@@ -27,7 +27,7 @@ const useMaker = () => {
         setAllowance('0')
       }
     }
-  }, [account, saaveContract?.address, sushiContract])
+  }, [account, saaveContract?.address, sushiContract]) // eslint-disable-line
   useEffect(() => {
     if (account && saaveContract && sushiContract) {
       fetchAllowance()
@@ -44,7 +44,7 @@ const useMaker = () => {
     } catch (e) {
       return e
     }
-  }, [addTransaction, saaveContract?.address, sushiContract])
+  }, [addTransaction, saaveContract?.address, sushiContract]) // eslint-disable-line
 
   // Saave Sushi - xSUSHI - aXSUSHI
   const saave = useCallback(

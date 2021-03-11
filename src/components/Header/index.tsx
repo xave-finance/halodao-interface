@@ -7,21 +7,15 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-// import Logo from '../../assets/svg/logo.svg'
-// import LogoDark from '../../assets/svg/logo_white.svg'
-
 import Logo from '../../assets/images/logo.png'
-// import LogoHover from '../../assets/svg/logo_hover.svg'
 
 import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-import { TYPE, ExternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 
 import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
 import Menu from '../Menu'
 
 import Row, { RowFixed } from '../Row'
@@ -34,7 +28,6 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
-import { SUSHI } from '../../constants'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -205,15 +198,6 @@ const Title = styled.a`
   }
 `
 
-const StaticIcon = styled.div`
-  padding-left: 4px;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  :hover {
-    opacity: 0;
-  }
-`
 const HoverIcon = styled.div`
   position: relative;
   display: flex;
@@ -247,37 +231,6 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => darken(0.1, theme.text1)};
   }
-`
-
-const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName
-})<{ isActive?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
-`}
 `
 
 export const StyledMenuButton = styled.button`
@@ -333,8 +286,6 @@ export default function Header() {
   const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [isDark] = useDarkModeManager()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -358,20 +309,11 @@ export default function Header() {
       </Modal>
       <HeaderRow>
         <Title href=".">
-          {/* <HoverIcon>
-            <img width={'48px'} src={LogoHover} alt="logo" />
-          </HoverIcon>
-          <StaticIcon>
-            <img width={'40px'} src={Logo} alt="logo" />
-          </StaticIcon> */}
           <HoverIcon>
             <img width={'40px'} src={Logo} alt="logo" />
           </HoverIcon>
         </Title>
         <HeaderLinks>
-          {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
-          </StyledNavLink> */}
           <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
@@ -385,22 +327,9 @@ export default function Header() {
           >
             {t('pool')}
           </StyledNavLink>
-          {/* <StyledNavLink id={`stake-nav-link`} to={'/sushi'}>
-            SUSHI
-          </StyledNavLink> */}
-          {/* <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink> */}
-          {/* {chainId === ChainId.MAINNET && ( */}
           <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
             Stake
           </StyledNavLink>
-          {/* )} */}
-          {/* {chainId && (
-            <StyledExternalLink id={`analytics-nav-link`} href={'https://analytics.sushi.com'}>
-              Analytics <span style={{ fontSize: '11px' }}>↗</span>
-            </StyledExternalLink>
-          )} */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>

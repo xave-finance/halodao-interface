@@ -1,21 +1,17 @@
 import { ChainId, TokenAmount } from '@sushiswap/sdk'
-import React, { useMemo } from 'react'
+import React from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 import tokenLogo from '../../assets/images/token-logo.png'
 import { SUSHI } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
-import { useMerkleDistributorContract } from '../../hooks/useContract'
-import useCurrentBlockTimestamp from '../../hooks/useCurrentBlockTimestamp'
-import { useTotalUniEarned } from '../../state/stake/hooks'
 import { useAggregateUniBalance, useTokenBalance } from '../../state/wallet/hooks'
-import { ExternalLink, StyledInternalLink, TYPE, UniTokenAnimated } from '../../theme'
-import { computeUniCirculation } from '../../utils/computeUniCirculation'
+import { ExternalLink, TYPE, UniTokenAnimated } from '../../theme'
 import useUSDCPrice from '../../utils/useUSDCPrice'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
-import { Break, CardBGImage, CardNoise, CardSection, DataCard } from '../earn/styled'
+import { Break, CardSection, DataCard } from '../earn/styled'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -46,19 +42,9 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
 
   const total = useAggregateUniBalance()
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
-  const uniToClaim: TokenAmount | undefined = useTotalUniEarned()
 
   const totalSupply: TokenAmount | undefined = useTotalSupply(uni)
   const uniPrice = useUSDCPrice(uni)
-  const blockTimestamp = useCurrentBlockTimestamp()
-  const unclaimedUni = useTokenBalance(useMerkleDistributorContract()?.address, uni)
-  const circulation: TokenAmount | undefined = useMemo(
-    () =>
-      blockTimestamp && uni && chainId === ChainId.MAINNET
-        ? computeUniCirculation(uni, blockTimestamp, unclaimedUni)
-        : totalSupply,
-    [blockTimestamp, chainId, totalSupply, unclaimedUni, uni]
-  )
 
   return (
     <ContentWrapper gap="lg">

@@ -9,12 +9,11 @@ import { useTotalSupply } from '../../data/TotalSupply'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { TYPE } from '../../theme'
 import { currencyId } from '../../utils/currencyId'
 import { unwrappedToken } from '../../utils/wrappedCurrency'
-import { ButtonPrimary, ButtonSecondary, ButtonEmpty, ButtonPrimaryNormal } from '../Button'
+import { ButtonPrimary, ButtonEmpty, ButtonPrimaryNormal } from '../Button'
 import { transparentize } from 'polished'
-import { CardNoise } from '../earn/styled'
 
 import { useColor } from '../../hooks/useColor'
 

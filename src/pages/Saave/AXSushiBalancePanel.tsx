@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react'
-import { Currency, Pair } from '@sushiswap/sdk'
+import React from 'react'
+import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
@@ -7,8 +7,6 @@ import { RowBetween } from '../../components/Row'
 import { Input as NumericalInput } from '../../components/NumericalInput'
 import { TYPE } from '../../theme'
 
-import { useActiveWeb3React } from '../../hooks'
-import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
@@ -33,12 +31,6 @@ const LabelRow = styled.div`
   }
 `
 
-const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
-
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
@@ -53,35 +45,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
   border: 1px solid ${({ theme }) => theme.bg2};
   background-color: ${({ theme }) => theme.bg1};
-`
-
-const StyledButtonName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 auto;' : '  margin: 0 auto;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
-`
-
-const StyledBalanceMax = styled.button`
-  height: 28px;
-  padding-right: 8px;
-  padding-left: 8px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
-  }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
 `
 
 interface CurrencyInputPanelProps {
@@ -110,8 +73,6 @@ export default function CurrencyInputPanel({
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
-  const { t } = useTranslation()
-  const { account } = useActiveWeb3React()
   const theme = useTheme()
 
   const aXSushiBalanceBigInt = useTokenBalance('0xF256CC7847E919FAc9B808cC216cAc87CCF2f47a')
