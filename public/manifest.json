@@ -1,6 +1,6 @@
 {
-  "short_name": "SushiSwap",
-  "name": "SushiSwap",
+  "short_name": "HaloDAO",
+  "name": "HaloDAO",
   "icons": [
     {
       "src": "./images/logo-192x192.png",
@@ -17,7 +17,7 @@
   ],
   "orientation": "portrait",
   "display": "standalone",
-  "theme_color": "#ff007a",
+  "theme_color": "#5c2a72",
   "background_color": "#fff",
   "start_url": "/"
 }

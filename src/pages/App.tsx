@@ -30,7 +30,12 @@ import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
-import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import {
+  OpenClaimAddressModalAndRedirectToSwap,
+  RedirectPathToSwapOnly,
+  RedirectToSwap,
+  RedirectPathToPoolOnly
+} from './Swap/redirects'
 //import Vote from './Vote'
 //import VotePage from './Vote/VotePage'
 
@@ -128,7 +133,7 @@ export default function App() {
               {/* <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} /> */}
               {/* <Route exact strict path="/uni/:currencyIdA/:currencyIdB" component={Manage} /> */}
               {/* <Route exact strict path="/vote/:id" component={VotePage} /> */}
-              <Route component={RedirectPathToSwapOnly} />
+              <Route component={RedirectPathToPoolOnly} />
             </Switch>
           </Web3ReactManager>
           <Marginer />

@@ -11,7 +11,7 @@ import styled from 'styled-components'
 // import LogoDark from '../../assets/svg/logo_white.svg'
 
 import Logo from '../../assets/images/logo.png'
-import LogoHover from '../../assets/svg/logo_hover.svg'
+// import LogoHover from '../../assets/svg/logo_hover.svg'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -358,17 +358,20 @@ export default function Header() {
       </Modal>
       <HeaderRow>
         <Title href=".">
-          <HoverIcon>
+          {/* <HoverIcon>
             <img width={'48px'} src={LogoHover} alt="logo" />
           </HoverIcon>
           <StaticIcon>
             <img width={'40px'} src={Logo} alt="logo" />
-          </StaticIcon>
+          </StaticIcon> */}
+          <HoverIcon>
+            <img width={'40px'} src={Logo} alt="logo" />
+          </HoverIcon>
         </Title>
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+          {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
-          </StyledNavLink>
+          </StyledNavLink> */}
           <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
@@ -388,16 +391,16 @@ export default function Header() {
           {/* <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
             Vote
           </StyledNavLink> */}
-          {chainId === ChainId.MAINNET && (
-            <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-              Stake
-            </StyledNavLink>
-          )}
-          {chainId && (
+          {/* {chainId === ChainId.MAINNET && ( */}
+          <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
+            Stake
+          </StyledNavLink>
+          {/* )} */}
+          {/* {chainId && (
             <StyledExternalLink id={`analytics-nav-link`} href={'https://analytics.sushi.com'}>
               Analytics <span style={{ fontSize: '11px' }}>↗</span>
             </StyledExternalLink>
-          )}
+          )} */}
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
@@ -438,7 +441,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                SUSHI
+                HALO
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
@@ -453,9 +456,9 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
+          {/* <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
+          </StyledMenuButton> */}
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

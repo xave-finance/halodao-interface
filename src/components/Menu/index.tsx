@@ -103,7 +103,7 @@ const MenuItemInternal = styled(StyledInternalLink)`
   }
 `
 
-const CODE_LINK = 'https://github.com/sushiswap/sushiswap-interface'
+const CODE_LINK = 'https://github.com/HaloDAO/halodao-interface'
 
 export default function Menu() {
   const { account } = useActiveWeb3React()
@@ -123,30 +123,30 @@ export default function Menu() {
 
       {open && (
         <MenuFlyout>
-          <MenuItem id="link" href="#">
+          <MenuItem id="link" href="https://halodao.com">
             <Info size={14} />
             About
           </MenuItem>
-          <MenuItem id="link" href="https://sushiswap.gitbook.io/sushiswap/">
+          {/* <MenuItem id="link" href="https://sushiswap.gitbook.io/sushiswap/">
             <BookOpen size={14} />
             Docs
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem id="link" href={CODE_LINK}>
             <Code size={14} />
             Code
           </MenuItem>
-          <MenuItem id="link" href="https://discord.gg/NVPXN4e">
+          <MenuItem id="link" href="https://discord.gg/gqKxuGdX">
             <MessageCircle size={14} />
             Discord
           </MenuItem>
-          <MenuItem id="link" href="https://analytics.sushi.com/">
+          {/* <MenuItem id="link" href="https://analytics.sushi.com/">
             <PieChart size={14} />
             Analytics
           </MenuItem>
           <MenuItemInternal id="link" to="/tools">
             <Tool size={14} />
             Tools
-          </MenuItemInternal>
+          </MenuItemInternal> */}
           {/* {account && (
             <ButtonPrimary onClick={openClaimModal} padding="8px 16px" width="100%" borderradius="20px" mt="0.5rem">
               Claim UNI
