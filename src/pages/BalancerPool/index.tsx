@@ -1,15 +1,14 @@
-import React, { useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React from 'react'
+import styled from 'styled-components'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, HideSmall } from '../../theme'
-import Card from '../../components/Card'
 import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import { useActiveWeb3React } from '../../hooks'
-import { Dots } from '../../components/swap/styleds'
+import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 640px;
+  max-width: 820px;
   width: 100%;
 `
 
@@ -22,21 +21,16 @@ const TitleRow = styled(RowBetween)`
   `};
 `
 
-const EmptyProposals = styled.div`
-  border: 1px solid ${({ theme }) => theme.text4};
-  padding: 16px 12px;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`
-
 const BalancerPool = () => {
-  const theme = useContext(ThemeContext)
   const { account } = useActiveWeb3React()
-  const isLoading = false
-  const pools: string[] = ['0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e']
+  const pools: BalancerPoolInfo[] = [
+    {
+      // Kovan
+      pair: 'WETH/DAI',
+      address: '0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e',
+      balancerUrl: 'https://kovan.pools.balancer.exchange/#/pool/0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e'
+    }
+  ]
 
   return (
     <>
@@ -51,31 +45,9 @@ const BalancerPool = () => {
               </HideSmall>
             </TitleRow>
 
-            {!account ? (
-              <Card padding="40px">
-                <TYPE.body color={theme.text3} textAlign="center">
-                  Connect to a wallet to view your liquidity.
-                </TYPE.body>
-              </Card>
-            ) : isLoading ? (
-              <EmptyProposals>
-                <TYPE.body color={theme.text3} textAlign="center">
-                  <Dots>Loading</Dots>
-                </TYPE.body>
-              </EmptyProposals>
-            ) : pools?.length > 0 ? (
-              <>
-                {pools.map(pool => {
-                  return <p>{pool}</p>
-                })}
-              </>
-            ) : (
-              <EmptyProposals>
-                <TYPE.body color={theme.text3} textAlign="center">
-                  No liquidity found.
-                </TYPE.body>
-              </EmptyProposals>
-            )}
+            {pools.map(pool => {
+              return <BalancerPoolCard account={account} poolInfo={pool} />
+            })}
           </AutoColumn>
         </AutoColumn>
       </PageWrapper>
