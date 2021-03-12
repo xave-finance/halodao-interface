@@ -95,10 +95,20 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
             </RowBetween>
 
             <RowBetween marginTop="10px">
-              <ButtonPrimaryNormal padding="8px" borderRadius="8px" width="48%">
+              <ButtonPrimaryNormal
+                padding="8px"
+                borderRadius="8px"
+                width="48%"
+                disabled={!(parseInt(stakeAmount) > 0 && parseInt(stakeAmount) <= bptBalance)}
+              >
                 Stake
               </ButtonPrimaryNormal>
-              <ButtonPrimaryNormal padding="8px" borderRadius="8px" width="48%">
+              <ButtonPrimaryNormal
+                padding="8px"
+                borderRadius="8px"
+                width="48%"
+                disabled={!(parseInt(unstakeAmount) > 0 && parseInt(unstakeAmount) <= bptStaked)}
+              >
                 Unstake
               </ButtonPrimaryNormal>
             </RowBetween>
@@ -114,10 +124,15 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
             </Row>
 
             <RowBetween marginTop="10px">
-              <ButtonPrimaryNormal padding="8px" borderRadius="8px" width="48%">
+              <ButtonPrimaryNormal padding="8px" borderRadius="8px" width="48%" disabled={!(haloBalance > 0)}>
                 Claim rewards
               </ButtonPrimaryNormal>
-              <ButtonPrimaryNormal padding="8px" borderRadius="8px" width="48%">
+              <ButtonPrimaryNormal
+                padding="8px"
+                borderRadius="8px"
+                width="48%"
+                disabled={!(haloBalance > 0 && bptStaked > 0)}
+              >
                 Unstake and claim rewards
               </ButtonPrimaryNormal>
             </RowBetween>
