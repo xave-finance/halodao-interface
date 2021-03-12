@@ -59,16 +59,23 @@ export const SUSHI: ChainTokenMap = {
 
 // HALO
 export const HALO: ChainTokenMap = {
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x695eEC33257c167b3f90fb1611bE31a88322b8Ab', 18, 'HALO', 'HALOToken')
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
+    18,
+    'HALO',
+    'HALOToken'
+  )
 }
 
 // Balancer pool addresses
+const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
 export const BALANCER_POOLS: ChainBalancerPoolsMap = {
   [ChainId.KOVAN]: [
     {
       pair: 'WETH/DAI',
-      address: '0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e',
-      balancerUrl: 'https://kovan.pools.balancer.exchange/#/pool/0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e'
+      address: wethDaiAddressKovan,
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
     }
   ]
 }
