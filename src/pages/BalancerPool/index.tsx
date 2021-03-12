@@ -6,6 +6,7 @@ import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import { useActiveWeb3React } from '../../hooks'
 import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
+import { BALANCER_POOLS } from '../../constants'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -22,15 +23,8 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { account } = useActiveWeb3React()
-  const pools: BalancerPoolInfo[] = [
-    {
-      // Kovan
-      pair: 'WETH/DAI',
-      address: '0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e',
-      balancerUrl: 'https://kovan.pools.balancer.exchange/#/pool/0x37f80ac90235ce0d3911952d0ce49071a0ffdb1e'
-    }
-  ]
+  const { account, chainId } = useActiveWeb3React()
+  const pools: BalancerPoolInfo[] = chainId ? BALANCER_POOLS[chainId] ?? [] : []
 
   return (
     <>
