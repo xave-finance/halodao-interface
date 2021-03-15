@@ -1,5 +1,6 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@sushiswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
+import { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
 
 import { fortmatic, injected, portis, lattice, walletconnect, walletlink } from '../connectors'
 
@@ -14,6 +15,10 @@ type ChainTokenList = {
 
 type ChainTokenMap = {
   readonly [chainId in ChainId]?: Token
+}
+
+type ChainBalancerPoolsMap = {
+  readonly [chainId in ChainId]?: BalancerPoolInfo[]
 }
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
@@ -50,6 +55,29 @@ export const SUSHI: ChainTokenMap = {
   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
   [ChainId.FANTOM]: new Token(ChainId.KOVAN, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
+}
+
+// HALO
+export const HALO: ChainTokenMap = {
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
+    18,
+    'HALO',
+    'HALOToken'
+  )
+}
+
+// Balancer pool addresses
+const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
+export const BALANCER_POOLS: ChainBalancerPoolsMap = {
+  [ChainId.KOVAN]: [
+    {
+      pair: 'WETH/DAI',
+      address: wethDaiAddressKovan,
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
+    }
+  ]
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {

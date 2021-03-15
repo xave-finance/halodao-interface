@@ -25,12 +25,18 @@ import {
 //import MigrateV1 from './MigrateV1'
 //import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 import RemoveV1Exchange from './MigrateV1/RemoveV1Exchange'
-import Pool from './Pool'
+// import Pool from './Pool'
+import BalancerPool from './BalancerPool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
-import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import {
+  OpenClaimAddressModalAndRedirectToSwap,
+  RedirectPathToSwapOnly,
+  RedirectToSwap,
+  RedirectPathToPoolOnly
+} from './Swap/redirects'
 //import Vote from './Vote'
 //import VotePage from './Vote/VotePage'
 
@@ -111,7 +117,8 @@ export default function App() {
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
               <Route exact strict path="/find" component={PoolFinder} />
-              <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/pool" component={BalancerPool} />
+              {/* <Route exact strict path="/pool" component={Pool} /> */}
               {/* <Route exact strict path="/sushi" component={Earn} /> */}
               {/* <Route exact strict path="/vote" component={Vote} /> */}
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
@@ -128,7 +135,7 @@ export default function App() {
               {/* <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} /> */}
               {/* <Route exact strict path="/uni/:currencyIdA/:currencyIdB" component={Manage} /> */}
               {/* <Route exact strict path="/vote/:id" component={VotePage} /> */}
-              <Route component={RedirectPathToSwapOnly} />
+              <Route component={RedirectPathToPoolOnly} />
             </Switch>
           </Web3ReactManager>
           <Marginer />

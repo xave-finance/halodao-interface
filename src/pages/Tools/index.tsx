@@ -9,7 +9,6 @@ import { RowBetween, RowFixed } from '../../components/Row'
 import { ButtonPrimaryNormal, ButtonSecondary, ButtonEmpty } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
 
-import { useActiveWeb3React } from '../../hooks'
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { transparentize } from 'polished'
 
@@ -67,7 +66,6 @@ const StyledPositionCard = styled(LightCard)`
 
 export default function Pool() {
   const theme = useContext(ThemeContext)
-  const { account } = useActiveWeb3React()
 
   return (
     <>

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Currency, Pair } from '@sushiswap/sdk'
+import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
@@ -8,11 +8,9 @@ import { Input as NumericalInput } from '../../components/NumericalInput'
 import { TYPE } from '../../theme'
 
 import { useActiveWeb3React } from '../../hooks'
-import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
-import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
-import { BigNumber } from '@ethersproject/bignumber'
+import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useSaave from '../../sushi-hooks/useSaave'
@@ -142,7 +140,6 @@ export default function CurrencyInputPanel({
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
-  const { t } = useTranslation()
   const { account } = useActiveWeb3React()
   const theme = useTheme()
 
@@ -155,7 +152,7 @@ export default function CurrencyInputPanel({
   console.log('sushiBalance:', sushiBalance, sushiBalanceBigInt, decimals)
 
   // handle approval
-  const [requestedApproval, setRequestedApproval] = useState(false)
+  const [, setRequestedApproval] = useState(false)
   const handleApprove = useCallback(async () => {
     //console.log("SEEKING APPROVAL");
     try {
