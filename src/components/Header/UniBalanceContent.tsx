@@ -3,7 +3,7 @@ import React from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 import tokenLogo from '../../assets/images/token-logo.png'
-import { SUSHI } from '../../constants'
+import { HALO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance, useTokenBalance } from '../../state/wallet/hooks'
@@ -38,7 +38,7 @@ const StyledClose = styled(X)`
  */
 export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowUniBalanceModal: any }) {
   const { account, chainId } = useActiveWeb3React()
-  const uni = chainId ? SUSHI[chainId] : undefined
+  const uni = chainId ? HALO[chainId] : undefined
 
   const total = useAggregateUniBalance()
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
@@ -51,7 +51,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
       <ModalUpper>
         <CardSection gap="md">
           <RowBetween>
-            <TYPE.white color="white">Your SUSHI Breakdown</TYPE.white>
+            <TYPE.white color="white">Your HALO Breakdown</TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
         </CardSection>
@@ -89,7 +89,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="sm">
           <AutoColumn gap="md">
             <RowBetween>
-              <TYPE.white color="white">SUSHI price:</TYPE.white>
+              <TYPE.white color="white">HALO price:</TYPE.white>
               <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
             </RowBetween>
             {/* <RowBetween>
@@ -102,7 +102,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
             </RowBetween>
             {uni && uni.chainId === ChainId.MAINNET ? (
               <ExternalLink href={`https://analytics.sushi.com/tokens/${uni.address}`}>
-                View SUSHI Analytics
+                View HALO Analytics
               </ExternalLink>
             ) : null}
           </AutoColumn>

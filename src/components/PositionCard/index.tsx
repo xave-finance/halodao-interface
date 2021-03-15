@@ -35,7 +35,7 @@ export const HoverCard = styled(Card)`
     border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
   }
 `
-const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
+export const StyledPositionCard = styled(LightCard)<{ bgColor: any }>`
   /* border: 1px solid ${({ theme }) => theme.text4}; */
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
