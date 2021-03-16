@@ -29,7 +29,7 @@ export function useContract(address: string | undefined, ABI: any, withSignerIfP
 
   return useMemo(() => {
     if (!address || !ABI || !library) {
-      console.log('Here')
+      console.log('Here: ', address)
       return null
     }
     try {
