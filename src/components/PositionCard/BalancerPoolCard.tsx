@@ -10,7 +10,7 @@ import NumericalInput from 'components/NumericalInput'
 import { CardSection, DataCard } from 'components/earn/styled'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
-import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards/Rewards.json'
+import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 
@@ -44,6 +44,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const [bptStaked, setBptStaked] = useState(0)
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   const LP_TOKEN_ADDRESS = poolInfo.tokenAddress
   const rewardsContract = useContract(HALO_REWARDS_ADDRESS, HALO_REWARDS_ABI)
@@ -54,7 +55,6 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const getBptBalance = useCallback(async () => {
     const bptBalanceValue = lpTokenContract?.balanceOf(account)
     setBptBalance(+formatEther(await bptBalanceValue))
-    //setBptBalance(bptBalanceValue)
   }, [lpTokenContract, account])
 
   // checks the allowance and skips approval if already within the approved value
@@ -71,17 +71,19 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   const getUnclaimedPoolReward = useCallback(async () => {
     const unclaimedHaloInPool = await rewardsContract?.pendingAmmLpUserRewards(poolInfo.address, account)
+    console.log(unclaimedHaloInPool.toString())
     setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
   }, [rewardsContract, account, poolInfo.address])
 
   useEffect(() => {
     getUserTotalTokenslByPoolAddress()
-    getUnclaimedPoolReward()
     getAllowance()
+    getUnclaimedPoolReward()
     getBptBalance()
   }, [bptBalance, getAllowance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
 
   const stakeLpToken = async () => {
+    setLoading(true)
     const lpTokenAmount = parseEther(stakeAmount)
 
     if (allowance < +stakeAmount) {
@@ -93,9 +95,12 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     const stakeLpResponse = await stakeLpTxn.wait()
     console.log('StakeLpResponse: ', stakeLpResponse)
     setStakeAmount('')
+    setLoading(false)
+    getBptBalance()
   }
 
   const unstakeLpToken = async () => {
+    setLoading(true)
     const lpTokenAmount = parseEther(unstakeAmount)
 
     const unstakeLpTxn = await rewardsContract!.withdrawAmmLpTokens(poolInfo.address, lpTokenAmount.toString())
@@ -103,14 +108,19 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
     console.log('UnstakeLpResponse: ', unstakeLpResponse)
     setUnstakeAmount('')
+    setLoading(false)
+    getBptBalance()
   }
 
   const claimPoolRewards = async () => {
-    const claimPoolRewardsTxn = await await rewardsContract!.withdrawPendingAmmLpRewards(poolInfo.address)
-    const claimPoolRewardsResponse = claimPoolRewardsTxn.wait()
+    setLoading(true)
+    const claimPoolRewardsTxn = await rewardsContract!.withdrawPendingAmmLpRewards(poolInfo.address)
+    const claimPoolRewardsResponse = await claimPoolRewardsTxn.wait()
 
     console.log('ClaimPoolRewardsResponse: ', claimPoolRewardsResponse)
+    setLoading(false)
   }
+
   return (
     <StyledPositionCard bgColor={backgroundColor}>
       <AutoColumn gap="12px">
@@ -171,7 +181,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseInt(stakeAmount) > 0 && parseInt(stakeAmount) <= bptBalance)}
+                disabled={!(parseInt(stakeAmount) > 0 && parseInt(stakeAmount) <= bptBalance) || loading}
                 onClick={stakeLpToken}
               >
                 Stake
@@ -180,7 +190,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseInt(unstakeAmount) > 0 && parseInt(unstakeAmount) <= bptStaked)}
+                disabled={!(parseInt(unstakeAmount) > 0 && parseInt(unstakeAmount) <= bptStaked) || loading}
                 onClick={unstakeLpToken}
               >
                 Unstake
@@ -202,7 +212,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(unclaimedHalo > 0)}
+                disabled={!(unclaimedHalo > 0) || loading}
                 onClick={claimPoolRewards}
               >
                 Claim rewards
