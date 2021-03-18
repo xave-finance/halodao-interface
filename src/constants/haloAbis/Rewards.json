@@ -446,24 +446,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "depositAmmLpTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_collateralAddress",
         "type": "address"
       },
@@ -479,6 +461,24 @@
       }
     ],
     "name": "depositMinter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lpAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositPoolTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -554,6 +554,30 @@
     "inputs": [
       {
         "internalType": "address",
+        "name": "_lpAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "getDepositedPoolTokenBalanceByUser",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_collateralAddress",
         "type": "address"
       }
@@ -592,6 +616,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getTotalMinterLpAllocationPoints",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTotalPoolAllocationPoints",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -599,7 +649,31 @@
         "type": "address"
       }
     ],
-    "name": "getTotalClaimedHaloByUser",
+    "name": "getTotalRewardsClaimedByUser",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_collateralAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "getUnclaimedMinterLpRewardsByUser",
     "outputs": [
       {
         "internalType": "uint256",
@@ -623,7 +697,20 @@
         "type": "address"
       }
     ],
-    "name": "getUserLpTokens",
+    "name": "getUnclaimedPoolRewardsByUserByPool",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getUnclaimedVestingRewards",
     "outputs": [
       {
         "internalType": "uint256",
@@ -814,67 +901,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "pendingAmmLpUserRewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "pendingMinterLpUserRewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "pendingVestingRewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "releaseVestedRewards",
     "outputs": [],
@@ -927,7 +953,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setAmmLpAlloc",
+    "name": "setAmmLpAllocationPoints",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -984,7 +1010,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setMinterLpAlloc",
+    "name": "setMinterLpAllocationPoints",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1004,33 +1030,7 @@
   },
   {
     "inputs": [],
-    "name": "totalAmmLpAllocationPoints",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "totalAmmLpAllocs",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalMinterLpAllocationPoints",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1123,24 +1123,6 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawAmmLpTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_collateralAddress",
         "type": "address"
       },
@@ -1166,9 +1148,14 @@
         "internalType": "address",
         "name": "_lpAddress",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
       }
     ],
-    "name": "withdrawPendingAmmLpRewards",
+    "name": "withdrawPoolTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1186,7 +1173,20 @@
         "type": "address"
       }
     ],
-    "name": "withdrawPendingMinterLpRewards",
+    "name": "withdrawUnclaimedMinterLpRewards",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lpAddress",
+        "type": "address"
+      }
+    ],
+    "name": "withdrawUnclaimedPoolRewards",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

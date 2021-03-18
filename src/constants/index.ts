@@ -70,14 +70,14 @@ export const HALO: ChainTokenMap = {
 
 // Balancer pool addresses
 const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
-const wethDaiAddressTokenKovan = process.env.REACT_APP_LP_TOKEN_ADDRESS || ''
+
 export const BALANCER_POOLS: ChainBalancerPoolsMap = {
   [ChainId.KOVAN]: [
     {
       pair: 'WETH/DAI',
       address: wethDaiAddressKovan,
       balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`,
-      tokenAddress: wethDaiAddressTokenKovan
+      tokenAddress: wethDaiAddressKovan
     }
   ]
 }

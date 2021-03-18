@@ -60,17 +60,18 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   // checks the allowance and skips approval if already within the approved value
   const getAllowance = useCallback(async () => {
     const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
+    console.log('Allowance ', formatEther(currentAllowance))
     setAllowance(+formatEther(currentAllowance))
   }, [lpTokenContract, account])
 
   const getUserTotalTokenslByPoolAddress = useCallback(async () => {
-    const lpTokens = await rewardsContract?.getUserLpTokens(poolInfo.address, account)
+    const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
 
     setBptStaked(+formatEther(lpTokens))
   }, [rewardsContract, account, poolInfo.address])
 
   const getUnclaimedPoolReward = useCallback(async () => {
-    const unclaimedHaloInPool = await rewardsContract?.pendingAmmLpUserRewards(poolInfo.address, account)
+    const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
     console.log(unclaimedHaloInPool.toString())
     setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
   }, [rewardsContract, account, poolInfo.address])
@@ -85,13 +86,13 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const stakeLpToken = async () => {
     setLoading(true)
     const lpTokenAmount = parseEther(stakeAmount)
-
+    getAllowance()
     if (allowance < +stakeAmount) {
-      const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount)
+      const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
       await approvalTxn.wait()
     }
 
-    const stakeLpTxn = await rewardsContract?.depositAmmLpTokens(poolInfo.address, lpTokenAmount.toString())
+    const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
     const stakeLpResponse = await stakeLpTxn.wait()
     console.log('StakeLpResponse: ', stakeLpResponse)
     setStakeAmount('')
@@ -103,7 +104,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     setLoading(true)
     const lpTokenAmount = parseEther(unstakeAmount)
 
-    const unstakeLpTxn = await rewardsContract!.withdrawAmmLpTokens(poolInfo.address, lpTokenAmount.toString())
+    const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, lpTokenAmount.toString())
     const unstakeLpResponse = await unstakeLpTxn.wait()
 
     console.log('UnstakeLpResponse: ', unstakeLpResponse)
@@ -114,7 +115,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   const claimPoolRewards = async () => {
     setLoading(true)
-    const claimPoolRewardsTxn = await rewardsContract!.withdrawPendingAmmLpRewards(poolInfo.address)
+    const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
     const claimPoolRewardsResponse = await claimPoolRewardsTxn.wait()
 
     console.log('ClaimPoolRewardsResponse: ', claimPoolRewardsResponse)
@@ -181,7 +182,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseInt(stakeAmount) > 0 && parseInt(stakeAmount) <= bptBalance) || loading}
+                disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading}
                 onClick={stakeLpToken}
               >
                 Stake
@@ -190,7 +191,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseInt(unstakeAmount) > 0 && parseInt(unstakeAmount) <= bptStaked) || loading}
+                disabled={!(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading}
                 onClick={unstakeLpToken}
               >
                 Unstake
