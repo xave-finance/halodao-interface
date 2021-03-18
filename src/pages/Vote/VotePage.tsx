@@ -15,7 +15,7 @@ import ReactMarkdown from 'react-markdown'
 import VoteModal from '../../components/vote/VoteModal'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { useActiveWeb3React } from '../../hooks'
-import { AVERAGE_BLOCK_TIME_IN_SECS, COMMON_CONTRACT_NAMES, SUSHI, ZERO_ADDRESS } from '../../constants'
+import { AVERAGE_BLOCK_TIME_IN_SECS, COMMON_CONTRACT_NAMES, HALO, ZERO_ADDRESS } from '../../constants'
 import { isAddress, getExplorerLink } from '../../utils'
 import { ApplicationModal } from '../../state/application/actions'
 import { useModalOpen, useToggleDelegateModal, useToggleVoteModal, useBlockNumber } from '../../state/application/hooks'
@@ -156,7 +156,7 @@ export default function VotePage({
 
   const uniBalance: TokenAmount | undefined = useTokenBalance(
     account ?? undefined,
-    chainId ? SUSHI[chainId] : undefined
+    chainId ? HALO[chainId] : undefined
   )
   const userDelegatee: string | undefined = useUserDelegatee()
 
