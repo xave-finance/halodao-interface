@@ -5,7 +5,7 @@ import { ButtonEmpty, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
 import { AutoColumn } from '../Column'
 import Row, { RowFixed, AutoRow, RowBetween } from '../Row'
 import { FixedHeightRow, StyledPositionCard } from '.'
-import { ExternalLink } from 'theme'
+import { CustomLightSpinner, ExternalLink } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { CardSection, DataCard } from 'components/earn/styled'
 import styled from 'styled-components'
@@ -13,6 +13,9 @@ import { transparentize } from 'polished'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import Confetti from 'components/Confetti'
+import Circle from '../../assets/images/blue-loader.svg'
+import { HALO_REWARDS_MESSAGE } from '../../constants/index'
 
 const HALO_REWARDS_ADDRESS = process.env.REACT_APP_HALO_REWARDS_ADDRESS
 
@@ -44,11 +47,16 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const [bptStaked, setBptStaked] = useState(0)
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState({
+    staking: false,
+    unstaking: false,
+    claim: false,
+    unstakeAndClaim: false,
+    confetti: false
+  })
 
-  const LP_TOKEN_ADDRESS = poolInfo.tokenAddress
   const rewardsContract = useContract(HALO_REWARDS_ADDRESS, HALO_REWARDS_ABI)
-  const lpTokenContract = useTokenContract(LP_TOKEN_ADDRESS)
+  const lpTokenContract = useTokenContract(poolInfo.tokenAddress)
   const backgroundColor = '#FFFFFF'
 
   // get bpt balance based on the token address in the poolInfo
@@ -60,7 +68,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   // checks the allowance and skips approval if already within the approved value
   const getAllowance = useCallback(async () => {
     const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
-    console.log('Allowance ', formatEther(currentAllowance))
+
     setAllowance(+formatEther(currentAllowance))
   }, [lpTokenContract, account])
 
@@ -72,7 +80,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   const getUnclaimedPoolReward = useCallback(async () => {
     const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
-    console.log(unclaimedHaloInPool.toString())
+
     setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
   }, [rewardsContract, account, poolInfo.address])
 
@@ -81,45 +89,73 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     getAllowance()
     getUnclaimedPoolReward()
     getBptBalance()
+
+    // make sure the confetti still activates without refereshing
+    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
   }, [bptBalance, getAllowance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
 
   const stakeLpToken = async () => {
-    setLoading(true)
+    setLoading({ ...loading, staking: true })
     const lpTokenAmount = parseEther(stakeAmount)
     getAllowance()
-    if (allowance < +stakeAmount) {
-      const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
-      await approvalTxn.wait()
+    try {
+      if (allowance < +stakeAmount) {
+        const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
+        await approvalTxn.wait()
+      }
+
+      const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
+      await stakeLpTxn.wait()
+      setLoading({ ...loading, staking: false, confetti: true })
+    } catch (e) {
+      console.error(e)
+      setLoading({ ...loading, staking: false })
     }
 
-    const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
-    const stakeLpResponse = await stakeLpTxn.wait()
-    console.log('StakeLpResponse: ', stakeLpResponse)
     setStakeAmount('')
-    setLoading(false)
     getBptBalance()
   }
 
   const unstakeLpToken = async () => {
-    setLoading(true)
+    setLoading({ ...loading, unstaking: true })
     const lpTokenAmount = parseEther(unstakeAmount)
+    try {
+      const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, lpTokenAmount.toString())
+      await unstakeLpTxn.wait()
+    } catch (e) {
+      console.error(e)
+    }
 
-    const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, lpTokenAmount.toString())
-    const unstakeLpResponse = await unstakeLpTxn.wait()
-
-    console.log('UnstakeLpResponse: ', unstakeLpResponse)
     setUnstakeAmount('')
-    setLoading(false)
+    setLoading({ ...loading, unstaking: false })
     getBptBalance()
   }
 
   const claimPoolRewards = async () => {
-    setLoading(true)
-    const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
-    const claimPoolRewardsResponse = await claimPoolRewardsTxn.wait()
+    setLoading({ ...loading, claim: true })
+    try {
+      const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
+      await claimPoolRewardsTxn.wait()
+      setLoading({ ...loading, claim: false, confetti: true })
+    } catch (e) {
+      console.error(e)
+      setLoading({ ...loading, claim: false })
+    }
+  }
 
-    console.log('ClaimPoolRewardsResponse: ', claimPoolRewardsResponse)
-    setLoading(false)
+  const claimAndUnstakeRewards = async () => {
+    setLoading({ ...loading, unstakeAndClaim: true })
+    try {
+      const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, parseEther(bptStaked.toString()))
+      await unstakeLpTxn.wait()
+
+      const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
+      await claimPoolRewardsTxn.wait()
+      setLoading({ ...loading, unstakeAndClaim: false, confetti: true })
+    } catch (e) {
+      console.error(e)
+      setLoading({ ...loading, unstakeAndClaim: false })
+    }
   }
 
   return (
@@ -164,6 +200,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
             </ButtonSecondary>
 
             <FixedHeightRow>
+              <Confetti start={loading.confetti} />
               <Text fontSize={16} fontWeight={500}>
                 Balance: {bptBalance.toFixed(2)} BPT
               </Text>
@@ -182,19 +219,35 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading}
+                disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking}
                 onClick={stakeLpToken}
               >
-                Stake
+                {loading.staking ? (
+                  <>
+                    {`${HALO_REWARDS_MESSAGE.staking}`}&nbsp;
+                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                  </>
+                ) : (
+                  'Stake'
+                )}
               </ButtonPrimaryNormal>
               <ButtonPrimaryNormal
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading}
+                disabled={
+                  !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
+                }
                 onClick={unstakeLpToken}
               >
-                Unstake
+                {loading.unstaking ? (
+                  <>
+                    {`${HALO_REWARDS_MESSAGE.unstaking}`}&nbsp;
+                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                  </>
+                ) : (
+                  'Unstake'
+                )}
               </ButtonPrimaryNormal>
             </RowBetween>
 
@@ -213,18 +266,33 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(unclaimedHalo > 0) || loading}
+                disabled={!(unclaimedHalo > 0) || loading.claim}
                 onClick={claimPoolRewards}
               >
-                Claim rewards
+                {loading.claim ? (
+                  <>
+                    {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
+                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                  </>
+                ) : (
+                  'Claim Rewards'
+                )}
               </ButtonPrimaryNormal>
               <ButtonPrimaryNormal
                 padding="8px"
                 borderRadius="8px"
                 width="48%"
-                disabled={!(unclaimedHalo > 0 && bptStaked > 0)}
+                disabled={!(unclaimedHalo > 0 && bptStaked > 0) || loading.unstakeAndClaim}
+                onClick={claimAndUnstakeRewards}
               >
-                Unstake and claim rewards
+                {loading.unstakeAndClaim ? (
+                  <>
+                    {`${HALO_REWARDS_MESSAGE.unstakeAndClaim}`}&nbsp;
+                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                  </>
+                ) : (
+                  'Unstake and claim rewards'
+                )}
               </ButtonPrimaryNormal>
             </RowBetween>
           </AutoColumn>
