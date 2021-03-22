@@ -21,6 +21,10 @@ type ChainBalancerPoolsMap = {
   readonly [chainId in ChainId]?: BalancerPoolInfo[]
 }
 
+type ChainAddressMap = {
+  readonly [chainId in ChainId]?: string
+}
+
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
 export const AVERAGE_BLOCK_TIME_IN_SECS = 13
 export const PROPOSAL_LENGTH_IN_BLOCKS = 40_320
@@ -30,34 +34,34 @@ export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 // SUSHI
-export const SUSHI: ChainTokenMap = {
-  [ChainId.MAINNET]: new Token(
-    ChainId.MAINNET,
-    '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
-    18,
-    'SUSHI',
-    'SushiToken'
-  ),
-  [ChainId.ROPSTEN]: new Token(
-    ChainId.ROPSTEN,
-    '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-    18,
-    'SUSHI',
-    'SushiToken'
-  ),
-  [ChainId.RINKEBY]: new Token(
-    ChainId.RINKEBY,
-    '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-    18,
-    'SUSHI',
-    'SushiToken'
-  ),
-  [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
-  [ChainId.FANTOM]: new Token(ChainId.KOVAN, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
-}
+// export const SUSHI: ChainTokenMap = {
+//   [ChainId.MAINNET]: new Token(
+//     ChainId.MAINNET,
+//     '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
+//     18,
+//     'SUSHI',
+//     'SushiToken'
+//   ),
+//   [ChainId.ROPSTEN]: new Token(
+//     ChainId.ROPSTEN,
+//     '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+//     18,
+//     'SUSHI',
+//     'SushiToken'
+//   ),
+//   [ChainId.RINKEBY]: new Token(
+//     ChainId.RINKEBY,
+//     '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
+//     18,
+//     'SUSHI',
+//     'SushiToken'
+//   ),
+//   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
+//   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
+//   [ChainId.FANTOM]: new Token(ChainId.KOVAN, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
+// }
 
-// HALO
+// HALO Token contract addresses
 export const HALO: ChainTokenMap = {
   [ChainId.KOVAN]: new Token(
     ChainId.KOVAN,
@@ -68,6 +72,11 @@ export const HALO: ChainTokenMap = {
   )
 }
 
+// HALO Rewards contract addresses
+export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ''
+}
+
 // Balancer pool addresses
 const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
 export const BALANCER_POOLS: ChainBalancerPoolsMap = {
@@ -76,6 +85,11 @@ export const BALANCER_POOLS: ChainBalancerPoolsMap = {
       pair: 'WETH/DAI',
       address: wethDaiAddressKovan,
       balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
+    },
+    {
+      pair: 'UBE/DAI',
+      address: '0xb65741116b0bb280666452aeb5397c5c5f68bb3a',
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/0xb65741116b0bb280666452aeb5397c5c5f68bb3a`
     }
   ]
 }
@@ -198,7 +212,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
 
 export const PINNED_PAIRS: { readonly [chainId in ChainId]?: [Token, Token][] } = {
   [ChainId.MAINNET]: [
-    [SUSHI[ChainId.MAINNET] as Token, WETH[ChainId.MAINNET]],
+    [HALO[ChainId.MAINNET] as Token, WETH[ChainId.MAINNET]],
     [
       new Token(ChainId.MAINNET, '0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643', 8, 'cDAI', 'Compound Dai'),
       new Token(ChainId.MAINNET, '0x39AA39c021dfbaE8faC545936693aC917d5E7563', 8, 'cUSDC', 'Compound USD Coin')

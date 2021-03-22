@@ -55,7 +55,7 @@ const BalancerPool = () => {
           </HideSmall>
         </TitleRow>
 
-        <PoolsSummary account={account ?? undefined} poolTokens={poolTokens} />
+        <PoolsSummary poolTokens={poolTokens} />
 
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: '100%' }}>

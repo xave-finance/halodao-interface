@@ -1,48 +1,79 @@
-import { Token } from '@sushiswap/sdk'
+import { Token, TokenAmount } from '@sushiswap/sdk'
 import { AutoColumn } from 'components/Column'
 import { CardSection, DataCard } from 'components/earn/styled'
 import { RowBetween } from 'components/Row'
+import { HALO, HALO_REWARDS_ADDRESS } from '../../constants'
+import { useActiveWeb3React } from 'hooks'
 import { transparentize } from 'polished'
-import React, { useContext, useState } from 'react'
-import { useTokenBalances } from 'state/wallet/hooks'
+import React, { useContext, useEffect, useState } from 'react'
+import { useTokenBalance, useTokenBalances } from 'state/wallet/hooks'
 import styled, { ThemeContext } from 'styled-components'
 import { TYPE } from 'theme'
 import useUSDCPrice from 'utils/useUSDCPrice'
+import { useContract } from 'sushi-hooks/useContract'
+import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
+import { BigNumber } from 'ethers'
+import { formatEther } from 'ethers/lib/utils'
 
 const VoteCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
   border: 1px solid ${({ theme }) => theme.text4};
   overflow: hidden;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 `
 
 interface PoolsSummaryProps {
-  account?: string
   poolTokens: Token[]
 }
 
-const PoolsSummary = ({ account, poolTokens }: PoolsSummaryProps) => {
+const PoolsSummary = ({ poolTokens }: PoolsSummaryProps) => {
+  const { account, chainId } = useActiveWeb3React()
   const theme = useContext(ThemeContext)
 
-  const balances = useTokenBalances(account, poolTokens)
+  const rewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, HALO_REWARDS_ABI)
+
+  const balances = useTokenBalances(account ?? undefined, poolTokens)
   console.log('balances:', balances)
 
-  // const price = useUSDCPrice(poolTokens[0])
-  // console.log('price:', price)
+  const [summary, setSummary] = useState({
+    stakableValue: '$ --',
+    stakedValue: '$ --',
+    haloEarned: '--'
+  })
 
-  const [summary, setSummary] = useState({ stakableValue: '$ --', stakedValue: '$ --', haloEarned: '--' })
+  useEffect(() => {
+    if (!rewardsContract || !account || !poolTokens.length) return
 
-  // if (chainId && account) {
-  // pools.forEach(pool => {
-  //   // tokens.push(new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`))
-  //   const BPTToken = new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`)
-  //   const bptBalance = useTokenBalance(account, BPTToken)
-  //   if (bptBalance) {
-  //     console.log(`BTP balance for ${pool.pair}:`, bptBalance.toFixed(2))
-  //   }
-  // })
-  // }
+    const getTotalHaloRewards = async () => {
+      // Get claimed halo
+      const claimedHalo: BigNumber = await rewardsContract.getTotalRewardsClaimedByUser(account)
+      let totalStakedValue = 0
+
+      // Get unclaimed halo for each pool & add to claimed
+      for (const pool of poolTokens) {
+        const unclaimedHalo: BigNumber = await rewardsContract.getUnclaimedPoolRewardsByUserByPool(
+          pool.address,
+          account
+        )
+        claimedHalo.add(unclaimedHalo)
+
+        const bptPrice = 1
+        const staked: BigNumber = await rewardsContract.getDepositedPoolTokenBalanceByUser(pool.address, account)
+        console.log('staked:', staked.toString())
+        totalStakedValue += staked.mul(bptPrice).toNumber()
+      }
+
+      console.log('totalStakedValue:', totalStakedValue.toString())
+
+      setSummary({
+        ...summary,
+        haloEarned: formatEther(claimedHalo)
+      })
+    }
+
+    getTotalHaloRewards()
+  }, [rewardsContract, account, poolTokens])
 
   return (
     <VoteCard>
