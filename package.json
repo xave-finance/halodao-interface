@@ -1,6 +1,6 @@
 {
-  "name": "@sushiswap/interface",
-  "description": "SushiSwap Interface",
+  "name": "@halodao/interface",
+  "description": "HaloDAO Interface",
   "homepage": ".",
   "private": true,
   "devDependencies": {
