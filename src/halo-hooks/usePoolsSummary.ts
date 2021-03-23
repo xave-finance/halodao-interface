@@ -26,10 +26,18 @@ const usePoolsSummary = (poolTokens: Token[]) => {
   const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolTokens)[0]
 
   useEffect(() => {
-    if (!chainId || !rewardsContract || !account || !poolTokens.length) return
+    if (
+      !chainId ||
+      !account ||
+      !rewardsContract ||
+      !poolTokens.length ||
+      !Object.keys(balances).length ||
+      !Object.keys(totalSupplies).length
+    ) {
+      return
+    }
 
     const getPoolSummary = async () => {
-      console.log('getPoolSummary triggerd!')
       let totalStakeableValue = 0
       let totalStakedValue = 0
       const claimedHalo: BigNumber = await rewardsContract.getTotalRewardsClaimedByUser(account)
