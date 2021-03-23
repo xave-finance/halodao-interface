@@ -77,8 +77,11 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ''
 }
 
+export const BALANCER_SUBGRAPH_URL = process.env.REACT_APP_BALANCER_SUBGRAPH_URL || ''
+
 // Balancer pool addresses
 const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
+const ubeDaiAddressKovan = process.env.REACT_APP_POOL_UBEDAI_ADDRESS_KOVAN || ''
 export const BALANCER_POOLS: ChainBalancerPoolsMap = {
   [ChainId.KOVAN]: [
     {
@@ -88,8 +91,8 @@ export const BALANCER_POOLS: ChainBalancerPoolsMap = {
     },
     {
       pair: 'UBE/DAI',
-      address: '0xb65741116b0bb280666452aeb5397c5c5f68bb3a',
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/0xb65741116b0bb280666452aeb5397c5c5f68bb3a`
+      address: ubeDaiAddressKovan,
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${ubeDaiAddressKovan}`
     }
   ]
 }
