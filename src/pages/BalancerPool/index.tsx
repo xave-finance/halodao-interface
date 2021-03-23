@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, HideSmall } from '../../theme'
 import { RowBetween } from '../../components/Row'
@@ -7,11 +7,7 @@ import { AutoColumn } from '../../components/Column'
 import { useActiveWeb3React } from '../../hooks'
 import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
 import { BALANCER_POOLS } from '../../constants'
-import { CardSection, DataCard } from 'components/earn/styled'
-import { transparentize } from 'polished'
 import { Token } from '@sushiswap/sdk'
-import useUSDCPrice from 'utils/useUSDCPrice'
-import { useTokenBalance } from 'state/wallet/hooks'
 import PoolsSummary from 'components/PoolsSummary'
 
 const PageWrapper = styled(AutoColumn)`
@@ -34,15 +30,14 @@ const BalancerPool = () => {
   const [poolTokens, setPoolTokens] = useState<Token[]>([])
 
   useEffect(() => {
-    if (!chainId) return
+    if (!chainId || !pools.length) return
     const tokens: Token[] = []
     pools.forEach(pool => {
       const token = new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`)
       tokens.push(token)
     })
     setPoolTokens(tokens)
-    console.log('poolTokens assigned!', tokens)
-  }, [chainId])
+  }, [chainId, pools])
 
   return (
     <>
