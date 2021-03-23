@@ -14,7 +14,7 @@ import { useAllProposalData, ProposalData, useUserVotes, useUserDelegatee } from
 import DelegateModal from '../../components/vote/DelegateModal'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { useActiveWeb3React } from '../../hooks'
-import { SUSHI, ZERO_ADDRESS } from '../../constants'
+import { HALO, ZERO_ADDRESS } from '../../constants'
 import { JSBI, TokenAmount, ChainId } from '@sushiswap/sdk'
 import { shortenAddress, getExplorerLink } from '../../utils'
 import Loader from '../../components/Loader'
@@ -116,7 +116,7 @@ export default function Vote() {
   const availableVotes: TokenAmount | undefined = useUserVotes()
   const uniBalance: TokenAmount | undefined = useTokenBalance(
     account ?? undefined,
-    chainId ? SUSHI[chainId] : undefined
+    chainId ? HALO[chainId] : undefined
   )
   const userDelegatee: string | undefined = useUserDelegatee()
 
