@@ -42,29 +42,34 @@ export default function Saave() {
             <AutoColumn gap="md">
               <RowBetween>
                 <TYPE.white fontWeight={600} color={theme.text1}>
-                  SushiBar: Make SUSHI work for you
+                  HALO: Make HALO work for you
                 </TYPE.white>
               </RowBetween>
               <RowBetween>
                 <div>
                   <TYPE.white fontSize={14} color={theme.text2} style={{ paddingBottom: '10px' }}>
-                    {`Stake your SUSHI into xSUSHI for ~15% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
-                  </TYPE.white>
-                  <TYPE.white fontSize={14} color={theme.text2} style={{ paddingBottom: '10px' }}>
-                    {`xSUSHI automatically earn fees (0.05% of all swaps, including multichain swaps) proportional to your share of the SushiBar.`}
+                    {`Stake your HALO into xHALO for ~% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
                   </TYPE.white>
                 </div>
               </RowBetween>
+              {/*
+
+              // Enable when we have analytics already
+
               <ExternalLink
                 style={{ color: 'white', textDecoration: 'underline' }}
                 target="_blank"
                 href="https://analytics.sushi.com/bar"
               >
+           
                 <TYPE.white fontSize={14} color={theme.text1}>
                   View SushiBar Stats <span style={{ fontSize: '11px' }}>↗</span>
                 </TYPE.white>
               </ExternalLink>
+
+              
               {account && (
+                
                 <ExternalLink
                   style={{ color: 'white', textDecoration: 'underline' }}
                   target="_blank"
@@ -75,6 +80,7 @@ export default function Saave() {
                   </TYPE.white>
                 </ExternalLink>
               )}
+                 */}
             </AutoColumn>
           </CardSection>
         </VoteCard>

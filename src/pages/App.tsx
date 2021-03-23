@@ -109,7 +109,7 @@ export default function App() {
               <Route exact strict path="/tools" component={Tools} />
               <Route exact strict path="/saave" component={Saave} />
               {/* Pages */}
-              {chainId === ChainId.MAINNET && <Route exact strict path="/stake" component={SushiBar} />}
+              {<Route exact strict path="/stake" component={SushiBar} />}
               <Route exact path="/sushibar" render={() => <Redirect to="/stake" />} />
               {/* Pages */}
               <Route exact strict path="/swap" component={Swap} />

@@ -68,7 +68,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   // checks the allowance and skips approval if already within the approved value
   const getAllowance = useCallback(async () => {
     const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
-
+    console.log(+formatEther(currentAllowance))
     setAllowance(+formatEther(currentAllowance))
   }, [lpTokenContract, account])
 

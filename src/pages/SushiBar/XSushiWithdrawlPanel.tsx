@@ -146,7 +146,7 @@ export default function CurrencyInputPanel({
   const { allowance, approve, leave } = useSushiBar()
   console.log('sushibar_allowance:', allowance)
 
-  const xSushiBalanceBigInt = useTokenBalance('0x8798249c2e607446efb7ad49ec89dd1865ff4272')
+  const xSushiBalanceBigInt = useTokenBalance(process.env.REACT_APP_HALOCHEST_ADDRESS || '')
   const xSushiBalance = formatFromBalance(xSushiBalanceBigInt?.value, xSushiBalanceBigInt?.decimals)
   const decimals = xSushiBalanceBigInt?.decimals
 
@@ -207,7 +207,7 @@ export default function CurrencyInputPanel({
                     fontSize={14}
                     style={{ display: 'inline', cursor: 'pointer' }}
                   >
-                    xSUSHI Balance: {xSushiBalance}
+                    xHALO Balance: {xSushiBalance}
                   </TYPE.body>
                 )}
               </RowBetween>
