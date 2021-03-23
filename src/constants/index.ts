@@ -87,14 +87,12 @@ export const BALANCER_POOLS: ChainBalancerPoolsMap = {
     {
       pair: 'WETH/DAI',
       address: wethDaiAddressKovan,
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`,
-      tokenAddress: wethDaiAddressKovan
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
     },
     {
       pair: 'UBE/DAI',
       address: ubeDaiAddressKovan,
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${ubeDaiAddressKovan}`,
-      tokenAddress: ubeDaiAddressKovan
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${ubeDaiAddressKovan}`
     }
   ]
 }

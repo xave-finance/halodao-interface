@@ -15,9 +15,8 @@ import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
-import { HALO_REWARDS_MESSAGE } from '../../constants/index'
-
-const HALO_REWARDS_ADDRESS = process.env.REACT_APP_HALO_REWARDS_ADDRESS
+import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { useActiveWeb3React } from 'hooks'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -31,7 +30,6 @@ export interface BalancerPoolInfo {
   pair: string
   address: string
   balancerUrl: string
-  tokenAddress: string
 }
 
 interface BalancerPoolCardProps {
@@ -40,6 +38,7 @@ interface BalancerPoolCardProps {
 }
 
 export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCardProps) {
+  const { chainId } = useActiveWeb3React()
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
@@ -55,8 +54,9 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     confetti: false
   })
 
-  const rewardsContract = useContract(HALO_REWARDS_ADDRESS, HALO_REWARDS_ABI)
-  const lpTokenContract = useTokenContract(poolInfo.tokenAddress)
+  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
+  const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
+  const lpTokenContract = useTokenContract(poolInfo.address)
   const backgroundColor = '#FFFFFF'
 
   // get bpt balance based on the token address in the poolInfo
@@ -67,10 +67,10 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   // checks the allowance and skips approval if already within the approved value
   const getAllowance = useCallback(async () => {
-    const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
+    const currentAllowance = await lpTokenContract!.allowance(account, rewardsContractAddress)
 
     setAllowance(+formatEther(currentAllowance))
-  }, [lpTokenContract, account])
+  }, [lpTokenContract, account, rewardsContractAddress])
 
   const getUserTotalTokenslByPoolAddress = useCallback(async () => {
     const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
@@ -100,7 +100,7 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     getAllowance()
     try {
       if (allowance < +stakeAmount) {
-        const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
+        const approvalTxn = await lpTokenContract!.approve(rewardsContractAddress, lpTokenAmount.toString())
         await approvalTxn.wait()
       }
 
