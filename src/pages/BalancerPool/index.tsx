@@ -9,6 +9,8 @@ import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/Bala
 import { BALANCER_POOLS } from '../../constants'
 import { Token } from '@sushiswap/sdk'
 import PoolsSummary from 'components/PoolsSummary'
+import { useBalancer } from 'halo-hooks/useBalancer'
+import { useRewards } from 'halo-hooks/useRewards'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -28,6 +30,9 @@ const BalancerPool = () => {
   const { account, chainId } = useActiveWeb3React()
   const pools: BalancerPoolInfo[] = chainId ? BALANCER_POOLS[chainId] ?? [] : []
   const [poolTokens, setPoolTokens] = useState<Token[]>([])
+  const tmp = useBalancer(['0x37F80ac90235cE0d3911952d0CE49071A0fFdB1e', '0xb65741116b0bB280666452aEb5397C5C5F68bb3A'])
+
+  const { getAllPools } = useRewards()
 
   useEffect(() => {
     if (!chainId || !pools.length) return
@@ -38,6 +43,10 @@ const BalancerPool = () => {
     })
     setPoolTokens(tokens)
   }, [chainId, pools])
+
+  useEffect(() => {
+    getAllPools()
+  }, [chainId])
 
   return (
     <>
