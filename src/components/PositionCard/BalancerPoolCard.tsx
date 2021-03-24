@@ -43,7 +43,6 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [allowance, setAllowance] = useState(0)
   const [bptStaked, setBptStaked] = useState(0)
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
@@ -66,11 +65,11 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   }, [lpTokenContract, account])
 
   // checks the allowance and skips approval if already within the approved value
-  const getAllowance = useCallback(async () => {
+  const getAllowance = async () => {
     const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
 
-    setAllowance(+formatEther(currentAllowance))
-  }, [lpTokenContract, account])
+    return +formatEther(currentAllowance)
+  }
 
   const getUserTotalTokenslByPoolAddress = useCallback(async () => {
     const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
@@ -87,16 +86,15 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   useEffect(() => {
     getUserTotalTokenslByPoolAddress()
-    getAllowance()
     getBptBalance()
     getUnclaimedPoolReward()
-  }, [bptBalance, getAllowance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
+  }, [bptBalance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
 
   const stakeLpToken = async () => {
     setLoading({ ...loading, staking: true })
     const lpTokenAmount = parseEther(stakeAmount)
-    getAllowance()
     try {
+      const allowance = await getAllowance()
       if (allowance < +stakeAmount) {
         const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
         await approvalTxn.wait()
