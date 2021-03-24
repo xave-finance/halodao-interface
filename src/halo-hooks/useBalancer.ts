@@ -7,6 +7,9 @@ import { ChainId, Token } from '@sushiswap/sdk'
 export const useBalancer = (poolAddresses: string[]) => {
   const [poolInfo, setPoolInfo] = useState<BalancerPoolInfo[]>([])
 
+  /**
+   * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
+   */
   useEffect(() => {
     const fetchPoolInfo = async () => {
       // Convert addresses to lowercase (cause subgraph api is case-sensitive)
@@ -27,9 +30,7 @@ export const useBalancer = (poolAddresses: string[]) => {
         }
       }
 
-      console.log('query:', query)
       const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
-      console.log('result:', result)
 
       const currentPoolInfo: BalancerPoolInfo[] = []
       for (const pool of result.pools) {
@@ -46,6 +47,12 @@ export const useBalancer = (poolAddresses: string[]) => {
     fetchPoolInfo()
   }, [poolAddresses])
 
+  /**
+   * Converts BalancerPoolInfo[] to Token[]
+   *
+   * A Token object will let us reuse uniswap's Token-related hooks which allows us
+   * to query balanceOf, totalSupply and other ERC20 methods quite easily
+   */
   const toPoolTokens = (poolInfo: BalancerPoolInfo[], chainId: ChainId) => {
     const tokens: Token[] = []
     poolInfo.forEach(pool => {
