@@ -5,8 +5,7 @@ import { TYPE, HideSmall } from '../../theme'
 import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import { useActiveWeb3React } from '../../hooks'
-import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
-import { BALANCER_POOLS } from '../../constants'
+import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
 import { Token } from '@sushiswap/sdk'
 import PoolsSummary from 'components/PoolsSummary'
 import { useBalancer } from 'halo-hooks/useBalancer'
@@ -27,26 +26,16 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { account, chainId } = useActiveWeb3React()
-  const pools: BalancerPoolInfo[] = chainId ? BALANCER_POOLS[chainId] ?? [] : []
+  const { chainId } = useActiveWeb3React()
+  const { poolAddresses } = useRewards()
+  const { poolInfo, toPoolTokens } = useBalancer(poolAddresses)
+
   const [poolTokens, setPoolTokens] = useState<Token[]>([])
-  const tmp = useBalancer(['0x37F80ac90235cE0d3911952d0CE49071A0fFdB1e', '0xb65741116b0bB280666452aEb5397C5C5F68bb3A'])
-
-  const { getAllPools } = useRewards()
 
   useEffect(() => {
-    if (!chainId || !pools.length) return
-    const tokens: Token[] = []
-    pools.forEach(pool => {
-      const token = new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`)
-      tokens.push(token)
-    })
-    setPoolTokens(tokens)
-  }, [chainId, pools])
-
-  useEffect(() => {
-    getAllPools()
-  }, [chainId])
+    if (!chainId || !poolInfo.length) return
+    setPoolTokens(toPoolTokens(poolInfo, chainId))
+  }, [chainId, poolInfo])
 
   return (
     <>
@@ -63,8 +52,8 @@ const BalancerPool = () => {
 
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            {pools.map(pool => {
-              return <BalancerPoolCard key={pool.address} account={account} poolInfo={pool} />
+            {poolInfo.map(pool => {
+              return <BalancerPoolCard key={pool.address} poolInfo={pool} />
             })}
           </AutoColumn>
         </AutoColumn>

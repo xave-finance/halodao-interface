@@ -72,30 +72,16 @@ export const HALO: ChainTokenMap = {
   )
 }
 
-// HALO Rewards contract addresses
+// HALO contract addresses
 export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ''
 }
 
-export const BALANCER_SUBGRAPH_URL = process.env.REACT_APP_BALANCER_SUBGRAPH_URL || ''
-
-// Balancer pool addresses
-const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
-const ubeDaiAddressKovan = process.env.REACT_APP_POOL_UBEDAI_ADDRESS_KOVAN || ''
-export const BALANCER_POOLS: ChainBalancerPoolsMap = {
-  [ChainId.KOVAN]: [
-    {
-      pair: 'WETH/DAI',
-      address: wethDaiAddressKovan,
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
-    },
-    {
-      pair: 'UBE/DAI',
-      address: ubeDaiAddressKovan,
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${ubeDaiAddressKovan}`
-    }
-  ]
-}
+// Balancer URLs
+export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'https://pools.balancer.exchange/#/pool'
+export const BALANCER_SUBGRAPH_URL =
+  process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
+  'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   // [UNI_ADDRESS]: 'UNI',

@@ -33,12 +33,11 @@ export interface BalancerPoolInfo {
 }
 
 interface BalancerPoolCardProps {
-  account: string | null | undefined
   poolInfo: BalancerPoolInfo
 }
 
-export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCardProps) {
-  const { chainId } = useActiveWeb3React()
+export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
+  const { chainId, account } = useActiveWeb3React()
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
