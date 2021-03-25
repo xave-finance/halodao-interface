@@ -13,7 +13,7 @@ import useTheme from '../../hooks/useTheme'
 import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
-import useSushiBar from '../../sushi-hooks/useSushiBar'
+import useHaloChest from '../../halo-hooks/useHaloChest'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -143,10 +143,10 @@ export default function CurrencyInputPanel({
   const { account } = useActiveWeb3React()
   const theme = useTheme()
 
-  const { allowance, approve, leave } = useSushiBar()
-  console.log('sushibar_allowance:', allowance)
+  const { allowance, approve, leave } = useHaloChest()
+  console.log('halochest:', allowance)
 
-  const xSushiBalanceBigInt = useTokenBalance(process.env.REACT_APP_HALOCHEST_ADDRESS || '')
+  const xSushiBalanceBigInt = useTokenBalance(process.env.REACT_APP_HALOCHEST_ADDRESS_KOVAN || '')
   const xSushiBalance = formatFromBalance(xSushiBalanceBigInt?.value, xSushiBalanceBigInt?.decimals)
   const decimals = xSushiBalanceBigInt?.decimals
 

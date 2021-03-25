@@ -4,19 +4,19 @@ import styled, { ThemeContext } from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import SaaveHeader from './SushiBarHeader'
+import SaaveHeader from './HaloChestHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
-import SushiDepositPanel from './SushiDepositPanel'
-import XSushiWithdrawlPanel from './XSushiWithdrawlPanel'
+import HaloDepositPanel from './HaloDepositPanel'
+import XHaloWithdrawlPanel from './XHaloWithdrawlPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import { TYPE, ExternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import { useActiveWeb3React } from '../../hooks'
+//import { useActiveWeb3React } from '../../hooks'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 420px;
@@ -31,7 +31,7 @@ const VoteCard = styled(DataCard)`
 
 export default function Saave() {
   const theme = useContext(ThemeContext)
-  const { account } = useActiveWeb3React()
+  //const { account } = useActiveWeb3React()
   //const darkMode = useDarkModeManager()
 
   return (
@@ -88,7 +88,7 @@ export default function Saave() {
           <SaaveHeader />
           <Wrapper id="swap-page">
             <AutoColumn style={{ paddingBottom: '10px' }}>
-              <SushiDepositPanel
+              <HaloDepositPanel
                 label={''}
                 disableCurrencySelect={true}
                 customBalanceText={'Available to deposit: '}
@@ -96,7 +96,7 @@ export default function Saave() {
                 buttonText="Deposit"
                 cornerRadiusBottomNone={true}
               />
-              <XSushiWithdrawlPanel
+              <XHaloWithdrawlPanel
                 label={''}
                 disableCurrencySelect={true}
                 customBalanceText={'Available to withdraw: '}
