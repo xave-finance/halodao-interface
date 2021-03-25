@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import SaaveHeader from './HaloChestHeader'
+import HaloChestHeader from './HaloChestHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
@@ -85,7 +85,7 @@ export default function Saave() {
           </CardSection>
         </VoteCard>
         <AppBody>
-          <SaaveHeader />
+          <HaloChestHeader />
           <Wrapper id="swap-page">
             <AutoColumn style={{ paddingBottom: '10px' }}>
               <HaloDepositPanel
