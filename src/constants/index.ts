@@ -70,12 +70,14 @@ export const HALO: ChainTokenMap = {
 
 // Balancer pool addresses
 const wethDaiAddressKovan = process.env.REACT_APP_POOL_WETHDAI_ADDRESS_KOVAN || ''
+
 export const BALANCER_POOLS: ChainBalancerPoolsMap = {
   [ChainId.KOVAN]: [
     {
       pair: 'WETH/DAI',
       address: wethDaiAddressKovan,
-      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`
+      balancerUrl: `https://kovan.pools.balancer.exchange/#/pool/${wethDaiAddressKovan}`,
+      tokenAddress: wethDaiAddressKovan
     }
   ]
 }
@@ -331,3 +333,11 @@ export const BLOCKED_ADDRESSES: string[] = [
   '0x901bb9583b24D97e995513C6778dc6888AB6870e',
   '0xA7e5d5A720f06526557c513402f2e6B5fA20b008'
 ]
+
+export const HALO_REWARDS_MESSAGE = {
+  approval: 'Approving token spend',
+  staking: 'Staking token',
+  unstaking: 'Unstaking token',
+  claiming: 'Claiming your rewards',
+  unstakeAndClaim: 'Unstaking and claiming'
+}
