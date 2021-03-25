@@ -43,7 +43,6 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [allowance, setAllowance] = useState(0)
   const [bptStaked, setBptStaked] = useState(0)
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
@@ -66,11 +65,11 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
   }, [lpTokenContract, account])
 
   // checks the allowance and skips approval if already within the approved value
-  const getAllowance = useCallback(async () => {
+  const getAllowance = async () => {
     const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
-    console.log(+formatEther(currentAllowance))
-    setAllowance(+formatEther(currentAllowance))
-  }, [lpTokenContract, account])
+
+    return +formatEther(currentAllowance)
+  }
 
   const getUserTotalTokenslByPoolAddress = useCallback(async () => {
     const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
@@ -80,40 +79,42 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
 
   const getUnclaimedPoolReward = useCallback(async () => {
     const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
-
+    // we can leave this to monitor the whole big int
+    console.log('Unclaimed HALO: ', unclaimedHaloInPool.toString())
     setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
   }, [rewardsContract, account, poolInfo.address])
 
   useEffect(() => {
     getUserTotalTokenslByPoolAddress()
-    getAllowance()
-    getUnclaimedPoolReward()
     getBptBalance()
-
-    // make sure the confetti still activates without refereshing
-    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
-  }, [bptBalance, getAllowance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
+    getUnclaimedPoolReward()
+  }, [bptBalance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
 
   const stakeLpToken = async () => {
     setLoading({ ...loading, staking: true })
     const lpTokenAmount = parseEther(stakeAmount)
-    getAllowance()
     try {
+      const allowance = await getAllowance()
       if (allowance < +stakeAmount) {
         const approvalTxn = await lpTokenContract!.approve(HALO_REWARDS_ADDRESS, lpTokenAmount.toString())
         await approvalTxn.wait()
       }
 
       const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
-      await stakeLpTxn.wait()
-      setLoading({ ...loading, staking: false, confetti: true })
+      const stakeLpTxnReceipt = await stakeLpTxn.wait()
+      if (stakeLpTxnReceipt.status === 1) {
+        setLoading({ ...loading, staking: false, confetti: true })
+      } else {
+        setLoading({ ...loading, staking: false })
+      }
     } catch (e) {
       console.error(e)
-      setLoading({ ...loading, staking: false })
     }
 
     setStakeAmount('')
     getBptBalance()
+    // make sure the confetti still activates without refereshing
+    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
   }
 
   const unstakeLpToken = async () => {
@@ -135,12 +136,19 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
     setLoading({ ...loading, claim: true })
     try {
       const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
-      await claimPoolRewardsTxn.wait()
-      setLoading({ ...loading, claim: false, confetti: true })
+      const claimPoolRewardsTxnReceipt = await claimPoolRewardsTxn.wait()
+      if (claimPoolRewardsTxnReceipt.status === 1) {
+        setLoading({ ...loading, claim: false, confetti: true })
+      } else {
+        setLoading({ ...loading, claim: false })
+      }
     } catch (e) {
       console.error(e)
       setLoading({ ...loading, claim: false })
     }
+
+    // make sure the confetti still activates without refereshing
+    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
   }
 
   const claimAndUnstakeRewards = async () => {
@@ -150,12 +158,21 @@ export default function BalancerPoolCard({ account, poolInfo }: BalancerPoolCard
       await unstakeLpTxn.wait()
 
       const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
-      await claimPoolRewardsTxn.wait()
+      const claimPoolRewardsTxnReceipt = await claimPoolRewardsTxn.wait()
+      if (claimPoolRewardsTxnReceipt.status === 1) {
+        setLoading({ ...loading, claim: false, confetti: true })
+      } else {
+        setLoading({ ...loading, claim: false })
+      }
+
       setLoading({ ...loading, unstakeAndClaim: false, confetti: true })
     } catch (e) {
       console.error(e)
       setLoading({ ...loading, unstakeAndClaim: false })
     }
+
+    // make sure the confetti still activates without refereshing
+    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
   }
 
   return (
