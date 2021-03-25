@@ -11,11 +11,7 @@ export const useRewards = () => {
 
   useEffect(() => {
     const fetchAddresses = async () => {
-      if (!rewardsContract) {
-        setPoolAddresses([])
-        return
-      }
-
+      if (!rewardsContract) return
       try {
         const addresses = await rewardsContract.getWhitelistedAMMPoolAddresses()
         setPoolAddresses(addresses)
@@ -23,7 +19,12 @@ export const useRewards = () => {
         console.error('Error fetching AMM pools: ', err)
       }
     }
-    fetchAddresses()
+
+    if (rewardsContract) {
+      fetchAddresses()
+    } else {
+      setPoolAddresses([])
+    }
   }, [rewardsContract])
 
   return { poolAddresses }

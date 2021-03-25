@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, HideSmall } from '../../theme'
 import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import { useActiveWeb3React } from '../../hooks'
 import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
-import { Token } from '@sushiswap/sdk'
 import PoolsSummary from 'components/PoolsSummary'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { useRewards } from 'halo-hooks/useRewards'
@@ -26,16 +24,8 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { chainId } = useActiveWeb3React()
   const { poolAddresses } = useRewards()
-  const { poolInfo, toPoolTokens } = useBalancer(poolAddresses)
-
-  const [poolTokens, setPoolTokens] = useState<Token[]>([])
-
-  useEffect(() => {
-    if (!chainId || !poolInfo.length) return
-    setPoolTokens(toPoolTokens(poolInfo, chainId))
-  }, [chainId, poolInfo])
+  const { poolInfo, poolTokens } = useBalancer(poolAddresses)
 
   return (
     <>

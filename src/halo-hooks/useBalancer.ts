@@ -2,15 +2,19 @@ import { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
 import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL } from '../constants'
 import { useEffect, useState } from 'react'
 import { subgraphRequest } from 'utils/balancer'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { Token } from '@sushiswap/sdk'
+import { useActiveWeb3React } from 'hooks'
 
 export const useBalancer = (poolAddresses: string[]) => {
+  const { chainId } = useActiveWeb3React()
   const [poolInfo, setPoolInfo] = useState<BalancerPoolInfo[]>([])
+  const [poolTokens, setPoolTokens] = useState<Token[]>([])
 
   /**
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
    */
   useEffect(() => {
+    console.log('poolAddresses changed!', poolAddresses)
     const fetchPoolInfo = async () => {
       // Convert addresses to lowercase (cause subgraph api is case-sensitive)
       const poolIds = poolAddresses.map(address => address.toLowerCase())
@@ -44,7 +48,11 @@ export const useBalancer = (poolAddresses: string[]) => {
       setPoolInfo(currentPoolInfo)
     }
 
-    fetchPoolInfo()
+    if (poolAddresses.length) {
+      fetchPoolInfo()
+    } else {
+      setPoolInfo([])
+    }
   }, [poolAddresses])
 
   /**
@@ -53,14 +61,20 @@ export const useBalancer = (poolAddresses: string[]) => {
    * A Token object will let us reuse uniswap's Token-related hooks which allows us
    * to query balanceOf, totalSupply and other ERC20 methods quite easily
    */
-  const toPoolTokens = (poolInfo: BalancerPoolInfo[], chainId: ChainId) => {
+  useEffect(() => {
+    if (!chainId || !poolInfo.length) {
+      setPoolTokens([])
+      return
+    }
+
     const tokens: Token[] = []
     poolInfo.forEach(pool => {
       const token = new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`)
       tokens.push(token)
     })
-    return tokens
-  }
 
-  return { poolInfo, toPoolTokens }
+    setPoolTokens(tokens)
+  }, [chainId, poolInfo])
+
+  return { poolInfo, poolTokens }
 }
