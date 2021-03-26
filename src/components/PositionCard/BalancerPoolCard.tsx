@@ -17,6 +17,8 @@ import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
+import { Token } from '@sushiswap/sdk'
+import DoubleCurrencyLogo from 'components/DoubleLogo'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -30,6 +32,8 @@ export interface BalancerPoolInfo {
   pair: string
   address: string
   balancerUrl: string
+  tokens: Token[]
+  liquidity: number
 }
 
 interface BalancerPoolCardProps {
@@ -179,10 +183,12 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
       <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
+            <DoubleCurrencyLogo currency0={poolInfo.tokens[0]} currency1={poolInfo.tokens[1]} size={20} />
             <Text fontWeight={500} fontSize={20}>
               {poolInfo.pair}
             </Text>
           </AutoRow>
+          <AutoRow gap="8px">$ {poolInfo.liquidity.toFixed(2)}</AutoRow>
           {account && (
             <RowFixed gap="8px">
               <ButtonEmpty

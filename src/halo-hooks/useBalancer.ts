@@ -10,12 +10,16 @@ export const useBalancer = (poolAddresses: string[]) => {
   const [poolInfo, setPoolInfo] = useState<BalancerPoolInfo[]>([])
   const [poolTokens, setPoolTokens] = useState<Token[]>([])
 
+  console.log('poolInfo:', poolInfo)
+
   /**
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
    */
   useEffect(() => {
     console.log('poolAddresses changed!', poolAddresses)
     const fetchPoolInfo = async () => {
+      if (!chainId) return
+
       // Convert addresses to lowercase (cause subgraph api is case-sensitive)
       const poolIds = poolAddresses.map(address => address.toLowerCase())
 
@@ -27,9 +31,12 @@ export const useBalancer = (poolAddresses: string[]) => {
             }
           },
           id: true,
+          liquidity: true,
           tokens: {
+            name: true,
             symbol: true,
-            address: true
+            address: true,
+            decimals: true
           }
         }
       }
@@ -38,22 +45,32 @@ export const useBalancer = (poolAddresses: string[]) => {
 
       const currentPoolInfo: BalancerPoolInfo[] = []
       for (const pool of result.pools) {
+        let tokenSymbols: string[] = []
+        let tokens: Token[] = []
+
+        for (const token of pool.tokens) {
+          tokenSymbols.push(token.symbol)
+          tokens.push(new Token(chainId, token.address, token.decimals, token.symbol, token.name))
+        }
+
         currentPoolInfo.push({
-          pair: `${pool.tokens[0].symbol}/${pool.tokens[1].symbol}`,
+          liquidity: parseFloat(pool.liquidity),
+          pair: tokenSymbols.join('/'),
           address: pool.id,
-          balancerUrl: `${BALANCER_POOL_URL}${pool.id}`
+          balancerUrl: `${BALANCER_POOL_URL}${pool.id}`,
+          tokens
         })
       }
 
       setPoolInfo(currentPoolInfo)
     }
 
-    if (poolAddresses.length) {
+    if (chainId && poolAddresses.length) {
       fetchPoolInfo()
     } else {
       setPoolInfo([])
     }
-  }, [poolAddresses])
+  }, [poolAddresses, chainId])
 
   /**
    * Converts BalancerPoolInfo[] to Token[]
