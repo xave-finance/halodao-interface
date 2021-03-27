@@ -4,9 +4,10 @@ import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, HideSmall } from '../../theme'
 import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import { useActiveWeb3React } from '../../hooks'
-import BalancerPoolCard, { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
-import { BALANCER_POOLS } from '../../constants'
+import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
+import PoolsSummary from 'components/PoolsSummary'
+import { useBalancer } from 'halo-hooks/useBalancer'
+import { useRewards } from 'halo-hooks/useRewards'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -23,24 +24,26 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { account, chainId } = useActiveWeb3React()
-  const pools: BalancerPoolInfo[] = chainId ? BALANCER_POOLS[chainId] ?? [] : []
+  const { poolAddresses } = useRewards()
+  const { poolInfo, poolTokens } = useBalancer(poolAddresses)
 
   return (
     <>
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />
 
+        <TitleRow>
+          <HideSmall>
+            <TYPE.mediumHeader style={{ marginTop: '0.5rem', justifySelf: 'flex-start' }}>Pools</TYPE.mediumHeader>
+          </HideSmall>
+        </TitleRow>
+
+        <PoolsSummary poolTokens={poolTokens} />
+
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            <TitleRow style={{ marginTop: '1rem' }} padding={'0'}>
-              <HideSmall>
-                <TYPE.mediumHeader style={{ marginTop: '0.5rem', justifySelf: 'flex-start' }}>Pools</TYPE.mediumHeader>
-              </HideSmall>
-            </TitleRow>
-
-            {pools.map(pool => {
-              return <BalancerPoolCard account={account} poolInfo={pool} />
+            {poolInfo.map(pool => {
+              return <BalancerPoolCard key={pool.address} poolInfo={pool} />
             })}
           </AutoColumn>
         </AutoColumn>

@@ -1,6 +1,6 @@
 {
-  "name": "@sushiswap/interface",
-  "description": "SushiSwap Interface",
+  "name": "@halodao/interface",
+  "description": "HaloDAO Interface",
   "homepage": ".",
   "private": true,
   "devDependencies": {
@@ -128,5 +128,7 @@
     ]
   },
   "license": "GPL-3.0-or-later",
-  "dependencies": {}
+  "dependencies": {
+    "json-to-graphql-query": "^2.0.0"
+  }
 }
