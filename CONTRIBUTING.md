@@ -22,15 +22,15 @@
 
 You will need the following things installed in order to run the app:
 
-- Nodejs `v8.16.2`. We **strongly** recommend you install via [NVM](https://github.com/creationix/nvm) to avoid incompatibility issues between different node projects.
+- Nodejs `v14.15`. We **strongly** recommend you install via [NVM](https://github.com/creationix/nvm) to avoid incompatibility issues between different node projects.
 
 ```
    brew install nvm
-   nvm install v8.16.2
-   nvm use v8.16.2
+   nvm install v14.15
+   nvm use v14.15
 ```
 
-- Check that the correct node (8.16.2) and npm (6.4.1) versions are installed
+- Check that the correct node (v14.15) and npm (6.14.11) versions are installed
 
 ```
     node -v
@@ -151,7 +151,7 @@ Having a good guideline for creating commits and sticking to it makes working wi
 ## Coding Style Guidelines
 Code consistency, readability and maintainability are important to us. We strictly require you to check and follow the specific guidelines listed below. Clean code matters!
 #### Specific
-- [Solidity](https://docs.soliditylang.org/en/v0.8.2/style-guide.html)
+- [Solidity](https://docs.soliditylang.org/en/v0.8.3/style-guide.html)
 - [Javascript](https://www.w3schools.com/js/js_conventions.asp)
 
 #### General
