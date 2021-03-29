@@ -8,7 +8,7 @@ import HaloChestHeader from './HaloChestHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
-import XHaloWithdrawlPanel from './XHaloWithdrawlPanel'
+import HALOHALODepositPanel from './HALOHALODepositPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { RowBetween } from '../../components/Row'
@@ -48,7 +48,7 @@ export default function Saave() {
               <RowBetween>
                 <div>
                   <TYPE.white fontSize={14} color={theme.text2} style={{ paddingBottom: '10px' }}>
-                    {`Stake your HALO into xHALO for ~% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
+                    {`Stake your HALO into HALOHALO for ~% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
                   </TYPE.white>
                 </div>
               </RowBetween>
@@ -96,7 +96,7 @@ export default function Saave() {
                 buttonText="Deposit"
                 cornerRadiusBottomNone={true}
               />
-              <XHaloWithdrawlPanel
+              <HALOHALODepositPanel
                 label={''}
                 disableCurrencySelect={true}
                 customBalanceText={'Available to withdraw: '}

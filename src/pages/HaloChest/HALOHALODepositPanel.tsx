@@ -208,7 +208,7 @@ export default function CurrencyInputPanel({
                     fontSize={14}
                     style={{ display: 'inline', cursor: 'pointer' }}
                   >
-                    xHALO Balance: {xHaloBalance}
+                    HALOHALO Balance: {xHaloBalance}
                   </TYPE.body>
                 )}
               </RowBetween>
