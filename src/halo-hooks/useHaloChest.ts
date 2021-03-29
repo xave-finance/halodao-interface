@@ -7,6 +7,7 @@ import Fraction from '../constants/Fraction'
 import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
 import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOCHEST_ABI from '../constants/haloAbis/HaloChest.json'
+import { HALOAddress, HALOCHEST_ADDRESS } from '../constants'
 
 const { BigNumber } = ethers
 
@@ -14,8 +15,8 @@ const useHaloChest = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const haloContract = useTokenContract(chainId === 42 ? process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN : '') // withSigner
-  const chestContract = useContract(chainId === 42 ? process.env.REACT_APP_HALOCHEST_ADDRESS_KOVAN : '', HALOCHEST_ABI) // withSigner
+  const haloContract = useTokenContract(chainId ? HALOAddress[chainId] : undefined || '') // withSigner
+  const chestContract = useContract(chainId ? HALOCHEST_ADDRESS[chainId] : undefined || '', HALOCHEST_ABI) // withSigner
 
   const [allowance, setAllowance] = useState('0')
 

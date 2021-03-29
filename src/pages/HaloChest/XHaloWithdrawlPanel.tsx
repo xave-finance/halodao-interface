@@ -14,6 +14,7 @@ import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloChest from '../../halo-hooks/useHaloChest'
+import { HALOCHEST_ADDRESS } from '../../constants'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -140,15 +141,15 @@ export default function CurrencyInputPanel({
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
 
   const { allowance, approve, leave } = useHaloChest()
   console.log('halochest:', allowance)
 
-  const xSushiBalanceBigInt = useTokenBalance(process.env.REACT_APP_HALOCHEST_ADDRESS_KOVAN || '')
-  const xSushiBalance = formatFromBalance(xSushiBalanceBigInt?.value, xSushiBalanceBigInt?.decimals)
-  const decimals = xSushiBalanceBigInt?.decimals
+  const xHaloBalanceBigInt = useTokenBalance(chainId ? HALOCHEST_ADDRESS[chainId] : ' ')
+  const xHaloBalance = formatFromBalance(xHaloBalanceBigInt?.value, xHaloBalanceBigInt?.decimals)
+  const decimals = xHaloBalanceBigInt?.decimals
 
   // handle approval
   const [requestedApproval, setRequestedApproval] = useState(false)
@@ -178,11 +179,11 @@ export default function CurrencyInputPanel({
     setDepositValue(depositValue)
   }, [])
   // used for max input button
-  const maxDepositAmountInput = xSushiBalanceBigInt
+  const maxDepositAmountInput = xHaloBalanceBigInt
   //const atMaxDepositAmount = true
   const handleMaxDeposit = useCallback(() => {
-    maxDepositAmountInput && onUserDepositInput(xSushiBalance, true)
-  }, [maxDepositAmountInput, onUserDepositInput, xSushiBalance])
+    maxDepositAmountInput && onUserDepositInput(xHaloBalance, true)
+  }, [maxDepositAmountInput, onUserDepositInput, xHaloBalance])
 
   return (
     <>
@@ -207,7 +208,7 @@ export default function CurrencyInputPanel({
                     fontSize={14}
                     style={{ display: 'inline', cursor: 'pointer' }}
                   >
-                    xHALO Balance: {xSushiBalance}
+                    xHALO Balance: {xHaloBalance}
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -236,9 +237,9 @@ export default function CurrencyInputPanel({
               <ButtonSelect
                 disabled={
                   pendingTx ||
-                  !xSushiBalance ||
+                  !xHaloBalance ||
                   Number(depositValue) === 0 ||
-                  Number(depositValue) > Number(xSushiBalance)
+                  Number(depositValue) > Number(xHaloBalance)
                 }
                 onClick={async () => {
                   setPendingTx(true)

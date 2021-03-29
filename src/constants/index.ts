@@ -61,7 +61,7 @@ export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 //   [ChainId.FANTOM]: new Token(ChainId.KOVAN, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
 // }
 
-// HALO Token contract addresses
+// HALO Token Instance
 export const HALO: ChainTokenMap = {
   [ChainId.KOVAN]: new Token(
     ChainId.KOVAN,
@@ -72,9 +72,20 @@ export const HALO: ChainTokenMap = {
   )
 }
 
-// HALO contract addresses
+// HALO Token Addresses
+
+export const HALOAddress: ChainAddressMap = {
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || ''
+}
+
+// HALO Rewards Addresses
 export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ''
+}
+
+// HALO Chest Addressess
+export const HALOCHEST_ADDRESS: ChainAddressMap = {
+  [ChainId.KOVAN]: process.env.REACT_APP_HALOCHEST_ADDRESS_KOVAN || ''
 }
 
 // Balancer URLs
