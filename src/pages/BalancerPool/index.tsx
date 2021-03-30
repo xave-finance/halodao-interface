@@ -25,7 +25,7 @@ const TitleRow = styled(RowBetween)`
 
 const BalancerPool = () => {
   const { poolAddresses } = useRewards()
-  const { poolInfo, poolTokens } = useBalancer(poolAddresses)
+  const { allPoolInfo, tokenPrice } = useBalancer(poolAddresses)
 
   return (
     <>
@@ -38,12 +38,20 @@ const BalancerPool = () => {
           </HideSmall>
         </TitleRow>
 
-        <PoolsSummary poolTokens={poolTokens} />
+        <PoolsSummary pools={allPoolInfo.map(poolInfo => poolInfo.asToken)} />
 
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            {poolInfo.map(pool => {
-              return <BalancerPoolCard key={pool.address} poolInfo={pool} />
+            <RowBetween>
+              <div>Pool</div>
+              <div>Total Pool Value</div>
+              <div>Stakable</div>
+              <div>Value Staked</div>
+              <div>Earned</div>
+              <div></div>
+            </RowBetween>
+            {allPoolInfo.map(poolInfo => {
+              return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
             })}
           </AutoColumn>
         </AutoColumn>
