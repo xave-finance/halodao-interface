@@ -19,6 +19,8 @@ import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/inde
 import { useActiveWeb3React } from 'hooks'
 import { Token } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
+import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
+import { getPoolLiquidity } from 'utils/balancer'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -28,19 +30,12 @@ const BalanceCard = styled(DataCard)`
   margin-top: 10px;
 `
 
-export interface BalancerPoolInfo {
-  pair: string
-  address: string
-  balancerUrl: string
-  tokens: Token[]
-  liquidity: number
-}
-
 interface BalancerPoolCardProps {
-  poolInfo: BalancerPoolInfo
+  poolInfo: PoolInfo
+  tokenPrice: TokenPrice
 }
 
-export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
+export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
@@ -183,12 +178,19 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
       <AutoColumn gap="12px">
         <FixedHeightRow>
           <AutoRow gap="8px">
-            <DoubleCurrencyLogo currency0={poolInfo.tokens[0]} currency1={poolInfo.tokens[1]} size={20} />
+            <DoubleCurrencyLogo
+              currency0={poolInfo.tokens[0].asToken}
+              currency1={poolInfo.tokens[1].asToken}
+              size={20}
+            />
             <Text fontWeight={500} fontSize={20}>
               {poolInfo.pair}
             </Text>
           </AutoRow>
-          <AutoRow gap="8px">$ {poolInfo.liquidity.toFixed(2)}</AutoRow>
+          <AutoRow gap="8px">$ {getPoolLiquidity(poolInfo, tokenPrice).toFixed(2)}</AutoRow>
+          <AutoRow gap="8px">-- BPT</AutoRow>
+          <AutoRow gap="8px">$ --</AutoRow>
+          <AutoRow gap="8px">-- HALO</AutoRow>
           {account && (
             <RowFixed gap="8px">
               <ButtonEmpty

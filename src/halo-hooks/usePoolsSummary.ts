@@ -9,7 +9,7 @@ import { useContract } from 'sushi-hooks/useContract'
 import { subgraphRequest } from 'utils/balancer'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
 
-const usePoolsSummary = (poolTokens: Token[]) => {
+const usePoolsSummary = (pools: Token[]) => {
   const { account, chainId } = useActiveWeb3React()
   const rewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, HALO_REWARDS_ABI)
 
@@ -20,17 +20,17 @@ const usePoolsSummary = (poolTokens: Token[]) => {
   })
 
   // Get user balance for each pool token
-  const balances = useTokenBalances(account ?? undefined, poolTokens)
+  const balances = useTokenBalances(account ?? undefined, pools)
 
   // Get totalSupply of each pool token
-  const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolTokens)[0]
+  const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(pools)[0]
 
   useEffect(() => {
     if (
       !chainId ||
       !account ||
       !rewardsContract ||
-      !poolTokens.length ||
+      !pools.length ||
       !Object.keys(balances).length ||
       !Object.keys(totalSupplies).length
     ) {
@@ -42,7 +42,7 @@ const usePoolsSummary = (poolTokens: Token[]) => {
       let totalStakedValue = 0
       const claimedHalo: BigNumber = await rewardsContract.getTotalRewardsClaimedByUser(account)
 
-      for (const pool of poolTokens) {
+      for (const pool of pools) {
         // Get unclaimed HALO earned per pool (then add to total HALO earnings)
         const unclaimedHalo: BigNumber = await rewardsContract.getUnclaimedPoolRewardsByUserByPool(
           pool.address,
@@ -88,7 +88,7 @@ const usePoolsSummary = (poolTokens: Token[]) => {
     }
 
     getPoolSummary()
-  }, [chainId, rewardsContract, account, poolTokens, balances, totalSupplies])
+  }, [chainId, rewardsContract, account, pools, balances, totalSupplies])
 
   return summary
 }

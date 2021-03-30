@@ -17,12 +17,12 @@ const VoteCard = styled(DataCard)`
 `
 
 interface PoolsSummaryProps {
-  poolTokens: Token[]
+  pools: Token[]
 }
 
-const PoolsSummary = ({ poolTokens }: PoolsSummaryProps) => {
+const PoolsSummary = ({ pools }: PoolsSummaryProps) => {
   const theme = useContext(ThemeContext)
-  const summary = usePoolsSummary(poolTokens)
+  const summary = usePoolsSummary(pools)
 
   return (
     <VoteCard>

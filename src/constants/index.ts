@@ -1,6 +1,5 @@
 import { ChainId, JSBI, Percent, Token, WETH } from '@sushiswap/sdk'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
 
 import { fortmatic, injected, portis, lattice, walletconnect, walletlink } from '../connectors'
 
@@ -17,12 +16,12 @@ type ChainTokenMap = {
   readonly [chainId in ChainId]?: Token
 }
 
-type ChainBalancerPoolsMap = {
-  readonly [chainId in ChainId]?: BalancerPoolInfo[]
-}
-
 type ChainAddressMap = {
   readonly [chainId in ChainId]?: string
+}
+
+type ChainCoinGeckoIdMap = {
+  readonly [chainId in ChainId]?: { [key: string]: string }
 }
 
 // Block time here is slightly higher (~1s) than average in order to avoid ongoing proposals past the displayed time
@@ -93,6 +92,23 @@ export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'htt
 export const BALANCER_SUBGRAPH_URL =
   process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
+
+// Coingecko API URL
+export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
+export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
+  [ChainId.KOVAN]: {
+    weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+    dai: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
+    maker: '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
+    'usd-coin': '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
+    augur: '0x8c9e6c40d3402480ACE624730524fACC5482798c',
+    'wrapped-bitcoin': '0xe0C9275E44Ea80eF17579d33c55136b7DA269aEb',
+    'basic-attention-token': '0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE',
+    havven: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
+    aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
+    '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244'
+  }
+}
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
   // [UNI_ADDRESS]: 'UNI',
