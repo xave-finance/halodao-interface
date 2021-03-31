@@ -1,20 +1,17 @@
-import { Token } from '@sushiswap/sdk'
-import { HALO_REWARDS_ADDRESS, BALANCER_SUBGRAPH_URL } from '../constants'
+import { HALO_REWARDS_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import { useActiveWeb3React } from 'hooks'
 import { useEffect, useState } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { useContract } from 'sushi-hooks/useContract'
-import { subgraphRequest } from 'utils/balancer'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
 import { PoolInfo } from './useBalancer'
+import { toFormattedCurrency } from 'utils/currencyFormatter'
 
-const usePoolsSummary = (allPoolInfo: PoolInfo[]) => {
+const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
   const { account, chainId } = useActiveWeb3React()
   const rewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, HALO_REWARDS_ABI)
-  const allPoolAsTokens = allPoolInfo.map(poolInfo => poolInfo.asToken)
-
   const [summary, setSummary] = useState({
     stakeableValue: '$ --',
     stakedValue: '$ --',
@@ -22,17 +19,18 @@ const usePoolsSummary = (allPoolInfo: PoolInfo[]) => {
   })
 
   // Get user balance for each pool token
-  const balances = useTokenBalances(account ?? undefined, allPoolAsTokens)
+  const poolsAsTokens = poolsInfo.map(poolInfo => poolInfo.asToken)
+  const balances = useTokenBalances(account ?? undefined, poolsAsTokens)
 
   // Get totalSupply of each pool token
-  const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(allPoolAsTokens)[0]
+  const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolsAsTokens)[0]
 
   useEffect(() => {
     if (
       !chainId ||
       !account ||
       !rewardsContract ||
-      !allPoolAsTokens.length ||
+      !poolsInfo.length ||
       !Object.keys(balances).length ||
       !Object.keys(totalSupplies).length
     ) {
@@ -44,7 +42,7 @@ const usePoolsSummary = (allPoolInfo: PoolInfo[]) => {
       let totalStakedValue = 0
       const claimedHalo: BigNumber = await rewardsContract.getTotalRewardsClaimedByUser(account)
 
-      for (const poolInfo of allPoolInfo) {
+      for (const poolInfo of poolsInfo) {
         // Get unclaimed HALO earned per pool (then add to total HALO earnings)
         const unclaimedHalo: BigNumber = await rewardsContract.getUnclaimedPoolRewardsByUserByPool(
           poolInfo.address,
@@ -72,14 +70,14 @@ const usePoolsSummary = (allPoolInfo: PoolInfo[]) => {
       }
 
       setSummary({
-        stakeableValue: `$ ${totalStakeableValue.toFixed(4)}`,
-        stakedValue: `$ ${totalStakedValue.toFixed(4)}`,
+        stakeableValue: toFormattedCurrency(totalStakeableValue, 4),
+        stakedValue: toFormattedCurrency(totalStakedValue, 4),
         haloEarned: formatEther(claimedHalo)
       })
     }
 
     getPoolSummary()
-  }, [chainId, rewardsContract, account, allPoolAsTokens, balances, totalSupplies])
+  }, [chainId, rewardsContract, account, poolsInfo, balances, totalSupplies])
 
   return summary
 }
