@@ -17,8 +17,8 @@ export async function subgraphRequest(url: string, query: {}) {
 export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {
   let sumWeight = 0
   let sumValue = 0
-  console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
-  console.log('PoolInfo: ', poolInfo)
+  // console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
+  // console.log('PoolInfo: ', poolInfo)
   for (const tokenInfo of poolInfo.tokens) {
     const price = tokenPrice[tokenInfo.address]
     if (!price) {
@@ -26,14 +26,14 @@ export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => 
     }
     sumWeight += tokenInfo.weightPercentage / 100
     sumValue += price * tokenInfo.balance
-    console.log('SUM weight, value: ', sumWeight, sumValue)
+    // console.log('SUM weight, value: ', sumWeight, sumValue)
   }
-  console.log('FINAL SUM weight, value: ', sumWeight, sumValue)
+  // console.log('FINAL SUM weight, value: ', sumWeight, sumValue)
   if (sumWeight > 0) {
-    console.log('Returned calculated value: ', sumValue / sumWeight)
+    // console.log('Returned calculated value: ', sumValue / sumWeight)
     return sumValue / sumWeight
   } else {
-    console.log('Returned balancer data: ', poolInfo.liquidity)
+    // console.log('Returned balancer data: ', poolInfo.liquidity)
     return poolInfo.liquidity
   }
 }
