@@ -10,10 +10,16 @@ on:
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
+    environment: dev
     steps:
       - uses: actions/checkout@v2
       - uses: ahmadnassri/action-workflow-run-wait@v1 # wait for all workflow_run workflows to be successful
       - run: yarn build
+        env:
+          REACT_APP_HALO_TOKEN_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN }}
+          REACT_APP_HALO_REWARDS_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN }}
+          REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
+          REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'

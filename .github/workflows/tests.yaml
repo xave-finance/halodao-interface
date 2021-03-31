@@ -13,6 +13,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-16.04
+    environment: test
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -38,11 +39,16 @@ jobs:
         env:
           CI: false
           REACT_APP_NETWORK_URL: "https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847"
+          REACT_APP_HALO_TOKEN_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN }}
+          REACT_APP_HALO_REWARDS_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN }}
+          REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
+          REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
       - run: yarn integration-test
 
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    environment: test
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -64,4 +70,9 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --frozen-lockfile
       - run: yarn test
+        env:
+          REACT_APP_HALO_TOKEN_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN }}
+          REACT_APP_HALO_REWARDS_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN }}
+          REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
+          REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
 
