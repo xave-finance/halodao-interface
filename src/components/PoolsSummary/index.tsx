@@ -7,6 +7,7 @@ import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { TYPE } from 'theme'
 import usePoolsSummary from 'halo-hooks/usePoolsSummary'
+import { PoolInfo } from 'halo-hooks/useBalancer'
 
 const VoteCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -17,12 +18,12 @@ const VoteCard = styled(DataCard)`
 `
 
 interface PoolsSummaryProps {
-  pools: Token[]
+  poolsInfo: PoolInfo[]
 }
 
-const PoolsSummary = ({ pools }: PoolsSummaryProps) => {
+const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
   const theme = useContext(ThemeContext)
-  const summary = usePoolsSummary(pools)
+  const summary = usePoolsSummary(poolsInfo)
 
   return (
     <VoteCard>

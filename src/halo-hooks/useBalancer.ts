@@ -28,11 +28,9 @@ export type TokenPrice = {
 
 export const useBalancer = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
-  const [allPoolInfo, setAllPoolInfo] = useState<PoolInfo[]>([])
+  const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
   const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
-
-  console.log('poolInfo:', allPoolInfo)
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
@@ -127,14 +125,14 @@ export const useBalancer = (poolAddresses: string[]) => {
         })
       }
 
-      setAllPoolInfo(newPoolsInfo)
+      setPoolsInfo(newPoolsInfo)
       setPoolTokensAddresses(newPoolTokensAddresses)
     }
 
     if (chainId && poolAddresses.length) {
       fetchPoolInfo()
     } else {
-      setAllPoolInfo([])
+      setPoolsInfo([])
     }
   }, [poolAddresses, chainId])
 
@@ -154,5 +152,5 @@ export const useBalancer = (poolAddresses: string[]) => {
     console.log('token price updated! ', tokenPrice)
   }, [tokenPrice])
 
-  return { allPoolInfo, tokenPrice }
+  return { poolsInfo, tokenPrice }
 }

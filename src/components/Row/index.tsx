@@ -38,8 +38,8 @@ export const AutoRow = styled(Row)<{ gap?: string; justify?: string }>`
   }
 `
 
-export const RowFixed = styled(Row)<{ gap?: string; justify?: string }>`
-  width: fit-content;
+export const RowFixed = styled(Row)<{ gap?: string; justify?: string; width?: string }>`
+  width: ${({ width }) => width ?? 'fit-content'};
   margin: ${({ gap }) => gap && `-${gap}`};
 `
 

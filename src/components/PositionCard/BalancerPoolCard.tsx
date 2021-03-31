@@ -17,10 +17,12 @@ import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
-import { Token } from '@sushiswap/sdk'
+import { CurrencyAmount, JSBI, Token } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
 import { getPoolLiquidity } from 'utils/balancer'
+import Fraction from 'constants/Fraction'
+import { useTotalSupply } from 'data/TotalSupply'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -41,6 +43,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
   const [bptStaked, setBptStaked] = useState(0)
+  const [bptStakedAmount, setBptStakedAmount] = useState<CurrencyAmount>(
+    CurrencyAmount.ether(JSBI.BigInt(parseEther('0')))
+  )
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
   const [loading, setLoading] = useState({
@@ -54,7 +59,19 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
   const lpTokenContract = useTokenContract(poolInfo.address)
+
   const backgroundColor = '#FFFFFF'
+
+  // Get liquidity in CurrencyAmount format
+  const liquidityAmount = CurrencyAmount.ether(
+    JSBI.BigInt(parseEther('' + getPoolLiquidity(poolInfo, tokenPrice).toString()))
+  )
+
+  // Get BPT price in CurrencyAmount format
+  const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
+  const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
+  console.log('poolInfo.liquidity / totalSupply:', poolInfo.liquidity, totalSupply)
+  const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
 
   // get bpt balance based on the token address in the poolInfo
   const getBptBalance = useCallback(async () => {
@@ -73,7 +90,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
 
     setBptStaked(+formatEther(lpTokens))
-  }, [rewardsContract, account, poolInfo.address])
+    console.log('bptPrice, lpTokens: ', bptPrice, formatEther(lpTokens))
+    setBptStakedAmount(
+      CurrencyAmount.ether(JSBI.multiply(JSBI.BigInt(parseEther('' + bptPrice)), JSBI.BigInt(lpTokens)))
+    )
+  }, [rewardsContract, account, poolInfo.address, bptPrice])
 
   const getUnclaimedPoolReward = useCallback(async () => {
     const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
@@ -177,20 +198,21 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     <StyledPositionCard bgColor={backgroundColor}>
       <AutoColumn gap="12px">
         <FixedHeightRow>
-          <AutoRow gap="8px">
+          <RowFixed gap="8px">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
               size={20}
             />
+            &nbsp;
             <Text fontWeight={500} fontSize={20}>
               {poolInfo.pair}
             </Text>
-          </AutoRow>
-          <AutoRow gap="8px">$ {getPoolLiquidity(poolInfo, tokenPrice).toFixed(2)}</AutoRow>
-          <AutoRow gap="8px">-- BPT</AutoRow>
-          <AutoRow gap="8px">$ --</AutoRow>
-          <AutoRow gap="8px">-- HALO</AutoRow>
+          </RowFixed>
+          <RowFixed>$ {liquidityAmount.toFixed(2, { groupSeparator: ',' })}</RowFixed>
+          <RowFixed>{bptBalance.toFixed(2)} BPT</RowFixed>
+          <RowFixed>$ {bptStakedAmount.toFixed(2, { groupSeparator: ',' })}</RowFixed>
+          <RowFixed>{unclaimedHalo} HALO</RowFixed>
           {account && (
             <RowFixed gap="8px">
               <ButtonEmpty
