@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "halo-dev-eb31c"
+  },
+  "targets": {
+    "halo-dev-eb31c": {
+      "hosting": {
+        "app": [
+          "dev-app-halodao"
+        ]
+      }
+    }
+  }
+}
