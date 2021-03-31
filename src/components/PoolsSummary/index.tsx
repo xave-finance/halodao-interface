@@ -1,4 +1,3 @@
-import { Token } from '@sushiswap/sdk'
 import { AutoColumn } from 'components/Column'
 import { CardSection, DataCard } from 'components/earn/styled'
 import { RowBetween } from 'components/Row'

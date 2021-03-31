@@ -45,10 +45,7 @@ export const useBalancer = (poolAddresses: string[]) => {
     const tokenIds = Object.keys(knownTokens)
     if (!tokenIds.length) return
 
-    console.log('fetching initial tokens price...')
-
     getTokensUSDPrice(GetPriceBy.id, tokenIds).then(price => {
-      console.log('initial tokens price fetched! ', price)
       const newPrice: TokenPrice = {}
       for (const key in price) {
         newPrice[knownTokens[key]] = price[key]
@@ -61,7 +58,6 @@ export const useBalancer = (poolAddresses: string[]) => {
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
    */
   useEffect(() => {
-    console.log('poolAddresses changed!', poolAddresses)
     const fetchPoolInfo = async () => {
       if (!chainId) return
 
@@ -89,7 +85,6 @@ export const useBalancer = (poolAddresses: string[]) => {
       }
 
       const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
-      console.log('getPools subgraph result: ', result)
 
       const newPoolsInfo: PoolInfo[] = []
       const newPoolTokensAddresses: string[] = []
@@ -141,16 +136,12 @@ export const useBalancer = (poolAddresses: string[]) => {
    */
   useEffect(() => {
     if (!poolTokensAddresses.length) return
-    console.log('fetching pool tokens price...')
     getTokensUSDPrice(GetPriceBy.address, poolTokensAddresses).then(price => {
-      console.log('pool tokens price fetched!')
-      setTokenPrice({ ...tokenPrice, ...price })
+      setTokenPrice(previousPrice => {
+        return { ...previousPrice, ...price }
+      })
     })
   }, [poolTokensAddresses])
-
-  useEffect(() => {
-    console.log('token price updated! ', tokenPrice)
-  }, [tokenPrice])
 
   return { poolsInfo, tokenPrice }
 }
