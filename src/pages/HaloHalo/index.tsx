@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 import AppBody from '../AppBody'
-import HaloChestHeader from './HaloChestHeader'
+import HaloChestHeader from './HaloHaloHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'

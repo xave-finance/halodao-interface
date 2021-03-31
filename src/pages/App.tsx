@@ -38,7 +38,7 @@ import {
 //import Vote from './Vote'
 //import VotePage from './Vote/VotePage'
 
-import HaloChest from './HaloChest'
+import HaloHalo from './HaloHalo'
 
 // Additional Tools
 import Tools from './Tools'
@@ -107,7 +107,7 @@ export default function App() {
               <Route exact strict path="/tools" component={Tools} />
               <Route exact strict path="/saave" component={Saave} />
               {/* Pages */}
-              {<Route exact strict path="/stake" component={HaloChest} />}
+              {<Route exact strict path="/stake" component={HaloHalo} />}
               <Route exact path="/sushibar" render={() => <Redirect to="/stake" />} />
               {/* Pages */}
               <Route exact strict path="/swap" component={Swap} />

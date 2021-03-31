@@ -6,17 +6,17 @@ import { useActiveWeb3React } from '../hooks'
 import Fraction from '../constants/Fraction'
 import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
 import { useTokenContract, useContract } from 'hooks/useContract'
-import HALOCHEST_ABI from '../constants/haloAbis/HaloChest.json'
-import { HALOAddress, HALOCHEST_ADDRESS } from '../constants'
+import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
+import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
 
 const { BigNumber } = ethers
 
-const useHaloChest = () => {
+const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const haloContract = useTokenContract(chainId ? HALOAddress[chainId] : undefined || '') // withSigner
-  const chestContract = useContract(chainId ? HALOCHEST_ADDRESS[chainId] : undefined || '', HALOCHEST_ABI) // withSigner
+  const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[chainId] : undefined || '') // withSigner
+  const chestContract = useContract(chainId ? HALOHALO_ADDRESS[chainId] : undefined || '', HALOHALO_ABI) // withSigner
 
   const [allowance, setAllowance] = useState('0')
 
@@ -55,7 +55,7 @@ const useHaloChest = () => {
       if (amount?.value) {
         try {
           const tx = await chestContract?.enter(amount?.value)
-          return addTransaction(tx, { summary: 'Enter HaloChest' })
+          return addTransaction(tx, { summary: 'Enter HALOHALO' })
         } catch (e) {
           return e
         }
@@ -71,7 +71,7 @@ const useHaloChest = () => {
         try {
           const tx = await chestContract?.leave(amount?.value)
           //const tx = await chestContract?.leave(ethers.utils.parseUnits(amount)) // where amount is string
-          return addTransaction(tx, { summary: 'Leave HaloChest' })
+          return addTransaction(tx, { summary: 'Leave HALOHALO' })
         } catch (e) {
           return e
         }
@@ -83,4 +83,4 @@ const useHaloChest = () => {
   return { allowance, approve, enter, leave }
 }
 
-export default useHaloChest
+export default useHaloHalo
