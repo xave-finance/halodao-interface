@@ -114,10 +114,7 @@ export default function Vote() {
 
   // user data
   const availableVotes: TokenAmount | undefined = useUserVotes()
-  const uniBalance: TokenAmount | undefined = useTokenBalance(
-    account ?? undefined,
-    chainId ? HALO[chainId] : undefined
-  )
+  const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, chainId ? HALO[chainId] : undefined)
   const userDelegatee: string | undefined = useUserDelegatee()
 
   // show delegation option if they have have a balance, but have not delegated
