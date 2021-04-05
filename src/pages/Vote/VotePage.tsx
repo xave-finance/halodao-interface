@@ -154,10 +154,7 @@ export default function VotePage({
     proposalData &&
     proposalData.status === 'active'
 
-  const uniBalance: TokenAmount | undefined = useTokenBalance(
-    account ?? undefined,
-    chainId ? HALO[chainId] : undefined
-  )
+  const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, chainId ? HALO[chainId] : undefined)
   const userDelegatee: string | undefined = useUserDelegatee()
 
   // in blurb link to home page if they are able to unlock
