@@ -23,7 +23,7 @@ export const useBalancer = (poolAddresses: string[]) => {
         pools: {
           __args: {
             where: {
-              id_in: poolIds
+              id_in: poolIds // eslint-disable-line
             }
           },
           id: true,
