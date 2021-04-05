@@ -1,15 +1,6 @@
 name: Firebase preview
 
 on:
-  push:
-    branches:
-      - master
-      - develop
-  pull_request:
-    branches:
-      - master
-      - develop
-
   # Triggers the workflow after "Tests" workflow has completed
   workflow_run:
     workflows: ["Tests"]
