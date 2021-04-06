@@ -1,7 +1,9 @@
-name: Firebase preview
+name: Deploy dev
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - develop
 
 jobs:
   build_and_preview:
@@ -21,5 +23,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HALO_DEV_EB31C }}'
           projectId: halo-dev-eb31c
           target: app
-        env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+          channelId: live
