@@ -92,8 +92,8 @@ export const useBalancer = (poolAddresses: string[]) => {
       // Convert result to `poolsInfo` so we can easily use it in the components
       for (const pool of result.pools) {
         // Process pool tokens info
-        let poolTokensInfo: PoolTokenInfo[] = []
-        let tokenSymbols: string[] = []
+        const poolTokensInfo: PoolTokenInfo[] = []
+        const tokenSymbols: string[] = []
         for (const token of pool.tokens) {
           tokenSymbols.push(token.symbol)
           newPoolTokensAddresses.push(token.address)

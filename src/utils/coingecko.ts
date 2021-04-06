@@ -9,7 +9,7 @@ export enum GetPriceBy {
 export async function getTokensUSDPrice(by: GetPriceBy, addressesOrIds: string[]) {
   const uri = by === GetPriceBy.id ? 'price?ids=' : 'token_price/ethereum?contract_addresses='
   const concatString = addressesOrIds.join('%2C')
-  let prices: { [adressOrId: string]: number } = {}
+  const prices: { [adressOrId: string]: number } = {}
 
   try {
     const url = `${COINGECKO_API_URL}/simple/${uri}${concatString}&vs_currencies=usd`
