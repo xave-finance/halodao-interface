@@ -27,7 +27,6 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
 
   useEffect(() => {
     if (
-      !chainId ||
       !account ||
       !rewardsContract ||
       !poolsInfo.length ||
@@ -77,7 +76,7 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
     }
 
     getPoolSummary()
-  }, [chainId, rewardsContract, account, poolsInfo, balances, totalSupplies])
+  }, [rewardsContract, account, poolsInfo, balances, totalSupplies])
 
   return summary
 }
