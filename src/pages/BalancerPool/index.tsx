@@ -7,7 +7,7 @@ import { AutoColumn } from '../../components/Column'
 import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
 import PoolsSummary from 'components/PoolsSummary'
 import { useBalancer } from 'halo-hooks/useBalancer'
-import { useRewards } from 'halo-hooks/useRewards'
+import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
 import Card from 'components/Card'
 
 const PageWrapper = styled(AutoColumn)`
@@ -25,7 +25,7 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { poolAddresses } = useRewards()
+  const { poolAddresses } = useWhitelistedPoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
 
   return (
