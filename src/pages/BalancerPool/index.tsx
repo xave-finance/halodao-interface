@@ -25,7 +25,7 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { poolAddresses } = useWhitelistedPoolAddresses()
+  const poolAddresses = useWhitelistedPoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
 
   return (

@@ -6,7 +6,7 @@ import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build
 import { ChainId, WETH } from '@sushiswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
-import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO } from '../constants'
+import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO, HALO_REWARDS_ADDRESS } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
   ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS
@@ -22,6 +22,7 @@ import { MULTICALL_ABI, MULTICALL_NETWORKS } from '../constants/multicall'
 import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
+import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
 
 // returns null on errors
 export function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -129,4 +130,9 @@ export function useSocksController(): Contract | null {
     UNISOCKS_ABI,
     false
   )
+}
+
+export function useHALORewardsContract(): Contract | null {
+  const { chainId } = useActiveWeb3React()
+  return useContract(chainId && HALO_REWARDS_ADDRESS[chainId], HALO_REWARDS_ABI, true)
 }

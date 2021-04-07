@@ -16,7 +16,7 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
   const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolsAsTokens)[0]
 
   // Get user total claimed HALO (all pools)
-  const claimedHalo = useTotalClaimedHALO()
+  const claimedHALO = useTotalClaimedHALO()
 
   // Get user unclaimed HALO per pool
   const poolAddresses = poolsInfo.map(poolInfo => poolInfo.address)
@@ -37,10 +37,9 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
       }
     }
 
-    console.log('Calculating pool summary...')
     let totalStakeableValue = 0
     let totalStakedValue = 0
-    let totalHALOEarned = claimedHalo
+    let totalHALOEarned = claimedHALO
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
@@ -75,7 +74,7 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
       stakedValue: toFormattedCurrency(totalStakedValue, 4),
       haloEarned: totalHALOEarned.toFixed(2)
     }
-  }, [poolsInfo, balances, totalSupplies, claimedHalo, unclaimedHALOs, stakedBPTs])
+  }, [poolsInfo, balances, totalSupplies, claimedHALO, unclaimedHALOs, stakedBPTs])
 }
 
 export default usePoolsSummary
