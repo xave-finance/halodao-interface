@@ -73,7 +73,7 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
     return {
       stakeableValue: toFormattedCurrency(totalStakeableValue, 4),
       stakedValue: toFormattedCurrency(totalStakedValue, 4),
-      haloEarned: totalHALOEarned
+      haloEarned: totalHALOEarned.toFixed(2)
     }
   }, [poolsInfo, balances, totalSupplies, claimedHalo, unclaimedHALOs, stakedBPTs])
 }

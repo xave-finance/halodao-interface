@@ -289,7 +289,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <BalanceCard>
                 <CardSection>
                   <Text fontSize={16} fontWeight={500}>
-                    Rewards earned: {unclaimedHalo} HALO
+                    Rewards earned: {unclaimedHalo.toFixed(2)} HALO
                   </Text>
                 </CardSection>
               </BalanceCard>
