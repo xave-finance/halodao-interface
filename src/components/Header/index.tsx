@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/images/logo.png'
+import Logo from '../../assets/svg/logo.svg'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
@@ -189,7 +189,7 @@ const Title = styled.a`
   align-items: center;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
+  margin-right: 15px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -216,20 +216,20 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
+  font-size: 1.5rem;
   width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
+  margin: 0 15px;
+  font-weight: 400;
+  font-family: 'Fredoka One', cursive;
 
   &.${activeClassName} {
     border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    font-weight: 200;
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => theme.primaryText1};
   }
 `
 
@@ -325,10 +325,10 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
-            {t('pool')}
+            {t('farm')}
           </StyledNavLink>
           <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-            Stake
+            {t('stake')}
           </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>

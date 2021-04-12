@@ -9,7 +9,7 @@ const Card = styled(Box)<{ width?: string; padding?: string; border?: string; bo
   padding: 1.25rem;
   padding: ${({ padding }) => padding};
   border: ${({ border }) => border};
-  border-radius: ${({ borderRadius }) => borderRadius};
+  c: ${({ borderRadius }) => borderRadius};
 `
 export default Card
 
@@ -41,7 +41,10 @@ export const PinkCard = styled(Card)`
   color: ${({ theme }) => theme.primary1};
   font-weight: 500;
 `
-
+export const IndigoCard = styled(Card)`
+  background-color: ${({ theme }) => theme.primary1};
+  font-weight: 800;
+`
 const BlueCardStyled = styled(Card)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primary1};
