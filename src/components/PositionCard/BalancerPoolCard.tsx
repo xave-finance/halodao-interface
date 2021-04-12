@@ -282,66 +282,42 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               size={14}
             />
             &nbsp;
-            <StyledTextForValue fontWeight={600}>
-              {poolInfo.pair}
-            </StyledTextForValue>
+            <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>
-                Total Pool Value: 
-              </StyledText> 
+              <StyledText fontWeight={600}>Total Pool Value:</StyledText>
             </HideMedium>
-            <StyledTextForValue>
-              {toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}
-            </StyledTextForValue> 
+            <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>
-                Stakeable: 
-              </StyledText>
+              <StyledText fontWeight={600}>Stakeable:</StyledText>
             </HideMedium>
-            <StyledTextForValue>
-              {bptBalance.toFixed(2)} BPT
-            </StyledTextForValue>
+            <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>
-                Value Staked: 
-              </StyledText>
+              <StyledText fontWeight={600}>Value Staked:</StyledText>
             </HideMedium>
-            <StyledTextForValue>
-              {toFormattedCurrency(bptStakedValue)}
-            </StyledTextForValue>
+            <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>
-                Earned: 
-              </StyledText>
+              <StyledText fontWeight={600}>Earned:</StyledText>
             </HideMedium>
-            <StyledTextForValue>
-              {unclaimedHalo} HALO
-            </StyledTextForValue>
+            <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
           </StyledRowFixed>
           {account && (
             <StyledRowFixed>
-              <StyledButton
-                onClick={() => setShowMore(!showMore)}
-              >
+              <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    <StyledButtonText>
-                      Manage
-                    </StyledButtonText>
+                    <StyledButtonText>Manage</StyledButtonText>
                   </>
                 ) : (
                   <>
-                    <StyledButtonText>
-                      Manage
-                    </StyledButtonText>
+                    <StyledButtonText>Manage</StyledButtonText>
                   </>
                 )}
               </StyledButton>

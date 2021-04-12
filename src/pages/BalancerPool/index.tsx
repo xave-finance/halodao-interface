@@ -36,7 +36,7 @@ const HeaderRow = styled(RowBetween)`
 
 const TitleRow = styled(RowBetween)`
   font-family: 'Fredoka One', cursive;
-  color: #471BB2;
+  color: #471bb2;
 `
 
 const StyledExternalLink = styled(ExternalLink)`
@@ -50,7 +50,7 @@ const StyledExternalLink = styled(ExternalLink)`
     text-align: center;
     text-decoration: none;
   `};
-  color: #518CFF;
+  color: #518cff;
 `
 
 const BalancerPool = () => {
@@ -64,7 +64,7 @@ const BalancerPool = () => {
         <PoolsSummaryRow>
           <HeaderRow>
             <TitleRow>
-                <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
+              <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
             </TitleRow>
             <Row>
               <TYPE.darkGray style={{ marginRight: '0.5rem', marginTop: '0.5rem', justifySelf: 'flex-start' }}>
@@ -72,11 +72,11 @@ const BalancerPool = () => {
               </TYPE.darkGray>
             </Row>
             <Row>
-              <StyledExternalLink href='https://google.com' style={{ fontSize: '14px' }}>
-                  Learn about staking 
-                  <HideLarge>
-                    <LinkIcon></LinkIcon>
-                  </HideLarge>
+              <StyledExternalLink href="https://google.com" style={{ fontSize: '14px' }}>
+                Learn about staking
+                <HideLarge>
+                  <LinkIcon></LinkIcon>
+                </HideLarge>
               </StyledExternalLink>
             </Row>
           </HeaderRow>
@@ -85,35 +85,35 @@ const BalancerPool = () => {
           </Row>
         </PoolsSummaryRow>
 
-          <AutoColumn gap="sm" style={{ width: '100%' }}>
-            <HideSmall>
-              <Card>
-                <AutoColumn>
-                  <RowBetween>
-                    <RowFixed width="24%">
-                      <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Pool</TYPE.thHeader>
-                    </RowFixed>
-                    <RowFixed width="19%">
-                      <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Total Pool Value</TYPE.thHeader>
-                    </RowFixed>
-                    <RowFixed width="16%">
-                      <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Stakable</TYPE.thHeader>
-                    </RowFixed>
-                    <RowFixed width="16%">
+        <AutoColumn gap="sm" style={{ width: '100%' }}>
+          <HideSmall>
+            <Card>
+              <AutoColumn>
+                <RowBetween>
+                  <RowFixed width="24%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Pool</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="19%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Total Pool Value</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Stakable</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Value Staked</TYPE.thHeader>
-                    </RowFixed>
-                    <RowFixed width="16%">
+                  </RowFixed>
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>Earned</TYPE.thHeader>
-                    </RowFixed>
-                    <RowFixed width="9%"></RowFixed>
-                  </RowBetween>
-                </AutoColumn>
-              </Card>
-            </HideSmall>
-            {poolsInfo.map(poolInfo => {
-              return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
-            })}
-          </AutoColumn>
+                  </RowFixed>
+                  <RowFixed width="9%"></RowFixed>
+                </RowBetween>
+              </AutoColumn>
+            </Card>
+          </HideSmall>
+          {poolsInfo.map(poolInfo => {
+            return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+          })}
+        </AutoColumn>
       </PageWrapper>
     </>
   )
