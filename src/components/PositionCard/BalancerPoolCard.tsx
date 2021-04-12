@@ -102,7 +102,6 @@ const StyledButton = styled(ButtonOutlined)`
     width: 100%;
     border-radius: 4px;
     padding: 6px 12px;
-    font-family: Inter;
     font-weight: 900;
     font-size: 16px;
     line-height: 150%;
