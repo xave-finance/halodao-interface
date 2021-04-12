@@ -54,7 +54,6 @@ interface PoolsSummaryProps {
 }
 
 const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
-  const theme = useContext(ThemeContext)
   const summary = usePoolsSummary(poolsInfo)
   const { t } = useTranslation()
 
