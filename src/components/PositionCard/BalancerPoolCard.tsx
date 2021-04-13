@@ -334,18 +334,49 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
         {showMore && (
           <AutoColumn gap="8px">
-            <ButtonSecondary padding="8px" borderRadius="8px">
-              <ExternalLink style={{ width: '100%', textAlign: 'center' }} href={poolInfo.balancerUrl}>
-                To stake, get BPT tokens here <span style={{ fontSize: '11px' }}>↗</span>
-              </ExternalLink>
-            </ButtonSecondary>
-
+            <RowBetween marginTop="10px">
+              <StyledFixedHeightRow>
+                <StyledRowFixed>
+                  <DoubleCurrencyLogo
+                    currency0={poolInfo.tokens[0].asToken}
+                    currency1={poolInfo.tokens[1].asToken}
+                    size={14}
+                  />
+                  &nbsp;
+                  <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
+                </StyledRowFixed>
+                <StyledRowFixed>
+                  <HideMedium>
+                    <StyledText fontWeight={600}>Total Pool Value:</StyledText>
+                  </HideMedium>
+                  <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
+                </StyledRowFixed>
+                <StyledRowFixed>
+                  <HideMedium>
+                    <StyledText fontWeight={600}>Stakeable:</StyledText>
+                  </HideMedium>
+                  <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
+                </StyledRowFixed>
+                <StyledRowFixed>
+                  <HideMedium>
+                    <StyledText fontWeight={600}>Value Staked:</StyledText>
+                  </HideMedium>
+                  <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
+                </StyledRowFixed>
+                <StyledRowFixed>
+                  <HideMedium>
+                    <StyledText fontWeight={600}>Earned:</StyledText>
+                  </HideMedium>
+                  <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
+                </StyledRowFixed>
+              </StyledFixedHeightRow>
+            </RowBetween>
             <FixedHeightRow>
               <Confetti start={loading.confetti} />
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={800}>
                 Balance: {bptBalance.toFixed(2)} BPT
               </Text>
-              <Text fontSize={16} fontWeight={500}>
+              <Text fontSize={16} fontWeight={800}>
                 Staked: {bptStaked.toFixed(2)} BPT
               </Text>
             </FixedHeightRow>
