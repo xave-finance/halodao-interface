@@ -208,7 +208,11 @@ export default function CurrencyInputPanel({
                     fontSize={14}
                     style={{ display: 'inline', cursor: 'pointer' }}
                   >
-                    HALOHALO Balance: {xHaloBalance}
+                    HALOHALO Balance:{' '}
+                    {(+xHaloBalance).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
                   </TYPE.body>
                 )}
               </RowBetween>
