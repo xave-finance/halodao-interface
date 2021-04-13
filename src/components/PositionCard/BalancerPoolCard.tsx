@@ -17,6 +17,7 @@ import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
+import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -333,7 +334,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
         </StyledFixedHeightRow>
 
         {showMore && (
-          <AutoColumn gap="8px">
+          <AutoColumn gap="8px"
+            style={{
+              background: "#F8F8F8",
+              borderRadius: "4px",
+              padding: "10px"
+            }}
+          >
             <RowBetween marginTop="10px">
               <StyledFixedHeightRow>
                 <StyledRowFixed>
@@ -393,6 +400,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 width="48%"
                 disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking}
                 onClick={stakeLpToken}
+                style={{
+                  background: "#471BB2",
+                  color: "#FFFFFF",
+                  fontWeight: 900
+                }}
               >
                 {loading.staking ? (
                   <>
@@ -400,7 +412,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                   </>
                 ) : (
-                  'Stake'
+                  t('stake')
                 )}
               </ButtonPrimaryNormal>
               <ButtonPrimaryNormal
@@ -411,6 +423,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
                 }
                 onClick={unstakeLpToken}
+                style={{
+                  color: "#471BB2",
+                  fontWeight: 900,
+                  border: "1px solid #471BB2"
+                }}
               >
                 {loading.unstaking ? (
                   <>
@@ -418,17 +435,42 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                   </>
                 ) : (
-                  'Unstake'
+                  t('unstake')
                 )}
               </ButtonPrimaryNormal>
             </RowBetween>
 
             <Row justify="center">
-              <BalanceCard>
-                <CardSection>
-                  <Text fontSize={16} fontWeight={500}>
-                    Rewards earned: {unclaimedHalo.toFixed(2)} HALO
+              <BalanceCard
+                style={{
+                  backgroundColor: "#D5CDEA",
+
+                  boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)",
+                  borderRadius: "10px",
+                  border: "0",
+                  color: "#000000"
+                }}
+              >
+                <CardSection
+                  style={{
+                    display: "block"
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: 500,
+                      textAlign: "left",
+                      width: "80%",
+                      float: "left"
+                    }}
+                  >
+                    {t('tokenCardRewardDescription')}
                   </Text>
+                  <img style={{
+                    marginBottom: '0.5rem',
+                    float: "right"
+                  }} width={'40px'} src={BunnyMoon} />
                 </CardSection>
               </BalanceCard>
             </Row>
