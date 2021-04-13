@@ -2,12 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, HideSmall } from '../../theme'
-import { RowBetween } from '../../components/Row'
+import { RowBetween, RowFixed } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
 import PoolsSummary from 'components/PoolsSummary'
 import { useBalancer } from 'halo-hooks/useBalancer'
-import { useRewards } from 'halo-hooks/useRewards'
+import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
+import Card from 'components/Card'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -24,8 +25,8 @@ const TitleRow = styled(RowBetween)`
 `
 
 const BalancerPool = () => {
-  const { poolAddresses } = useRewards()
-  const { poolInfo, poolTokens } = useBalancer(poolAddresses)
+  const poolAddresses = useWhitelistedPoolAddresses()
+  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
 
   return (
     <>
@@ -38,12 +39,24 @@ const BalancerPool = () => {
           </HideSmall>
         </TitleRow>
 
-        <PoolsSummary poolTokens={poolTokens} />
+        <PoolsSummary poolsInfo={poolsInfo} />
 
         <AutoColumn gap="lg" justify="center">
           <AutoColumn gap="lg" style={{ width: '100%' }}>
-            {poolInfo.map(pool => {
-              return <BalancerPoolCard key={pool.address} poolInfo={pool} />
+            <Card>
+              <AutoColumn>
+                <RowBetween>
+                  <RowFixed width="24%">Pool</RowFixed>
+                  <RowFixed width="19%">Total Pool Value</RowFixed>
+                  <RowFixed width="16%">Stakable</RowFixed>
+                  <RowFixed width="16%">Value Staked</RowFixed>
+                  <RowFixed width="16%">Earned</RowFixed>
+                  <RowFixed width="9%"></RowFixed>
+                </RowBetween>
+              </AutoColumn>
+            </Card>
+            {poolsInfo.map(poolInfo => {
+              return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
             })}
           </AutoColumn>
         </AutoColumn>

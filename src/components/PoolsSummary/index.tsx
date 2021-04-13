@@ -1,4 +1,3 @@
-import { Token } from '@sushiswap/sdk'
 import { AutoColumn } from 'components/Column'
 import { CardSection, DataCard } from 'components/earn/styled'
 import { RowBetween } from 'components/Row'
@@ -7,6 +6,7 @@ import React, { useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { TYPE } from 'theme'
 import usePoolsSummary from 'halo-hooks/usePoolsSummary'
+import { PoolInfo } from 'halo-hooks/useBalancer'
 
 const VoteCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -17,12 +17,12 @@ const VoteCard = styled(DataCard)`
 `
 
 interface PoolsSummaryProps {
-  poolTokens: Token[]
+  poolsInfo: PoolInfo[]
 }
 
-const PoolsSummary = ({ poolTokens }: PoolsSummaryProps) => {
+const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
   const theme = useContext(ThemeContext)
-  const summary = usePoolsSummary(poolTokens)
+  const summary = usePoolsSummary(poolsInfo)
 
   return (
     <VoteCard>

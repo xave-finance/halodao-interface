@@ -1,21 +1,66 @@
-import { BalancerPoolInfo } from 'components/PositionCard/BalancerPoolCard'
-import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL } from '../constants'
+import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL, COINGECKO_KNOWN_TOKENS } from '../constants'
 import { useEffect, useState } from 'react'
 import { subgraphRequest } from 'utils/balancer'
+import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
+import { getAddress } from '@ethersproject/address'
+
+export type PoolInfo = {
+  pair: string
+  address: string
+  balancerUrl: string
+  liquidity: number
+  tokens: PoolTokenInfo[]
+  asToken: Token
+}
+
+type PoolTokenInfo = {
+  address: string
+  balance: number
+  weightPercentage: number
+  asToken: Token
+}
+
+export type TokenPrice = {
+  [address: string]: number
+}
 
 export const useBalancer = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
-  const [poolInfo, setPoolInfo] = useState<BalancerPoolInfo[]>([])
-  const [poolTokens, setPoolTokens] = useState<Token[]>([])
+  const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
+  const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
+  const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
+
+  /**
+   * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
+   * This is a workaround so we can test with kovan addresses
+   */
+  useEffect(() => {
+    if (!chainId) return
+
+    const knownTokens = COINGECKO_KNOWN_TOKENS[chainId]
+    if (!knownTokens) return
+
+    const tokenIds = Object.keys(knownTokens)
+    if (!tokenIds.length) return
+
+    getTokensUSDPrice(GetPriceBy.id, tokenIds).then(price => {
+      const newPrice: TokenPrice = {}
+      for (const key in price) {
+        newPrice[knownTokens[key]] = price[key]
+      }
+      setTokenPrice(newPrice)
+    })
+  }, [chainId])
 
   /**
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
    */
   useEffect(() => {
-    console.log('poolAddresses changed!', poolAddresses)
     const fetchPoolInfo = async () => {
+      if (!chainId) return
+
       // Convert addresses to lowercase (cause subgraph api is case-sensitive)
       const poolIds = poolAddresses.map(address => address.toLowerCase())
 
@@ -27,54 +72,76 @@ export const useBalancer = (poolAddresses: string[]) => {
             }
           },
           id: true,
+          totalWeight: true,
+          liquidity: true,
           tokens: {
             symbol: true,
-            address: true
+            address: true,
+            decimals: true,
+            denormWeight: true,
+            balance: true
           }
         }
       }
 
       const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
 
-      const currentPoolInfo: BalancerPoolInfo[] = []
+      const newPoolsInfo: PoolInfo[] = []
+      const newPoolTokensAddresses: string[] = []
+
+      // Convert result to `poolsInfo` so we can easily use it in the components
       for (const pool of result.pools) {
-        currentPoolInfo.push({
-          pair: `${pool.tokens[0].symbol}/${pool.tokens[1].symbol}`,
-          address: pool.id,
-          balancerUrl: `${BALANCER_POOL_URL}${pool.id}`
+        // Process pool tokens info
+        const poolTokensInfo: PoolTokenInfo[] = []
+        const tokenSymbols: string[] = []
+        for (const token of pool.tokens) {
+          tokenSymbols.push(token.symbol)
+          newPoolTokensAddresses.push(token.address)
+
+          poolTokensInfo.push({
+            address: getAddress(token.address),
+            balance: parseFloat(token.balance),
+            weightPercentage: (100 / pool.totalWeight) * token.denormWeight,
+            asToken: new Token(chainId, token.address, token.decimals, token.symbol, token.name)
+          })
+        }
+
+        // Process pool info
+        const pair = tokenSymbols.join('/')
+        const poolAsToken = new Token(chainId, pool.id, 18, 'BPT', `BPT: ${pool.pair}`)
+
+        newPoolsInfo.push({
+          pair,
+          address: getAddress(pool.id),
+          balancerUrl: `${BALANCER_POOL_URL}${pool.id}`,
+          liquidity: parseFloat(pool.liquidity),
+          tokens: poolTokensInfo,
+          asToken: poolAsToken
         })
       }
 
-      setPoolInfo(currentPoolInfo)
+      setPoolsInfo(newPoolsInfo)
+      setPoolTokensAddresses(newPoolTokensAddresses)
     }
 
-    if (poolAddresses.length) {
+    if (chainId && poolAddresses.length) {
       fetchPoolInfo()
     } else {
-      setPoolInfo([])
+      setPoolsInfo([])
     }
-  }, [poolAddresses])
+  }, [poolAddresses, chainId])
 
   /**
-   * Converts BalancerPoolInfo[] to Token[]
-   *
-   * A Token object will let us reuse uniswap's Token-related hooks which allows us
-   * to query balanceOf, totalSupply and other ERC20 methods quite easily
+   * Gets the price of the all the pool tokens & stores it in `tokenPrice` state
    */
   useEffect(() => {
-    if (!chainId || !poolInfo.length) {
-      setPoolTokens([])
-      return
-    }
-
-    const tokens: Token[] = []
-    poolInfo.forEach(pool => {
-      const token = new Token(chainId, pool.address, 18, 'BPT', `BPT: ${pool.pair}`)
-      tokens.push(token)
+    if (!poolTokensAddresses.length) return
+    getTokensUSDPrice(GetPriceBy.address, poolTokensAddresses).then(price => {
+      setTokenPrice(previousPrice => {
+        return { ...previousPrice, ...price }
+      })
     })
+  }, [poolTokensAddresses])
 
-    setPoolTokens(tokens)
-  }, [chainId, poolInfo])
-
-  return { poolInfo, poolTokens }
+  return { poolsInfo, tokenPrice }
 }

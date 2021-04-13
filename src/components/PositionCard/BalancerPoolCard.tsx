@@ -3,7 +3,7 @@ import { ChevronDown, ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
 import { ButtonEmpty, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
 import { AutoColumn } from '../Column'
-import Row, { RowFixed, AutoRow, RowBetween } from '../Row'
+import Row, { RowFixed, RowBetween } from '../Row'
 import { FixedHeightRow, StyledPositionCard } from '.'
 import { CustomLightSpinner, ExternalLink } from 'theme'
 import NumericalInput from 'components/NumericalInput'
@@ -17,6 +17,11 @@ import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
+import DoubleCurrencyLogo from 'components/DoubleLogo'
+import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
+import { getPoolLiquidity } from 'utils/balancer'
+import { useTotalSupply } from 'data/TotalSupply'
+import { toFormattedCurrency } from 'utils/currencyFormatter'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -26,22 +31,18 @@ const BalanceCard = styled(DataCard)`
   margin-top: 10px;
 `
 
-export interface BalancerPoolInfo {
-  pair: string
-  address: string
-  balancerUrl: string
-}
-
 interface BalancerPoolCardProps {
-  poolInfo: BalancerPoolInfo
+  poolInfo: PoolInfo
+  tokenPrice: TokenPrice
 }
 
-export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
+export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
   const [bptStaked, setBptStaked] = useState(0)
+  const [bptStakedValue, setBptStakedValue] = useState(0)
   const [unclaimedHalo, setUnclaimedHalo] = useState(0)
   const [bptBalance, setBptBalance] = useState(0)
   const [loading, setLoading] = useState({
@@ -55,7 +56,12 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
   const lpTokenContract = useTokenContract(poolInfo.address)
+
   const backgroundColor = '#FFFFFF'
+
+  const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
+  const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
+  const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
 
   // get bpt balance based on the token address in the poolInfo
   const getBptBalance = useCallback(async () => {
@@ -65,16 +71,18 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
 
   // checks the allowance and skips approval if already within the approved value
   const getAllowance = async () => {
-    const currentAllowance = await lpTokenContract!.allowance(account, HALO_REWARDS_ADDRESS)
-
+    const currentAllowance = await lpTokenContract!.allowance(account, rewardsContractAddress)
     return +formatEther(currentAllowance)
   }
 
   const getUserTotalTokenslByPoolAddress = useCallback(async () => {
     const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
-
     setBptStaked(+formatEther(lpTokens))
-  }, [rewardsContract, account, poolInfo.address])
+
+    // Get staked tokens value
+    const stakedValue = +formatEther(lpTokens) * bptPrice
+    setBptStakedValue(stakedValue)
+  }, [rewardsContract, account, poolInfo.address, bptPrice])
 
   const getUnclaimedPoolReward = useCallback(async () => {
     const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
@@ -107,7 +115,7 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
         setLoading({ ...loading, staking: false })
       }
     } catch (e) {
-      console.error(e)
+      console.error('Stake error', e)
     }
 
     setStakeAmount('')
@@ -178,11 +186,21 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
     <StyledPositionCard bgColor={backgroundColor}>
       <AutoColumn gap="12px">
         <FixedHeightRow>
-          <AutoRow gap="8px">
+          <RowFixed gap="8px">
+            <DoubleCurrencyLogo
+              currency0={poolInfo.tokens[0].asToken}
+              currency1={poolInfo.tokens[1].asToken}
+              size={20}
+            />
+            &nbsp;
             <Text fontWeight={500} fontSize={20}>
               {poolInfo.pair}
             </Text>
-          </AutoRow>
+          </RowFixed>
+          <RowFixed>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</RowFixed>
+          <RowFixed>{bptBalance.toFixed(2)} BPT</RowFixed>
+          <RowFixed>{toFormattedCurrency(bptStakedValue)}</RowFixed>
+          <RowFixed>{unclaimedHalo} HALO</RowFixed>
           {account && (
             <RowFixed gap="8px">
               <ButtonEmpty
@@ -271,7 +289,7 @@ export default function BalancerPoolCard({ poolInfo }: BalancerPoolCardProps) {
               <BalanceCard>
                 <CardSection>
                   <Text fontSize={16} fontWeight={500}>
-                    Rewards earned: {unclaimedHalo} HALO
+                    Rewards earned: {unclaimedHalo.toFixed(2)} HALO
                   </Text>
                 </CardSection>
               </BalanceCard>
