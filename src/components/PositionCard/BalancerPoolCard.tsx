@@ -18,6 +18,8 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
+import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
+import Molecule from '../../assets/svg/molecule.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -337,8 +339,12 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           <AutoColumn gap="8px"
             style={{
               background: "#F8F8F8",
-              borderRadius: "4px",
-              padding: "10px"
+              borderRadius: "4px"
+            }}
+          >
+          <div
+            style={{
+              padding: "30px 30px 0 30px"
             }}
           >
             <RowBetween marginTop="10px">
@@ -474,41 +480,93 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </CardSection>
               </BalanceCard>
             </Row>
-
-            <RowBetween marginTop="10px">
-              <ButtonPrimaryNormal
-                padding="8px"
-                borderRadius="8px"
-                width="48%"
-                disabled={!(unclaimedHalo > 0) || loading.claim}
-                onClick={claimPoolRewards}
-              >
-                {loading.claim ? (
-                  <>
-                    {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
-                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                  </>
-                ) : (
-                  'Claim Rewards'
-                )}
-              </ButtonPrimaryNormal>
-              <ButtonPrimaryNormal
-                padding="8px"
-                borderRadius="8px"
-                width="48%"
-                disabled={!(unclaimedHalo > 0 && bptStaked > 0) || loading.unstakeAndClaim}
-                onClick={claimAndUnstakeRewards}
-              >
-                {loading.unstakeAndClaim ? (
-                  <>
-                    {`${HALO_REWARDS_MESSAGE.unstakeAndClaim}`}&nbsp;
-                    <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                  </>
-                ) : (
-                  'Unstake and claim rewards'
-                )}
-              </ButtonPrimaryNormal>
-            </RowBetween>
+          </div>
+          <Row
+            style={{
+              display: "block"
+            }}
+          >
+            <BalanceCard
+              style={{
+                background: "#15006D",
+                borderRadius: "0px 0px 4px 4px",
+                width: "100%",
+                height: "98px"
+              }}
+            >
+              <CardSection
+                    style={{
+                      display: "block"
+                    }}
+                  >
+                    <img
+                      style={{
+                        width: "40px",
+                        float: "left",
+                        marginLeft: "50px"
+                      }}
+                      src={BunnyRewards}
+                    />
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontSize: 16,
+                        fontWeight: 800,
+                        float: "left",
+                        textAlign: "left",
+                        marginLeft: "50px"
+                      }}
+                    >
+                      <div>
+                      Pair Name Rewards:
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "Fredoka One",
+                          fontStyle: "normal",
+                          fontWeight: "normal",
+                          fontSize: "36px",
+                          lineHeight: "44px"
+                        }}
+                      >
+                      {unclaimedHalo.toFixed(2)} HALO
+                      </div>
+                    </Text>
+                    <ButtonPrimaryNormal
+                      padding="8px"
+                      borderRadius="8px"
+                      width="48%"
+                      disabled={!(unclaimedHalo > 0) || loading.claim}
+                      onClick={claimPoolRewards}
+                      style={{
+                        width: "234px",
+                        height: "53px",
+                        background: "#FFFFFF",
+                        borderRadius: "10px",
+                        float: "right",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {loading.claim ? (
+                        <>
+                          {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      ) : (
+                        <div>
+                          <img
+                            style={{
+                              marginBottom: "-5px"
+                            }}
+                            src={Molecule}
+                          />
+                          Claim
+                        </div>
+                      )}
+                    </ButtonPrimaryNormal>
+                  </CardSection>
+              </BalanceCard>
+          </Row>
           </AutoColumn>
         )}
       </AutoColumn>
