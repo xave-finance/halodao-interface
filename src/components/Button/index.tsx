@@ -120,6 +120,11 @@ export const ButtonPrimaryNormal = styled(Base)`
   }
 `
 
+export const ButtonPrimaryGradient = styled(Base)`
+  background: linear-gradient(54.93deg, #15006D 12.16%, #15006D 33.28%, #5521B6 66.19%, #2DB7C4 93.15%);
+  color: white;
+`
+
 export const ButtonLight = styled(Base)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};

@@ -14,12 +14,13 @@ import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE } from '../../theme'
 
-import { YellowCard } from '../Card'
+import { HaloGradientCard } from '../Card'
 import Menu from '../Menu'
-
+import { ButtonPrimaryGradient } from '../Button'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
+
 import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
@@ -123,12 +124,13 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  background: ${({ theme }) => theme.haloGradient};
   border-radius: ${({ theme }) => theme.borderRadius};
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
-
+  color: white;
+  
   :focus {
     border: 1px solid blue;
   }
@@ -139,8 +141,6 @@ const UNIAmount = styled(AccountElement)`
   padding: 4px 8px;
   height: 36px;
   font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #f537c3 0%, #00abff 100%), #edeef2;
 `
 
 const UNIWrapper = styled.span`
@@ -163,10 +163,11 @@ const HideSmall = styled.span`
   `};
 `
 
-const NetworkCard = styled(YellowCard)`
+const NetworkCard = styled(HaloGradientCard)`
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: 8px 12px;
   white-space: nowrap;
+  color: white;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
     margin-right: 0.5rem;

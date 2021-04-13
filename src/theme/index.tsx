@@ -81,6 +81,7 @@ export function colors(darkMode: boolean): Colors {
     yellow1: '#FFE270',
     yellow2: '#F3841E',
     blue1: '#518CFF',
+    haloGradient: 'linear-gradient(54.93deg, #15006D 12.16%, #15006D 33.28%, #5521B6 66.19%, #2DB7C4 93.15%)',
 
     borderRadius: '20px'
 

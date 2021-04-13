@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Text } from 'rebass'
+import { useTranslation } from 'react-i18next'
+
 import { ButtonOutlined, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
 import { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween } from '../Row'
@@ -110,6 +112,10 @@ const StyledButton = styled(ButtonOutlined)`
   border-radius: 5px;
   width: fit-content;
   line-height: 130%;
+  :hover {
+    background: ${({ theme }) => theme.bg2};
+    color: white;
+  }
 `
 
 const StyledButtonText = styled(Text)`
@@ -141,6 +147,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     unstakeAndClaim: false,
     confetti: false
   })
+  const { t } = useTranslation()
 
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
@@ -286,25 +293,25 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>Total Pool Value:</StyledText>
+              <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>Stakeable:</StyledText>
+              <StyledText fontWeight={600}>{t('stakeable')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>Value Staked:</StyledText>
+              <StyledText fontWeight={600}>{t('valueStaked')}</StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed>
             <HideMedium>
-              <StyledText fontWeight={600}>Earned:</StyledText>
+              <StyledText fontWeight={600}>{t('earned')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
           </StyledRowFixed>
@@ -313,11 +320,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    <StyledButtonText>Manage</StyledButtonText>
+                    <StyledButtonText>{t('manage')}</StyledButtonText>
                   </>
                 ) : (
                   <>
-                    <StyledButtonText>Manage</StyledButtonText>
+                    <StyledButtonText>{t('manage')}</StyledButtonText>
                   </>
                 )}
               </StyledButton>
