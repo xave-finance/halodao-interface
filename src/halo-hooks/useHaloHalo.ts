@@ -26,7 +26,12 @@ const useHaloHalo = () => {
   const getAPY = useCallback(async () => {
     const currentHaloHaloAPY = (await halohaloContract?.APY()).toString()
     // fixed to 2 decimal points
-    setHaloHaloAPY((+formatEther(currentHaloHaloAPY)).toFixed(2))
+    setHaloHaloAPY(
+      (+formatEther(currentHaloHaloAPY)).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+    )
   }, [halohaloContract])
 
   const fetchAllowance = useCallback(async () => {
