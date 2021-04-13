@@ -15,6 +15,7 @@ import { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 //import { useActiveWeb3React } from '../../hooks'
 
@@ -33,6 +34,7 @@ export default function Saave() {
   const theme = useContext(ThemeContext)
   //const { account } = useActiveWeb3React()
   //const darkMode = useDarkModeManager()
+  const { haloHaloAPY } = useHaloHalo()
 
   return (
     <>
@@ -48,7 +50,7 @@ export default function Saave() {
               <RowBetween>
                 <div>
                   <TYPE.white fontSize={14} color={theme.text2} style={{ paddingBottom: '10px' }}>
-                    {`Stake your HALO into HALOHALO for ~% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
+                    {`Stake your HALO into HALOHALO for ~${haloHaloAPY}% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
                   </TYPE.white>
                 </div>
               </RowBetween>
