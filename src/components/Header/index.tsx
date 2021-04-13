@@ -130,7 +130,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   width: 100%;
   cursor: pointer;
   color: white;
-  
+
   :focus {
     border: 1px solid blue;
   }

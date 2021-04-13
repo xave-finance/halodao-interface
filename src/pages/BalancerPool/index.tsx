@@ -12,7 +12,6 @@ import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
 
-
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
   width: 100%;
@@ -74,8 +73,10 @@ const BalancerPool = () => {
               <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
             </TitleRow>
             <Row>
-              <TYPE.darkGray style={{ fontSize:'16px', margin:'2px 0', lineHeight:'130%', justifySelf: 'flex-start' }}>
-              {t('stakeToEarn')}
+              <TYPE.darkGray
+                style={{ fontSize: '16px', margin: '2px 0', lineHeight: '130%', justifySelf: 'flex-start' }}
+              >
+                {t('stakeToEarn')}
               </TYPE.darkGray>
             </Row>
             <Row>
