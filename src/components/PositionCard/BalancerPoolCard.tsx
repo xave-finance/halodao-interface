@@ -279,7 +279,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   }
 
   return (
-    <StyledCard bgColor={backgroundColor}>
+    <StyledCard bgColor={backgroundColor} className="pool-card">
       <AutoColumn gap="8px">
         <StyledFixedHeightRow>
           <StyledRowFixed gap="8px">
