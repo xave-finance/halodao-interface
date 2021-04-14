@@ -15,6 +15,7 @@ import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALOHALO_ADDRESS } from '../../constants'
+import { formatEther } from '@ethersproject/units'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -145,12 +146,12 @@ export default function CurrencyInputPanel({
   const theme = useTheme()
 
   const { allowance, approve, leave } = useHaloHalo()
-  console.log('halochest:', allowance)
+  console.log('halohalo:', allowance)
 
-  const xHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
-  const xHaloBalance = formatFromBalance(xHaloBalanceBigInt?.value, xHaloBalanceBigInt?.decimals)
-  const decimals = xHaloBalanceBigInt?.decimals
-
+  const haloHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
+  const haloHaloBalance = formatFromBalance(haloHaloBalanceBigInt?.value, haloHaloBalanceBigInt?.decimals)
+  const decimals = haloHaloBalanceBigInt?.decimals
+  console.log(formatEther(haloHaloBalanceBigInt?.value))
   // handle approval
   const [requestedApproval, setRequestedApproval] = useState(false)
   const handleApprove = useCallback(async () => {
@@ -179,11 +180,11 @@ export default function CurrencyInputPanel({
     setDepositValue(depositValue)
   }, [])
   // used for max input button
-  const maxDepositAmountInput = xHaloBalanceBigInt
+  const maxDepositAmountInput = haloHaloBalanceBigInt
   //const atMaxDepositAmount = true
   const handleMaxDeposit = useCallback(() => {
-    maxDepositAmountInput && onUserDepositInput(xHaloBalance, true)
-  }, [maxDepositAmountInput, onUserDepositInput, xHaloBalance])
+    maxDepositAmountInput && onUserDepositInput(haloHaloBalance, true)
+  }, [maxDepositAmountInput, onUserDepositInput, haloHaloBalance])
 
   return (
     <>
@@ -209,7 +210,7 @@ export default function CurrencyInputPanel({
                     style={{ display: 'inline', cursor: 'pointer' }}
                   >
                     HALOHALO Balance:{' '}
-                    {(+xHaloBalance).toLocaleString(undefined, {
+                    {(+haloHaloBalance).toLocaleString(undefined, {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2
                     })}
@@ -241,9 +242,9 @@ export default function CurrencyInputPanel({
               <ButtonSelect
                 disabled={
                   pendingTx ||
-                  !xHaloBalance ||
+                  !haloHaloBalance ||
                   Number(depositValue) === 0 ||
-                  Number(depositValue) > Number(xHaloBalance)
+                  Number(depositValue) > Number(haloHaloBalance)
                 }
                 onClick={async () => {
                   setPendingTx(true)

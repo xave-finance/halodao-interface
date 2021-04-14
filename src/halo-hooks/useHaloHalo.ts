@@ -21,6 +21,7 @@ const useHaloHalo = () => {
 
   const [allowance, setAllowance] = useState('0')
   const [haloHaloAPY, setHaloHaloAPY] = useState('0')
+  const [haloHaloPrice, setHaloHaloPrice] = useState('0')
 
   // gets the current APY from the haloHalo contract
   const getAPY = useCallback(async () => {
@@ -28,6 +29,16 @@ const useHaloHalo = () => {
     // fixed to 2 decimal points
     setHaloHaloAPY(
       (+formatEther(currentHaloHaloAPY)).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })
+    )
+  }, [halohaloContract])
+
+  const getHaloHaloPrice = useCallback(async () => {
+    const { lastHaloHaloPrice } = await halohaloContract?.latestHaloHaloPrice()
+    setHaloHaloPrice(
+      (+formatEther(lastHaloHaloPrice)).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       })
@@ -50,10 +61,11 @@ const useHaloHalo = () => {
     if (account && halohaloContract && haloContract) {
       fetchAllowance()
       getAPY()
+      getHaloHaloPrice()
     }
     const refreshInterval = setInterval(fetchAllowance, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, halohaloContract, fetchAllowance, haloContract, getAPY])
+  }, [account, halohaloContract, fetchAllowance, haloContract, getAPY, getHaloHaloPrice])
 
   const approve = useCallback(async () => {
     try {
@@ -95,7 +107,7 @@ const useHaloHalo = () => {
     [addTransaction, halohaloContract]
   )
 
-  return { allowance, approve, enter, leave, haloHaloAPY }
+  return { allowance, approve, enter, leave, haloHaloAPY, haloHaloPrice }
 }
 
 export default useHaloHalo

@@ -34,7 +34,7 @@ export default function Saave() {
   const theme = useContext(ThemeContext)
   //const { account } = useActiveWeb3React()
   //const darkMode = useDarkModeManager()
-  const { haloHaloAPY } = useHaloHalo()
+  const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
 
   return (
     <>
@@ -50,7 +50,7 @@ export default function Saave() {
               <RowBetween>
                 <div>
                   <TYPE.white fontSize={14} color={theme.text2} style={{ paddingBottom: '10px' }}>
-                    {`Stake your HALO into HALOHALO for ~${haloHaloAPY}% APY. No impermanent loss, no loss of governance rights. Continuously compounding.`}
+                    {`Stake your HALO into HALOHALO for ~${haloHaloAPY}% APY. No impermanent loss, no loss of governance rights. Continuously compounding. Currently, 1 HALOHALO is equal to ${haloHaloPrice} HALO`}
                   </TYPE.white>
                 </div>
               </RowBetween>
