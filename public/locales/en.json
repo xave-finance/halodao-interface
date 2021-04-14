@@ -92,6 +92,7 @@
   "farm": "Farm",
   "stake": "Stake",
   "unstake": "Unstake",
+  "vesting": "Vesting",
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
@@ -101,7 +102,7 @@
   "valueStaked": "Value Staked",
   "earned": "Earned",
   "getBPTTokens": "To stake, get BPT Tokens here",
-  "stakeToEarn": "Stake your Balancer Pool Tokens (BPT) to earn Halo!",
-  "learnAboutStaking": "Learn about staking",
-  "closeTxt": "Close"
+  "closeTxt": "Close",
+  "stakeToEarn": "Stake your Balancer (Liquidty Pool) Pool Tokens (BPT) to earn Halo!",
+  "learnAboutStaking": "Learn about staking"
 }

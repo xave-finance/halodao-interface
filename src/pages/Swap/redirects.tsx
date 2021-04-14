@@ -11,7 +11,7 @@ export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
 
 // Redirects to pool but only replace the pathname
 export function RedirectPathToPoolOnly({ location }: RouteComponentProps) {
-  return <Redirect to={{ ...location, pathname: '/pool' }} />
+  return <Redirect to={{ ...location, pathname: '/farm' }} />
 }
 
 // Redirects from the /swap/:outputCurrency path to the /swap?outputCurrency=:outputCurrency format

@@ -107,15 +107,15 @@ export default function App() {
               <Route exact strict path="/tools" component={Tools} />
               <Route exact strict path="/saave" component={Saave} />
               {/* Pages */}
-              {<Route exact strict path="/stake" component={HaloHalo} />}
-              <Route exact path="/sushibar" render={() => <Redirect to="/stake" />} />
+              {<Route exact strict path="/vesting" component={HaloHalo} />}
+              <Route exact path="/sushibar" render={() => <Redirect to="/vesting" />} />
               {/* Pages */}
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
               <Route exact strict path="/find" component={PoolFinder} />
-              <Route exact strict path="/pool" component={BalancerPool} />
+              <Route exact strict path="/farm" component={BalancerPool} />
               {/* <Route exact strict path="/pool" component={Pool} /> */}
               {/* <Route exact strict path="/sushi" component={Earn} /> */}
               {/* <Route exact strict path="/vote" component={Vote} /> */}
