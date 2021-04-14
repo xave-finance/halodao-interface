@@ -487,112 +487,170 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         t('stake')
                       )}
                     </ButtonPrimaryNormal>
+                    <StyledTextForValue fontSize={16} fontWeight={800}>
+                      Staked: {bptStaked.toFixed(2)} BPT
+                    </StyledTextForValue>
+                    <NumericalInput style={{width: "100%"}} value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
+                    <ButtonPrimaryNormal
+                      padding="8px"
+                      borderRadius="8px"
+                      width="48%"
+                      disabled={
+                        !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
+                      }
+                      onClick={unstakeLpToken}
+                      style={{
+                        color: "#471BB2",
+                        fontWeight: 900,
+                        border: "1px solid #471BB2",
+                        width: "100%",
+                        margin: "4% 0 4% 0",
+                        height: "38px"
+                      }}
+                    >
+                      {loading.unstaking ? (
+                        <>
+                          {`${HALO_REWARDS_MESSAGE.unstaking}`}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      ) : (
+                        t('unstake')
+                      )}
+                    </ButtonPrimaryNormal>
+                    <BalanceCard
+                      style={{
+                        backgroundColor: "#D5CDEA",
+                        boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)",
+                        borderRadius: "10px",
+                        border: "0",
+                        color: "#000000"
+                      }}
+                    >
+                      <CardSection
+                        style={{
+                          display: "block"
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontWeight: "normal",
+                            fontStyle: "normal",
+                            textAlign: "left",
+                            lineHeight: "160%",
+                            letterSpacing: "normal"
+                          }}
+                        >
+                          {t('tokenCardRewardDescription')}
+                        </Text>
+                      </CardSection>
+                    </BalanceCard>
+                    <BalanceCard
+                      style={{
+                        background: "#15006D",
+                        borderRadius: "0px 0px 4px 4px"
+                      }}
+                    >
+                      <StyledFixedHeightRow>
+                        <StyledRowFixed style={{
+                          display: "block",
+                          paddingBottom: 0
+                        }}>
+                          <img style={{float: "left"}} src={BunnyRewards} />
+                        </StyledRowFixed>
+                        <StyledRowFixed
+                          style={{
+                            marginTop: "2%",
+                            paddingLeft: "7%"
+                          }}
+                        >
+                          <Text>
+                            <div
+                              style={{
+                                color: "#FFFFFF",
+                                fontSize: 16,
+                                fontWeight: "bold",
+                                textAlign: "left",
+                                letterSpacing: "normal"
+                              }}
+                            >Total Rewards:</div>
+                            <div
+                              style={{
+                                marginTop: "5px",
+                                color: "#FFFFFF",
+                                fontFamily: "Fredoka One",
+                                fontStyle: "normal",
+                                fontWeight: "normal",
+                                fontSize: "36px",
+                                lineHeight: "44px"
+                              }}
+                            >
+                              {unclaimedHalo.toFixed(2)} HALO
+                            </div>
+                          </Text>
+                          <ButtonPrimaryNormal
+                            padding="8px"
+                            borderRadius="8px"
+                            width="48%"
+                            disabled={!(unclaimedHalo > 0) || loading.claim}
+                            onClick={claimPoolRewards}
+                            style={{
+                              marginTop: "5px",
+                              width: "90%",
+                              height: "53px",
+                              background: "#FFFFFF",
+                              borderRadius: "10px",
+                              float: "right",
+                              fontWeight: "bold"
+                            }}
+                          >
+                            {loading.claim ? (
+                              <>
+                                {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
+                                <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                              </>
+                            ) : (
+                              <div>
+                                <img
+                                  style={{
+                                    marginBottom: "-5px"
+                                  }}
+                                  src={Molecule}
+                                />
+                                Claim
+                              </div>
+                            )}
+                          </ButtonPrimaryNormal>
+                          <StyledClose
+                            style={{
+                              display: "block",
+                              width: "90%"
+                            }}
+                          >
+                            <StyledTextForValue
+                              onClick={() => setShowMore(!showMore)}
+                              style={{
+                                fontFamily: "Inter",
+                                fontStyle: "normal",
+                                fontWeight: 900,
+                                fontSize: "16px",
+                                lineHeight: "150%",
+                                textDecorationLine: "underline",
+                                color: "#FFFFFF",
+                                cursor: "pointer",
+                                float: "right",
+                                letterSpacing: "normal"
+                              }}
+                            >Close X</StyledTextForValue>
+                          </StyledClose>
+                        </StyledRowFixed>
+                      </StyledFixedHeightRow>
+                    </BalanceCard>
                   </StyledRowFixed>
                 </StyledFixedHeightRow>
               </HideMedium>
-              {/* <RowBetween marginTop="10px">
-                <StyledFixedHeightRow>
-                  <StyledRowFixed>
-                    <HideMedium>
-                      <StyledTextForValue fontSize={16} fontWeight={800}>
-                        Balance: {bptBalance.toFixed(2)} BPT
-                      </StyledTextForValue>
-                    </HideMedium>
-                    <NumericalInput style={{display: "block"}} value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
-                  </StyledRowFixed>
-                  <StyledRowFixed>
-                    <HideMedium>
-                      <StyledTextForValue fontSize={16} fontWeight={800}>
-                        Staked: {bptStaked.toFixed(2)} BPT
-                      </StyledTextForValue>
-                    </HideMedium>
-                    <StyledTextForValue><NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} /></StyledTextForValue>
-                  </StyledRowFixed>
-                </StyledFixedHeightRow>
-                <NumericalInput value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
-                <NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
-              </RowBetween> */}
-              {/* <RowBetween marginTop="10px">
-                <ButtonPrimaryNormal
-                  padding="8px"
-                  borderRadius="8px"
-                  width="48%"
-                  disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking}
-                  onClick={stakeLpToken}
-                  style={{
-                    background: "#471BB2",
-                    color: "#FFFFFF",
-                    fontWeight: 900
-                  }}
-                >
-                  {loading.staking ? (
-                    <>
-                      {`${HALO_REWARDS_MESSAGE.staking}`}&nbsp;
-                      <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                    </>
-                  ) : (
-                    t('stake')
-                  )}
-                </ButtonPrimaryNormal>
-                <ButtonPrimaryNormal
-                  padding="8px"
-                  borderRadius="8px"
-                  width="48%"
-                  disabled={
-                    !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
-                  }
-                  onClick={unstakeLpToken}
-                  style={{
-                    color: "#471BB2",
-                    fontWeight: 900,
-                    border: "1px solid #471BB2"
-                  }}
-                >
-                  {loading.unstaking ? (
-                    <>
-                      {`${HALO_REWARDS_MESSAGE.unstaking}`}&nbsp;
-                      <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                    </>
-                  ) : (
-                    t('unstake')
-                  )}
-                </ButtonPrimaryNormal>
-              </RowBetween> */}
-              <RowBetween marginTop="10px">
-                <BalanceCard
-                  style={{
-                    backgroundColor: "#D5CDEA",
-                    boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)",
-                    borderRadius: "10px",
-                    border: "0",
-                    color: "#000000"
-                  }}
-                >
-                  <CardSection
-                    style={{
-                      display: "block"
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 500,
-                        textAlign: "left",
-                        width: "80%",
-                        float: "left"
-                      }}
-                    >
-                      {t('tokenCardRewardDescription')}
-                    </Text>
-                    <img style={{
-                      marginBottom: '0.5rem',
-                      float: "right"
-                    }} width={'40px'} src={BunnyMoon} />
-                  </CardSection>
-                </BalanceCard>
-              </RowBetween>
             </div>
-            <RowBetween marginTop="10px">
+            {/* <RowBetween marginTop="10px">
               <BalanceCard
                 style={{
                   background: "#15006D",
@@ -601,74 +659,74 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 }}
               >
                 <StyledFixedHeightRow>
-                    <StyledRowFixed>
-                      <img
+                  <StyledRowFixed>
+                    <img
+                      style={{
+                        marginLeft: "30px"
+                      }}
+                      src={BunnyRewards}
+                    />
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <Text
+                      style={{
+                        color: "#FFFFFF",
+                        fontSize: 16,
+                        fontWeight: 800,
+                        textAlign: "left",
+                      }}
+                    >
+                      <div>Pair Name Rewards:</div>
+                      <div
                         style={{
-                          marginLeft: "30px"
-                        }}
-                        src={BunnyRewards}
-                      />
-                    </StyledRowFixed>
-                    <StyledRowFixed>
-                      <Text
-                        style={{
-                          color: "#FFFFFF",
-                          fontSize: 16,
-                          fontWeight: 800,
-                          textAlign: "left",
+                          fontFamily: "Fredoka One",
+                          fontStyle: "normal",
+                          fontWeight: "normal",
+                          fontSize: "36px",
+                          lineHeight: "44px"
                         }}
                       >
-                        <div>Pair Name Rewards:</div>
-                        <div
-                          style={{
-                            fontFamily: "Fredoka One",
-                            fontStyle: "normal",
-                            fontWeight: "normal",
-                            fontSize: "36px",
-                            lineHeight: "44px"
-                          }}
-                        >
-                          {unclaimedHalo.toFixed(2)} HALO
+                        {unclaimedHalo.toFixed(2)} HALO
+                      </div>
+                    </Text>
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <ButtonPrimaryNormal
+                      padding="8px"
+                      borderRadius="8px"
+                      width="48%"
+                      disabled={!(unclaimedHalo > 0) || loading.claim}
+                      onClick={claimPoolRewards}
+                      style={{
+                        width: "234px",
+                        height: "53px",
+                        background: "#FFFFFF",
+                        borderRadius: "10px",
+                        float: "right",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {loading.claim ? (
+                        <>
+                          {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      ) : (
+                        <div>
+                          <img
+                            style={{
+                              marginBottom: "-5px"
+                            }}
+                            src={Molecule}
+                          />
+                          Claim
                         </div>
-                      </Text>
-                    </StyledRowFixed>
-                    <StyledRowFixed>
-                      <ButtonPrimaryNormal
-                        padding="8px"
-                        borderRadius="8px"
-                        width="48%"
-                        disabled={!(unclaimedHalo > 0) || loading.claim}
-                        onClick={claimPoolRewards}
-                        style={{
-                          width: "234px",
-                          height: "53px",
-                          background: "#FFFFFF",
-                          borderRadius: "10px",
-                          float: "right",
-                          fontWeight: "bold"
-                        }}
-                      >
-                        {loading.claim ? (
-                          <>
-                            {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
-                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                          </>
-                        ) : (
-                          <div>
-                            <img
-                              style={{
-                                marginBottom: "-5px"
-                              }}
-                              src={Molecule}
-                            />
-                            Claim
-                          </div>
-                        )}
-                      </ButtonPrimaryNormal>
-                    </StyledRowFixed>
-                  </StyledFixedHeightRow>
-                </BalanceCard>
-            </RowBetween>
+                      )}
+                    </ButtonPrimaryNormal>
+                  </StyledRowFixed>
+                </StyledFixedHeightRow>
+              </BalanceCard>
+            </RowBetween> */}
           </AutoColumn>
         )}
       </AutoColumn>
