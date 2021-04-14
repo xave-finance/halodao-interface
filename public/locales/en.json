@@ -102,5 +102,6 @@
   "earned": "Earned",
   "getBPTTokens": "To stake, get BPT Tokens here",
   "stakeToEarn": "Stake your Balancer Pool Tokens (BPT) to earn Halo!",
-  "learnAboutStaking": "Learn about staking"
+  "learnAboutStaking": "Learn about staking",
+  "closeTxt": "Close"
 }
