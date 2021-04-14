@@ -129,6 +129,23 @@ const StyledButtonText = styled(Text)`
   font-size: 12px;
 `
 
+const StyledClose = styled(Text)`
+  display: inline;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const StyledBorderBottom = styled(Text)`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: inline;
+    border-bottom: 1px solid #471BB2;
+    width: 100%;
+    color: transparent;
+  `};
+`
+
 interface BalancerPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
@@ -348,7 +365,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               }}
             >
               <RowBetween marginTop="10px">
-                <StyledFixedHeightRow style={{marginBottom: "20px"}}>
+                <StyledFixedHeightRow
+                  style={{
+                    marginBottom: "20px"
+                  }}
+                >
                   <StyledRowFixed>
                     <DoubleCurrencyLogo
                       currency0={poolInfo.tokens[0].asToken}
@@ -383,19 +404,22 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
                   </StyledRowFixed>
                   <StyledRowFixed>
-                    <StyledTextForValue
-                      onClick={() => setShowMore(!showMore)}
-                      style={{
-                        fontFamily: "Open Sans",
-                        fontWeight: "bold",
-                        fontSize: "12px",
-                        lineHeight: "130%",
-                        textDecorationLine: "underline",
-                        color: "#15006D",
-                        cursor: "pointer"
-                      }}
-                    >Close</StyledTextForValue>
+                    <StyledClose>
+                      <StyledTextForValue
+                        onClick={() => setShowMore(!showMore)}
+                        style={{
+                          fontFamily: "Open Sans",
+                          fontWeight: "bold",
+                          fontSize: "12px",
+                          lineHeight: "130%",
+                          textDecorationLine: "underline",
+                          color: "#15006D",
+                          cursor: "pointer"
+                        }}
+                      >Close</StyledTextForValue>
+                    </StyledClose>
                   </StyledRowFixed>
+                  <StyledBorderBottom>.</StyledBorderBottom>
                 </StyledFixedHeightRow>
               </RowBetween>
               <FixedHeightRow>
