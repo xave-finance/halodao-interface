@@ -751,27 +751,33 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   style={{
                     background: "#15006D",
                     borderRadius: "0px 0px 4px 4px",
-                    padding: "30px 0 30px 0"
+                    padding: "30px 0 50px 0"
                   }}
                 >
-                  <StyledFixedHeightRow>
-                    <StyledRowFixed>
-                      <img
+                  <StyledFixedHeightRow
+                    style={{
+                      display: "block"
+                    }}
+                  >
+                    <StyledRowFixed
                         style={{
+                          float: "left",
                           marginLeft: "30px"
                         }}
-                        src={BunnyRewards}
-                      />
+                    >
+                      <img src={BunnyRewards} />
                     </StyledRowFixed>
-                    <StyledRowFixed>
-                      <Text
+                    <StyledRowFixed
                         style={{
+                          float: "left",
+                          marginLeft: "50px",
                           color: "#FFFFFF",
                           fontSize: 16,
                           fontWeight: 800,
                           textAlign: "left",
                         }}
-                      >
+                    >
+                      <Text>
                         <div>Pair Name Rewards:</div>
                         <div
                           style={{
@@ -786,7 +792,12 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         </div>
                       </Text>
                     </StyledRowFixed>
-                    <StyledRowFixed>
+                    <StyledRowFixed
+                      style={{
+                        float: "right",
+                        marginRight: "20px"
+                      }}
+                    >
                       <ButtonPrimaryNormal
                         padding="8px"
                         borderRadius="8px"
