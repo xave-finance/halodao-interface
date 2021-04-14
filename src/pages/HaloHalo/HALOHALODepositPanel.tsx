@@ -146,12 +146,11 @@ export default function CurrencyInputPanel({
   const theme = useTheme()
 
   const { allowance, approve, leave } = useHaloHalo()
-  console.log('halohalo:', allowance)
 
   const haloHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
   const haloHaloBalance = formatFromBalance(haloHaloBalanceBigInt?.value, haloHaloBalanceBigInt?.decimals)
   const decimals = haloHaloBalanceBigInt?.decimals
-  console.log(formatEther(haloHaloBalanceBigInt?.value))
+
   // handle approval
   const [requestedApproval, setRequestedApproval] = useState(false)
   const handleApprove = useCallback(async () => {
