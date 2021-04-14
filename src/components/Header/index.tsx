@@ -14,9 +14,8 @@ import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { TYPE } from '../../theme'
 
-import { HaloGradientCard } from '../Card'
+import { YellowCard } from '../Card'
 import Menu from '../Menu'
-import { ButtonPrimaryGradient } from '../Button'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -124,19 +123,18 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background: ${({ theme }) => theme.haloGradient};
+  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
   border-radius: ${({ theme }) => theme.borderRadius};
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
-  color: white;
-  
   :focus {
     border: 1px solid blue;
   }
 `
 
 const UNIAmount = styled(AccountElement)`
+  background: ${({ theme }) => theme.haloGradient};
   color: white;
   padding: 4px 8px;
   height: 36px;
@@ -163,11 +161,10 @@ const HideSmall = styled.span`
   `};
 `
 
-const NetworkCard = styled(HaloGradientCard)`
+const NetworkCard = styled(YellowCard)`
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: 8px 12px;
   white-space: nowrap;
-  color: white;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
     margin-right: 0.5rem;
