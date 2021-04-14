@@ -151,6 +151,22 @@ interface BalancerPoolCardProps {
   tokenPrice: TokenPrice
 }
 
+const StyledBalanceStakeWeb = styled(Text)`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+export const FixedHeightRowWeb = styled(RowBetween)`
+  height: 24px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    height: 0;
+  `};
+`
+
 export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const [showMore, setShowMore] = useState(false)
@@ -422,20 +438,81 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   <StyledBorderBottom>.</StyledBorderBottom>
                 </StyledFixedHeightRow>
               </RowBetween>
-              <FixedHeightRow>
+              <FixedHeightRowWeb>
                 <Confetti start={loading.confetti} />
-                <Text fontSize={16} fontWeight={800}>
-                  Balance: {bptBalance.toFixed(2)} BPT
-                </Text>
-                <Text fontSize={16} fontWeight={800}>
-                  Staked: {bptStaked.toFixed(2)} BPT
-                </Text>
-              </FixedHeightRow>
-              <RowBetween marginTop="10px">
+                <StyledBalanceStakeWeb>
+                  <StyledRowFixed>
+                    <Text fontSize={16} fontWeight={800}>
+                      Balance: {bptBalance.toFixed(2)} BPT
+                    </Text>
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <Text fontSize={16} fontWeight={800}>
+                      Staked: {bptStaked.toFixed(2)} BPT
+                    </Text>
+                  </StyledRowFixed>
+                </StyledBalanceStakeWeb>
+              </FixedHeightRowWeb>
+              <HideMedium>
+                <StyledFixedHeightRow>
+                  <StyledRowFixed style={{
+                    padding: 0,
+                    display: "block"
+                  }}>
+                    <StyledTextForValue fontSize={16} fontWeight={800}>
+                      Balance: {bptBalance.toFixed(2)} BPT
+                    </StyledTextForValue><br />
+                    <NumericalInput style={{width: "100%"}} value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
+                    <ButtonPrimaryNormal
+                      padding="8px"
+                      borderRadius="8px"
+                      width="48%"
+                      disabled={!(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking}
+                      onClick={stakeLpToken}
+                      style={{
+                        background: "#471BB2",
+                        color: "#FFFFFF",
+                        fontWeight: 900,
+                        width: "100%",
+                        margin: "4% 0 4% 0",
+                        height: "38px"
+                      }}
+                    >
+                      {loading.staking ? (
+                        <>
+                          {`${HALO_REWARDS_MESSAGE.staking}`}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      ) : (
+                        t('stake')
+                      )}
+                    </ButtonPrimaryNormal>
+                  </StyledRowFixed>
+                </StyledFixedHeightRow>
+              </HideMedium>
+              {/* <RowBetween marginTop="10px">
+                <StyledFixedHeightRow>
+                  <StyledRowFixed>
+                    <HideMedium>
+                      <StyledTextForValue fontSize={16} fontWeight={800}>
+                        Balance: {bptBalance.toFixed(2)} BPT
+                      </StyledTextForValue>
+                    </HideMedium>
+                    <NumericalInput style={{display: "block"}} value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <HideMedium>
+                      <StyledTextForValue fontSize={16} fontWeight={800}>
+                        Staked: {bptStaked.toFixed(2)} BPT
+                      </StyledTextForValue>
+                    </HideMedium>
+                    <StyledTextForValue><NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} /></StyledTextForValue>
+                  </StyledRowFixed>
+                </StyledFixedHeightRow>
                 <NumericalInput value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
                 <NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
-              </RowBetween>
-              <RowBetween marginTop="10px">
+              </RowBetween> */}
+              {/* <RowBetween marginTop="10px">
                 <ButtonPrimaryNormal
                   padding="8px"
                   borderRadius="8px"
@@ -480,7 +557,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     t('unstake')
                   )}
                 </ButtonPrimaryNormal>
-              </RowBetween>
+              </RowBetween> */}
               <RowBetween marginTop="10px">
                 <BalanceCard
                   style={{
