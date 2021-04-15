@@ -6,7 +6,7 @@ import tokenLogo from '../../assets/images/token-logo.png'
 import { HALO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance, useTokenBalance } from '../../state/wallet/hooks'
+import { useTokenBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE, UniTokenAnimated } from '../../theme'
 import useUSDCPrice from '../../utils/useUSDCPrice'
 import { AutoColumn } from '../Column'
@@ -40,7 +40,6 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
   const { account, chainId } = useActiveWeb3React()
   const uni = chainId ? HALO[chainId] : undefined
 
-  const total = useAggregateUniBalance()
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
 
   const totalSupply: TokenAmount | undefined = useTotalSupply(uni)
@@ -61,26 +60,36 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
             <CardSection gap="sm">
               <AutoColumn gap="md" justify="center">
                 <UniTokenAnimated width="48px" src={tokenLogo} />{' '}
-                <TYPE.white fontSize={48} fontWeight={600} color="white">
-                  {total?.toFixed(2, { groupSeparator: ',' })}
+                <TYPE.white
+                  style={{
+                    fontFamily: "Fredoka One",
+                    fontStyle: "normal",
+                    fontSize: "36px",
+                    fontWeight: "normal",
+                    color: "#FFFFFF",
+                    lineHeight: "44px"
+                  }}
+                >
+                  {uniBalance?.toFixed(2, { groupSeparator: ',' })}
                 </TYPE.white>
               </AutoColumn>
               <AutoColumn gap="md">
                 <RowBetween>
-                  <TYPE.white color="white">Balance:</TYPE.white>
-                  <TYPE.white color="white">{uniBalance?.toFixed(2, { groupSeparator: ',' })}</TYPE.white>
+                  <TYPE.white
+                    style={{
+                      color: "#FFFFFF",
+                      width: "100%",
+                      textAlign: "center",
+                      fontFamily: "Open Sans",
+                      fontStyle: "normal",
+                      fontWeight: 800,
+                      fontSize: "18px",
+                      lineHeight: "25px",
+                      letterSpacing: "0.1em",
+                      opacity: "0.4"
+                    }}
+                  >BALANCE</TYPE.white>
                 </RowBetween>
-                {/* <RowBetween>
-                  <TYPE.white color="white">Unclaimed:</TYPE.white>
-                  <TYPE.white color="white">
-                    {uniToClaim?.toFixed(4, { groupSeparator: ',' })}{' '}
-                    {uniToClaim && uniToClaim.greaterThan('0') && (
-                      <StyledInternalLink onClick={() => setShowUniBalanceModal(false)} to="/uni">
-                        (claim)
-                      </StyledInternalLink>
-                    )}
-                  </TYPE.white>
-                </RowBetween> */}
               </AutoColumn>
             </CardSection>
             <Break />
@@ -89,15 +98,11 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="sm">
           <AutoColumn gap="md">
             <RowBetween>
-              <TYPE.white color="white">HALO price:</TYPE.white>
+              <TYPE.white color="white" opacity={0.7}>HALO price:</TYPE.white>
               <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
             </RowBetween>
-            {/* <RowBetween>
-              <TYPE.white color="white">UNI in circulation:</TYPE.white>
-              <TYPE.white color="white">{circulation?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
-            </RowBetween> */}
             <RowBetween>
-              <TYPE.white color="white">Total Supply</TYPE.white>
+              <TYPE.white color="white" opacity={0.7}>HALO supply:</TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
             {uni && uni.chainId === ChainId.MAINNET ? (
