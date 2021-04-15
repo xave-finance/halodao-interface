@@ -1,64 +1,134 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+
 import styled from 'styled-components'
 import { SwapPoolTabs } from '../../components/NavigationTabs'
-import { TYPE, HideSmall } from '../../theme'
-import { RowBetween, RowFixed } from '../../components/Row'
+import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
+import Row, { RowBetween, RowFixed } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
 import PoolsSummary from 'components/PoolsSummary'
+import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
-import Card from 'components/Card'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
   width: 100%;
 `
 
-const TitleRow = styled(RowBetween)`
+const PoolsSummaryRow = styled(Row)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    flex-direction: column;
+  `};
+  flex-direction: row;
+  align-items: start;
+`
+
+const HeaderRow = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-wrap: wrap;
     gap: 12px;
     width: 100%;
-    flex-direction: column-reverse;
+    flex-direction: column;
   `};
+  flex-direction: column;
+  width: 60%;
+  padding-right: 0.5rem;
+`
+
+const TitleRow = styled(RowBetween)`
+  font-family: 'Fredoka One', cursive;
+  color: #471bb2;
+`
+
+const StyledExternalLink = styled(ExternalLink)`
+  ${({ theme }) => theme.mediaWidth.upToSmall` 
+    border: 1px solid #518CFF;
+    box-sizing: border-box;
+    border-radius: 20px; 
+    padding: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+  `};
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
 `
 
 const BalancerPool = () => {
   const poolAddresses = useWhitelistedPoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
+  const { t } = useTranslation()
 
   return (
     <>
       <PageWrapper>
         <SwapPoolTabs active={'pool'} />
+        <PoolsSummaryRow>
+          <HeaderRow>
+            <TitleRow>
+              <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
+            </TitleRow>
+            <Row>
+              <TYPE.darkGray
+                style={{ fontSize: '16px', margin: '2px 0', lineHeight: '130%', justifySelf: 'flex-start' }}
+              >
+                {t('stakeToEarn')}
+              </TYPE.darkGray>
+            </Row>
+            <Row>
+              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
+                {t('getBPTTokens')}
+                <HideLarge>
+                  <LinkIcon></LinkIcon>
+                </HideLarge>
+              </StyledExternalLink>
+            </Row>
+            <Row>
+              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
+                {t('learnAboutStaking')}
+                <HideLarge>
+                  <LinkIcon></LinkIcon>
+                </HideLarge>
+              </StyledExternalLink>
+            </Row>
+          </HeaderRow>
+          <Row>
+            <PoolsSummary poolsInfo={poolsInfo} />
+          </Row>
+        </PoolsSummaryRow>
 
-        <TitleRow>
+        <AutoColumn gap="sm" style={{ width: '100%' }}>
           <HideSmall>
-            <TYPE.mediumHeader style={{ marginTop: '0.5rem', justifySelf: 'flex-start' }}>Pools</TYPE.mediumHeader>
-          </HideSmall>
-        </TitleRow>
-
-        <PoolsSummary poolsInfo={poolsInfo} />
-
-        <AutoColumn gap="lg" justify="center">
-          <AutoColumn gap="lg" style={{ width: '100%' }}>
             <Card>
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="24%">Pool</RowFixed>
-                  <RowFixed width="19%">Total Pool Value</RowFixed>
-                  <RowFixed width="16%">Stakable</RowFixed>
-                  <RowFixed width="16%">Value Staked</RowFixed>
-                  <RowFixed width="16%">Earned</RowFixed>
+                  <RowFixed width="24%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="19%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
+                  </RowFixed>
                   <RowFixed width="9%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>
-            {poolsInfo.map(poolInfo => {
-              return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
-            })}
-          </AutoColumn>
+          </HideSmall>
+          {poolsInfo.map(poolInfo => {
+            return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+          })}
         </AutoColumn>
       </PageWrapper>
     </>

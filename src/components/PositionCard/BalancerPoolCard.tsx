@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { ChevronDown, ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
-import { ButtonEmpty, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
+import { useTranslation } from 'react-i18next'
+
+import { ButtonOutlined, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
 import { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween } from '../Row'
-import { FixedHeightRow, StyledPositionCard } from '.'
-import { CustomLightSpinner, ExternalLink } from 'theme'
+import { FixedHeightRow } from '.'
+import { CustomLightSpinner, ExternalLink, HideMedium } from 'theme'
 import NumericalInput from 'components/NumericalInput'
+import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
@@ -30,6 +32,99 @@ const BalanceCard = styled(DataCard)`
   text-align: center;
   margin-top: 10px;
 `
+const StyledFixedHeightRow = styled(FixedHeightRow)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+  `};
+`
+export const StyledCard = styled(GreyCard)<{ bgColor: any }>`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    background: ${({ theme }) => theme.bg3};
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5rem;
+  `};
+  border: none
+  background: ${({ theme }) => transparentize(0.6, theme.bg1)};
+  position: relative;
+  overflow: hidden;
+  padding: .5rem;
+  border-radius: 0px;
+`
+
+const StyledRowFixed = styled(RowFixed)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    flex-direction: column;
+    margin-top: 0.5rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    &:first-of-type {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      line-height: 16px;
+      letter-spacing: 0.2rem;
+    }
+    &:last-of-type {
+      width: 100%;
+      margin-bottom: 0.5rem;
+      margin-top: 1.5rem;
+    }
+  `};
+`
+
+const StyledText = styled(Text)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    line-height: 16px;
+    letter-spacing: 0.2rem;
+  `};
+  font-size: 12px;
+`
+
+const StyledTextForValue = styled(Text)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    font-size: 16px;
+    line-height: 130%;
+  `};
+  font-size: 12px;
+`
+
+const StyledButton = styled(ButtonOutlined)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    background: ${({ theme }) => theme.bg2};
+    color: white;
+    width: 100%;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 900;
+    font-size: 16px;
+    line-height: 150%;
+  `};
+  padding: 4px 8px;
+  border-radius: 5px;
+  width: fit-content;
+  line-height: 130%;
+  :hover {
+    background: ${({ theme }) => theme.bg2};
+    color: white;
+  }
+`
+
+const StyledButtonText = styled(Text)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    font-size: 16px;
+  `};
+  font-weight: bold;
+  font-size: 12px;
+`
 
 interface BalancerPoolCardProps {
   poolInfo: PoolInfo
@@ -52,6 +147,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     unstakeAndClaim: false,
     confetti: false
   })
+  const { t } = useTranslation()
 
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
@@ -183,47 +279,58 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   }
 
   return (
-    <StyledPositionCard bgColor={backgroundColor}>
-      <AutoColumn gap="12px">
-        <FixedHeightRow>
-          <RowFixed gap="8px">
+    <StyledCard bgColor={backgroundColor}>
+      <AutoColumn gap="8px">
+        <StyledFixedHeightRow>
+          <StyledRowFixed gap="8px">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
-              size={20}
+              size={14}
             />
             &nbsp;
-            <Text fontWeight={500} fontSize={20}>
-              {poolInfo.pair}
-            </Text>
-          </RowFixed>
-          <RowFixed>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</RowFixed>
-          <RowFixed>{bptBalance.toFixed(2)} BPT</RowFixed>
-          <RowFixed>{toFormattedCurrency(bptStakedValue)}</RowFixed>
-          <RowFixed>{unclaimedHalo} HALO</RowFixed>
+            <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed>
+            <HideMedium>
+              <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
+            </HideMedium>
+            <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed>
+            <HideMedium>
+              <StyledText fontWeight={600}>{t('stakeable')}:</StyledText>
+            </HideMedium>
+            <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed>
+            <HideMedium>
+              <StyledText fontWeight={600}>{t('valueStaked')}</StyledText>
+            </HideMedium>
+            <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed>
+            <HideMedium>
+              <StyledText fontWeight={600}>{t('earned')}:</StyledText>
+            </HideMedium>
+            <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
+          </StyledRowFixed>
           {account && (
-            <RowFixed gap="8px">
-              <ButtonEmpty
-                padding="6px 8px"
-                borderRadius="20px"
-                width="fit-content"
-                onClick={() => setShowMore(!showMore)}
-              >
+            <StyledRowFixed>
+              <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    Manage
-                    <ChevronUp size="20" style={{ marginLeft: '10px' }} />
+                    <StyledButtonText>{t('manage')}</StyledButtonText>
                   </>
                 ) : (
                   <>
-                    Manage
-                    <ChevronDown size="20" style={{ marginLeft: '10px' }} />
+                    <StyledButtonText>{t('manage')}</StyledButtonText>
                   </>
                 )}
-              </ButtonEmpty>
-            </RowFixed>
+              </StyledButton>
+            </StyledRowFixed>
           )}
-        </FixedHeightRow>
+        </StyledFixedHeightRow>
 
         {showMore && (
           <AutoColumn gap="8px">
@@ -332,6 +439,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           </AutoColumn>
         )}
       </AutoColumn>
-    </StyledPositionCard>
+    </StyledCard>
   )
 }

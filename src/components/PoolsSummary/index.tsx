@@ -1,19 +1,53 @@
-import { AutoColumn } from 'components/Column'
-import { CardSection, DataCard } from 'components/earn/styled'
+import { useTranslation } from 'react-i18next'
+import React, { useContext } from 'react'
+
+import Row from '../../components/Row'
+import { IndigoCard } from '../../components/Card'
 import { RowBetween } from 'components/Row'
 import { transparentize } from 'polished'
-import React, { useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
-import { TYPE } from 'theme'
+import styled from 'styled-components'
+import { TYPE, HideSmall } from 'theme'
 import usePoolsSummary from 'halo-hooks/usePoolsSummary'
 import { PoolInfo } from 'halo-hooks/useBalancer'
 
-const VoteCard = styled(DataCard)`
-  background: ${({ theme }) => transparentize(0.5, theme.bg1)};
-  border: 1px solid ${({ theme }) => theme.text4};
+import HaloHalo from '../../assets/svg/halohalo.svg'
+
+const DashboardRow = styled(Row)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    flex-direction: column;
+  `};
+  flex-direction: row;
+  align-items: start;
+  margin: 1.5 rem;
+`
+
+const InfoRow = styled(Row)`
+  flex-direction: column;
+  margin-right: 0.5rem;
+`
+
+const InfoTitleRow = styled(RowBetween)`
+  color: ${({ theme }) => theme.bg2};
+`
+
+const EarnedTitleRow = styled(RowBetween)`
+  color: ${({ theme }) => theme.text4};
+`
+
+const StakeCard = styled(IndigoCard)`
+  background: ${({ theme }) => transparentize(0.9, theme.primary1)};
   overflow: hidden;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+`
+
+const EarnCard = styled(IndigoCard)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    height: 100%;
+  `};
+  background: ${({ theme }) => transparentize(0.9, theme.primary1)};
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  height: 190px;
 `
 
 interface PoolsSummaryProps {
@@ -21,38 +55,81 @@ interface PoolsSummaryProps {
 }
 
 const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
-  const theme = useContext(ThemeContext)
   const summary = usePoolsSummary(poolsInfo)
+  const { t } = useTranslation()
 
   return (
-    <VoteCard>
-      <CardSection>
-        <AutoColumn gap="md">
-          <RowBetween>
-            <TYPE.white fontWeight={600} color={theme.text1}>
-              My Stakeable Value
-            </TYPE.white>
-            <TYPE.white fontWeight={600} color={theme.text1}>
-              My Staked Value
-            </TYPE.white>
-            <TYPE.white fontWeight={600} color={theme.text1}>
-              My HALO Earned
-            </TYPE.white>
-          </RowBetween>
-          <RowBetween>
-            <TYPE.white fontWeight={600} color={theme.text1}>
+    <DashboardRow>
+      <InfoRow>
+        <StakeCard>
+          <InfoTitleRow>
+            <TYPE.subHeader
+              style={{
+                letterSpacing: '0.1em',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                justifySelf: 'flex-start'
+              }}
+            >
+              {t('poolSummaryStakeable')}
+            </TYPE.subHeader>
+          </InfoTitleRow>
+          <Row>
+            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}>
               {summary.stakeableValue}
-            </TYPE.white>
-            <TYPE.white fontWeight={600} color={theme.text1}>
+            </TYPE.body>
+          </Row>
+        </StakeCard>
+        <StakeCard>
+          <InfoTitleRow>
+            <TYPE.subHeader
+              style={{
+                letterSpacing: '0.1em',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                justifySelf: 'flex-start'
+              }}
+            >
+              {t('poolSummaryStaked')}
+            </TYPE.subHeader>
+          </InfoTitleRow>
+          <Row>
+            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}>
               {summary.stakedValue}
-            </TYPE.white>
-            <TYPE.white fontWeight={600} color={theme.text1}>
-              {summary.haloEarned} HALO
-            </TYPE.white>
-          </RowBetween>
-        </AutoColumn>
-      </CardSection>
-    </VoteCard>
+            </TYPE.body>
+          </Row>
+        </StakeCard>
+      </InfoRow>
+      <Row>
+        <EarnCard>
+          <HideSmall>
+            <Row>
+              <img style={{ marginBottom: '0.5rem' }} width={'85px'} src={HaloHalo} alt="Halo halo" />
+            </Row>
+          </HideSmall>
+          <EarnedTitleRow>
+            <TYPE.subHeader
+              style={{
+                letterSpacing: '0.1em',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                fontSize: '0.75rem',
+                justifySelf: 'flex-start'
+              }}
+            >
+              {t('poolSummaryHaloEarned')}
+            </TYPE.subHeader>
+          </EarnedTitleRow>
+          <Row>
+            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}>
+              {summary.haloEarned}
+            </TYPE.body>
+          </Row>
+        </EarnCard>
+      </Row>
+    </DashboardRow>
   )
 }
 

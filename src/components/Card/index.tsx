@@ -42,6 +42,15 @@ export const PinkCard = styled(Card)`
   font-weight: 500;
 `
 
+export const IndigoCard = styled(Card)`
+  background-color: ${({ theme }) => theme.primary1};
+  font-weight: 800;
+`
+
+export const HaloGradientCard = styled(Card)`
+  background: ${({ theme }) => theme.haloGradient};
+  font-weight: 500;
+`
 const BlueCardStyled = styled(Card)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primary1};

@@ -87,5 +87,19 @@
   "forAtLeast": "for at least ",
   "brokenToken": "The selected token is not compatible with Uniswap V1. Adding liquidity will result in locked funds.",
   "toleranceExplanation": "Lowering this limit decreases your risk of frontrunning. However, this makes more likely that your transaction will fail due to normal price movements.",
-  "tokenSearchPlaceholder": "Search name or paste address"
+  "tokenSearchPlaceholder": "Search name or paste address",
+  "manage": "Manage",
+  "farm": "Farm",
+  "stake": "Stake",
+  "vesting": "Vesting",
+  "stakeable": "Stakable",
+  "poolSummaryStakeable": "My Stakeable Value",
+  "poolSummaryStaked": "My Staked Value",
+  "poolSummaryHaloEarned": "My HALO Earned",
+  "totalPoolValue": "Total Pool Value",
+  "valueStaked": "Value Staked",
+  "earned": "Earned",
+  "getBPTTokens": "To stake, get BPT Tokens here",
+  "stakeToEarn": "Stake your Balancer (Liquidty Pool) Pool Tokens (BPT) to earn Halo!",
+  "learnAboutStaking": "Learn about staking"
 }
