@@ -1,4 +1,3 @@
-import { transparentize } from 'polished'
 import React, { useMemo } from 'react'
 import styled, {
   ThemeProvider as StyledComponentsThemeProvider,
@@ -43,15 +42,15 @@ export function colors(darkMode: boolean): Colors {
 
     // text
     text1: darkMode ? '#FFFFFF' : '#000000',
-    text2: darkMode ? '#C3C5CB' : '#565A69',
-    text3: darkMode ? '#6C7284' : '#888D9B',
-    text4: darkMode ? '#565A69' : '#C3C5CB',
+    text2: darkMode ? '#C3C5CB' : '#BDBDBD',
+    text3: darkMode ? '#6C7284' : '#333333',
+    text4: darkMode ? '#565A69' : '#15006D',
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
     bg1: darkMode ? '#18212e' : '#FFFFFF',
-    bg2: darkMode ? '#202d3f' : '#F7F8FA',
-    bg3: darkMode ? '#2a3a50' : '#EDEEF2',
+    bg2: darkMode ? '#202d3f' : '#471BB2',
+    bg3: darkMode ? '#2a3a50' : '#F1F1F1',
     bg4: darkMode ? '#3a506f' : '#CED0D9',
     bg5: darkMode ? '#6C7284' : '#888D9B',
 
@@ -60,17 +59,17 @@ export function colors(darkMode: boolean): Colors {
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
-    primary1: darkMode ? '#0094ec' : '#0e0e23',
-    primary2: darkMode ? '#0097fb' : '#FF8CC3',
-    primary3: darkMode ? '#00aff5' : '#FF99C9',
-    primary4: darkMode ? '#376bad70' : '#F6DDE8',
-    primary5: darkMode ? '#153d6f70' : '#ebebeb',
+    primary1: darkMode ? '#0094ec' : '#471BB2',
+    primary2: darkMode ? '#0097fb' : '#6c3f80',
+    primary3: darkMode ? '#00aff5' : '#7d558e',
+    primary4: darkMode ? '#376bad70' : '#8d6a9c',
+    primary5: darkMode ? '#153d6f70' : '#9d7faa',
 
     // color text
-    primaryText1: darkMode ? '#6da8ff' : '#0e0e23',
+    primaryText1: darkMode ? '#6da8ff' : '#471BB2',
 
     // secondary colors
-    secondary1: darkMode ? '#0094ec' : '#ff007a',
+    secondary1: darkMode ? '#0094ec' : '#471BB2',
     secondary2: darkMode ? '#17000b26' : '#F6DDE8',
     secondary3: darkMode ? '#17000b26' : '#ebebeb',
 
@@ -81,7 +80,8 @@ export function colors(darkMode: boolean): Colors {
     green1: '#27AE60',
     yellow1: '#FFE270',
     yellow2: '#F3841E',
-    blue1: '#0094ec',
+    blue1: '#518CFF',
+    haloGradient: 'linear-gradient(54.93deg, #15006D 12.16%, #15006D 33.28%, #5521B6 66.19%, #2DB7C4 93.15%)',
 
     borderRadius: '20px'
 
@@ -148,13 +148,16 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={16} color={'text1'} {...props} />
   },
   largeHeader(props: TextProps) {
-    return <TextWrapper fontWeight={600} fontSize={24} {...props} />
+    return <TextWrapper fontWeight={600} fontSize={36} {...props} />
   },
   mediumHeader(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={20} {...props} />
   },
   subHeader(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
+  },
+  thHeader(props: TextProps) {
+    return <TextWrapper fontWeight={400} fontSize={12} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={11} {...props} />
@@ -180,13 +183,14 @@ export const TYPE = {
 }
 
 export const FixedGlobalStyle = createGlobalStyle`
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
+
 html, input, textarea, button {
-  font-family: 'Inter', sans-serif;
-  font-display: fallback;
+  font-family: 'Open Sans', sans-serif;
 }
 @supports (font-variation-settings: normal) {
   html, input, textarea, button {
-    font-family: 'Inter var', sans-serif;
+    font-family: 'Open Sans', sans-serif;
   }
 }
 
@@ -222,14 +226,10 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: ${({ theme }) => theme.bg1};
 }
 
 body {
   min-height: 100vh;
-  background-position: 0 -30vh;
-  background-repeat: no-repeat;
-  background-image: ${({ theme }) =>
-    `radial-gradient(50% 50% at 50% 50%, ${transparentize(0.8, '#db4690')} 0%, ${transparentize(1, '#db4690')} 100%)`};
 }
 `

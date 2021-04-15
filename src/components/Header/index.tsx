@@ -2,31 +2,24 @@ import { ChainId, TokenAmount, Currency } from '@sushiswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-// import Logo from '../../assets/svg/logo.svg'
-// import LogoDark from '../../assets/svg/logo_white.svg'
-
-import Logo from '../../assets/images/logo.png'
-import LogoHover from '../../assets/svg/logo_hover.svg'
+import Logo from '../../assets/svg/logo.svg'
 
 import { useActiveWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-import { TYPE, ExternalLink } from '../../theme'
+import { TYPE } from '../../theme'
 
 import { YellowCard } from '../Card'
-import { Moon, Sun } from 'react-feather'
 import Menu from '../Menu'
-
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
+
 import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
@@ -34,7 +27,6 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
-import { SUSHI } from '../../constants'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -136,19 +128,17 @@ const AccountElement = styled.div<{ active: boolean }>`
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
-
   :focus {
     border: 1px solid blue;
   }
 `
 
 const UNIAmount = styled(AccountElement)`
+  background: ${({ theme }) => theme.haloGradient};
   color: white;
   padding: 4px 8px;
   height: 36px;
   font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #f537c3 0%, #00abff 100%), #edeef2;
 `
 
 const UNIWrapper = styled.span`
@@ -196,7 +186,7 @@ const Title = styled.a`
   align-items: center;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
+  margin-right: 15px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -205,15 +195,6 @@ const Title = styled.a`
   }
 `
 
-const StaticIcon = styled.div`
-  padding-left: 4px;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  :hover {
-    opacity: 0;
-  }
-`
 const HoverIcon = styled.div`
   position: relative;
   display: flex;
@@ -232,52 +213,21 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
+  font-size: 1.5rem;
   width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
+  margin: 0 15px;
+  font-weight: 400;
+  font-family: 'Fredoka One', cursive;
 
   &.${activeClassName} {
     border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    font-weight: 200;
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => theme.primaryText1};
   }
-`
-
-const StyledExternalLink = styled(ExternalLink).attrs({
-  activeClassName
-})<{ isActive?: boolean }>`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  border-radius: 3rem;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
-  width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
-
-  &.${activeClassName} {
-    border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
-`}
 `
 
 export const StyledMenuButton = styled.button`
@@ -333,8 +283,6 @@ export default function Header() {
   const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-  // const [isDark] = useDarkModeManager()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const toggleClaimModal = useToggleSelfClaimModal()
 
@@ -359,16 +307,10 @@ export default function Header() {
       <HeaderRow>
         <Title href=".">
           <HoverIcon>
-            <img width={'48px'} src={LogoHover} alt="logo" />
-          </HoverIcon>
-          <StaticIcon>
             <img width={'40px'} src={Logo} alt="logo" />
-          </StaticIcon>
+          </HoverIcon>
         </Title>
         <HeaderLinks>
-          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
-            {t('swap')}
-          </StyledNavLink>
           <StyledNavLink
             id={`pool-nav-link`}
             to={'/pool'}
@@ -380,24 +322,11 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
-            {t('pool')}
+            {t('farm')}
           </StyledNavLink>
-          {/* <StyledNavLink id={`stake-nav-link`} to={'/sushi'}>
-            SUSHI
-          </StyledNavLink> */}
-          {/* <StyledNavLink id={`stake-nav-link`} to={'/vote'}>
-            Vote
-          </StyledNavLink> */}
-          {chainId === ChainId.MAINNET && (
-            <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-              Stake
-            </StyledNavLink>
-          )}
-          {chainId && (
-            <StyledExternalLink id={`analytics-nav-link`} href={'https://analytics.sushi.com'}>
-              Analytics <span style={{ fontSize: '11px' }}>↗</span>
-            </StyledExternalLink>
-          )}
+          <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
+            {t('vesting')}
+          </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
@@ -438,7 +367,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                SUSHI
+                HALO
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
@@ -453,9 +382,9 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
+          {/* <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
+          </StyledMenuButton> */}
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

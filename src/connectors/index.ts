@@ -25,6 +25,11 @@ const RPC = {
   [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network'
 }
 
+// Use uniswap's infura URL for local development to prevent 403 error
+if (process.env.NODE_ENV === 'development') {
+  RPC[ChainId.MAINNET] = 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
+}
+
 export const network = new NetworkConnector({
   defaultChainId: 1,
   urls: RPC

@@ -8,11 +8,9 @@ import { Input as NumericalInput } from '../../components/NumericalInput'
 import { TYPE } from '../../theme'
 
 import { useActiveWeb3React } from '../../hooks'
-import { useTranslation } from 'react-i18next'
 import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
-import { BigNumber } from '@ethersproject/bignumber'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useSushiBar from '../../sushi-hooks/useSushiBar'
@@ -142,7 +140,6 @@ export default function CurrencyInputPanel({
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
-  const { t } = useTranslation()
   const { account } = useActiveWeb3React()
   const theme = useTheme()
 

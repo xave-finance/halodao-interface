@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { ExternalLink } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
   padding: 1rem;
   outline: none;
   border: 1px solid;
@@ -12,6 +11,7 @@ const InfoCard = styled.button<{ active?: boolean }>`
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.primary1};
   }
+  background-color: white;
   border-color: ${({ theme, active }) => (active ? 'transparent' : theme.bg3)};
 `
 

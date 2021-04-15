@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - master
-  pull_request_target:
+      - develop
+  pull_request:
     branches:
       - master
+      - develop
 
 jobs:
   run-linters:

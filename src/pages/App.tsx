@@ -1,10 +1,8 @@
 import React, { Suspense } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
-import { ChainId } from '@sushiswap/sdk'
-import { useActiveWeb3React } from '../hooks/index'
+//import { useActiveWeb3React } from '../hooks/index'
 import styled from 'styled-components'
 import GoogleAnalyticsReporter from '../components/analytics/GoogleAnalyticsReporter'
-
 import AddressClaimModal from '../components/claim/AddressClaimModal'
 import Header from '../components/Header'
 import Polling from '../components/Header/Polling'
@@ -25,16 +23,22 @@ import {
 //import MigrateV1 from './MigrateV1'
 //import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 import RemoveV1Exchange from './MigrateV1/RemoveV1Exchange'
-import Pool from './Pool'
+// import Pool from './Pool'
+import BalancerPool from './BalancerPool'
 import PoolFinder from './PoolFinder'
 import RemoveLiquidity from './RemoveLiquidity'
 import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Swap from './Swap'
-import { OpenClaimAddressModalAndRedirectToSwap, RedirectPathToSwapOnly, RedirectToSwap } from './Swap/redirects'
+import {
+  OpenClaimAddressModalAndRedirectToSwap,
+  RedirectPathToSwapOnly,
+  RedirectToSwap,
+  RedirectPathToPoolOnly
+} from './Swap/redirects'
 //import Vote from './Vote'
 //import VotePage from './Vote/VotePage'
 
-import SushiBar from './SushiBar'
+import HaloHalo from './HaloHalo'
 
 // Additional Tools
 import Tools from './Tools'
@@ -83,7 +87,7 @@ function TopLevelModals() {
 }
 
 export default function App() {
-  const { chainId } = useActiveWeb3React()
+  // const { chainId } = useActiveWeb3React()
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
@@ -103,15 +107,16 @@ export default function App() {
               <Route exact strict path="/tools" component={Tools} />
               <Route exact strict path="/saave" component={Saave} />
               {/* Pages */}
-              {chainId === ChainId.MAINNET && <Route exact strict path="/stake" component={SushiBar} />}
-              <Route exact path="/sushibar" render={() => <Redirect to="/stake" />} />
+              {<Route exact strict path="/vesting" component={HaloHalo} />}
+              <Route exact path="/sushibar" render={() => <Redirect to="/vesting" />} />
               {/* Pages */}
               <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/claim" component={OpenClaimAddressModalAndRedirectToSwap} />
               <Route exact strict path="/swap/:outputCurrency" component={RedirectToSwap} />
               <Route exact strict path="/send" component={RedirectPathToSwapOnly} />
               <Route exact strict path="/find" component={PoolFinder} />
-              <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/farm" component={BalancerPool} />
+              {/* <Route exact strict path="/pool" component={Pool} /> */}
               {/* <Route exact strict path="/sushi" component={Earn} /> */}
               {/* <Route exact strict path="/vote" component={Vote} /> */}
               <Route exact strict path="/create" component={RedirectToAddLiquidity} />
@@ -128,7 +133,7 @@ export default function App() {
               {/* <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} /> */}
               {/* <Route exact strict path="/uni/:currencyIdA/:currencyIdB" component={Manage} /> */}
               {/* <Route exact strict path="/vote/:id" component={VotePage} /> */}
-              <Route component={RedirectPathToSwapOnly} />
+              <Route component={RedirectPathToPoolOnly} />
             </Switch>
           </Web3ReactManager>
           <Marginer />
