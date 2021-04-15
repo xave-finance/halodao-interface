@@ -305,3 +305,17 @@ export const ExtraSmallOnly = styled.span`
     display: block;
   `};
 `
+
+export const HideLarge = styled.span`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToLarge`
+    display: inline;
+  `};
+`
+
+export const HideMedium = styled.span`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: inline;
+  `};
+`

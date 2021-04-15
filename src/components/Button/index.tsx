@@ -120,6 +120,11 @@ export const ButtonPrimaryNormal = styled(Base)`
   }
 `
 
+export const ButtonPrimaryGradient = styled(Base)`
+  background: linear-gradient(54.93deg, #15006d 12.16%, #15006d 33.28%, #5521b6 66.19%, #2db7c4 93.15%);
+  color: white;
+`
+
 export const ButtonLight = styled(Base)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
@@ -237,7 +242,7 @@ export const ButtonUNIGradient = styled(ButtonPrimary)`
 export const ButtonOutlined = styled(Base)`
   border: 1px solid ${({ theme }) => theme.bg2};
   background-color: transparent;
-  color: ${({ theme }) => theme.text1};
+  color: ${({ theme }) => theme.text4};
 
   &:focus {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};

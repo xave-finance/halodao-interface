@@ -2,12 +2,11 @@ import { ChainId, TokenAmount, Currency } from '@sushiswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
-import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
 
-import Logo from '../../assets/images/logo.png'
+import Logo from '../../assets/svg/logo.svg'
 
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
@@ -17,10 +16,10 @@ import { TYPE } from '../../theme'
 
 import { YellowCard } from '../Card'
 import Menu from '../Menu'
-
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
+
 import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
 import { useUserHasAvailableClaim } from '../../state/claim/hooks'
 import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
@@ -129,19 +128,17 @@ const AccountElement = styled.div<{ active: boolean }>`
   white-space: nowrap;
   width: 100%;
   cursor: pointer;
-
   :focus {
     border: 1px solid blue;
   }
 `
 
 const UNIAmount = styled(AccountElement)`
+  background: ${({ theme }) => theme.haloGradient};
   color: white;
   padding: 4px 8px;
   height: 36px;
   font-weight: 500;
-  background-color: ${({ theme }) => theme.bg3};
-  background: radial-gradient(174.47% 188.91% at 1.84% 0%, #f537c3 0%, #00abff 100%), #edeef2;
 `
 
 const UNIWrapper = styled.span`
@@ -189,7 +186,7 @@ const Title = styled.a`
   align-items: center;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 12px;
+  margin-right: 15px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -216,20 +213,20 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1rem;
+  font-size: 1.5rem;
   width: fit-content;
-  margin: 0 12px;
-  font-weight: 500;
+  margin: 0 15px;
+  font-weight: 400;
+  font-family: 'Fredoka One', cursive;
 
   &.${activeClassName} {
     border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 600;
-    color: ${({ theme }) => theme.text1};
+    font-weight: 200;
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => theme.primaryText1};
   }
 `
 
@@ -325,10 +322,10 @@ export default function Header() {
               pathname.startsWith('/find')
             }
           >
-            {t('pool')}
+            {t('farm')}
           </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/stake'}>
-            Stake
+          <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
+            {t('vesting')}
           </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
