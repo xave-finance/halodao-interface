@@ -65,7 +65,7 @@ const BalancerPool = () => {
 
   return (
     <>
-      <PageWrapper id={`pool-page`}>
+      <PageWrapper id={`farm-page`}>
         <SwapPoolTabs active={'pool'} />
         <PoolsSummaryRow>
           <HeaderRow>

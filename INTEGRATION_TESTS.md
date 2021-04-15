@@ -11,25 +11,26 @@ If Cypress UI is running, it will automatically reload when updating the tests.
 
 ### Important
 
-Before running the test, be sure to build the app first!
+Before running the test, be sure to build the app first and serve it locally:
 
 ```
 yarn build
-```
-
-Then serve the app locally:
-
-```
 serve build -l 3000
 ```
 
-Now you can run Cypress UI to start the integration tests
+...or simply use the script:
 
 ```
-$(npm bin)/cypress open
+yarn build-serve
 ```
 
-Click any test or choose `Run all specs` to run all the tests. This will open up a new controlled browser where you can see the automated test in action!
+Now you can run Cypress UI on another terminal using:
+
+```
+yarn cypress
+```
+
+Click any test or choose "Run all specs" to run all the tests. This will open up a new controlled browser where you can see the automated test in action! You can also inspect elements using the controlled browser or view console logs, but avoid using it to surf the web.
 
 ## Running tests via CLI
 

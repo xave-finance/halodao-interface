@@ -7,12 +7,12 @@ describe('Pool', () => {
     // Initially pool summary is blank
     cy.get('#text-stakeable-value').contains('$ --')
     cy.get('#text-staked-value').contains('$ --')
-    cy.get('#text-halo-earned').contains('-- HALO')
+    cy.get('#text-halo-earned').contains('--')
 
     // Then should reload to show the figures
     cy.get('#text-stakeable-value').should('not.contain', '$ --')
     cy.get('#text-staked-value').should('not.contain', '$ --')
-    cy.get('#text-halo-earned').should('not.contain', '-- HALO')
+    cy.get('#text-halo-earned').should('not.contain', '--')
   })
 
   it('displays the pools', () => {

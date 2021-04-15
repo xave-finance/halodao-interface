@@ -324,7 +324,7 @@ export default function Header() {
           >
             {t('farm')}
           </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
+          <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
         </HeaderLinks>
