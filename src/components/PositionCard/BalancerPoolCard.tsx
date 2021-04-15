@@ -822,7 +822,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                             <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                           </>
                         ) : (
-                          <div>
+                          <div style={{
+                            color: "#333333"
+                          }}>
                             <img
                               style={{
                                 marginBottom: "-5px"
