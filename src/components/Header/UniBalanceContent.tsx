@@ -62,12 +62,12 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
                 <UniTokenAnimated width="48px" src={tokenLogo} />{' '}
                 <TYPE.white
                   style={{
-                    fontFamily: "Fredoka One",
-                    fontStyle: "normal",
-                    fontSize: "36px",
-                    fontWeight: "normal",
-                    color: "#FFFFFF",
-                    lineHeight: "44px"
+                    fontFamily: 'Fredoka One',
+                    fontStyle: 'normal',
+                    fontSize: '36px',
+                    fontWeight: 'normal',
+                    color: '#FFFFFF',
+                    lineHeight: '44px'
                   }}
                 >
                   {uniBalance?.toFixed(2, { groupSeparator: ',' })}
@@ -77,18 +77,20 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
                 <RowBetween>
                   <TYPE.white
                     style={{
-                      color: "#FFFFFF",
-                      width: "100%",
-                      textAlign: "center",
-                      fontFamily: "Open Sans",
-                      fontStyle: "normal",
+                      color: '#FFFFFF',
+                      width: '100%',
+                      textAlign: 'center',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
                       fontWeight: 800,
-                      fontSize: "18px",
-                      lineHeight: "25px",
-                      letterSpacing: "0.1em",
-                      opacity: "0.4"
+                      fontSize: '18px',
+                      lineHeight: '25px',
+                      letterSpacing: '0.1em',
+                      opacity: '0.4'
                     }}
-                  >BALANCE</TYPE.white>
+                  >
+                    BALANCE
+                  </TYPE.white>
                 </RowBetween>
               </AutoColumn>
             </CardSection>
@@ -98,11 +100,15 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="sm">
           <AutoColumn gap="md">
             <RowBetween>
-              <TYPE.white color="white" opacity={0.7}>HALO price:</TYPE.white>
+              <TYPE.white color="white" opacity={0.7}>
+                HALO price:
+              </TYPE.white>
               <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
             </RowBetween>
             <RowBetween>
-              <TYPE.white color="white" opacity={0.7}>HALO supply:</TYPE.white>
+              <TYPE.white color="white" opacity={0.7}>
+                HALO supply:
+              </TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
             {uni && uni.chainId === ChainId.MAINNET ? (
