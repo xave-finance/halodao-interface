@@ -4,31 +4,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
 
-// export const useWhitelistedPoolAddresses = () => {
-//   const rewardsContract = useHALORewardsContract()
-//   const [poolAddresses, setPoolAddresses] = useState<string[]>([])
-
-//   useEffect(() => {
-//     const fetchAddresses = async () => {
-//       if (!rewardsContract) return
-//       try {
-//         const addresses = await rewardsContract.getWhitelistedAMMPoolAddresses()
-//         setPoolAddresses(addresses)
-//       } catch (err) {
-//         console.error('Error fetching AMM pool addresses: ', err)
-//       }
-//     }
-
-//     if (rewardsContract) {
-//       fetchAddresses()
-//     } else {
-//       setPoolAddresses([])
-//     }
-//   }, [rewardsContract])
-
-//   return poolAddresses
-// }
-
 export const useWhitelistedPoolAddresses = () => {
   const rewardsContract = useHALORewardsContract()
   const data = useSingleCallResult(rewardsContract, 'getWhitelistedAMMPoolAddresses')
