@@ -659,20 +659,22 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                             paddingLeft: "7%"
                           }}
                         >
-                          <Text>
+                          <Text
+                            style={{
+                              color: "#FFFFFF",
+                              textAlign: "left",
+                              letterSpacing: "normal"
+                            }}
+                          >
                             <div
                               style={{
-                                color: "#FFFFFF",
                                 fontSize: 16,
-                                fontWeight: "bold",
-                                textAlign: "left",
-                                letterSpacing: "normal"
+                                fontWeight: "bold"
                               }}
                             >Total Rewards:</div>
                             <div
                               style={{
                                 marginTop: "5px",
-                                color: "#FFFFFF",
                                 fontFamily: "Fredoka One",
                                 fontStyle: "normal",
                                 fontWeight: "normal",
@@ -725,6 +727,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                             <StyledTextForValue
                               onClick={() => setShowMore(!showMore)}
                               style={{
+                                marginTop: "10px",
                                 fontFamily: "Inter",
                                 fontStyle: "normal",
                                 fontWeight: 900,
