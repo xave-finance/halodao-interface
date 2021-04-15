@@ -648,11 +648,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       }}
                     >
                       <StyledFixedHeightRow>
-                        <StyledRowFixed style={{
-                          display: "block",
-                          paddingBottom: 0
-                        }}>
-                          <img style={{float: "left"}} src={BunnyRewards} alt="Bunny Rewards" />
+                        <StyledRowFixed
+                          style={{
+                            display: 'block',
+                            paddingBottom: 0
+                          }}
+                        >
+                          <img style={{ float: 'left' }} src={BunnyRewards} alt="Bunny Rewards" />
                         </StyledRowFixed>
                         <StyledRowFixed
                           style={{
