@@ -54,7 +54,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
         </CardSection>
-        <Break style={{backgroundColor: "#FFFFFF"}} />
+        <Break style={{ backgroundColor: '#FFFFFF' }} />
         {account && (
           <>
             <CardSection gap="sm">
@@ -94,7 +94,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
                 </RowBetween>
               </AutoColumn>
             </CardSection>
-            <Break style={{backgroundColor: "#FFFFFF"}} />
+            <Break style={{ backgroundColor: '#FFFFFF' }} />
           </>
         )}
         <CardSection gap="sm">
