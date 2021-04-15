@@ -2,11 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 
-import { ButtonOutlined, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
+import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
-import Row, { RowFixed, RowBetween } from '../Row'
+import { RowFixed, RowBetween } from '../Row'
 import { FixedHeightRow } from '.'
-import { CustomLightSpinner, ExternalLink, HideMedium } from 'theme'
+import { CustomLightSpinner, HideMedium } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
@@ -294,30 +294,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
   }
 
-  const claimAndUnstakeRewards = async () => {
-    setLoading({ ...loading, unstakeAndClaim: true })
-    try {
-      const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, parseEther(bptStaked.toString()))
-      await unstakeLpTxn.wait()
-
-      const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
-      const claimPoolRewardsTxnReceipt = await claimPoolRewardsTxn.wait()
-      if (claimPoolRewardsTxnReceipt.status === 1) {
-        setLoading({ ...loading, claim: false, confetti: true })
-      } else {
-        setLoading({ ...loading, claim: false })
-      }
-
-      setLoading({ ...loading, unstakeAndClaim: false, confetti: true })
-    } catch (e) {
-      console.error(e)
-      setLoading({ ...loading, unstakeAndClaim: false })
-    }
-
-    // make sure the confetti still activates without refereshing
-    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
-  }
-
   return (
     <StyledCard bgColor={backgroundColor}>
       <AutoColumn gap="8px">
@@ -540,10 +516,12 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       >
                         {t('tokenCardRewardDescription')}
                       </Text>
-                      <img style={{
-                        marginBottom: '0.5rem',
-                        float: "right"
-                      }} width={'40px'} src={BunnyMoon} />
+                      <img width={'40px'} src={BunnyMoon} alt="Bunny Moon"
+                        style={{
+                          marginBottom: '0.5rem',
+                          float: "right"
+                        }}
+                      />
                     </CardSection>
                   </BalanceCard>
                 </RowBetween>
@@ -651,7 +629,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           display: "block",
                           paddingBottom: 0
                         }}>
-                          <img style={{float: "left"}} src={BunnyRewards} />
+                          <img style={{float: "left"}} src={BunnyRewards} alt="Bunny Rewards" />
                         </StyledRowFixed>
                         <StyledRowFixed
                           style={{
@@ -713,6 +691,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                                     marginBottom: "-5px"
                                   }}
                                   src={Molecule}
+                                  alt="Molecule"
                                 />
                                 Claim
                               </div>
@@ -768,7 +747,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           marginLeft: "30px"
                         }}
                     >
-                      <img src={BunnyRewards} />
+                      <img src={BunnyRewards} alt="Bunny Rewards" />
                     </StyledRowFixed>
                     <StyledRowFixed
                         style={{
@@ -830,6 +809,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                                 marginBottom: "-5px"
                               }}
                               src={Molecule}
+                              alt="Molecule"
                             />
                             Claim
                           </div>

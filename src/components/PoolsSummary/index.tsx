@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import React, { useContext } from 'react'
+import React from 'react'
 
 import Row from '../../components/Row'
 import { IndigoCard } from '../../components/Card'
