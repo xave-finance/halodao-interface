@@ -523,10 +523,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       >
                         {t('tokenCardRewardDescription')}
                       </Text>
-                      <img width={'40px'} src={BunnyMoon} alt="Bunny Moon"
+                      <img
+                        width={'40px'}
+                        src={BunnyMoon}
+                        alt="Bunny Moon"
                         style={{
                           marginBottom: '0.5rem',
-                          float: "right"
+                          float: 'right'
                         }}
                       />
                     </CardSection>
@@ -645,11 +648,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       }}
                     >
                       <StyledFixedHeightRow>
-                        <StyledRowFixed style={{
-                          display: "block",
-                          paddingBottom: 0
-                        }}>
-                          <img style={{float: "left"}} src={BunnyRewards} alt="Bunny Rewards" />
+                        <StyledRowFixed
+                          style={{
+                            display: 'block',
+                            paddingBottom: 0
+                          }}
+                        >
+                          <img style={{ float: 'left' }} src={BunnyRewards} alt="Bunny Rewards" />
                         </StyledRowFixed>
                         <StyledRowFixed
                           style={{
