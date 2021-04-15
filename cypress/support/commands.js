@@ -35,9 +35,6 @@ class CustomizedBridge extends _Eip1193Bridge {
       method = args[0]
       params = args[1]
     }
-    console.log('>>> args:', args)
-    console.log('>>> method:', method)
-    console.log('>>> params:', params)
     if (method === 'eth_requestAccounts' || method === 'eth_accounts') {
       if (isCallbackForm) {
         callback({ result: [TEST_ADDRESS_NEVER_USE] })
