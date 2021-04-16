@@ -89,7 +89,7 @@ const StyledText = styled(Text)`
     line-height: 16px;
     letter-spacing: 0.2rem;
   `};
-  font-size: 12px;
+  font-size: 14px;
 `
 
 const StyledTextForValue = styled(Text)`
@@ -97,7 +97,7 @@ const StyledTextForValue = styled(Text)`
     font-size: 16px;
     line-height: 130%;
   `};
-  font-size: 12px;
+  font-size: 14px;
 `
 
 const StyledButton = styled(ButtonOutlined)`
@@ -126,7 +126,7 @@ const StyledButtonText = styled(Text)`
     font-size: 16px;
   `};
   font-weight: bold;
-  font-size: 12px;
+  font-size: 14px;
 `
 
 const StyledClose = styled(Text)`

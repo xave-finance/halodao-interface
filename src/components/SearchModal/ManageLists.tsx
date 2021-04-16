@@ -76,7 +76,7 @@ const StyledTitleText = styled.div<{ active: boolean }>`
 `
 
 const StyledListUrlText = styled(TYPE.main)<{ active: boolean }>`
-  font-size: 12px;
+  font-size: 14px;
   color: ${({ theme, active }) => (active ? theme.white : theme.text2)};
 `
 

@@ -157,7 +157,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
   },
   thHeader(props: TextProps) {
-    return <TextWrapper fontWeight={400} fontSize={12} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
+    return <TextWrapper fontWeight={400} fontSize={14} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={11} {...props} />

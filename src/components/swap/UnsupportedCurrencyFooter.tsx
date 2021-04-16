@@ -31,7 +31,7 @@ const DetailsFooter = styled.div<{ show: boolean }>`
 `
 
 const AddressText = styled(TYPE.blue)`
-  font-size: 12px;
+  font-size: 14px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     font-size: 10px;
