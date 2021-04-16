@@ -358,7 +358,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           >
             <div
               style={{
-                padding: '30px 30px 0 30px'
+                padding: '20px 30px 0 30px'
               }}
             >
               <HideMedium>
