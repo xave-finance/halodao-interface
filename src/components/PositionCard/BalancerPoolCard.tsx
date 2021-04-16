@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
-
 import { ButtonOutlined, ButtonPrimaryNormal, ButtonSecondary } from '../Button'
 import { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween } from '../Row'
@@ -12,8 +11,6 @@ import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
-import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
-import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import Circle from '../../assets/images/blue-loader.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
@@ -25,6 +22,12 @@ import { useTotalSupply } from 'data/TotalSupply'
 import { toFormattedCurrency } from 'utils/currencyFormatter'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import {
+  useDepositWithdrawPoolTokensCallback,
+  useStakedBPTPerPool,
+  useUnclaimedHALOPerPool
+} from 'halo-hooks/useRewards'
+import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -152,29 +155,40 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
+  const [unstakeAmount, setUnstakeAmount] = useState('')
   const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
-  const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [bptStaked, setBptStaked] = useState(0)
-  const [bptStakedValue, setBptStakedValue] = useState(0)
-  const [unclaimedHalo, setUnclaimedHalo] = useState(0)
-  const [bptBalance, setBptBalance] = useState(0)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
 
-  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
-  const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
-  const lpTokenContract = useTokenContract(poolInfo.address)
+  // Get user BPT balance
+  const bptBalanceAmount = useTokenBalance(poolInfo.address)
+  const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
-  // BPT price calculation
+  // Get user staked BPT
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.address])
+  const bptStaked = stakedBPTs[poolInfo.address]
+
+  // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
   const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
+  const bptStakedValue = (bptStaked ?? 0) * bptPrice
+
+  // Get user earned HALO
+  const unclaimedHALOs = useUnclaimedHALOPerPool([poolInfo.address])
+  const unclaimedHalo = unclaimedHALOs[poolInfo.address]
 
   // Make use of `useApproveCallback` for checking & setting allowance
+  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
-  // Updating the state of stake button
+  // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
+  const [depositPoolTokens, withdrawPoolTokens] = useDepositWithdrawPoolTokensCallback()
+
+  /**
+   * Updating the state of stake button
+   */
   useEffect(() => {
     if (isTxInProgress) return
 
@@ -192,7 +206,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     }
   }, [approveState, stakeAmount, bptBalance, isTxInProgress])
 
-  // Updating the state of unstake button
+  /**
+   * Updating the state of unstake button
+   */
   useEffect(() => {
     if (isTxInProgress) return
 
@@ -204,41 +220,15 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     }
   }, [unstakeAmount, bptStaked, isTxInProgress])
 
-  // get bpt balance based on the token address in the poolInfo
-  const getBptBalance = useCallback(async () => {
-    const bptBalanceValue = lpTokenContract?.balanceOf(account)
-    setBptBalance(+formatEther(await bptBalanceValue))
-  }, [lpTokenContract, account])
-
-  const getUserTotalTokenslByPoolAddress = useCallback(async () => {
-    const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
-    setBptStaked(+formatEther(lpTokens))
-
-    // Get staked tokens value
-    const stakedValue = +formatEther(lpTokens) * bptPrice
-    setBptStakedValue(stakedValue)
-  }, [rewardsContract, account, poolInfo.address, bptPrice])
-
-  const getUnclaimedPoolReward = useCallback(async () => {
-    const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
-    // we can leave this to monitor the whole big int
-    console.log('Unclaimed HALO: ', unclaimedHaloInPool.toString())
-    setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
-  }, [rewardsContract, account, poolInfo.address])
-
-  useEffect(() => {
-    getUserTotalTokenslByPoolAddress()
-    getBptBalance()
-    getUnclaimedPoolReward()
-  }, [bptBalance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
-
   /**
    * Approves the stake amount
    */
   const approveStakeAmount = async () => {
     setIsTxInProgress(true)
     setStakeButtonState(StakeButtonStates.Approving)
+
     await approveCallback()
+
     setIsTxInProgress(false)
   }
 
@@ -249,17 +239,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     setIsTxInProgress(true)
     setStakeButtonState(StakeButtonStates.Staking)
 
-    const lpTokenAmount = parseEther(stakeAmount)
     try {
-      const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
-      const stakeLpTxnReceipt = await stakeLpTxn.wait()
+      const tx = await depositPoolTokens(poolInfo.address, parseFloat(stakeAmount) ?? 0)
+      await tx.wait()
     } catch (e) {
       console.error('Stake error: ', e)
     }
 
     setStakeAmount('')
-    getBptBalance() // refresh balance
-
     setStakeButtonState(StakeButtonStates.Disabled)
     setIsTxInProgress(false)
   }
@@ -271,17 +258,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
     setIsTxInProgress(true)
     setUnstakeButtonState(UnstakeButtonStates.Unstaking)
 
-    const lpTokenAmount = parseEther(unstakeAmount)
     try {
-      const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, lpTokenAmount.toString())
-      await unstakeLpTxn.wait()
+      const tx = await withdrawPoolTokens(poolInfo.address, parseFloat(unstakeAmount) ?? 0)
+      await tx.wait()
     } catch (e) {
       console.error('Unstake error: ', e)
     }
 
     setUnstakeAmount('')
-    getBptBalance() // refresh balance
-
     setUnstakeButtonState(UnstakeButtonStates.Disabled)
     setIsTxInProgress(false)
   }
