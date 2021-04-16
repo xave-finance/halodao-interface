@@ -298,7 +298,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
       <AutoColumn>
         <StyledFixedHeightRow
           style={{
-            padding: "0 0 0 10px"
+            padding: '0 0 0 10px'
           }}
         >
           <StyledRowFixed width="25%" gap="8px">
@@ -357,7 +357,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             style={{
               background: '#F8F8F8',
               borderRadius: '4px',
-              marginTop: "10px"
+              marginTop: '10px'
             }}
           >
             <div
