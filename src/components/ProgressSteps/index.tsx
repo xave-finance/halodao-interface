@@ -21,7 +21,7 @@ const Circle = styled.div<{ confirmed?: boolean; disabled?: boolean }>`
   align-items: center;
   justify-content: center;
   line-height: 8px;
-  font-size: 12px;
+  font-size: 14px;
 `
 
 const CircleRow = styled.div`
