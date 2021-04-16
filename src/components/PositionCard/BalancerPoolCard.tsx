@@ -295,10 +295,18 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   }
 
   return (
-    <StyledCard bgColor={backgroundColor}>
-      <AutoColumn gap="8px">
-        <StyledFixedHeightRow>
-          <StyledRowFixed gap="8px">
+    <StyledCard bgColor={backgroundColor}
+      style={{
+        padding: "5px 0 5px 0"
+      }}
+    >
+      <AutoColumn>
+        <StyledFixedHeightRow
+          style={{
+            padding: "0 0 0 10px"
+          }}
+        >
+          <StyledRowFixed width="25%" gap="8px">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -307,25 +315,25 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed>
+          <StyledRowFixed width="21%">
             <HideMedium>
               <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed>
+          <StyledRowFixed width="18%">
             <HideMedium>
               <StyledText fontWeight={600}>{t('stakeable')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed>
+          <StyledRowFixed width="18%">
             <HideMedium>
               <StyledText fontWeight={600}>{t('valueStaked')}</StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed>
+          <StyledRowFixed width="16%">
             <HideMedium>
               <StyledText fontWeight={600}>{t('earned')}:</StyledText>
             </HideMedium>
@@ -336,11 +344,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    <StyledButtonText>{t('closeTxt')}</StyledButtonText>
+                    <StyledButtonText width="74px">{t('closeTxt')}</StyledButtonText>
                   </>
                 ) : (
                   <>
-                    <StyledButtonText>{t('manage')}</StyledButtonText>
+                    <StyledButtonText width="74px">{t('manage')}</StyledButtonText>
                   </>
                 )}
               </StyledButton>
@@ -353,7 +361,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             gap="8px"
             style={{
               background: '#F8F8F8',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              marginTop: "10px"
             }}
           >
             <div
@@ -378,7 +387,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
                     </StyledRowFixed>
                     <StyledRowFixed>
-                      <StyledText fontWeight={600}>Total Pool Value:</StyledText>
+                      <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
                       <StyledTextForValue>
                         {toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}
                       </StyledTextForValue>
