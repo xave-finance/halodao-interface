@@ -439,15 +439,21 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     </StyledRowFixed>
                   </StyledBalanceStakeWeb>
                 </StyledFixedHeightRowWeb>
-                <RowBetween marginTop="10px">
-                  <NumericalInput value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
-                  <NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
-                </RowBetween>
-                <RowBetween marginTop="10px">
+                <RowBetween
+                  style={{
+                    marginTop: "10px",
+                    display: "block",
+                    width: "48%",
+                    float: "left"
+                  }}
+                 >
+                  <NumericalInput style={{
+                    width: "100%"
+                  }} value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
                   <ButtonPrimaryNormal
                     padding="8px"
                     borderRadius="8px"
-                    width="48%"
+                    width="100%"
                     disabled={
                       !(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking
                     }
@@ -467,10 +473,22 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       t('stake')
                     )}
                   </ButtonPrimaryNormal>
+                </RowBetween>
+                <RowBetween
+                  style={{
+                    marginTop: "10px",
+                    display: "block",
+                    width: "48%",
+                    float: "right"
+                  }}
+                >
+                  <NumericalInput style={{
+                    width: "100%"
+                  }} value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
                   <ButtonPrimaryNormal
                     padding="8px"
                     borderRadius="8px"
-                    width="48%"
+                    width="100%"
                     disabled={
                       !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
                     }
