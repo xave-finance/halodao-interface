@@ -166,17 +166,17 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
   // Get user staked BPT
   const stakedBPTs = useStakedBPTPerPool([poolInfo.address])
-  const bptStaked = stakedBPTs[poolInfo.address]
+  const bptStaked = stakedBPTs[poolInfo.address] ?? 0
 
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
   const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
-  const bptStakedValue = (bptStaked ?? 0) * bptPrice
+  const bptStakedValue = bptStaked * bptPrice
 
   // Get user earned HALO
   const unclaimedHALOs = useUnclaimedHALOPerPool([poolInfo.address])
-  const unclaimedHalo = unclaimedHALOs[poolInfo.address]
+  const unclaimedHalo = unclaimedHALOs[poolInfo.address] ?? 0
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
@@ -312,7 +312,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    <StyledButtonText>{t('manage')}</StyledButtonText>
+                    <StyledButtonText>{t('close')}</StyledButtonText>
                   </>
                 ) : (
                   <>
@@ -342,8 +342,12 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             </FixedHeightRow>
 
             <RowBetween marginTop="10px">
-              <NumericalInput value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
-              <NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
+              <NumericalInput value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} id="stake-input" />
+              <NumericalInput
+                value={unstakeAmount}
+                onUserInput={amount => setUnstakeAmount(amount)}
+                id="unstake-input"
+              />
             </RowBetween>
 
             <RowBetween marginTop="10px">
@@ -361,6 +365,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     approveStakeAmount()
                   }
                 }}
+                id="stake-button"
               >
                 {(stakeButtonState === StakeButtonStates.Disabled ||
                   stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
@@ -384,6 +389,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 width="48%"
                 disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(unstakeButtonState)}
                 onClick={unstakeLpToken}
+                id="unstake-button"
               >
                 {(unstakeButtonState === UnstakeButtonStates.Disabled ||
                   unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}

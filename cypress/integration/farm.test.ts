@@ -1,6 +1,6 @@
-describe('Pool', () => {
+describe('Farm', () => {
   beforeEach(() => {
-    cy.visit('/pool')
+    cy.visit('/farm')
   })
 
   it('displays a non-blank pool summary', () => {
@@ -19,7 +19,15 @@ describe('Pool', () => {
     cy.get('.pool-card')
   })
 
-  it('display pool details', () => {
+  it('can stake BPT', () => {
     cy.contains('Manage').click()
+    cy.get('#stake-input').type('1')
+    cy.get('#stake-button').click()
+
+    // @todo:
+    // - sign approve tx (in metamask?)
+    // - click button again to stake
+    // - sign stake tx (in metamask?)
+    // - verify staked BPT has increased
   })
 })
