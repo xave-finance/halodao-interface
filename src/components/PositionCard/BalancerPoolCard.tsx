@@ -336,7 +336,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <StyledButton onClick={() => setShowMore(!showMore)}>
                 {showMore ? (
                   <>
-                    <StyledButtonText>{t('manage')}</StyledButtonText>
+                    <StyledButtonText>{t('closeTxt')}</StyledButtonText>
                   </>
                 ) : (
                   <>
