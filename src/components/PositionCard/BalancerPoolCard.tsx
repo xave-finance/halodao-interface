@@ -684,12 +684,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           >
                             <div
                               style={{
-                                fontSize: 16,
-                                fontWeight: 'bold'
+                                fontFamily: "Open Sans",
+                                fontStyle: "normal",
+                                fontWeight: "bold",
+                                lineHeight: "130%"
                               }}
-                            >
-                              Total Rewards:
-                            </div>
+                            >{poolInfo.pair} Rewards:</div>
+
                             <div
                               style={{
                                 marginTop: '5px',
@@ -802,7 +803,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       }}
                     >
                       <Text>
-                        <div>Pair Name Rewards:</div>
+                        <div
+                          style={{
+                            fontFamily: "Open Sans",
+                            fontStyle: "normal",
+                            fontWeight: "bold",
+                            lineHeight: "130%"
+                          }}
+                        >{poolInfo.pair} Rewards:</div>
                         <div
                           style={{
                             fontFamily: 'Fredoka One',
