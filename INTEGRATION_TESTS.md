@@ -37,5 +37,5 @@ Click any test or choose "Run all specs" to run all the tests. This will open up
 Simply run the command on terminal:
 
 ```
-npm run integaration-test
+yarn integaration-test
 ```
