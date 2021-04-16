@@ -521,7 +521,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   >
                     <CardSection
                       style={{
-                        display: 'block'
+                        display: "block",
+                        padding: 0,
+                        margin: "15px 25px 15px 25px"
                       }}
                     >
                       <Text
@@ -540,7 +542,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         src={BunnyMoon}
                         alt="Bunny Moon"
                         style={{
-                          marginBottom: '0.5rem',
                           float: 'right'
                         }}
                       />
