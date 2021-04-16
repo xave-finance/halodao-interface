@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
-import { SwapPoolTabs } from '../../components/NavigationTabs'
 import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
@@ -58,7 +57,7 @@ const StyledExternalLink = styled(ExternalLink)`
   line-height: 130%;
 `
 
-const BalancerPool = () => {
+const Farm = () => {
   const poolAddresses = useWhitelistedPoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
   const { t } = useTranslation()
@@ -66,7 +65,6 @@ const BalancerPool = () => {
   return (
     <>
       <PageWrapper id={`farm-page`}>
-        <SwapPoolTabs active={'pool'} />
         <PoolsSummaryRow>
           <HeaderRow>
             <TitleRow>
@@ -135,4 +133,4 @@ const BalancerPool = () => {
   )
 }
 
-export default BalancerPool
+export default Farm

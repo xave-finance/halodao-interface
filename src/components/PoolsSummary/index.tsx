@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import React, { useContext } from 'react'
+import React from 'react'
 
 import Row from '../../components/Row'
 import { IndigoCard } from '../../components/Card'
@@ -76,7 +76,10 @@ const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
             </TYPE.subHeader>
           </InfoTitleRow>
           <Row>
-            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }} id="text-stakeable-value">
+            <TYPE.body
+              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+              id="text-stakeable-value"
+            >
               {summary.stakeableValue}
             </TYPE.body>
           </Row>
@@ -96,7 +99,10 @@ const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
             </TYPE.subHeader>
           </InfoTitleRow>
           <Row>
-            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }} id="text-staked-value">
+            <TYPE.body
+              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+              id="text-staked-value"
+            >
               {summary.stakedValue}
             </TYPE.body>
           </Row>
@@ -123,7 +129,10 @@ const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
             </TYPE.subHeader>
           </EarnedTitleRow>
           <Row>
-            <TYPE.body style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }} id="text-halo-earned">
+            <TYPE.body
+              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+              id="text-halo-earned"
+            >
               {summary.haloEarned}
             </TYPE.body>
           </Row>

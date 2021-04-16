@@ -1,6 +1,6 @@
 import { useActiveWeb3React } from 'hooks'
 import { useHALORewardsContract } from 'hooks/useContract'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
 

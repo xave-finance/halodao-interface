@@ -362,10 +362,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <NumericalInput value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
             </RowBetween>
 
-            <p>
-              approveState: {approveState} | stakeButtonState: {stakeButtonState}
-            </p>
-
             <RowBetween marginTop="10px">
               <ButtonPrimaryNormal
                 padding="8px"
@@ -375,7 +371,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   stakeButtonState
                 )}
                 onClick={() => {
-                  if (stakeButtonState == StakeButtonStates.Approved) {
+                  if (stakeButtonState === StakeButtonStates.Approved) {
                     stakeLpToken()
                   } else {
                     approveStakeAmount()
