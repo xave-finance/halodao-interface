@@ -775,19 +775,21 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 <BalanceCard
                   style={{
                     background: '#15006D',
-                    borderRadius: '0px 0px 4px 4px',
-                    padding: '30px 0 50px 0'
+                    borderRadius: '0px 0px 4px 4px'
                   }}
                 >
                   <StyledFixedHeightRow
                     style={{
-                      display: 'block'
+                      display: 'block',
+                      height: "100%",
+                      padding: "20px 0"
                     }}
                   >
                     <StyledRowFixed
                       style={{
                         float: 'left',
-                        marginLeft: '30px'
+                        marginLeft: '30px',
+                        height: "100%"
                       }}
                     >
                       <img src={BunnyRewards} alt="Bunny Rewards" />
@@ -799,7 +801,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         color: '#FFFFFF',
                         fontSize: 16,
                         fontWeight: 800,
-                        textAlign: 'left'
+                        textAlign: 'left',
+                        height: "100%"
                       }}
                     >
                       <Text>
@@ -827,7 +830,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <StyledRowFixed
                       style={{
                         float: 'right',
-                        marginRight: '20px'
+                        marginRight: '30px',
+                        height: "100%"
                       }}
                     >
                       <ButtonPrimaryNormal
