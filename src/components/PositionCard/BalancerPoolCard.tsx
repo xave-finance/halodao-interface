@@ -45,8 +45,7 @@ const StyledFixedHeightRow = styled(FixedHeightRow)`
 export const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     background: ${({ theme }) => theme.bg3};
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding: 5px 0 0 0;
     border-radius: 4px;
     box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
     margin-bottom: 0.5rem;
@@ -55,7 +54,7 @@ export const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
   overflow: hidden;
-  padding: .5rem;
+  padding: 5px 0 5px 0;
   border-radius: 0px;
 `
 
@@ -295,11 +294,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   }
 
   return (
-    <StyledCard bgColor={backgroundColor}
-      style={{
-        padding: "5px 0 5px 0"
-      }}
-    >
+    <StyledCard bgColor={backgroundColor}>
       <AutoColumn>
         <StyledFixedHeightRow
           style={{
