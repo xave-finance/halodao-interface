@@ -410,13 +410,31 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                   >
                     <StyledRowFixed>
-                      <Text fontSize={16} fontWeight={800}>
-                        Balance: {bptBalance.toFixed(2)} BPT
+                      <Text
+                        style={{
+                            fontFamily: "Open Sans",
+                            fontStyle: "normal",
+                            fontWeight: 800,
+                            fontSize: "14px",
+                            lineHeight: "16px",
+                            letterSpacing: "0.2em"
+                        }}
+                      >
+                      BALANCE: {bptBalance.toFixed(2)} BPT
                       </Text>
                     </StyledRowFixed>
                     <StyledRowFixed>
-                      <Text fontSize={16} fontWeight={800}>
-                        Staked: {bptStaked.toFixed(2)} BPT
+                      <Text
+                        style={{
+                          fontFamily: "Open Sans",
+                          fontStyle: "normal",
+                          fontWeight: 800,
+                          fontSize: "14px",
+                          lineHeight: "16px",
+                          letterSpacing: "0.2em"
+                        }}
+                      >
+                        STAKED: {bptStaked.toFixed(2)} BPT
                       </Text>
                     </StyledRowFixed>
                   </StyledBalanceStakeWeb>
