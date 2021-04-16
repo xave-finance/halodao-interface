@@ -412,26 +412,26 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <StyledRowFixed>
                       <Text
                         style={{
-                            fontFamily: "Open Sans",
-                            fontStyle: "normal",
-                            fontWeight: 800,
-                            fontSize: "14px",
-                            lineHeight: "16px",
-                            letterSpacing: "0.2em"
+                          fontFamily: 'Open Sans',
+                          fontStyle: 'normal',
+                          fontWeight: 800,
+                          fontSize: '14px',
+                          lineHeight: '16px',
+                          letterSpacing: '0.2em'
                         }}
                       >
-                      BALANCE: {bptBalance.toFixed(2)} BPT
+                        BALANCE: {bptBalance.toFixed(2)} BPT
                       </Text>
                     </StyledRowFixed>
                     <StyledRowFixed>
                       <Text
                         style={{
-                          fontFamily: "Open Sans",
-                          fontStyle: "normal",
+                          fontFamily: 'Open Sans',
+                          fontStyle: 'normal',
                           fontWeight: 800,
-                          fontSize: "14px",
-                          lineHeight: "16px",
-                          letterSpacing: "0.2em"
+                          fontSize: '14px',
+                          lineHeight: '16px',
+                          letterSpacing: '0.2em'
                         }}
                       >
                         STAKED: {bptStaked.toFixed(2)} BPT
@@ -441,15 +441,19 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledFixedHeightRowWeb>
                 <RowBetween
                   style={{
-                    marginTop: "10px",
-                    display: "block",
-                    width: "48%",
-                    float: "left"
+                    marginTop: '10px',
+                    display: 'block',
+                    width: '48%',
+                    float: 'left'
                   }}
-                 >
-                  <NumericalInput style={{
-                    width: "100%"
-                  }} value={stakeAmount} onUserInput={amount => setStakeAmount(amount)} />
+                >
+                  <NumericalInput
+                    style={{
+                      width: '100%'
+                    }}
+                    value={stakeAmount}
+                    onUserInput={amount => setStakeAmount(amount)}
+                  />
                   <ButtonPrimaryNormal
                     padding="8px"
                     borderRadius="8px"
@@ -476,15 +480,19 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </RowBetween>
                 <RowBetween
                   style={{
-                    marginTop: "10px",
-                    display: "block",
-                    width: "48%",
-                    float: "right"
+                    marginTop: '10px',
+                    display: 'block',
+                    width: '48%',
+                    float: 'right'
                   }}
                 >
-                  <NumericalInput style={{
-                    width: "100%"
-                  }} value={unstakeAmount} onUserInput={amount => setUnstakeAmount(amount)} />
+                  <NumericalInput
+                    style={{
+                      width: '100%'
+                    }}
+                    value={unstakeAmount}
+                    onUserInput={amount => setUnstakeAmount(amount)}
+                  />
                   <ButtonPrimaryNormal
                     padding="8px"
                     borderRadius="8px"
@@ -521,9 +529,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   >
                     <CardSection
                       style={{
-                        display: "block",
+                        display: 'block',
                         padding: 0,
-                        margin: "15px 25px 15px 25px"
+                        margin: '15px 25px 15px 25px'
                       }}
                     >
                       <Text
@@ -684,12 +692,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           >
                             <div
                               style={{
-                                fontFamily: "Open Sans",
-                                fontStyle: "normal",
-                                fontWeight: "bold",
-                                lineHeight: "130%"
+                                fontFamily: 'Open Sans',
+                                fontStyle: 'normal',
+                                fontWeight: 'bold',
+                                lineHeight: '130%'
                               }}
-                            >{poolInfo.pair} Rewards:</div>
+                            >
+                              {poolInfo.pair} Rewards:
+                            </div>
 
                             <div
                               style={{
@@ -781,15 +791,15 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   <StyledFixedHeightRow
                     style={{
                       display: 'block',
-                      height: "100%",
-                      padding: "20px 0"
+                      height: '100%',
+                      padding: '20px 0'
                     }}
                   >
                     <StyledRowFixed
                       style={{
                         float: 'left',
                         marginLeft: '30px',
-                        height: "100%"
+                        height: '100%'
                       }}
                     >
                       <img src={BunnyRewards} alt="Bunny Rewards" />
@@ -802,18 +812,20 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         fontSize: 16,
                         fontWeight: 800,
                         textAlign: 'left',
-                        height: "100%"
+                        height: '100%'
                       }}
                     >
                       <Text>
                         <div
                           style={{
-                            fontFamily: "Open Sans",
-                            fontStyle: "normal",
-                            fontWeight: "bold",
-                            lineHeight: "130%"
+                            fontFamily: 'Open Sans',
+                            fontStyle: 'normal',
+                            fontWeight: 'bold',
+                            lineHeight: '130%'
                           }}
-                        >{poolInfo.pair} Rewards:</div>
+                        >
+                          {poolInfo.pair} Rewards:
+                        </div>
                         <div
                           style={{
                             fontFamily: 'Fredoka One',
@@ -831,7 +843,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       style={{
                         float: 'right',
                         marginRight: '30px',
-                        height: "100%"
+                        height: '100%'
                       }}
                     >
                       <ButtonPrimaryNormal
