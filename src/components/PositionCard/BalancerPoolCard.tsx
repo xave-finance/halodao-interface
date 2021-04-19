@@ -208,7 +208,7 @@ const AutoColumnCustom = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background: #F8F8F8;
+  background: #f8f8f8;
   border-radius: 4px;
   margin-top: 10px;
 
@@ -399,8 +399,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledButtonWeb>
               </StyledRowFixedWeb>
               <StyledRowFixedMobile>
-                 <div onClick={() => setShowMore(!showMore)}>
-                    {showMore ? (
+                <div onClick={() => setShowMore(!showMore)}>
+                  {showMore ? (
                     <StyledCardBoxWeb>
                       <StyledButtonMobile>
                         <StyledButtonText width="74px">{t('closeTxt')}</StyledButtonText>
