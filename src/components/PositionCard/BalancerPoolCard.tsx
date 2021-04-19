@@ -64,6 +64,7 @@ const StyledRowFixed = styled(RowFixed)`
     margin-top: 0.5rem;
     align-items: flex-start;
     justify-content: flex-start;
+    width: 100%;
 
     &:first-of-type {
       flex-direction: row;
@@ -347,7 +348,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
       <AutoColumn>
         <StyledFixedHeightRow
           style={{
-            padding: '0 0 0 10px'
+            padding: '0 0 0 30px'
           }}
         >
           <StyledRowFixed width="25%" gap="8px">
@@ -383,6 +384,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             </HideMedium>
             <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
           </StyledRowFixed>
+          {/* Manage and Close buttons for web and mobile */}
           {account && (
             <>
               <StyledRowFixedWeb>
@@ -419,9 +421,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
         {showMore && (
           <AutoColumnCustom>
+            {/* Line */}
             <HideMedium>
               <RowBetween>
-                <StyledBorderBottom>.</StyledBorderBottom>
+                <StyledBorderBottom
+                  style={{
+                    margin: '0 0 0 30px'
+                  }}
+                >.</StyledBorderBottom>
               </RowBetween>
             </HideMedium>
             <div
@@ -692,124 +699,126 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         </Text>
                       </CardSection>
                     </BalanceCard>
-                    <BalanceCard
-                      style={{
-                        background: '#15006D',
-                        borderRadius: '0px 0px 4px 4px'
-                      }}
-                    >
-                      <StyledFixedHeightRow>
-                        <StyledRowFixed
-                          style={{
-                            display: 'block',
-                            paddingBottom: 0
-                          }}
-                        >
-                          <img style={{ float: 'left' }} src={BunnyRewards} alt="Bunny Rewards" />
-                        </StyledRowFixed>
-                        <StyledRowFixed
-                          style={{
-                            marginTop: '2%',
-                            paddingLeft: '7%'
-                          }}
-                        >
-                          <Text
-                            style={{
-                              color: '#FFFFFF',
-                              textAlign: 'left',
-                              letterSpacing: 'normal'
-                            }}
-                          >
-                            <div
-                              style={{
-                                fontFamily: 'Open Sans',
-                                fontStyle: 'normal',
-                                fontWeight: 'bold',
-                                lineHeight: '130%'
-                              }}
-                            >
-                              {poolInfo.pair} Rewards:
-                            </div>
-
-                            <div
-                              style={{
-                                marginTop: '5px',
-                                fontFamily: 'Fredoka One',
-                                fontStyle: 'normal',
-                                fontWeight: 'normal',
-                                fontSize: '36px',
-                                lineHeight: '44px'
-                              }}
-                            >
-                              {unclaimedHalo.toFixed(2)} HALO
-                            </div>
-                          </Text>
-                          <ButtonPrimaryNormal
-                            padding="8px"
-                            borderRadius="8px"
-                            width="48%"
-                            disabled={!(unclaimedHalo > 0) || loading.claim}
-                            onClick={claimPoolRewards}
-                            style={{
-                              marginTop: '5px',
-                              width: '90%',
-                              height: '53px',
-                              background: '#FFFFFF',
-                              borderRadius: '10px',
-                              float: 'right',
-                              fontWeight: 'bold'
-                            }}
-                          >
-                            {loading.claim ? (
-                              <>
-                                {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
-                                <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                              </>
-                            ) : (
-                              <div>
-                                <img
-                                  style={{
-                                    marginBottom: '-5px'
-                                  }}
-                                  src={Molecule}
-                                  alt="Molecule"
-                                />
-                                Claim
-                              </div>
-                            )}
-                          </ButtonPrimaryNormal>
-                          <StyledClose
-                            style={{
-                              display: 'block',
-                              width: '90%'
-                            }}
-                          >
-                            <StyledTextForValue
-                              onClick={() => setShowMore(!showMore)}
-                              style={{
-                                marginTop: '10px',
-                                fontFamily: 'Inter',
-                                fontStyle: 'normal',
-                                fontWeight: 900,
-                                fontSize: '16px',
-                                lineHeight: '150%',
-                                textDecorationLine: 'underline',
-                                color: '#FFFFFF',
-                                cursor: 'pointer',
-                                float: 'right',
-                                letterSpacing: 'normal'
-                              }}
-                            >
-                              Close X
-                            </StyledTextForValue>
-                          </StyledClose>
-                        </StyledRowFixed>
-                      </StyledFixedHeightRow>
-                    </BalanceCard>
                   </StyledRowFixed>
                 </StyledFixedHeightRow>
               </HideMedium>
             </div>
+            <HideMedium>
+              <BalanceCard
+                style={{
+                  background: '#15006D',
+                  borderRadius: '0px 0px 4px 4px'
+                }}
+              >
+                <StyledFixedHeightRow>
+                  <StyledRowFixed
+                    style={{
+                      display: 'block',
+                      paddingBottom: 0
+                    }}
+                  >
+                    <img style={{ float: 'left' }} src={BunnyRewards} alt="Bunny Rewards" />
+                  </StyledRowFixed>
+                  <StyledRowFixed
+                    style={{
+                      marginTop: '2%',
+                      paddingLeft: '7%'
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#FFFFFF',
+                        textAlign: 'left',
+                        letterSpacing: 'normal'
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: 'Open Sans',
+                          fontStyle: 'normal',
+                          fontWeight: 'bold',
+                          lineHeight: '130%'
+                        }}
+                      >
+                        {poolInfo.pair} Rewards:
+                      </div>
+
+                      <div
+                        style={{
+                          marginTop: '5px',
+                          fontFamily: 'Fredoka One',
+                          fontStyle: 'normal',
+                          fontWeight: 'normal',
+                          fontSize: '36px',
+                          lineHeight: '44px'
+                        }}
+                      >
+                        {unclaimedHalo.toFixed(2)} HALO
+                      </div>
+                    </Text>
+                    <ButtonPrimaryNormal
+                      padding="8px"
+                      borderRadius="8px"
+                      width="48%"
+                      disabled={!(unclaimedHalo > 0) || loading.claim}
+                      onClick={claimPoolRewards}
+                      style={{
+                        marginTop: '5px',
+                        width: '90%',
+                        height: '53px',
+                        background: '#FFFFFF',
+                        borderRadius: '10px',
+                        float: 'right',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {loading.claim ? (
+                        <>
+                          {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      ) : (
+                        <div>
+                          <img
+                            style={{
+                              marginBottom: '-5px'
+                            }}
+                            src={Molecule}
+                            alt="Molecule"
+                          />
+                          Claim
+                        </div>
+                      )}
+                    </ButtonPrimaryNormal>
+                    <StyledClose
+                      style={{
+                        display: 'block',
+                        width: '90%'
+                      }}
+                    >
+                      <StyledTextForValue
+                        onClick={() => setShowMore(!showMore)}
+                        style={{
+                          marginTop: '10px',
+                          fontFamily: 'Inter',
+                          fontStyle: 'normal',
+                          fontWeight: 900,
+                          fontSize: '16px',
+                          lineHeight: '150%',
+                          textDecorationLine: 'underline',
+                          color: '#FFFFFF',
+                          cursor: 'pointer',
+                          float: 'right',
+                          letterSpacing: 'normal'
+                        }}
+                      >
+                        Close X
+                      </StyledTextForValue>
+                    </StyledClose>
+                  </StyledRowFixed>
+                </StyledFixedHeightRow>
+              </BalanceCard>
+            </HideMedium>
             <StyledCardBoxWeb>
               <RowBetween marginTop="10px">
                 <BalanceCard
