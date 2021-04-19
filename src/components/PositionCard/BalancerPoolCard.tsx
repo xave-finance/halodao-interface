@@ -369,19 +369,25 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">{t('stakeable')}:</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">
+                {t('stakeable')}:
+              </StyledText>
             </HideMedium>
             <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">{t('valueStaked')}</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">
+                {t('valueStaked')}
+              </StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">{t('earned')}:</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">
+                {t('earned')}:
+              </StyledText>
             </HideMedium>
             <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
           </StyledRowFixed>
@@ -412,7 +418,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   ) : (
                     <StyledButtonMobile
                       style={{
-                        margin: "20px 0 20px 0"
+                        margin: '20px 0 20px 0'
                       }}
                     >
                       <StyledButtonText width="74px">{t('manage')}</StyledButtonText>
