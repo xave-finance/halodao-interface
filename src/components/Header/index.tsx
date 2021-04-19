@@ -12,7 +12,7 @@ import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-import { TYPE } from '../../theme'
+import { ExternalLink, TYPE } from '../../theme'
 
 import { YellowCard } from '../Card'
 import Menu from '../Menu'
@@ -27,6 +27,7 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
+import { darken } from 'polished'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -230,6 +231,38 @@ const StyledNavLink = styled(NavLink).attrs({
   }
 `
 
+const StyledExternalLink = styled(ExternalLink).attrs({
+  activeClassName
+})<{ isActive?: boolean }>`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: left;
+  border-radius: 3rem;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text2};
+  font-size: 1.5rem;
+  width: fit-content;
+  margin: 0 15px;
+  font-weight: 400;
+  font-family: 'Fredoka One', cursive;
+
+  &.${activeClassName} {
+    border-radius: ${({ theme }) => theme.borderRadius};
+    font-weight: 600;
+    color: ${({ theme }) => theme.text1};
+  }
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.1, theme.text1)};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+      display: none;
+`}
+`
+
 export const StyledMenuButton = styled.button`
   position: relative;
   width: 100%;
@@ -327,6 +360,12 @@ export default function Header() {
           <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
+          <StyledExternalLink id={`swap-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+            {t('swap')}
+          </StyledExternalLink>
+          <StyledExternalLink id={`vote-nav-link`} href={'https://balancer.exchange/#/swap'}>
+            {t('vote')}
+          </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>

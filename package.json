@@ -129,6 +129,8 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "json-to-graphql-query": "^2.0.0"
+    "@types/numeral": "^2.0.1",
+    "json-to-graphql-query": "^2.0.0",
+    "numeral": "^2.0.6"
   }
 }
