@@ -96,7 +96,7 @@ export const useBalancer = (poolAddresses: string[]) => {
         const tokenSymbols: string[] = []
         for (const token of pool.tokens) {
           tokenSymbols.push(token.symbol)
-          const address = getAddress(token.address);
+          const address = getAddress(token.address)
           newPoolTokensAddresses.push(address)
 
           poolTokensInfo.push({
