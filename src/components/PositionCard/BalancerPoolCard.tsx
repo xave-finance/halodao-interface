@@ -42,6 +42,16 @@ const StyledFixedHeightRow = styled(FixedHeightRow)`
     height: 100%;
   `};
 `
+
+const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
+  padding: 0 0 0 8px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    padding: 0 0 0 30px;
+  `};
+`
 export const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     background: ${({ theme }) => theme.bg3};
@@ -347,11 +357,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   return (
     <StyledCard bgColor={backgroundColor}>
       <AutoColumn>
-        <StyledFixedHeightRow
-          style={{
-            padding: '0 0 0 30px'
-          }}
-        >
+        <StyledFixedHeightRowCustom>
           <StyledRowFixed width="25%" gap="8px">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
@@ -428,7 +434,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               </StyledRowFixedMobile>
             </>
           )}
-        </StyledFixedHeightRow>
+        </StyledFixedHeightRowCustom>
 
         {showMore && (
           <AutoColumnCustom>
