@@ -568,7 +568,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       boxShadow: '0px 7px 14px rgba(0, 0, 0, 0.1)',
                       borderRadius: '10px',
                       border: '0',
-                      color: '#000000'
+                      color: '#000000',
+                      marginTop: "20px"
                     }}
                   >
                     <CardSection
