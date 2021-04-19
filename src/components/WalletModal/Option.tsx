@@ -70,7 +70,7 @@ const HeaderText = styled.div`
 const SubHeader = styled.div`
   color: ${({ theme }) => theme.text1};
   margin-top: 10px;
-  font-size: 12px;
+  font-size: 14px;
 `
 
 const IconWrapper = styled.div<{ size?: number | null }>`

@@ -37,7 +37,7 @@ const NameOverflow = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 140px;
-  font-size: 12px;
+  font-size: 14px;
 `
 
 export default function ImportRow({
