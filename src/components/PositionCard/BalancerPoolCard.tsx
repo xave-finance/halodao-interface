@@ -585,7 +585,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           fontWeight: 500,
                           textAlign: 'left',
                           width: '80%',
-                          float: 'left'
+                          float: 'left',
+                          marginTop: "7px"
                         }}
                       >
                         {t('tokenCardRewardDescription')}
