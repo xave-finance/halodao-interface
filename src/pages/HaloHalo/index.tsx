@@ -42,7 +42,8 @@ export default function Saave() {
           style={{
             maxWidth: "300px",
             width: "100%",
-            float: "left"
+            float: "left",
+            borderRadius: 0
           }}
         >
           <CardSection>
@@ -81,30 +82,39 @@ export default function Saave() {
                   color: "#333333"
                 }}
               >
-                Stake your HALO to earn HALOHALO for ~%APY. Unstake at any time. Continuously compounding.
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
-                  fontWeight: "normal",
-                  fontSize: "16px",
-                  lineHeight: "130%",
-                  textDecorationLine: "underline",
-                  color: "#518CFF",
-                  cursor: "pointer"
-                }}
-              >
-                Learn about staking
+                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool to earn daily.
               </RowBetween>
             </AutoColumn>
           </CardSection>
           <CardSection
             style={{
-              background: "blue"
+              width: "300px",
+              height: "200px",
+              marginTop: "28px",
+              background: "#e9e4f7",
+              fontFamily: "Open Sans",
+              fontStyle: "normal",
+              fontWeight: "normal",
+              fontSize: "16px",
+              lineHeight: "130%",
+              color: "#333333",
+              borderRadius: "8px",
+              paddingLeft: "40px"
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient id vitae morbi ipsum est maecenas tellus at. Consequat in justo
+            <RowBetween
+              style={{
+                fontFamily: "Open Sans",
+                fontStyle: "normal",
+                fontWeight: 800,
+                lineHeight: "16px",
+                letterSpacing: "0.1em",
+                color: "#15006D"
+              }}
+            >DESSERT FACT</RowBetween>
+            <RowBetween>
+              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on daily HALO vesting multiples.
+            </RowBetween>
           </CardSection>
         </VoteCard>
         <div
