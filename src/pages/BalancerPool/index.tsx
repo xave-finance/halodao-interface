@@ -101,13 +101,16 @@ const BalancerPool = () => {
           </Row>
         </PoolsSummaryRow>
 
-        <AutoColumn gap="sm" style={{
-          width: '100%'
-        }}>
+        <AutoColumn
+          gap="sm"
+          style={{
+            width: '100%'
+          }}
+        >
           <HideSmall>
             <Card
               style={{
-                padding: "10px 0 0 0"
+                padding: '10px 0 0 0'
               }}
             >
               <AutoColumn>
