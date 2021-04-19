@@ -95,6 +95,7 @@ const StyledRowFixedMobile = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: block;
     width: 100%;
+    padding: 0 30px 0 0;
   `};
 `
 
@@ -368,19 +369,19 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
-              <StyledText fontWeight={600}>{t('stakeable')}:</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">{t('stakeable')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
-              <StyledText fontWeight={600}>{t('valueStaked')}</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">{t('valueStaked')}</StyledText>
             </HideMedium>
             <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <HideMedium>
-              <StyledText fontWeight={600}>{t('earned')}:</StyledText>
+              <StyledText fontWeight={600} marginTop="10px">{t('earned')}:</StyledText>
             </HideMedium>
             <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
           </StyledRowFixed>
@@ -409,7 +410,11 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       </StyledButtonMobile>
                     </StyledCardBoxWeb>
                   ) : (
-                    <StyledButtonMobile>
+                    <StyledButtonMobile
+                      style={{
+                        margin: "20px 0 20px 0"
+                      }}
+                    >
                       <StyledButtonText width="74px">{t('manage')}</StyledButtonText>
                     </StyledButtonMobile>
                   )}
@@ -426,7 +431,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               <RowBetween>
                 <StyledBorderBottom
                   style={{
-                    margin: '0 0 0 30px'
+                    margin: '0 30px 0 30px'
                   }}
                 >.</StyledBorderBottom>
               </RowBetween>
