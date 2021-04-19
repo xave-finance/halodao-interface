@@ -14,9 +14,9 @@ const StyledSwapHeader = styled.div`
 export default function SwapHeader() {
   return (
     <StyledSwapHeader
-    style={{
-      background: "blue"
-    }}
+      style={{
+        background: 'blue'
+      }}
     >
       <RowBetween>
         <TYPE.black fontWeight={500}>HALO → HALOHALO</TYPE.black>

@@ -40,9 +40,9 @@ export default function Saave() {
       <PageWrapper>
         <VoteCard
           style={{
-            maxWidth: "300px",
-            width: "100%",
-            float: "left",
+            maxWidth: '300px',
+            width: '100%',
+            float: 'left',
             borderRadius: 0
           }}
         >
@@ -50,89 +50,96 @@ export default function Saave() {
             <AutoColumn gap="md">
               <RowBetween
                 style={{
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
+                  fontFamily: 'Open Sans',
+                  fontStyle: 'normal',
                   fontWeight: 800,
-                  lineHeight: "16px",
-                  letterSpacing: "0.2em",
-                  color: "#000000"
+                  lineHeight: '16px',
+                  letterSpacing: '0.2em',
+                  color: '#000000'
                 }}
               >
                 VESTING
               </RowBetween>
               <RowBetween
                 style={{
-                  fontFamily: "Fredoka One",
-                  fontStyle: "normal",
-                  fontWeight: "normal",
-                  fontSize: "36px",
-                  lineHeight: "44px",
-                  color: "#471BB2"
+                  fontFamily: 'Fredoka One',
+                  fontStyle: 'normal',
+                  fontWeight: 'normal',
+                  fontSize: '36px',
+                  lineHeight: '44px',
+                  color: '#471BB2'
                 }}
               >
                 Dessert Pool
               </RowBetween>
               <RowBetween
                 style={{
-                  fontFamily: "Open Sans",
-                  fontStyle: "normal",
-                  fontWeight: "normal",
-                  fontSize: "16px",
-                  lineHeight: "130%",
-                  color: "#333333"
+                  fontFamily: 'Open Sans',
+                  fontStyle: 'normal',
+                  fontWeight: 'normal',
+                  fontSize: '16px',
+                  lineHeight: '130%',
+                  color: '#333333'
                 }}
               >
-                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool to earn daily.
+                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
+                to earn daily.
               </RowBetween>
             </AutoColumn>
           </CardSection>
           <CardSection
             style={{
-              width: "300px",
-              height: "200px",
-              marginTop: "28px",
-              background: "#e9e4f7",
-              fontFamily: "Open Sans",
-              fontStyle: "normal",
-              fontWeight: "normal",
-              fontSize: "16px",
-              lineHeight: "130%",
-              color: "#333333",
-              borderRadius: "8px",
-              paddingLeft: "40px"
+              width: '300px',
+              height: '200px',
+              marginTop: '28px',
+              background: '#e9e4f7',
+              fontFamily: 'Open Sans',
+              fontStyle: 'normal',
+              fontWeight: 'normal',
+              fontSize: '16px',
+              lineHeight: '130%',
+              color: '#333333',
+              borderRadius: '8px',
+              paddingLeft: '40px'
             }}
           >
             <RowBetween
               style={{
-                fontFamily: "Open Sans",
-                fontStyle: "normal",
+                fontFamily: 'Open Sans',
+                fontStyle: 'normal',
                 fontWeight: 800,
-                lineHeight: "16px",
-                letterSpacing: "0.1em",
-                color: "#15006D"
+                lineHeight: '16px',
+                letterSpacing: '0.1em',
+                color: '#15006D'
               }}
-            >DESSERT FACT</RowBetween>
+            >
+              DESSERT FACT
+            </RowBetween>
             <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on daily HALO vesting multiples.
+              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
+              daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
         </VoteCard>
         <div
           style={{
-            width: "440px",
-            float: "right"
+            width: '440px',
+            float: 'right'
           }}
         >
           <HaloChestHeader />
-          <Wrapper id="swap-page"
+          <Wrapper
+            id="swap-page"
             style={{
-              background: "yellow"
+              background: 'yellow'
             }}
           >
-            <AutoColumn style={{
-              paddingBottom: '10px',
-              background: "green"
-            }}>
+            <AutoColumn
+              style={{
+                paddingBottom: '10px',
+                background: 'green'
+              }}
+            >
               <HaloDepositPanel
                 label={''}
                 disableCurrencySelect={true}
