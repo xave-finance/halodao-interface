@@ -433,7 +433,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   style={{
                     margin: '0 30px 0 30px'
                   }}
-                >.</StyledBorderBottom>
+                >
+                  .
+                </StyledBorderBottom>
               </RowBetween>
             </HideMedium>
             <div
