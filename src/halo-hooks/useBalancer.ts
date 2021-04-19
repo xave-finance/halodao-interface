@@ -96,13 +96,14 @@ export const useBalancer = (poolAddresses: string[]) => {
         const tokenSymbols: string[] = []
         for (const token of pool.tokens) {
           tokenSymbols.push(token.symbol)
-          newPoolTokensAddresses.push(token.address)
+          const address = getAddress(token.address);
+          newPoolTokensAddresses.push(address)
 
           poolTokensInfo.push({
-            address: getAddress(token.address),
+            address,
             balance: parseFloat(token.balance),
             weightPercentage: (100 / pool.totalWeight) * token.denormWeight,
-            asToken: new Token(chainId, token.address, token.decimals, token.symbol, token.name)
+            asToken: new Token(chainId, address, token.decimals, token.symbol, token.name)
           })
         }
 
