@@ -51,7 +51,9 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
       <ModalUpper>
         <CardSection gap="md">
           <RowBetween>
-            <TYPE.white color="white" fontWeight="bold">Your HALO Breakdown</TYPE.white>
+            <TYPE.white color="white" fontWeight="bold">
+              Your HALO Breakdown
+            </TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
         </CardSection>
