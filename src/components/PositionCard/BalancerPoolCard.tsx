@@ -855,7 +855,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <StyledRowFixed
                       style={{
                         float: 'left',
-                        marginLeft: '50px',
+                        marginLeft: '30px',
                         color: '#FFFFFF',
                         fontSize: 16,
                         fontWeight: 800,
