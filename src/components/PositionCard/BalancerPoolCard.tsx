@@ -833,7 +833,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       padding="8px"
                       borderRadius="8px"
                       width="48%"
-                      onClick={() => {}}
                       style={{
                         marginTop: '5px',
                         width: '90%',
@@ -954,7 +953,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         padding="8px"
                         borderRadius="8px"
                         width="48%"
-                        onClick={() => {}}
                         style={{
                           width: '234px',
                           height: '53px',
