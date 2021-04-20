@@ -16,7 +16,7 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-//import { useActiveWeb3React } from '../../hooks'
+import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 760px;
@@ -159,6 +159,27 @@ export default function Saave() {
                 buttonText="Withdraw"
                 cornerRadiusTopNone={true}
               />
+              <RowBetween
+                style={{
+                  padding: "0.75rem 1rem 0 1rem"
+                }}
+              >
+                <img src={HalohaloIngredients} alt="Halo Halo" />
+                <div
+                  style={{
+                    width: "100%",
+                    margin: "0 0 0 10px",
+                    fontStyle: "italic",
+                    fontFamily: "Open Sans",
+                    fontWeight: 600,
+                    lineHeight: "16px",
+                    letterSpacing: "0.2em",
+                    color: "#000000"
+                  }}
+                >
+                  HaloHalo:Halo  =  x1.15
+                </div>
+              </RowBetween>
             </AutoColumn>
           </Wrapper>
         </div>
