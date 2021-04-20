@@ -193,7 +193,6 @@ export default function Saave() {
       <PageWrapperMobile>
         <VoteCard
           style={{
-            maxWidth: '300px',
             width: '100%',
             float: 'left',
             borderRadius: 0
@@ -276,7 +275,6 @@ export default function Saave() {
           </div>
           <CardSection
             style={{
-              width: '300px',
               height: '200px',
               marginTop: '28px',
               background: '#e9e4f7',
