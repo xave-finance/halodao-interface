@@ -273,7 +273,15 @@ export default function CurrencyInputPanel({
                 onClick={handleApprove} disabled={requestedApproval}>
                   <Aligner>
                     <StyledButtonName
-
+                      style={{
+                        fontFamily: "Inter",
+                        fontStyle: "normal",
+                        fontWeight: 900,
+                        fontSize: "16px",
+                        lineHeight: "150%",
+                        textAlign: "center",
+                        color: "#FFFFFF"
+                      }}
                     >Approve</StyledButtonName>
                   </Aligner>
                 </ButtonSelect>
@@ -301,7 +309,17 @@ export default function CurrencyInputPanel({
                   }}
                 >
                   <Aligner>
-                    <StyledButtonName>Deposit</StyledButtonName>
+                    <StyledButtonName
+                      style={{
+                        fontFamily: "Inter",
+                        fontStyle: "normal",
+                        fontWeight: 900,
+                        fontSize: "16px",
+                        lineHeight: "150%",
+                        textAlign: "center",
+                        color: "#FFFFFF"
+                      }}
+                    >Deposit</StyledButtonName>
                   </Aligner>
                 </ButtonSelect>
               )}

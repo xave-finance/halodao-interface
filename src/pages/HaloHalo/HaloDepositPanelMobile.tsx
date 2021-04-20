@@ -14,7 +14,7 @@ import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
-import { HALOHALO_ADDRESS } from '../../constants'
+import { HALO_TOKEN_ADDRESS } from '../../constants'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -74,7 +74,7 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: #FFFFFF;
   z-index: 1;
 `
 
@@ -143,12 +143,12 @@ export default function CurrencyInputPanel({
   const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
 
-  const { allowance, approve, leave } = useHaloHalo()
-  console.log('halochest:', allowance)
+  const { allowance, approve, enter } = useHaloHalo()
+  console.log('haloChest_allowance:', allowance)
 
-  const xHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
-  const xHaloBalance = formatFromBalance(xHaloBalanceBigInt?.value, xHaloBalanceBigInt?.decimals)
-  const decimals = xHaloBalanceBigInt?.decimals
+  const haloBalanceBigInt = useTokenBalance(chainId ? HALO_TOKEN_ADDRESS[chainId] : ' ')
+  const haloBalance = formatFromBalance(haloBalanceBigInt?.value, haloBalanceBigInt?.decimals)
+  const decimals = haloBalanceBigInt?.decimals
 
   // handle approval
   const [requestedApproval, setRequestedApproval] = useState(false)
@@ -178,20 +178,20 @@ export default function CurrencyInputPanel({
     setDepositValue(depositValue)
   }, [])
   // used for max input button
-  const maxDepositAmountInput = xHaloBalanceBigInt
+  const maxDepositAmountInput = haloBalanceBigInt
   //const atMaxDepositAmount = true
   const handleMaxDeposit = useCallback(() => {
-    maxDepositAmountInput && onUserDepositInput(xHaloBalance, true)
-  }, [maxDepositAmountInput, onUserDepositInput, xHaloBalance])
+    maxDepositAmountInput && onUserDepositInput(haloBalance, true)
+  }, [maxDepositAmountInput, onUserDepositInput, haloBalance])
 
   return (
     <>
       {/* Deposit Input */}
       <InputPanel
         style={{
-          marginTop: '10px'
+          margin: "32px 0 0 0"
         }}
-      id={id}>
+        id={id}>
         <Container
           hideInput={hideInput}
           cornerRadiusBottomNone={cornerRadiusBottomNone}
@@ -217,10 +217,11 @@ export default function CurrencyInputPanel({
                       fontWeight: 800,
                       lineHeight: "16px",
                       letterSpacing: "0.2em",
-                      color: "#000000"
+                      color: "#000000",
+                      fontSize: "14px"
                     }}
                   >
-                    BALANCE: {xHaloBalance} Halo Halo
+                    BALANCE: {haloBalance} Halo Tokens
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -265,71 +266,68 @@ export default function CurrencyInputPanel({
               paddingTop: "5px"
             }} selected={disableCurrencySelect}>
             {!allowance || Number(allowance) === 0 ? (
-              <ButtonSelect
-                style={{
-                  background: "#471BB2",
-                  borderRadius: "4px",
-                  width: "100%",
-                  height: "38px",
-                  margin: 0,
-                  padding: 0
-                }}
+                <ButtonSelect
+                  style={{
+                    background: "#471BB2",
+                    borderRadius: "4px",
+                    width: "100%",
+                    height: "38px",
+                    margin: 0,
+                    padding: 0
+                  }}
                 onClick={handleApprove} disabled={requestedApproval}>
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: "Inter",
-                      fontStyle: "normal",
-                      fontWeight: 900,
-                      fontSize: "16px",
-                      lineHeight: "150%",
-                      textAlign: "center",
-                      color: "#FFFFFF"
-                    }}
-                  >Approve</StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
-            ) : (
-              <ButtonSelect
-                style={{
-                  background: "#471BB2",
-                  borderRadius: "4px",
-                  width: "100%",
-                  height: "38px",
-                  margin: 0,
-                  padding: 0
-                }}
-                disabled={
-                  pendingTx ||
-                  !xHaloBalance ||
-                  Number(depositValue) === 0 ||
-                  Number(depositValue) > Number(xHaloBalance)
-                }
-                onClick={async () => {
-                  setPendingTx(true)
-                  if (maxSelected) {
-                    await leave(maxDepositAmountInput)
-                  } else {
-                    await leave(formatToBalance(depositValue, decimals))
+                  <Aligner>
+                    <StyledButtonName
+                      style={{
+                        fontFamily: "Inter",
+                        fontStyle: "normal",
+                        fontWeight: 900,
+                        fontSize: "16px",
+                        lineHeight: "150%",
+                        textAlign: "center",
+                        color: "#FFFFFF"
+                      }}
+                    >Approve</StyledButtonName>
+                  </Aligner>
+                </ButtonSelect>
+              ) : (
+                <ButtonSelect
+                  style={{
+                    background: "#471BB2",
+                    borderRadius: "4px",
+                    width: "100%",
+                    height: "38px",
+                    margin: 0,
+                    padding: 0
+                  }}
+                  disabled={
+                    pendingTx || !haloBalance || Number(depositValue) === 0 || Number(depositValue) > Number(haloBalance)
                   }
-                  setPendingTx(false)
-                }}
-              >
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: "Inter",
-                      fontStyle: "normal",
-                      fontWeight: 900,
-                      fontSize: "16px",
-                      lineHeight: "150%",
-                      textAlign: "center",
-                      color: "#FFFFFF"
-                    }}
-                  >Claim HALO</StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
-            )}
+                  onClick={async () => {
+                    setPendingTx(true)
+                    if (maxSelected) {
+                      await enter(maxDepositAmountInput)
+                    } else {
+                      await enter(formatToBalance(depositValue, decimals))
+                    }
+                    setPendingTx(false)
+                  }}
+                >
+                  <Aligner>
+                    <StyledButtonName
+                      style={{
+                        fontFamily: "Inter",
+                        fontStyle: "normal",
+                        fontWeight: 900,
+                        fontSize: "16px",
+                        lineHeight: "150%",
+                        textAlign: "center",
+                        color: "#FFFFFF"
+                      }}
+                    >Deposit</StyledButtonName>
+                  </Aligner>
+                </ButtonSelect>
+              )}
           </InputRow>
         </Container>
       </InputPanel>

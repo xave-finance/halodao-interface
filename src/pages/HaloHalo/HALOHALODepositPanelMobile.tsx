@@ -74,7 +74,7 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: #FFFFFF;
   z-index: 1;
 `
 
@@ -217,7 +217,8 @@ export default function CurrencyInputPanel({
                       fontWeight: 800,
                       lineHeight: "16px",
                       letterSpacing: "0.2em",
-                      color: "#000000"
+                      color: "#000000",
+                      fontSize: "14px"
                     }}
                   >
                     BALANCE: {xHaloBalance} Halo Halo
@@ -285,7 +286,7 @@ export default function CurrencyInputPanel({
                       lineHeight: "150%",
                       textAlign: "center",
                       color: "#FFFFFF"
-                    }}
+                    }}                  
                   >Approve</StyledButtonName>
                 </Aligner>
               </ButtonSelect>
