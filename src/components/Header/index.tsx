@@ -360,10 +360,10 @@ export default function Header() {
           <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
-          <StyledExternalLink id={`swap-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+          <StyledExternalLink id={`swap-nav-link`} href={'https://balancer.exchange/#/swap'}>
             {t('swap')}
           </StyledExternalLink>
-          <StyledExternalLink id={`vote-nav-link`} href={'https://balancer.exchange/#/swap'}>
+          <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
             {t('vote')}
           </StyledExternalLink>
         </HeaderLinks>
