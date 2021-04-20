@@ -124,20 +124,23 @@ export default function Saave() {
         <div
           style={{
             width: '440px',
-            float: 'right'
+            float: 'right',
+            background: "#FFFFFF",
+            border: "1px solid #15006D",
+            borderRadius: "4px"
           }}
         >
           <HaloChestHeader />
           <Wrapper
             id="swap-page"
             style={{
-              background: 'yellow'
+              // background: 'yellow'
             }}
           >
             <AutoColumn
               style={{
                 paddingBottom: '10px',
-                background: 'green'
+                // background: 'green'
               }}
             >
               <HaloDepositPanel
