@@ -27,7 +27,7 @@ yarn build-serve
 Now you can run Cypress UI on another terminal using:
 
 ```
-yarn cypress
+yarn cy
 ```
 
 Click any test or choose "Run all specs" to run all the tests. This will open up a new controlled browser where you can see the automated test in action! You can also inspect elements using the controlled browser or view console logs, but avoid using it to surf the web.
