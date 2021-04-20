@@ -139,7 +139,7 @@ export default function Saave() {
           >
             <AutoColumn
               style={{
-                paddingBottom: '10px',
+                padding: '10px 0 10px 0',
                 // background: 'green'
               }}
             >
