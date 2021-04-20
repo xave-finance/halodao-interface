@@ -99,12 +99,21 @@ const Farm = () => {
           </Row>
         </PoolsSummaryRow>
 
-        <AutoColumn gap="sm" style={{ width: '100%' }}>
+        <AutoColumn
+          gap="sm"
+          style={{
+            width: '100%'
+          }}
+        >
           <HideSmall>
-            <Card>
+            <Card
+              style={{
+                padding: '10px 0 0 0'
+              }}
+            >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="24%">
+                  <RowFixed width="22%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="19%">

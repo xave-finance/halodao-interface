@@ -43,7 +43,7 @@ const ErrorGroup = styled.div`
 
 const ErrorButton = styled.div`
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 14px;
   color: ${({ theme }) => theme.text1};
   background-color: ${({ theme }) => theme.bg4};
   margin-left: 1rem;
