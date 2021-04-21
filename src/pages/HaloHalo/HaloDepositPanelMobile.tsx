@@ -236,12 +236,12 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: "5px 0 0 0",
+                    padding: '5px 0 0 0',
                     borderRadius: '8px'
                   }
                 : {
-                  padding: "5px 0 0 0"
-                }
+                    padding: '5px 0 0 0'
+                  }
             }
             selected={disableCurrencySelect}
           >
@@ -280,12 +280,12 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: "5px 0 0 0",
+                    padding: '5px 0 0 0',
                     borderRadius: '8px'
                   }
                 : {
-                    padding: "5px 0 0 0"
-                }
+                    padding: '5px 0 0 0'
+                  }
             }
             selected={disableCurrencySelect}
           >

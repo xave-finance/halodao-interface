@@ -249,7 +249,7 @@ export default function Saave() {
               width: '100%',
               border: '1px solid #15006D',
               borderRadius: '4px',
-              padding: "20px 20px 0 20px"
+              padding: '20px 20px 0 20px'
             }}
           >
             <HaloChestHeaderMobile />
