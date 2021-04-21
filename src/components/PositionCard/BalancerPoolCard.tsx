@@ -787,7 +787,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               >
                 <StyledFixedHeightRow
                   style={{
-                    padding: "0 0 0 8%"
+                    padding: '0 0 0 8%'
                   }}
                 >
                   <StyledRowFixed
