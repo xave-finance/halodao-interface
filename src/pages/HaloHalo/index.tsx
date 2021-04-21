@@ -167,23 +167,23 @@ export default function Saave() {
               />
               <RowBetween
                 style={{
-                  padding: "0.75rem 1rem 0 1rem"
+                  padding: '0.75rem 1rem 0 1rem'
                 }}
               >
                 <img src={HalohaloIngredients} alt="Halo Halo" />
                 <div
                   style={{
-                    width: "100%",
-                    margin: "0 0 0 10px",
-                    fontStyle: "italic",
-                    fontFamily: "Open Sans",
+                    width: '100%',
+                    margin: '0 0 0 10px',
+                    fontStyle: 'italic',
+                    fontFamily: 'Open Sans',
                     fontWeight: 600,
-                    lineHeight: "16px",
-                    letterSpacing: "0.2em",
-                    color: "#000000"
+                    lineHeight: '16px',
+                    letterSpacing: '0.2em',
+                    color: '#000000'
                   }}
                 >
-                  HaloHalo:Halo  =  x1.15
+                  HaloHalo:Halo = x1.15
                 </div>
               </RowBetween>
             </AutoColumn>

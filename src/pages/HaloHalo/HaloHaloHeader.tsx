@@ -15,26 +15,31 @@ const StyledSwapHeader = styled.div`
 export default function SwapHeader() {
   return (
     <StyledSwapHeader
-      style={{
-        // background: 'blue'
-      }}
+      style={
+        {
+          // background: 'blue'
+        }
+      }
     >
       <RowBetween>
         <img src={Halohalo} alt="Halo Halo" />
         <TYPE.black
           style={{
-            fontFamily: "Open Sans",
-            fontStyle: "normal",
+            fontFamily: 'Open Sans',
+            fontStyle: 'normal',
             fontWeight: 800,
-            fontSize: "18px",
-            lineHeight: "25px",
-            letterSpacing: "0.2em",
-            color: "#15006D",
-            display: "block",
-            width: "100%",
-            marginLeft: "30px"
+            fontSize: '18px',
+            lineHeight: '25px',
+            letterSpacing: '0.2em',
+            color: '#15006D',
+            display: 'block',
+            width: '100%',
+            marginLeft: '30px'
           }}
-          fontWeight={500}>HALO → HALOHALO</TYPE.black>
+          fontWeight={500}
+        >
+          HALO → HALOHALO
+        </TYPE.black>
       </RowBetween>
     </StyledSwapHeader>
   )

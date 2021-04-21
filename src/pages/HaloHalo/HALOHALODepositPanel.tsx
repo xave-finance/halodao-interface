@@ -191,7 +191,8 @@ export default function CurrencyInputPanel({
         style={{
           marginTop: '10px'
         }}
-      id={id}>
+        id={id}
+      >
         <Container
           hideInput={hideInput}
           cornerRadiusBottomNone={cornerRadiusBottomNone}
@@ -201,7 +202,7 @@ export default function CurrencyInputPanel({
             <LabelRow>
               <RowBetween
                 style={{
-                  display: "block"
+                  display: 'block'
                 }}
               >
                 <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
@@ -211,13 +212,13 @@ export default function CurrencyInputPanel({
                   <TYPE.body
                     onClick={handleMaxDeposit}
                     style={{
-                      cursor: "pointer",
-                      fontFamily: "Open Sans",
-                      fontStyle: "normal",
+                      cursor: 'pointer',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
                       fontWeight: 800,
-                      lineHeight: "16px",
-                      letterSpacing: "0.2em",
-                      color: "#000000"
+                      lineHeight: '16px',
+                      letterSpacing: '0.2em',
+                      color: '#000000'
                     }}
                   >
                     BALANCE: {xHaloBalance} Halo Halo
@@ -226,12 +227,19 @@ export default function CurrencyInputPanel({
               </RowBetween>
             </LabelRow>
           )}
-          <InputRow style={hideInput ? {
-              padding: 0,
-              borderRadius: '8px'
-            } : {
-              paddingBottom: 0
-            }} selected={disableCurrencySelect}>
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: 0,
+                    borderRadius: '8px'
+                  }
+                : {
+                    paddingBottom: 0
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
             {!hideInput && (
               <>
                 <NumericalInput
@@ -241,40 +249,54 @@ export default function CurrencyInputPanel({
                     onUserDepositInput(val)
                   }}
                 />
-                {account && label !== 'To' && <StyledBalanceMax
-                  style={{
-                    border: "1px solid #471BB2",
-                    borderRadius: "22px",
-                    background: "#FFFFFF",
-                    fontFamily: "Open Sans",
-                    fontStyle: "normal",
-                    fontWeight: "bold",
-                    lineHeight: "130%",
-                    width: "77px",
-                    height: "33px",
-                    margin: 0
-                  }}
-                onClick={handleMaxDeposit}>MAX</StyledBalanceMax>}
+                {account && label !== 'To' && (
+                  <StyledBalanceMax
+                    style={{
+                      border: '1px solid #471BB2',
+                      borderRadius: '22px',
+                      background: '#FFFFFF',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 'bold',
+                      lineHeight: '130%',
+                      width: '77px',
+                      height: '33px',
+                      margin: 0
+                    }}
+                    onClick={handleMaxDeposit}
+                  >
+                    MAX
+                  </StyledBalanceMax>
+                )}
               </>
             )}
           </InputRow>
-          <InputRow style={hideInput ? {
-              padding: 0,
-              borderRadius: "8px"
-            } : {
-              paddingTop: "5px"
-            }} selected={disableCurrencySelect}>
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: 0,
+                    borderRadius: '8px'
+                  }
+                : {
+                    paddingTop: '5px'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
             {!allowance || Number(allowance) === 0 ? (
               <ButtonSelect
                 style={{
-                  background: "#471BB2",
-                  borderRadius: "4px",
-                  width: "100%",
-                  height: "38px",
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
                   margin: 0,
                   padding: 0
                 }}
-                onClick={handleApprove} disabled={requestedApproval}>
+                onClick={handleApprove}
+                disabled={requestedApproval}
+              >
                 <Aligner>
                   <StyledButtonName
                     style={{
@@ -292,10 +314,10 @@ export default function CurrencyInputPanel({
             ) : (
               <ButtonSelect
                 style={{
-                  background: "#471BB2",
-                  borderRadius: "4px",
-                  width: "100%",
-                  height: "38px",
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
                   margin: 0,
                   padding: 0
                 }}

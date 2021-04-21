@@ -197,7 +197,7 @@ export default function CurrencyInputPanel({
             <LabelRow>
               <RowBetween
                 style={{
-                  display: "block"
+                  display: 'block'
                 }}
               >
                 <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
@@ -207,13 +207,13 @@ export default function CurrencyInputPanel({
                   <TYPE.body
                     onClick={handleMaxDeposit}
                     style={{
-                      cursor: "pointer",
-                      fontFamily: "Open Sans",
-                      fontStyle: "normal",
+                      cursor: 'pointer',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
                       fontWeight: 800,
-                      lineHeight: "16px",
-                      letterSpacing: "0.2em",
-                      color: "#000000"
+                      lineHeight: '16px',
+                      letterSpacing: '0.2em',
+                      color: '#000000'
                     }}
                   >
                     BALANCE: {haloBalance} Halo Tokens
@@ -222,12 +222,19 @@ export default function CurrencyInputPanel({
               </RowBetween>
             </LabelRow>
           )}
-          <InputRow style={hideInput ? {
-              padding: 0,
-              borderRadius: '8px'
-            } : {
-              paddingBottom: 0
-            }} selected={disableCurrencySelect}>
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: 0,
+                    borderRadius: '8px'
+                  }
+                : {
+                    paddingBottom: 0
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
             {!hideInput && (
               <>
                 <NumericalInput
@@ -237,92 +244,86 @@ export default function CurrencyInputPanel({
                     onUserDepositInput(val)
                   }}
                 />
-                {account && label !== 'To' && <StyledBalanceMax
-                  style={{
-                    border: "1px solid #471BB2",
-                    borderRadius: "22px",
-                    background: "#FFFFFF",
-                    fontFamily: "Open Sans",
-                    fontStyle: "normal",
-                    fontWeight: "bold",
-                    lineHeight: "130%",
-                    width: "77px",
-                    height: "33px",
-                    margin: 0
-                  }}
-                onClick={handleMaxDeposit}>MAX</StyledBalanceMax>}
+                {account && label !== 'To' && (
+                  <StyledBalanceMax
+                    style={{
+                      border: '1px solid #471BB2',
+                      borderRadius: '22px',
+                      background: '#FFFFFF',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 'bold',
+                      lineHeight: '130%',
+                      width: '77px',
+                      height: '33px',
+                      margin: 0
+                    }}
+                    onClick={handleMaxDeposit}
+                  >
+                    MAX
+                  </StyledBalanceMax>
+                )}
               </>
             )}
           </InputRow>
-          <InputRow style={hideInput ? {
-              padding: 0,
-              borderRadius: "8px"
-            } : {
-              paddingTop: "5px"
-            }} selected={disableCurrencySelect}>
-            {!allowance || Number(allowance) === 0 ? (
-                <ButtonSelect
-                  style={{
-                    background: "#471BB2",
-                    borderRadius: "4px",
-                    width: "100%",
-                    height: "38px",
-                    margin: 0,
-                    padding: 0
-                  }}
-                onClick={handleApprove} disabled={requestedApproval}>
-                  <Aligner>
-                    <StyledButtonName
-                      style={{
-                        fontFamily: "Inter",
-                        fontStyle: "normal",
-                        fontWeight: 900,
-                        fontSize: "16px",
-                        lineHeight: "150%",
-                        textAlign: "center",
-                        color: "#FFFFFF"
-                      }}
-                    >Approve</StyledButtonName>
-                  </Aligner>
-                </ButtonSelect>
-              ) : (
-                <ButtonSelect
-                  style={{
-                    background: "#471BB2",
-                    borderRadius: "4px",
-                    width: "100%",
-                    height: "38px",
-                    margin: 0,
-                    padding: 0
-                  }}
-                  disabled={
-                    pendingTx || !haloBalance || Number(depositValue) === 0 || Number(depositValue) > Number(haloBalance)
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: 0,
+                    borderRadius: '8px'
                   }
-                  onClick={async () => {
-                    setPendingTx(true)
-                    if (maxSelected) {
-                      await enter(maxDepositAmountInput)
-                    } else {
-                      await enter(formatToBalance(depositValue, decimals))
-                    }
-                    setPendingTx(false)
-                  }}
-                >
-                  <Aligner>
-                    <StyledButtonName
-                      style={{
-                        fontFamily: "Inter",
-                        fontStyle: "normal",
-                        fontWeight: 900,
-                        fontSize: "16px",
-                        lineHeight: "150%",
-                        textAlign: "center",
-                        color: "#FFFFFF"
-                      }}
-                    >Deposit</StyledButtonName>
-                  </Aligner>
-                </ButtonSelect>
-              )}
+                : {
+                    paddingTop: '5px'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
+            {!allowance || Number(allowance) === 0 ? (
+              <ButtonSelect
+                style={{
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
+                  margin: 0,
+                  padding: 0
+                }}
+                onClick={handleApprove}
+                disabled={requestedApproval}
+              >
+                <Aligner>
+                  <StyledButtonName>Approve</StyledButtonName>
+                </Aligner>
+              </ButtonSelect>
+            ) : (
+              <ButtonSelect
+                style={{
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
+                  margin: 0,
+                  padding: 0
+                }}
+                disabled={
+                  pendingTx || !haloBalance || Number(depositValue) === 0 || Number(depositValue) > Number(haloBalance)
+                }
+                onClick={async () => {
+                  setPendingTx(true)
+                  if (maxSelected) {
+                    await enter(maxDepositAmountInput)
+                  } else {
+                    await enter(formatToBalance(depositValue, decimals))
+                  }
+                  setPendingTx(false)
+                }}
+              >
+                <Aligner>
+                  <StyledButtonName>Deposit</StyledButtonName>
+                </Aligner>
+              </ButtonSelect>
+            )}
           </InputRow>
         </Container>
       </InputPanel>
