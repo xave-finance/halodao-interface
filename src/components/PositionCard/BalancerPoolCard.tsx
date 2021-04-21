@@ -348,7 +348,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
               }}
             >
               <RowBetween marginTop="10px">
-                <StyledFixedHeightRow>
+                <StyledFixedHeightRow style={{marginBottom: "20px"}}>
                   <StyledRowFixed>
                     <DoubleCurrencyLogo
                       currency0={poolInfo.tokens[0].asToken}
@@ -381,6 +381,20 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       <StyledText fontWeight={600}>Earned:</StyledText>
                     </HideMedium>
                     <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <StyledTextForValue
+                      onClick={() => setShowMore(!showMore)}
+                      style={{
+                        fontFamily: "Open Sans",
+                        fontWeight: "bold",
+                        fontSize: "12px",
+                        lineHeight: "130%",
+                        textDecorationLine: "underline",
+                        color: "#15006D",
+                        cursor: "pointer"
+                      }}
+                    >Close</StyledTextForValue>
                   </StyledRowFixed>
                 </StyledFixedHeightRow>
               </RowBetween>
