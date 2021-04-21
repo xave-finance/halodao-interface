@@ -300,15 +300,17 @@ export default function CurrencyInputPanel({
                 <Aligner>
                   <StyledButtonName
                     style={{
-                      fontFamily: "Inter",
-                      fontStyle: "normal",
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
                       fontWeight: 900,
-                      fontSize: "16px",
-                      lineHeight: "150%",
-                      textAlign: "center",
-                      color: "#FFFFFF"
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      textAlign: 'center',
+                      color: '#FFFFFF'
                     }}
-                  >Approve</StyledButtonName>
+                  >
+                    Approve
+                  </StyledButtonName>
                 </Aligner>
               </ButtonSelect>
             ) : (
@@ -340,15 +342,17 @@ export default function CurrencyInputPanel({
                 <Aligner>
                   <StyledButtonName
                     style={{
-                      fontFamily: "Inter",
-                      fontStyle: "normal",
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
                       fontWeight: 900,
-                      fontSize: "16px",
-                      lineHeight: "150%",
-                      textAlign: "center",
-                      color: "#FFFFFF"
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      textAlign: 'center',
+                      color: '#FFFFFF'
                     }}
-                  >Claim HALO</StyledButtonName>
+                  >
+                    Claim HALO
+                  </StyledButtonName>
                 </Aligner>
               </ButtonSelect>
             )}

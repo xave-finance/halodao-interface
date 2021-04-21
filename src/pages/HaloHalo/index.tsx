@@ -138,8 +138,8 @@ export default function Saave() {
           style={{
             width: '440px',
             float: 'right',
-            border: "1px solid #15006D",
-            borderRadius: "4px"
+            border: '1px solid #15006D',
+            borderRadius: '4px'
           }}
         >
           <HaloChestHeader />
@@ -231,48 +231,48 @@ export default function Saave() {
           <div
             style={{
               width: '100%',
-              border: "1px solid #15006D",
-              borderRadius: "4px"
+              border: '1px solid #15006D',
+              borderRadius: '4px'
             }}
           >
             <HaloChestHeaderMobile />
             <HaloDepositPanelMobile
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to deposit: '}
-                id="stake-liquidity-token"
-                buttonText="Deposit"
-                cornerRadiusBottomNone={true}
-              />
-              <HALOHALODepositPanelMobile
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to withdraw: '}
-                id="withdraw-liquidity-token"
-                buttonText="Withdraw"
-                cornerRadiusTopNone={true}
-              />
-              <RowBetween
+              label={''}
+              disableCurrencySelect={true}
+              customBalanceText={'Available to deposit: '}
+              id="stake-liquidity-token"
+              buttonText="Deposit"
+              cornerRadiusBottomNone={true}
+            />
+            <HALOHALODepositPanelMobile
+              label={''}
+              disableCurrencySelect={true}
+              customBalanceText={'Available to withdraw: '}
+              id="withdraw-liquidity-token"
+              buttonText="Withdraw"
+              cornerRadiusTopNone={true}
+            />
+            <RowBetween
+              style={{
+                padding: '10px 0 10px 0'
+              }}
+            >
+              <div
                 style={{
-                  padding: "10px 0 10px 0"
+                  width: '100%',
+                  margin: '0 0 0 10px',
+                  fontStyle: 'italic',
+                  fontFamily: 'Open Sans',
+                  fontWeight: 600,
+                  lineHeight: '16px',
+                  letterSpacing: '0.2em',
+                  color: '#000000',
+                  textAlign: 'center'
                 }}
               >
-                <div
-                  style={{
-                    width: "100%",
-                    margin: "0 0 0 10px",
-                    fontStyle: "italic",
-                    fontFamily: "Open Sans",
-                    fontWeight: 600,
-                    lineHeight: "16px",
-                    letterSpacing: "0.2em",
-                    color: "#000000",
-                    textAlign: "center"
-                  }}
-                >
-                  HaloHalo:Halo  =  x1.15
-                </div>
-              </RowBetween>
+                HaloHalo:Halo = x1.15
+              </div>
+            </RowBetween>
           </div>
           <CardSection
             style={{
