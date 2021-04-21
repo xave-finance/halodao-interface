@@ -83,6 +83,7 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   border-radius: ${({ cornerRadiusTopNone }) => cornerRadiusTopNone && '0 0 12px 12px'};
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
   background-color: ${({ theme }) => theme.bg1};
+  margin: 30px 0 0 0;
 `
 
 const StyledButtonName = styled.span<{ active?: boolean }>`
@@ -187,12 +188,7 @@ export default function CurrencyInputPanel({
   return (
     <>
       {/* Deposit Input */}
-      <InputPanel
-        style={{
-          marginTop: '10px'
-        }}
-        id={id}
-      >
+      <InputPanel id={id}>
         <Container
           hideInput={hideInput}
           cornerRadiusBottomNone={cornerRadiusBottomNone}
@@ -236,11 +232,11 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: 0,
+                    padding: "5px 0 0 0",
                     borderRadius: '8px'
                   }
                 : {
-                    padding: 0
+                    padding: "5px 0 0 0"
                   }
             }
             selected={disableCurrencySelect}
@@ -280,11 +276,11 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: 0,
+                    padding: "5px 0 0 0",
                     borderRadius: '8px'
                   }
                 : {
-                    padding: 0
+                    padding: "5px 0 0 0"
                   }
             }
             selected={disableCurrencySelect}

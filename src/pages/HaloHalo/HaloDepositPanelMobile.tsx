@@ -189,7 +189,7 @@ export default function CurrencyInputPanel({
       {/* Deposit Input */}
       <InputPanel
         style={{
-          margin: '32px 0 0 0'
+          margin: '30px 0 0 0'
         }}
         id={id}
       >
@@ -236,12 +236,12 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: 0,
+                    padding: "5px 0 0 0",
                     borderRadius: '8px'
                   }
                 : {
-                    padding: 0
-                  }
+                  padding: "5px 0 0 0"
+                }
             }
             selected={disableCurrencySelect}
           >
@@ -280,12 +280,12 @@ export default function CurrencyInputPanel({
             style={
               hideInput
                 ? {
-                    padding: 0,
+                    padding: "5px 0 0 0",
                     borderRadius: '8px'
                   }
                 : {
-                    padding: 0
-                  }
+                    padding: "5px 0 0 0"
+                }
             }
             selected={disableCurrencySelect}
           >

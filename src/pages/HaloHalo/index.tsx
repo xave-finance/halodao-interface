@@ -248,7 +248,8 @@ export default function Saave() {
             style={{
               width: '100%',
               border: '1px solid #15006D',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              padding: "20px 20px 0 20px"
             }}
           >
             <HaloChestHeaderMobile />
@@ -270,13 +271,12 @@ export default function Saave() {
             />
             <RowBetween
               style={{
-                padding: '10px 0 10px 0'
+                padding: '20px 0 20px 0'
               }}
             >
               <div
                 style={{
                   width: '100%',
-                  margin: '0 0 0 10px',
                   fontStyle: 'italic',
                   fontFamily: 'Open Sans',
                   fontWeight: 600,
