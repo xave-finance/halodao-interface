@@ -143,9 +143,10 @@ export default function Saave() {
           }}
         >
           <HaloChestHeader />
-          <Wrapper id="swap-page"
+          <Wrapper
+            id="swap-page"
             style={{
-              padding: "0 30px 0 30px"
+              padding: '0 30px 0 30px'
             }}
           >
             <AutoColumn
@@ -176,12 +177,16 @@ export default function Saave() {
               >
                 <div
                   style={{
-                    margin: "auto"
+                    margin: 'auto'
                   }}
                 >
-                  <img style={{
-                    float: "left"
-                  }} src={HalohaloIngredients} alt="Halo Halo" />
+                  <img
+                    style={{
+                      float: 'left'
+                    }}
+                    src={HalohaloIngredients}
+                    alt="Halo Halo"
+                  />
                   <div
                     style={{
                       margin: '8px 0 0 10px',
@@ -191,7 +196,7 @@ export default function Saave() {
                       lineHeight: '16px',
                       letterSpacing: '0.2em',
                       color: '#000000',
-                      float: "left"
+                      float: 'left'
                     }}
                   >
                     HaloHalo:Halo = x1.15

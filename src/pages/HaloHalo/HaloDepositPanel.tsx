@@ -195,9 +195,11 @@ export default function CurrencyInputPanel({
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
           {!hideInput && (
-            <LabelRow style={{
-              padding: 0
-            }}>
+            <LabelRow
+              style={{
+                padding: 0
+              }}
+            >
               <RowBetween
                 style={{
                   display: 'block'
