@@ -16,7 +16,7 @@ export default function SwapHeader() {
   return (
     <StyledSwapHeader
       style={{
-        padding: "30px 0 0 30px"
+        padding: '30px 0 0 30px'
       }}
     >
       <RowBetween>
