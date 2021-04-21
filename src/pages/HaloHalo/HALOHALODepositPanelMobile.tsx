@@ -199,7 +199,11 @@ export default function CurrencyInputPanel({
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
           {!hideInput && (
-            <LabelRow>
+            <LabelRow
+              style={{
+                padding: 0
+              }}
+            >
               <RowBetween
                 style={{
                   display: 'block'
@@ -236,7 +240,7 @@ export default function CurrencyInputPanel({
                     borderRadius: '8px'
                   }
                 : {
-                    paddingBottom: 0
+                    padding: 0
                   }
             }
             selected={disableCurrencySelect}
@@ -280,7 +284,7 @@ export default function CurrencyInputPanel({
                     borderRadius: '8px'
                   }
                 : {
-                    paddingTop: '5px'
+                    padding: 0
                   }
             }
             selected={disableCurrencySelect}

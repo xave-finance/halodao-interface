@@ -15,11 +15,9 @@ const StyledSwapHeader = styled.div`
 export default function SwapHeader() {
   return (
     <StyledSwapHeader
-      style={
-        {
-          // background: 'blue'
-        }
-      }
+      style={{
+        padding: 0
+      }}
     >
       <RowBetween>
         <img
