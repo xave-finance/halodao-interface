@@ -15,7 +15,6 @@ export async function getTokensUSDPrice(by: GetPriceBy, addressesOrIds: string[]
     const url = `${COINGECKO_API_URL}/simple/${uri}${concatString}&vs_currencies=usd`
     const response = await fetch(url)
     const data = await response.json()
-    console.log('CG response: ', data)
 
     for (const key in data) {
       const price = data[key].usd

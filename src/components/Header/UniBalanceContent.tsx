@@ -2,7 +2,8 @@ import { ChainId, TokenAmount } from '@sushiswap/sdk'
 import React from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
-import tokenLogo from '../../assets/images/token-logo.png'
+// import tokenLogo from '../../assets/images/token-logo.png'
+import tokenLogo from '../../assets/svg/token-logo-new.svg'
 import { HALO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
@@ -50,7 +51,9 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
       <ModalUpper>
         <CardSection gap="md">
           <RowBetween>
-            <TYPE.white color="white">Your HALO Breakdown</TYPE.white>
+            <TYPE.white color="white" fontWeight="bold">
+              Your HALO Breakdown
+            </TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
         </CardSection>

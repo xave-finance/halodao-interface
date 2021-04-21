@@ -312,19 +312,13 @@ export default function Header() {
         </Title>
         <HeaderLinks>
           <StyledNavLink
-            id={`pool-nav-link`}
-            to={'/pool'}
-            isActive={(match, { pathname }) =>
-              Boolean(match) ||
-              pathname.startsWith('/add') ||
-              pathname.startsWith('/remove') ||
-              pathname.startsWith('/create') ||
-              pathname.startsWith('/find')
-            }
+            id={`farm-nav-link`}
+            to={'/farm'}
+            isActive={(match, { pathname }) => Boolean(match) || pathname === '/farm'}
           >
             {t('farm')}
           </StyledNavLink>
-          <StyledNavLink id={`stake-nav-link`} to={'/vesting'}>
+          <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
         </HeaderLinks>

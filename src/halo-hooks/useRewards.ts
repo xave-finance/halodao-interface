@@ -1,32 +1,17 @@
 import { useActiveWeb3React } from 'hooks'
 import { useHALORewardsContract } from 'hooks/useContract'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
-import { formatEther } from 'ethers/lib/utils'
+import { formatEther, parseEther } from 'ethers/lib/utils'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 export const useWhitelistedPoolAddresses = () => {
   const rewardsContract = useHALORewardsContract()
-  const [poolAddresses, setPoolAddresses] = useState<string[]>([])
+  const data = useSingleCallResult(rewardsContract, 'getWhitelistedAMMPoolAddresses')
 
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      if (!rewardsContract) return
-      try {
-        const addresses = await rewardsContract.getWhitelistedAMMPoolAddresses()
-        setPoolAddresses(addresses)
-      } catch (err) {
-        console.error('Error fetching AMM pool addresses: ', err)
-      }
-    }
-
-    if (rewardsContract) {
-      fetchAddresses()
-    } else {
-      setPoolAddresses([])
-    }
-  }, [rewardsContract])
-
-  return poolAddresses
+  return useMemo<string[]>(() => {
+    return data.result ? data.result[0] : []
+  }, [data])
 }
 
 export const useTotalClaimedHALO = (): number => {
@@ -83,4 +68,39 @@ export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: st
         : {},
     [poolAddresses, results]
   )
+}
+
+export const useDepositWithdrawPoolTokensCallback = () => {
+  const rewardsContract = useHALORewardsContract()
+  const addTransaction = useTransactionAdder()
+
+  const depositPoolTokens = useCallback(
+    async (poolTokenAddress: string, amount: number) => {
+      if (!rewardsContract) return
+
+      const tx = await rewardsContract.depositPoolTokens(poolTokenAddress, parseEther(`${amount}`).toString())
+      addTransaction(tx, {
+        summary: `Stake ${amount} BPT`
+      })
+
+      return tx
+    },
+    [rewardsContract, addTransaction]
+  )
+
+  const withdrawPoolTokens = useCallback(
+    async (poolTokenAddress: string, amount: number) => {
+      if (!rewardsContract) return
+
+      const tx = await rewardsContract.withdrawPoolTokens(poolTokenAddress, parseEther(`${amount}`).toString())
+      addTransaction(tx, {
+        summary: `Unstake ${amount} BPT`
+      })
+
+      return tx
+    },
+    [rewardsContract, addTransaction]
+  )
+
+  return [depositPoolTokens, withdrawPoolTokens]
 }
