@@ -113,7 +113,7 @@ export default function Saave() {
               lineHeight: '130%',
               color: '#333333',
               borderRadius: '8px',
-              paddingLeft: '0 27px 0 40px'
+              padding: '0 27px 0 40px'
             }}
           >
             <RowBetween
