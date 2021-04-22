@@ -547,22 +547,23 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         approveStakeAmount()
                       }
                     }}
-                    style={stakeButtonState === StakeButtonStates.Disabled ? {
-                      background: '#471BB2',
-                      color: '#FFFFFF',
-                      fontWeight: 900,
-                      opacity: ".5"
-                    } : {
-                      background: '#471BB2',
-                      color: '#FFFFFF',
-                      fontWeight: 900
-                    }}
-                  >
-                    {(
-                      stakeButtonState === StakeButtonStates.Disabled ||
-                      stakeButtonState === StakeButtonStates.Approved
-                    ) && <>{t('stake')}</>
+                    style={
+                      stakeButtonState === StakeButtonStates.Disabled
+                        ? {
+                            background: '#471BB2',
+                            color: '#FFFFFF',
+                            fontWeight: 900,
+                            opacity: '.5'
+                          }
+                        : {
+                            background: '#471BB2',
+                            color: '#FFFFFF',
+                            fontWeight: 900
+                          }
                     }
+                  >
+                    {(stakeButtonState === StakeButtonStates.Disabled ||
+                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
                     {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
                     {stakeButtonState === StakeButtonStates.Approving && (
                       <>
@@ -696,22 +697,26 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           approveStakeAmount()
                         }
                       }}
-                      style={stakeButtonState === StakeButtonStates.Disabled ? {
-                        background: '#471BB2',
-                        color: '#FFFFFF',
-                        fontWeight: 900,
-                        width: '100%',
-                        margin: '4% 0 4% 0',
-                        height: '38px',
-                        opacity: ".5"
-                      } : {
-                        background: '#471BB2',
-                        color: '#FFFFFF',
-                        fontWeight: 900,
-                        width: '100%',
-                        margin: '4% 0 4% 0',
-                        height: '38px'
-                      }}
+                      style={
+                        stakeButtonState === StakeButtonStates.Disabled
+                          ? {
+                              background: '#471BB2',
+                              color: '#FFFFFF',
+                              fontWeight: 900,
+                              width: '100%',
+                              margin: '4% 0 4% 0',
+                              height: '38px',
+                              opacity: '.5'
+                            }
+                          : {
+                              background: '#471BB2',
+                              color: '#FFFFFF',
+                              fontWeight: 900,
+                              width: '100%',
+                              margin: '4% 0 4% 0',
+                              height: '38px'
+                            }
+                      }
                     >
                       {(stakeButtonState === StakeButtonStates.Disabled ||
                         stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
