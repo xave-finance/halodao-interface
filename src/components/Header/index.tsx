@@ -27,7 +27,6 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
-import { darken } from 'polished'
 
 const HeaderFrame = styled.div`
   display: grid;
@@ -363,6 +362,9 @@ export default function Header() {
           </StyledExternalLink>
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
             {t('vote')}
+          </StyledExternalLink>
+          <StyledExternalLink id={`mint-nav-link`} href={'https://dev.minter.halodao.com'}>
+            {t('mint')}
           </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
