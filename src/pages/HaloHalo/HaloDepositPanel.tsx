@@ -221,7 +221,7 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {haloBalance} Halo Tokens
+                    BALANCE: {haloBalance} HALO Tokens
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -348,7 +348,7 @@ export default function CurrencyInputPanel({
                       color: '#FFFFFF'
                     }}
                   >
-                    Deposit
+                    Claim HALO
                   </StyledButtonName>
                 </Aligner>
               </ButtonSelect>

@@ -22,7 +22,7 @@ import { transparentize } from 'polished'
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 
 const PageWrapperWeb = styled(AutoColumn)`
-  max-width: 760px;
+  max-width: 820px;
   width: 100%;
   display: block;
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -53,7 +53,7 @@ export default function Saave() {
       <PageWrapperWeb>
         <VoteCard
           style={{
-            maxWidth: '300px',
+            maxWidth: '370px',
             width: '100%',
             float: 'left',
             borderRadius: 0
@@ -102,8 +102,7 @@ export default function Saave() {
           </CardSection>
           <CardSection
             style={{
-              width: '300px',
-              height: '200px',
+              width: '350px',
               marginTop: '28px',
               background: '#e9e4f7',
               fontFamily: 'Open Sans',
@@ -113,7 +112,7 @@ export default function Saave() {
               lineHeight: '130%',
               color: '#333333',
               borderRadius: '8px',
-              padding: '0 27px 0 40px'
+              padding: '24px 27px 24px 40px'
             }}
           >
             <RowBetween
@@ -123,7 +122,8 @@ export default function Saave() {
                 fontWeight: 800,
                 lineHeight: '16px',
                 letterSpacing: '0.1em',
-                color: '#15006D'
+                color: '#15006D',
+                margin: '0 0 20px 0'
               }}
             >
               DESSERT FACT
@@ -159,7 +159,7 @@ export default function Saave() {
                 disableCurrencySelect={true}
                 customBalanceText={'Available to deposit: '}
                 id="stake-liquidity-token"
-                buttonText="Deposit"
+                buttonText="Claim HALO"
                 cornerRadiusBottomNone={true}
               />
               <HALOHALODepositPanel
@@ -199,7 +199,7 @@ export default function Saave() {
                       float: 'left'
                     }}
                   >
-                    HaloHalo:Halo = x1.15
+                    HALOHALO:HALO = x1.15
                   </div>
                 </div>
               </RowBetween>
@@ -258,7 +258,7 @@ export default function Saave() {
               disableCurrencySelect={true}
               customBalanceText={'Available to deposit: '}
               id="stake-liquidity-token"
-              buttonText="Deposit"
+              buttonText="Claim HALO"
               cornerRadiusBottomNone={true}
             />
             <HALOHALODepositPanelMobile
@@ -286,7 +286,7 @@ export default function Saave() {
                   textAlign: 'center'
                 }}
               >
-                HaloHalo:Halo = x1.15
+                HALOHALO:HALO = x1.15
               </div>
             </RowBetween>
           </div>

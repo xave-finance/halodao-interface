@@ -222,7 +222,7 @@ export default function CurrencyInputPanel({
                       fontSize: '14px'
                     }}
                   >
-                    BALANCE: {xHaloBalance} Halo Halo
+                    BALANCE: {xHaloBalance} HALOHALO
                   </TYPE.body>
                 )}
               </RowBetween>
