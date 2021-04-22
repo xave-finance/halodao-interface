@@ -34,3 +34,15 @@ The interface will not work on other networks.
 
 **Please open all pull requests against the `master` branch.**
 CI checks will run against all PRs.
+
+# alpha / PoC site
+
+## Build & deploy to alpha.app.halodao.com
+
+```
+// Build the react project
+yarn build
+
+// Deploy to firebase hosting
+yarn deploy:alpha
+```
