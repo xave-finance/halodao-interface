@@ -139,7 +139,8 @@ export default function Saave() {
             width: '440px',
             float: 'right',
             border: '1px solid #15006D',
-            borderRadius: '4px'
+            borderRadius: '4px',
+            boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
           }}
         >
           <HaloChestHeader />
@@ -249,7 +250,8 @@ export default function Saave() {
               width: '100%',
               border: '1px solid #15006D',
               borderRadius: '4px',
-              padding: '20px 20px 0 20px'
+              padding: '20px 20px 0 20px',
+              boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
             }}
           >
             <HaloChestHeaderMobile />
@@ -292,7 +294,6 @@ export default function Saave() {
           </div>
           <CardSection
             style={{
-              height: '200px',
               marginTop: '28px',
               background: '#e9e4f7',
               fontFamily: 'Open Sans',
@@ -302,7 +303,7 @@ export default function Saave() {
               lineHeight: '130%',
               color: '#333333',
               borderRadius: '8px',
-              paddingLeft: '0 27px 0 40px'
+              padding: '24px 27px 24px 40px'
             }}
           >
             <RowBetween
@@ -312,7 +313,8 @@ export default function Saave() {
                 fontWeight: 800,
                 lineHeight: '16px',
                 letterSpacing: '0.1em',
-                color: '#15006D'
+                color: '#15006D',
+                margin: '0 0 20px 0'
               }}
             >
               DESSERT FACT
