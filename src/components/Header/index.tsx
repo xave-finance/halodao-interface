@@ -364,6 +364,9 @@ export default function Header() {
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
             {t('vote')}
           </StyledExternalLink>
+          <StyledExternalLink id={`mint-nav-link`} href={'https://dev.minter.halodao.com'}>
+            {t('mint')}
+          </StyledExternalLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
