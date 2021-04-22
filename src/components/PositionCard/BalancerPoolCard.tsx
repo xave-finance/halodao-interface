@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
+import  { Link } from 'react-router-dom'
+
 import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
@@ -835,31 +837,39 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         {formatNumber(unclaimedHalo)} HALO
                       </div>
                     </Text>
-                    <ButtonPrimaryNormal
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
+                    <Link
                       style={{
-                        marginTop: '5px',
-                        width: '90%',
-                        height: '53px',
-                        background: '#FFFFFF',
-                        borderRadius: '10px',
-                        float: 'right',
-                        fontWeight: 'bold'
+                        width: '100%'
                       }}
+                      to='/vesting'
                     >
-                      <div>
-                        <img
-                          style={{
-                            marginBottom: '-5px'
-                          }}
-                          src={Molecule}
-                          alt="Molecule"
-                        />
-                        Claim
-                      </div>
-                    </ButtonPrimaryNormal>
+                      <ButtonPrimaryNormal
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        style={{
+                          marginTop: '5px',
+                          width: '90%',
+                          height: '53px',
+                          background: '#FFFFFF',
+                          color: '#000000',
+                          borderRadius: '10px',
+                          float: 'left',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        <div>
+                          <img
+                            style={{
+                              marginBottom: '-5px'
+                            }}
+                            src={Molecule}
+                            alt="Molecule"
+                          />
+                          Claim
+                        </div>
+                      </ButtonPrimaryNormal>
+                    </Link>
                     <StyledClose
                       style={{
                         display: 'block',
@@ -955,34 +965,36 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '100%'
                       }}
                     >
-                      <ButtonPrimaryNormal
-                        padding="8px"
-                        borderRadius="8px"
-                        width="48%"
-                        style={{
-                          width: '234px',
-                          height: '53px',
-                          background: '#FFFFFF',
-                          borderRadius: '10px',
-                          float: 'right',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        <div
+                      <Link to='/vesting'>
+                        <ButtonPrimaryNormal
+                          padding="8px"
+                          borderRadius="8px"
+                          width="48%"
                           style={{
-                            color: '#333333'
+                            width: '234px',
+                            height: '53px',
+                            background: '#FFFFFF',
+                            borderRadius: '10px',
+                            float: 'right',
+                            fontWeight: 'bold'
                           }}
                         >
-                          <img
+                          <div
                             style={{
-                              marginBottom: '-5px'
+                              color: '#333333'
                             }}
-                            src={Molecule}
-                            alt="Molecule"
-                          />
-                          Claim
-                        </div>
-                      </ButtonPrimaryNormal>
+                          >
+                            <img
+                              style={{
+                                marginBottom: '-5px'
+                              }}
+                              src={Molecule}
+                              alt="Molecule"
+                            />
+                            Claim
+                          </div>
+                        </ButtonPrimaryNormal>
+                      </Link>
                     </StyledRowFixed>
                   </StyledFixedHeightRow>
                 </BalanceCard>
