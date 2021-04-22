@@ -107,5 +107,6 @@
   "stakeToEarn": "Stake your Balancer (Liquidty Pool) Pool Tokens (BPT) to earn Halo!",
   "learnAboutStaking": "Learn about staking",
   "approve": "Approve",
-  "unstake": "Unstake"
+  "unstake": "Unstake",
+  "vote": "Vote"
 }

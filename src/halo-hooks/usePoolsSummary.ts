@@ -3,7 +3,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useMemo } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { PoolInfo } from './useBalancer'
-import { toFormattedCurrency } from 'utils/currencyFormatter'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useStakedBPTPerPool, useTotalClaimedHALO, useUnclaimedHALOPerPool } from './useRewards'
 
 const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
@@ -70,9 +70,9 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
     }
 
     return {
-      stakeableValue: toFormattedCurrency(totalStakeableValue, 4),
-      stakedValue: toFormattedCurrency(totalStakedValue, 4),
-      haloEarned: totalHALOEarned.toFixed(2)
+      stakeableValue: formatNumber(totalStakeableValue, NumberFormat.usd),
+      stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
+      haloEarned: formatNumber(totalHALOEarned)
     }
   }, [poolsInfo, balances, totalSupplies, claimedHALO, unclaimedHALOs, stakedBPTs])
 }

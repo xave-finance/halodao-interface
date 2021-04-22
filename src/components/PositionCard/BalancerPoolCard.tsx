@@ -22,7 +22,7 @@ import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
-import { toFormattedCurrency } from 'utils/currencyFormatter'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
@@ -387,7 +387,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             <HideMedium>
               <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
             </HideMedium>
-            <StyledTextForValue>{toFormattedCurrency(getPoolLiquidity(poolInfo, tokenPrice))}</StyledTextForValue>
+            <StyledTextForValue>
+              {formatNumber(getPoolLiquidity(poolInfo, tokenPrice), NumberFormat.usd)}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
@@ -395,7 +397,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 {t('stakeable')}:
               </StyledText>
             </HideMedium>
-            <StyledTextForValue>{bptBalance.toFixed(2)} BPT</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(bptBalance)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <HideMedium>
@@ -403,7 +405,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 {t('valueStaked')}
               </StyledText>
             </HideMedium>
-            <StyledTextForValue>{toFormattedCurrency(bptStakedValue)}</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <HideMedium>
@@ -411,7 +413,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 {t('earned')}:
               </StyledText>
             </HideMedium>
-            <StyledTextForValue>{unclaimedHalo} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHalo)} HALO</StyledTextForValue>
           </StyledRowFixed>
           {/* Manage and Close buttons for web and mobile */}
           {account && (
@@ -490,7 +492,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           letterSpacing: '0.2em'
                         }}
                       >
-                        BALANCE: {bptBalance.toFixed(2)} BPT
+                        BALANCE: {formatNumber(bptBalance)} BPT
                       </Text>
                     </StyledRowFixed>
                     <StyledRowFixed>
@@ -504,7 +506,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           letterSpacing: '0.2em'
                         }}
                       >
-                        STAKED: {bptStaked.toFixed(2)} BPT
+                        STAKED: {formatNumber(bptStaked)} BPT
                       </Text>
                     </StyledRowFixed>
                   </StyledBalanceStakeWeb>
@@ -657,7 +659,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                   >
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Balance: {bptBalance.toFixed(2)} BPT
+                      Balance: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
                     <br />
                     <NumericalInput
@@ -709,7 +711,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       )}
                     </ButtonPrimaryNormal>
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Staked: {bptStaked.toFixed(2)} BPT
+                      Staked: {formatNumber(bptStaked)} BPT
                     </StyledTextForValue>
                     <NumericalInput
                       style={{ width: '100%' }}
@@ -826,7 +828,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           lineHeight: '44px'
                         }}
                       >
-                        {unclaimedHalo.toFixed(2)} HALO
+                        {formatNumber(unclaimedHalo)} HALO
                       </div>
                     </Text>
                     <ButtonPrimaryNormal
@@ -938,7 +940,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                             lineHeight: '44px'
                           }}
                         >
-                          {unclaimedHalo.toFixed(2)} HALO
+                          {formatNumber(unclaimedHalo)} HALO
                         </div>
                       </Text>
                     </StyledRowFixed>
