@@ -140,7 +140,7 @@ export default function Saave() {
             float: 'right',
             border: '1px solid #15006D',
             borderRadius: '4px',
-            boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
+            boxShadow: '0px 7px 14px rgba(0, 0, 0, 0.1)'
           }}
         >
           <HaloChestHeader />
@@ -251,7 +251,7 @@ export default function Saave() {
               border: '1px solid #15006D',
               borderRadius: '4px',
               padding: '20px 20px 0 20px',
-              boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
+              boxShadow: '0px 7px 14px rgba(0, 0, 0, 0.1)'
             }}
           >
             <HaloChestHeaderMobile />
