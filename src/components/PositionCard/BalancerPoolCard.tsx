@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
-
 import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
@@ -12,10 +11,7 @@ import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
-import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
-import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import Confetti from 'components/Confetti'
 import Circle from '../../assets/images/blue-loader.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
@@ -27,6 +23,14 @@ import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { toFormattedCurrency } from 'utils/currencyFormatter'
+import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
+import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import {
+  useDepositWithdrawPoolTokensCallback,
+  useStakedBPTPerPool,
+  useUnclaimedHALOPerPool
+} from 'halo-hooks/useRewards'
+import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 
 const BalanceCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -179,11 +183,6 @@ const StyledBorderBottom = styled(Text)`
   `};
 `
 
-interface BalancerPoolCardProps {
-  poolInfo: PoolInfo
-  tokenPrice: TokenPrice
-}
-
 const StyledBalanceStakeWeb = styled(Text)`
   display: flex;
   width: 100%;
@@ -231,131 +230,148 @@ const AutoColumnCustom = styled.div`
   `}
 `
 
+enum StakeButtonStates {
+  Disabled,
+  NotApproved,
+  Approving,
+  Approved,
+  Staking
+}
+
+enum UnstakeButtonStates {
+  Disabled,
+  Enabled,
+  Unstaking
+}
+
+interface BalancerPoolCardProps {
+  poolInfo: PoolInfo
+  tokenPrice: TokenPrice
+}
+
 export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
+  const { t } = useTranslation()
+
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [bptStaked, setBptStaked] = useState(0)
-  const [bptStakedValue, setBptStakedValue] = useState(0)
-  const [unclaimedHalo, setUnclaimedHalo] = useState(0)
-  const [bptBalance, setBptBalance] = useState(0)
-  const [loading, setLoading] = useState({
-    staking: false,
-    unstaking: false,
-    claim: false,
-    unstakeAndClaim: false,
-    confetti: false
-  })
-  const { t } = useTranslation()
+  const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
+  const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
+  const [isTxInProgress, setIsTxInProgress] = useState(false)
 
-  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
-  const rewardsContract = useContract(rewardsContractAddress, HALO_REWARDS_ABI)
-  const lpTokenContract = useTokenContract(poolInfo.address)
+  // Get user BPT balance
+  const bptBalanceAmount = useTokenBalance(poolInfo.address)
+  const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
-  const backgroundColor = '#FFFFFF'
+  // Get user staked BPT
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.address])
+  const bptStaked = stakedBPTs[poolInfo.address] ?? 0
 
+  // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
   const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
+  const bptStakedValue = bptStaked * bptPrice
 
-  // get bpt balance based on the token address in the poolInfo
-  const getBptBalance = useCallback(async () => {
-    const bptBalanceValue = lpTokenContract?.balanceOf(account)
-    setBptBalance(+formatEther(await bptBalanceValue))
-  }, [lpTokenContract, account])
+  // Get user earned HALO
+  const unclaimedHALOs = useUnclaimedHALOPerPool([poolInfo.address])
+  const unclaimedHalo = unclaimedHALOs[poolInfo.address] ?? 0
 
-  // checks the allowance and skips approval if already within the approved value
-  const getAllowance = async () => {
-    const currentAllowance = await lpTokenContract!.allowance(account, rewardsContractAddress)
-    return +formatEther(currentAllowance)
+  // Make use of `useApproveCallback` for checking & setting allowance
+  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
+  const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
+  const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+
+  // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
+  const [depositPoolTokens, withdrawPoolTokens] = useDepositWithdrawPoolTokensCallback()
+
+  /**
+   * Updating the state of stake button
+   */
+  useEffect(() => {
+    if (isTxInProgress) return
+
+    const amountAsFloat = parseFloat(stakeAmount)
+    if (amountAsFloat > 0 && amountAsFloat <= bptBalance) {
+      if (approveState === ApprovalState.APPROVED) {
+        setStakeButtonState(StakeButtonStates.Approved)
+      } else if (approveState === ApprovalState.PENDING) {
+        setStakeButtonState(StakeButtonStates.Approving)
+      } else {
+        setStakeButtonState(StakeButtonStates.NotApproved)
+      }
+    } else {
+      setStakeButtonState(StakeButtonStates.Disabled)
+    }
+  }, [approveState, stakeAmount, bptBalance, isTxInProgress])
+
+  /**
+   * Updating the state of unstake button
+   */
+  useEffect(() => {
+    if (isTxInProgress) return
+
+    const amountAsFloat = parseFloat(unstakeAmount)
+    if (amountAsFloat > 0 && amountAsFloat <= bptStaked) {
+      setUnstakeButtonState(UnstakeButtonStates.Enabled)
+    } else {
+      setUnstakeButtonState(UnstakeButtonStates.Disabled)
+    }
+  }, [unstakeAmount, bptStaked, isTxInProgress])
+
+  /**
+   * Approves the stake amount
+   */
+  const approveStakeAmount = async () => {
+    setIsTxInProgress(true)
+    setStakeButtonState(StakeButtonStates.Approving)
+
+    await approveCallback()
+
+    setIsTxInProgress(false)
   }
 
-  const getUserTotalTokenslByPoolAddress = useCallback(async () => {
-    const lpTokens = await rewardsContract?.getDepositedPoolTokenBalanceByUser(poolInfo.address, account)
-    setBptStaked(+formatEther(lpTokens))
-
-    // Get staked tokens value
-    const stakedValue = +formatEther(lpTokens) * bptPrice
-    setBptStakedValue(stakedValue)
-  }, [rewardsContract, account, poolInfo.address, bptPrice])
-
-  const getUnclaimedPoolReward = useCallback(async () => {
-    const unclaimedHaloInPool = await rewardsContract?.getUnclaimedPoolRewardsByUserByPool(poolInfo.address, account)
-    // we can leave this to monitor the whole big int
-    console.log('Unclaimed HALO: ', unclaimedHaloInPool.toString())
-    setUnclaimedHalo(+formatEther(unclaimedHaloInPool))
-  }, [rewardsContract, account, poolInfo.address])
-
-  useEffect(() => {
-    getUserTotalTokenslByPoolAddress()
-    getBptBalance()
-    getUnclaimedPoolReward()
-  }, [bptBalance, getUnclaimedPoolReward, getUserTotalTokenslByPoolAddress, getBptBalance])
-
+  /**
+   * Stakes the LP token to Rewards contract
+   */
   const stakeLpToken = async () => {
-    setLoading({ ...loading, staking: true })
-    const lpTokenAmount = parseEther(stakeAmount)
-    try {
-      const allowance = await getAllowance()
-      if (allowance < +stakeAmount) {
-        const approvalTxn = await lpTokenContract!.approve(rewardsContractAddress, lpTokenAmount.toString())
-        await approvalTxn.wait()
-      }
+    setIsTxInProgress(true)
+    setStakeButtonState(StakeButtonStates.Staking)
 
-      const stakeLpTxn = await rewardsContract?.depositPoolTokens(poolInfo.address, lpTokenAmount.toString())
-      const stakeLpTxnReceipt = await stakeLpTxn.wait()
-      if (stakeLpTxnReceipt.status === 1) {
-        setLoading({ ...loading, staking: false, confetti: true })
-      } else {
-        setLoading({ ...loading, staking: false })
-      }
+    try {
+      const tx = await depositPoolTokens(poolInfo.address, parseFloat(stakeAmount) ?? 0)
+      await tx.wait()
     } catch (e) {
-      console.error('Stake error', e)
+      console.error('Stake error: ', e)
     }
 
     setStakeAmount('')
-    getBptBalance()
-    // make sure the confetti still activates without refereshing
-    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
+    setStakeButtonState(StakeButtonStates.Disabled)
+    setIsTxInProgress(false)
   }
 
+  /**
+   * Unstake LP token from Rewards contract
+   */
   const unstakeLpToken = async () => {
-    setLoading({ ...loading, unstaking: true })
-    const lpTokenAmount = parseEther(unstakeAmount)
+    setIsTxInProgress(true)
+    setUnstakeButtonState(UnstakeButtonStates.Unstaking)
+
     try {
-      const unstakeLpTxn = await rewardsContract!.withdrawPoolTokens(poolInfo.address, lpTokenAmount.toString())
-      await unstakeLpTxn.wait()
+      const tx = await withdrawPoolTokens(poolInfo.address, parseFloat(unstakeAmount) ?? 0)
+      await tx.wait()
     } catch (e) {
-      console.error(e)
+      console.error('Unstake error: ', e)
     }
 
     setUnstakeAmount('')
-    setLoading({ ...loading, unstaking: false })
-    getBptBalance()
-  }
-
-  const claimPoolRewards = async () => {
-    setLoading({ ...loading, claim: true })
-    try {
-      const claimPoolRewardsTxn = await rewardsContract!.withdrawUnclaimedPoolRewards(poolInfo.address)
-      const claimPoolRewardsTxnReceipt = await claimPoolRewardsTxn.wait()
-      if (claimPoolRewardsTxnReceipt.status === 1) {
-        setLoading({ ...loading, claim: false, confetti: true })
-      } else {
-        setLoading({ ...loading, claim: false })
-      }
-    } catch (e) {
-      console.error(e)
-      setLoading({ ...loading, claim: false })
-    }
-
-    // make sure the confetti still activates without refereshing
-    setTimeout(() => setLoading({ ...loading, confetti: false }), 3000)
+    setUnstakeButtonState(UnstakeButtonStates.Disabled)
+    setIsTxInProgress(false)
   }
 
   return (
-    <StyledCard bgColor={backgroundColor}>
+    <StyledCard bgColor="#FFFFFF" className="pool-card">
       <AutoColumn>
         <StyledFixedHeightRowCustom>
           <StyledRowFixed width="25%" gap="8px">
@@ -438,7 +454,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
         {showMore && (
           <AutoColumnCustom>
-            {/* Line */}
             <HideMedium>
               <RowBetween>
                 <StyledBorderBottom
@@ -457,7 +472,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             >
               <StyledCardBoxWeb>
                 <StyledFixedHeightRowWeb>
-                  <Confetti start={loading.confetti} />
                   <StyledBalanceStakeWeb
                     style={{
                       display: 'flex',
@@ -509,28 +523,45 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                     value={stakeAmount}
                     onUserInput={amount => setStakeAmount(amount)}
+                    id="stake-input"
                   />
                   <ButtonPrimaryNormal
+                    id="stake-button"
                     padding="8px"
                     borderRadius="8px"
                     width="100%"
-                    disabled={
-                      !(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking
-                    }
-                    onClick={stakeLpToken}
+                    disabled={[
+                      StakeButtonStates.Disabled,
+                      StakeButtonStates.Approving,
+                      StakeButtonStates.Staking
+                    ].includes(stakeButtonState)}
+                    onClick={() => {
+                      if (stakeButtonState === StakeButtonStates.Approved) {
+                        stakeLpToken()
+                      } else {
+                        approveStakeAmount()
+                      }
+                    }}
                     style={{
                       background: '#471BB2',
                       color: '#FFFFFF',
                       fontWeight: 900
                     }}
                   >
-                    {loading.staking ? (
+                    {(stakeButtonState === StakeButtonStates.Disabled ||
+                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                    {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                    {stakeButtonState === StakeButtonStates.Approving && (
                       <>
-                        {`${HALO_REWARDS_MESSAGE.staking}`}&nbsp;
+                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
                         <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                       </>
-                    ) : (
-                      t('stake')
+                    )}
+                    {stakeButtonState === StakeButtonStates.Staking && (
+                      <>
+                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                      </>
                     )}
                   </ButtonPrimaryNormal>
                 </RowBetween>
@@ -548,14 +579,16 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                     value={unstakeAmount}
                     onUserInput={amount => setUnstakeAmount(amount)}
+                    id="unstake-input"
                   />
                   <ButtonPrimaryNormal
+                    id="unstake-button"
                     padding="8px"
                     borderRadius="8px"
                     width="100%"
-                    disabled={
-                      !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
-                    }
+                    disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                      unstakeButtonState
+                    )}
                     onClick={unstakeLpToken}
                     style={{
                       color: '#471BB2',
@@ -563,13 +596,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       border: '1px solid #471BB2'
                     }}
                   >
-                    {loading.unstaking ? (
+                    {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                      unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                    {unstakeButtonState === UnstakeButtonStates.Unstaking && (
                       <>
-                        {`${HALO_REWARDS_MESSAGE.unstaking}`}&nbsp;
+                        {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
                         <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                       </>
-                    ) : (
-                      t('unstake')
                     )}
                   </ButtonPrimaryNormal>
                 </RowBetween>
@@ -631,15 +664,25 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       style={{ width: '100%' }}
                       value={stakeAmount}
                       onUserInput={amount => setStakeAmount(amount)}
+                      id="stake-input"
                     />
                     <ButtonPrimaryNormal
+                      id="stake-button"
                       padding="8px"
                       borderRadius="8px"
                       width="48%"
-                      disabled={
-                        !(parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) <= bptBalance) || loading.staking
-                      }
-                      onClick={stakeLpToken}
+                      disabled={[
+                        StakeButtonStates.Disabled,
+                        StakeButtonStates.Approving,
+                        StakeButtonStates.Staking
+                      ].includes(stakeButtonState)}
+                      onClick={() => {
+                        if (stakeButtonState === StakeButtonStates.Approved) {
+                          stakeLpToken()
+                        } else {
+                          approveStakeAmount()
+                        }
+                      }}
                       style={{
                         background: '#471BB2',
                         color: '#FFFFFF',
@@ -649,13 +692,20 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '38px'
                       }}
                     >
-                      {loading.staking ? (
+                      {(stakeButtonState === StakeButtonStates.Disabled ||
+                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                      {stakeButtonState === StakeButtonStates.Approving && (
                         <>
-                          {`${HALO_REWARDS_MESSAGE.staking}`}&nbsp;
+                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
                           <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                         </>
-                      ) : (
-                        t('stake')
+                      )}
+                      {stakeButtonState === StakeButtonStates.Staking && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
                       )}
                     </ButtonPrimaryNormal>
                     <StyledTextForValue fontSize={16} fontWeight={800}>
@@ -665,14 +715,16 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       style={{ width: '100%' }}
                       value={unstakeAmount}
                       onUserInput={amount => setUnstakeAmount(amount)}
+                      id="unstake-input"
                     />
                     <ButtonPrimaryNormal
+                      id="unstake-button"
                       padding="8px"
                       borderRadius="8px"
                       width="48%"
-                      disabled={
-                        !(parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) <= bptStaked) || loading.unstaking
-                      }
+                      disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                        unstakeButtonState
+                      )}
                       onClick={unstakeLpToken}
                       style={{
                         color: '#471BB2',
@@ -683,13 +735,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '38px'
                       }}
                     >
-                      {loading.unstaking ? (
+                      {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                        unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                      {unstakeButtonState === UnstakeButtonStates.Unstaking && (
                         <>
-                          {`${HALO_REWARDS_MESSAGE.unstaking}`}&nbsp;
+                          {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
                           <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
                         </>
-                      ) : (
-                        t('unstake')
                       )}
                     </ButtonPrimaryNormal>
                     <BalanceCard
@@ -781,8 +833,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       padding="8px"
                       borderRadius="8px"
                       width="48%"
-                      disabled={!(unclaimedHalo > 0) || loading.claim}
-                      onClick={claimPoolRewards}
                       style={{
                         marginTop: '5px',
                         width: '90%',
@@ -793,23 +843,16 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         fontWeight: 'bold'
                       }}
                     >
-                      {loading.claim ? (
-                        <>
-                          {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      ) : (
-                        <div>
-                          <img
-                            style={{
-                              marginBottom: '-5px'
-                            }}
-                            src={Molecule}
-                            alt="Molecule"
-                          />
-                          Claim
-                        </div>
-                      )}
+                      <div>
+                        <img
+                          style={{
+                            marginBottom: '-5px'
+                          }}
+                          src={Molecule}
+                          alt="Molecule"
+                        />
+                        Claim
+                      </div>
                     </ButtonPrimaryNormal>
                     <StyledClose
                       style={{
@@ -910,8 +953,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         padding="8px"
                         borderRadius="8px"
                         width="48%"
-                        disabled={!(unclaimedHalo > 0) || loading.claim}
-                        onClick={claimPoolRewards}
                         style={{
                           width: '234px',
                           height: '53px',
@@ -921,27 +962,20 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           fontWeight: 'bold'
                         }}
                       >
-                        {loading.claim ? (
-                          <>
-                            {`${HALO_REWARDS_MESSAGE.claiming}`}&nbsp;
-                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                          </>
-                        ) : (
-                          <div
+                        <div
+                          style={{
+                            color: '#333333'
+                          }}
+                        >
+                          <img
                             style={{
-                              color: '#333333'
+                              marginBottom: '-5px'
                             }}
-                          >
-                            <img
-                              style={{
-                                marginBottom: '-5px'
-                              }}
-                              src={Molecule}
-                              alt="Molecule"
-                            />
-                            Claim
-                          </div>
-                        )}
+                            src={Molecule}
+                            alt="Molecule"
+                          />
+                          Claim
+                        </div>
                       </ButtonPrimaryNormal>
                     </StyledRowFixed>
                   </StyledFixedHeightRow>

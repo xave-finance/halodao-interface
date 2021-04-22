@@ -363,7 +363,7 @@ export const BLOCKED_ADDRESSES: string[] = [
 ]
 
 export const HALO_REWARDS_MESSAGE = {
-  approval: 'Approving token spend',
+  approving: 'Approving token spend',
   staking: 'Staking token',
   unstaking: 'Unstaking token',
   claiming: 'Claiming your rewards',

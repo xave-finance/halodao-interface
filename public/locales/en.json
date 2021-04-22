@@ -89,6 +89,7 @@
   "toleranceExplanation": "Lowering this limit decreases your risk of frontrunning. However, this makes more likely that your transaction will fail due to normal price movements.",
   "tokenSearchPlaceholder": "Search name or paste address",
   "manage": "Manage",
+  "close": "Close",
   "farm": "Farm",
   "stake": "Stake",
   "unstake": "Unstake",
@@ -104,5 +105,7 @@
   "getBPTTokens": "To stake, get BPT Tokens here",
   "closeTxt": "Close",
   "stakeToEarn": "Stake your Balancer (Liquidty Pool) Pool Tokens (BPT) to earn Halo!",
-  "learnAboutStaking": "Learn about staking"
+  "learnAboutStaking": "Learn about staking",
+  "approve": "Approve",
+  "unstake": "Unstake"
 }
