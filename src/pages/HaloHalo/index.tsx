@@ -87,6 +87,20 @@ const VoteCardWrapper = styled.div`
   }
 `
 
+const DepositWrapper = styled.div`
+  float: right;
+  border: 1px solid #15006D;
+  border-radius: 4px;
+  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+  `};
+`
+
+const DepositInnerWrapper = styled.div`
+  padding: '0 30px 0 30px'
+`
+
 export default function Saave() {
   return (
     <>
@@ -115,79 +129,68 @@ export default function Saave() {
             </CardSectionWrapper>
           </VoteCard>
         </VoteCardWrapper>
-        <div
-          style={{
-            width: '440px',
-            float: 'right',
-            border: '1px solid #15006D',
-            borderRadius: '4px',
-            boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
-          }}
-        >
+        <DepositWrapper>
           <HaloChestHeader />
-          <Wrapper
-            id="swap-page"
-            style={{
-              padding: '0 30px 0 30px'
-            }}
-          >
-            <AutoColumn
-              style={{
-                padding: '10px 0 10px 0'
-              }}
-            >
-              <HaloDepositPanel
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to deposit: '}
-                id="stake-liquidity-token"
-                buttonText="Claim HALO"
-                cornerRadiusBottomNone={true}
-              />
-              <HALOHALODepositPanel
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to withdraw: '}
-                id="withdraw-liquidity-token"
-                buttonText="Withdraw"
-                cornerRadiusTopNone={true}
-              />
-              <RowBetween
+          <DepositInnerWrapper>
+            <Wrapper id="swap-page">
+              <AutoColumn
                 style={{
-                  padding: '30px 0 0 0'
+                  padding: '10px 0 10px 0'
                 }}
               >
-                <div
+                <HaloDepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to deposit: '}
+                  id="stake-liquidity-token"
+                  buttonText="Claim HALO"
+                  cornerRadiusBottomNone={true}
+                />
+                <HALOHALODepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to withdraw: '}
+                  id="withdraw-liquidity-token"
+                  buttonText="Withdraw"
+                  cornerRadiusTopNone={true}
+                />
+                <RowBetween
                   style={{
-                    margin: 'auto'
+                    padding: '30px 0 0 0'
                   }}
                 >
-                  <img
-                    style={{
-                      float: 'left'
-                    }}
-                    src={HalohaloIngredients}
-                    alt="Halo Halo"
-                  />
                   <div
                     style={{
-                      margin: '8px 0 0 10px',
-                      fontStyle: 'italic',
-                      fontFamily: 'Open Sans',
-                      fontWeight: 600,
-                      lineHeight: '16px',
-                      letterSpacing: '0.2em',
-                      color: '#000000',
-                      float: 'left'
+                      margin: 'auto'
                     }}
                   >
-                    HALOHALO:HALO = x1.15
+                    <img
+                      style={{
+                        float: 'left'
+                      }}
+                      src={HalohaloIngredients}
+                      alt="Halo Halo"
+                    />
+                    <div
+                      style={{
+                        margin: '8px 0 0 10px',
+                        fontStyle: 'italic',
+                        fontFamily: 'Open Sans',
+                        fontWeight: 600,
+                        lineHeight: '16px',
+                        letterSpacing: '0.2em',
+                        color: '#000000',
+                        float: 'left'
+                      }}
+                    >
+                      HALOHALO:HALO = x1.15
+                    </div>
                   </div>
-                </div>
-              </RowBetween>
-            </AutoColumn>
-          </Wrapper>
-        </div>
+                </RowBetween>
+              </AutoColumn>
+            </Wrapper>
+          </DepositInnerWrapper>
+        </DepositWrapper>
         <CardSection
           style={{
             width: '350px',

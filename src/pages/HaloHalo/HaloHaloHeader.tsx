@@ -1,44 +1,65 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RowBetween } from '../../components/Row'
-import { TYPE } from '../../theme'
 import Halohalo from '../../assets/svg/halohalo-2.svg'
 
 const StyledSwapHeader = styled.div`
-  padding: 12px 1rem 0px 1.5rem;
+  padding: 30px 0 0 30px;
   margin-bottom: -4px;
   width: 100%;
   max-width: 420px;
   color: ${({ theme }) => theme.text2};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0
+  `};
 `
+
+const HaloTitle = styled.div`
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 25px;
+  letter-spacing: 0.2em;
+  color: #15006D;
+  display: block;
+  width: 100%;
+  margin-left: 30px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    text-align: center;
+    margin: 0;
+  `};
+`
+const HaloImg = styled.img`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: block;
+    margin: auto;
+    padding: 10px 0 10px 0;
+  `};
+`
+
+const RowBetweenWrapper = styled.div`
+  ${RowBetween} {
+    display: flex;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      display: block;
+    `};
+  }
+`
+
 
 export default function SwapHeader() {
   return (
-    <StyledSwapHeader
-      style={{
-        padding: '30px 0 0 30px'
-      }}
-    >
-      <RowBetween>
-        <img src={Halohalo} alt="Halo Halo" />
-        <TYPE.black
-          style={{
-            fontFamily: 'Open Sans',
-            fontStyle: 'normal',
-            fontWeight: 800,
-            fontSize: '18px',
-            lineHeight: '25px',
-            letterSpacing: '0.2em',
-            color: '#15006D',
-            display: 'block',
-            width: '100%',
-            marginLeft: '30px'
-          }}
-          fontWeight={500}
-        >
-          HALO → HALOHALO
-        </TYPE.black>
-      </RowBetween>
+    <StyledSwapHeader>
+      <RowBetweenWrapper>
+        <RowBetween>
+          <HaloImg src={Halohalo} alt="Halo Halo" />
+          <HaloTitle>
+            HALO → HALOHALO
+          </HaloTitle>
+        </RowBetween>
+      </RowBetweenWrapper>
     </StyledSwapHeader>
   )
 }
