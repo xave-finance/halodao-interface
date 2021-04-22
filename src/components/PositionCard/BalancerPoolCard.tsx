@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
-import  { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
@@ -841,7 +841,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       style={{
                         width: '100%'
                       }}
-                      to='/vesting'
+                      to="/vesting"
                     >
                       <ButtonPrimaryNormal
                         padding="8px"
@@ -965,7 +965,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '100%'
                       }}
                     >
-                      <Link to='/vesting'>
+                      <Link to="/vesting">
                         <ButtonPrimaryNormal
                           padding="8px"
                           borderRadius="8px"
