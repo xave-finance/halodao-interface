@@ -229,6 +229,10 @@ const StyledNavLink = styled(NavLink).attrs({
   :focus {
     color: ${({ theme }) => theme.primaryText1};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    font-size: 1rem;
+  `};
 `
 
 const StyledExternalLink = styled(ExternalLink).attrs({
@@ -250,17 +254,17 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   &.${activeClassName} {
     border-radius: ${({ theme }) => theme.borderRadius};
     font-weight: 600;
-    color: ${({ theme }) => theme.text1};
   }
 
   :hover,
   :focus {
-    color: ${({ theme }) => darken(0.1, theme.text1)};
+    color: ${({ theme }) => theme.primaryText1};
+    text-decoration: none;
   }
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      display: none;
-`}
+    font-size: 1rem;
+  `};
 `
 
 export const StyledMenuButton = styled.button`
