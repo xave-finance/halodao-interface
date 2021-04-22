@@ -5,13 +5,10 @@ import styled from 'styled-components'
 //import { useDarkModeManager } from '../../state/user/hooks'
 // import AppBody from '../AppBody'
 import HaloChestHeader from './HaloHaloHeader'
-import HaloChestHeaderMobile from './HaloHaloHeaderMobile'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
-import HaloDepositPanelMobile from './HaloDepositPanelMobile'
 import HALOHALODepositPanel from './HALOHALODepositPanel'
-import HALOHALODepositPanelMobile from './HALOHALODepositPanelMobile'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { RowBetween } from '../../components/Row'
@@ -21,20 +18,10 @@ import { transparentize } from 'polished'
 
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 
-const PageWrapperWeb = styled(AutoColumn)`
+const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
   width: 100%;
   display: block;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
-`
-
-const PageWrapperMobile = styled(AutoColumn)`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: inline;
-  `};
 `
 
 const VoteCard = styled(DataCard)`
@@ -43,97 +30,91 @@ const VoteCard = styled(DataCard)`
   margin-bottom: 10px;
 `
 
-export default function Saave() {
-  // const theme = useContext(ThemeContext)
-  //const { account } = useActiveWeb3React()
-  //const darkMode = useDarkModeManager()
+const CardSectionWrapper = styled.div`
+  ${CardSection} {
+    padding: 0 0 20px 0;
+  }
+`
 
+const VestingRow = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16px;
+    letter-spacing: 0.2em;
+    color: #000000;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const DessertPoolRow = styled.div`
+  ${RowBetween} {
+    font-family: Fredoka One;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 44px;
+    color: #471BB2;
+    font-size: 36px;
+  }
+`
+
+const TokenRewardsExplainer = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: #333333;
+  }
+`
+
+const AutoColumnVesting = styled.div`
+  ${AutoColumn} {
+    grid-row-gap: 5px;
+  }
+`
+
+const VoteCardWrapper = styled.div`
+  ${VoteCard} {
+    max-width: 370px;
+    width: 100%;
+    float: left;
+    border-radius: 0;
+  }
+`
+
+export default function Saave() {
   return (
     <>
-      <PageWrapperWeb>
-        <VoteCard
-          style={{
-            maxWidth: '370px',
-            width: '100%',
-            float: 'left',
-            borderRadius: 0
-          }}
-        >
-          <CardSection>
-            <AutoColumn gap="md">
-              <RowBetween
-                style={{
-                  fontFamily: 'Open Sans',
-                  fontStyle: 'normal',
-                  fontWeight: 800,
-                  lineHeight: '16px',
-                  letterSpacing: '0.2em',
-                  color: '#000000'
-                }}
-              >
-                VESTING
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: 'Fredoka One',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '36px',
-                  lineHeight: '44px',
-                  color: '#471BB2'
-                }}
-              >
-                Dessert Pool
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: 'Open Sans',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '16px',
-                  lineHeight: '130%',
-                  color: '#333333'
-                }}
-              >
-                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
-                to earn daily.
-              </RowBetween>
-            </AutoColumn>
-          </CardSection>
-          <CardSection
-            style={{
-              width: '350px',
-              marginTop: '28px',
-              background: '#e9e4f7',
-              fontFamily: 'Open Sans',
-              fontStyle: 'normal',
-              fontWeight: 'normal',
-              fontSize: '16px',
-              lineHeight: '130%',
-              color: '#333333',
-              borderRadius: '8px',
-              padding: '24px 27px 24px 40px'
-            }}
-          >
-            <RowBetween
-              style={{
-                fontFamily: 'Open Sans',
-                fontStyle: 'normal',
-                fontWeight: 800,
-                lineHeight: '16px',
-                letterSpacing: '0.1em',
-                color: '#15006D',
-                margin: '0 0 20px 0'
-              }}
-            >
-              DESSERT FACT
-            </RowBetween>
-            <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
-              daily HALO vesting multiples.
-            </RowBetween>
-          </CardSection>
-        </VoteCard>
+      <PageWrapper>
+        <VoteCardWrapper>
+          <VoteCard>
+            <CardSectionWrapper>
+              <CardSection>
+                <AutoColumnVesting>
+                  <AutoColumn gap="md">
+                    <VestingRow>
+                      <RowBetween>VESTING</RowBetween>
+                    </VestingRow>
+                    <DessertPoolRow>
+                      <RowBetween>Dessert Pool</RowBetween>
+                    </DessertPoolRow>
+                    <TokenRewardsExplainer>
+                      <RowBetween>
+                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
+                        to earn daily.
+                      </RowBetween>
+                    </TokenRewardsExplainer>
+                  </AutoColumn>
+                </AutoColumnVesting>
+              </CardSection>
+            </CardSectionWrapper>
+          </VoteCard>
+        </VoteCardWrapper>
         <div
           style={{
             width: '440px',
@@ -207,125 +188,40 @@ export default function Saave() {
             </AutoColumn>
           </Wrapper>
         </div>
-      </PageWrapperWeb>
-      <PageWrapperMobile>
-        <VoteCard
+        <CardSection
           style={{
-            width: '100%',
-            float: 'left',
-            borderRadius: 0
+            width: '350px',
+            marginTop: '28px',
+            background: '#e9e4f7',
+            fontFamily: 'Open Sans',
+            fontStyle: 'normal',
+            fontWeight: 'normal',
+            fontSize: '16px',
+            lineHeight: '130%',
+            color: '#333333',
+            borderRadius: '8px',
+            padding: '24px 27px 24px 40px'
           }}
         >
-          <CardSection>
-            <AutoColumn gap="md">
-              <RowBetween
-                style={{
-                  fontFamily: 'Fredoka One',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '36px',
-                  lineHeight: '44px',
-                  color: '#471BB2'
-                }}
-              >
-                Dessert Pool
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: 'Open Sans',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '16px',
-                  lineHeight: '130%',
-                  color: '#333333'
-                }}
-              >
-                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
-                to earn daily.
-              </RowBetween>
-            </AutoColumn>
-          </CardSection>
-          <div
+          <RowBetween
             style={{
-              width: '100%',
-              border: '1px solid #15006D',
-              borderRadius: '4px',
-              padding: '20px 20px 0 20px',
-              boxShadow: "0px 7px 14px rgba(0, 0, 0, 0.1)"
-            }}
-          >
-            <HaloChestHeaderMobile />
-            <HaloDepositPanelMobile
-              label={''}
-              disableCurrencySelect={true}
-              customBalanceText={'Available to deposit: '}
-              id="stake-liquidity-token"
-              buttonText="Claim HALO"
-              cornerRadiusBottomNone={true}
-            />
-            <HALOHALODepositPanelMobile
-              label={''}
-              disableCurrencySelect={true}
-              customBalanceText={'Available to withdraw: '}
-              id="withdraw-liquidity-token"
-              buttonText="Withdraw"
-              cornerRadiusTopNone={true}
-            />
-            <RowBetween
-              style={{
-                padding: '20px 0 20px 0'
-              }}
-            >
-              <div
-                style={{
-                  width: '100%',
-                  fontStyle: 'italic',
-                  fontFamily: 'Open Sans',
-                  fontWeight: 600,
-                  lineHeight: '16px',
-                  letterSpacing: '0.2em',
-                  color: '#000000',
-                  textAlign: 'center'
-                }}
-              >
-                HALOHALO:HALO = x1.15
-              </div>
-            </RowBetween>
-          </div>
-          <CardSection
-            style={{
-              marginTop: '28px',
-              background: '#e9e4f7',
               fontFamily: 'Open Sans',
               fontStyle: 'normal',
-              fontWeight: 'normal',
-              fontSize: '16px',
-              lineHeight: '130%',
-              color: '#333333',
-              borderRadius: '8px',
-              padding: '24px 27px 24px 40px'
+              fontWeight: 800,
+              lineHeight: '16px',
+              letterSpacing: '0.1em',
+              color: '#15006D',
+              margin: '0 0 20px 0'
             }}
           >
-            <RowBetween
-              style={{
-                fontFamily: 'Open Sans',
-                fontStyle: 'normal',
-                fontWeight: 800,
-                lineHeight: '16px',
-                letterSpacing: '0.1em',
-                color: '#15006D',
-                margin: '0 0 20px 0'
-              }}
-            >
-              DESSERT FACT
-            </RowBetween>
-            <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
-              daily HALO vesting multiples.
-            </RowBetween>
-          </CardSection>
-        </VoteCard>
-      </PageWrapperMobile>
+            DESSERT FACT
+          </RowBetween>
+          <RowBetween>
+            The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
+            daily HALO vesting multiples.
+          </RowBetween>
+        </CardSection>
+      </PageWrapper>
     </>
   )
 }
