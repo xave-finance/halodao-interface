@@ -2,17 +2,17 @@ import { TEST_ADDRESS_NEVER_USE_SHORTENED } from '../support/commands'
 
 describe('Landing Page', () => {
   beforeEach(() => cy.visit('/'))
-  it('loads farm page', () => {
-    cy.get('#farm-page')
+  it('loads swap page', () => {
+    cy.get('#swap-page')
   })
 
-  it('redirects to url /farm', () => {
-    cy.url().should('include', '/farm')
+  it('redirects to url /swap', () => {
+    cy.url().should('include', '/swap')
   })
 
-  it('allows navigation to vesting', () => {
-    cy.get('#vesting-nav-link').click()
-    cy.url().should('include', '/vesting')
+  it('allows navigation to pool', () => {
+    cy.get('#pool-nav-link').click()
+    cy.url().should('include', '/pool')
   })
 
   it('is connected', () => {

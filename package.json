@@ -107,7 +107,9 @@
     "build": "CI= GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'"
+    "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
+    "build-serve": "yarn build && serve build -l 3000",
+    "cy": "$(npm bin)/cypress open"
   },
   "eslintConfig": {
     "extends": "react-app",

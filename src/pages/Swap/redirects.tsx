@@ -9,8 +9,8 @@ export function RedirectPathToSwapOnly({ location }: RouteComponentProps) {
   return <Redirect to={{ ...location, pathname: '/swap' }} />
 }
 
-// Redirects to pool but only replace the pathname
-export function RedirectPathToPoolOnly({ location }: RouteComponentProps) {
+// Redirects to farm but only replace the pathname
+export function RedirectPathToFarmOnly({ location }: RouteComponentProps) {
   return <Redirect to={{ ...location, pathname: '/farm' }} />
 }
 
