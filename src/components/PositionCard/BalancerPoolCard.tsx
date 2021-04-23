@@ -278,14 +278,14 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
-  const [stakeHover, setStakeHover] = useState(false);
+  const [stakeHover, setStakeHover] = useState(false)
 
   const toggleHover = () => {
     setStakeHover(!stakeHover)
   }
 
   // Stake and Unstake button designs for normal, disabled and hover
-  let stakeButnStyle;
+  let stakeButnStyle
 
   if (stakeButtonState === StakeButtonStates.Disabled) {
     stakeButnStyle = {
@@ -616,7 +616,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       }
                     }}
                     style={stakeButnStyle}
-                    onMouseEnter={toggleHover} onMouseLeave={toggleHover}
+                    onMouseEnter={toggleHover}
+                    onMouseLeave={toggleHover}
                   >
                     {(stakeButtonState === StakeButtonStates.Disabled ||
                       stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
