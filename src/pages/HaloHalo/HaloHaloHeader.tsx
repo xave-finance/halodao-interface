@@ -21,7 +21,7 @@ const HaloTitle = styled.div`
   font-size: 18px;
   line-height: 25px;
   letter-spacing: 0.2em;
-  color: #15006D;
+  color: #15006d;
   display: block;
   width: 100%;
   margin-left: 30px;
@@ -48,16 +48,13 @@ const RowBetweenWrapper = styled.div`
   }
 `
 
-
 export default function SwapHeader() {
   return (
     <StyledSwapHeader>
       <RowBetweenWrapper>
         <RowBetween>
           <HaloImg src={Halohalo} alt="Halo Halo" />
-          <HaloTitle>
-            HALO → HALOHALO
-          </HaloTitle>
+          <HaloTitle>HALO → HALOHALO</HaloTitle>
         </RowBetween>
       </RowBetweenWrapper>
     </StyledSwapHeader>

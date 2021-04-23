@@ -56,7 +56,7 @@ const DessertPoolRow = styled.div`
     font-style: normal;
     font-weight: normal;
     line-height: 44px;
-    color: #471BB2;
+    color: #471bb2;
     font-size: 36px;
   }
 `
@@ -96,7 +96,7 @@ const VoteCardWrapper = styled.div`
 const DepositWrapper = styled.div`
   width: 440px;
   float: right;
-  border: 1px solid #15006D;
+  border: 1px solid #15006d;
   border-radius: 4px;
   box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -169,10 +169,10 @@ const RowBetweenCard = styled.div`
     font-weight: 800;
     line-height: 16px;
     letter-spacing: 0.1em;
-    color: #15006D;
+    color: #15006d;
     margin: 0 0 20px 0;
   }
-`;
+`
 
 export default function Saave() {
   return (
@@ -192,8 +192,8 @@ export default function Saave() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
-                        to earn daily.
+                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the
+                        Dessert Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -204,45 +204,41 @@ export default function Saave() {
         </VoteCardWrapper>
         <DepositWrapper>
           <HaloChestHeader />
-            <Wrapper id="swap-page">
-              <AutoColumnDeposit>
-                <AutoColumn>
-                  <HaloDepositPanel
-                    label={''}
-                    disableCurrencySelect={true}
-                    customBalanceText={'Available to deposit: '}
-                    id="stake-liquidity-token"
-                    buttonText="Claim HALO"
-                    cornerRadiusBottomNone={true}
-                  />
-                  <HALOHALODepositPanel
-                    label={''}
-                    disableCurrencySelect={true}
-                    customBalanceText={'Available to withdraw: '}
-                    id="withdraw-liquidity-token"
-                    buttonText="Withdraw"
-                    cornerRadiusTopNone={true}
-                  />
-                  <RowBetweenHaloPair>
-                    <RowBetween>
-                      <HaloPairCenterContainer>
-                        <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                        <HaloHaloPairText>
-                          HALOHALO:HALO = x1.15
-                        </HaloHaloPairText>
-                      </HaloPairCenterContainer>
-                    </RowBetween>
-                  </RowBetweenHaloPair>
-                </AutoColumn>
-              </AutoColumnDeposit>
-            </Wrapper>
+          <Wrapper id="swap-page">
+            <AutoColumnDeposit>
+              <AutoColumn>
+                <HaloDepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to deposit: '}
+                  id="stake-liquidity-token"
+                  buttonText="Claim HALO"
+                  cornerRadiusBottomNone={true}
+                />
+                <HALOHALODepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to withdraw: '}
+                  id="withdraw-liquidity-token"
+                  buttonText="Withdraw"
+                  cornerRadiusTopNone={true}
+                />
+                <RowBetweenHaloPair>
+                  <RowBetween>
+                    <HaloPairCenterContainer>
+                      <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
+                      <HaloHaloPairText>HALOHALO:HALO = x1.15</HaloHaloPairText>
+                    </HaloPairCenterContainer>
+                  </RowBetween>
+                </RowBetweenHaloPair>
+              </AutoColumn>
+            </AutoColumnDeposit>
+          </Wrapper>
         </DepositWrapper>
         <CardSectionContainer>
           <CardSection>
             <RowBetweenCard>
-              <RowBetween>
-                DESSERT FACT
-              </RowBetween>
+              <RowBetween>DESSERT FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween>
               The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
