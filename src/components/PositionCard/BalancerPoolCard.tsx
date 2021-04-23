@@ -7,7 +7,7 @@ import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
 import { FixedHeightRow } from '.'
-import { CustomLightSpinner, HideMedium } from 'theme'
+import { CustomLightSpinner, HideMedium, ExternalLink } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
@@ -18,6 +18,7 @@ import Circle from '../../assets/images/blue-loader.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
 import Molecule from '../../assets/svg/molecule.svg'
+import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -230,6 +231,22 @@ const AutoColumnCustom = styled.div`
     border-radius: 0;
     margin-top: 0;
   `}
+`
+
+const StyledExternalLink = styled(ExternalLink)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border: 1px solid #518CFF;
+    box-sizing: border-box;
+    border-radius: 20px;
+    padding: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+  `};
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
 `
 
 enum StakeButtonStates {
@@ -513,6 +530,21 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     </StyledRowFixed>
                   </StyledBalanceStakeWeb>
                 </StyledFixedHeightRowWeb>
+                <StyledRowFixed>
+                  <StyledExternalLink href="#" style={{
+                    fontSize: '14px',
+                    fontWeight: 600
+                  }}>
+                    To stake, get BPT tokens
+                    <img
+                      style={{
+                        marginLeft: '6px',
+                        height: '14px',
+                        marginBottom: '-2px'
+                      }}
+                      src={LinkIcon} alt="Link Icon" />
+                  </StyledExternalLink>
+                </StyledRowFixed>
                 <RowBetween
                   style={{
                     marginTop: '10px',
