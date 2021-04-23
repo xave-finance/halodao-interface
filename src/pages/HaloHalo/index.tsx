@@ -16,10 +16,10 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-//import { useActiveWeb3React } from '../../hooks'
+import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 760px;
+  max-width: 820px;
   width: 100%;
   display: block;
 `
@@ -30,135 +30,222 @@ const VoteCard = styled(DataCard)`
   margin-bottom: 10px;
 `
 
-export default function Saave() {
-  // const theme = useContext(ThemeContext)
-  //const { account } = useActiveWeb3React()
-  //const darkMode = useDarkModeManager()
+const CardSectionWrapper = styled.div`
+  ${CardSection} {
+    padding: 0 0 20px 0;
+  }
+`
 
+const VestingRow = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16px;
+    letter-spacing: 0.2em;
+    color: #000000;
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const DessertPoolRow = styled.div`
+  ${RowBetween} {
+    font-family: Fredoka One;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 44px;
+    color: #471bb2;
+    font-size: 36px;
+  }
+`
+
+const TokenRewardsExplainer = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: #333333;
+  }
+`
+
+const AutoColumnVesting = styled.div`
+  ${AutoColumn} {
+    grid-row-gap: 5px;
+  }
+`
+
+const AutoColumnDeposit = styled.div`
+  ${AutoColumn} {
+    padding: '10px 0 10px 0';
+  }
+`
+
+const VoteCardWrapper = styled.div`
+  ${VoteCard} {
+    max-width: 370px;
+    width: 100%;
+    float: left;
+    border-radius: 0;
+  }
+`
+
+const DepositWrapper = styled.div`
+  width: 440px;
+  float: right;
+  border: 1px solid #15006d;
+  border-radius: 4px;
+  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    width: 100%;
+    margin-bottom: 50px;
+  `};
+`
+
+const RowBetweenHaloPair = styled.div`
+  ${RowBetween} {
+    padding: 20px 0 0 0;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      padding: 0;
+    `};
+  }
+`
+
+const HaloIngredients = styled.img`
+  float: left;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const HaloHaloPairText = styled.div`
+  margin: 8px 0 0 10px;
+  font-style: italic;
+  font-family: Open Sans;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.2em;
+  color: #000000;
+  float: left;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 16px 0 0 0;
+  `};
+`
+
+const HaloPairCenterContainer = styled.div`
+  margin: auto;
+`
+
+const CardSectionContainer = styled.div`
+  ${CardSection} {
+    width: 350px;
+    margin-top: 28px;
+    background: #e9e4f7;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: #333333;
+    border-radius: 8px;
+    padding: 24px 24px 24px 24px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+    `};
+  }
+`
+
+const RowBetweenCard = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16px;
+    letter-spacing: 0.1em;
+    color: #15006d;
+    margin: 0 0 20px 0;
+  }
+`
+
+export default function Saave() {
   return (
     <>
       <PageWrapper>
-        <VoteCard
-          style={{
-            maxWidth: '300px',
-            width: '100%',
-            float: 'left',
-            borderRadius: 0
-          }}
-        >
+        <VoteCardWrapper>
+          <VoteCard>
+            <CardSectionWrapper>
+              <CardSection>
+                <AutoColumnVesting>
+                  <AutoColumn gap="md">
+                    <VestingRow>
+                      <RowBetween>VESTING</RowBetween>
+                    </VestingRow>
+                    <DessertPoolRow>
+                      <RowBetween>Dessert Pool</RowBetween>
+                    </DessertPoolRow>
+                    <TokenRewardsExplainer>
+                      <RowBetween>
+                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the
+                        Dessert Pool to earn daily.
+                      </RowBetween>
+                    </TokenRewardsExplainer>
+                  </AutoColumn>
+                </AutoColumnVesting>
+              </CardSection>
+            </CardSectionWrapper>
+          </VoteCard>
+        </VoteCardWrapper>
+        <DepositWrapper>
+          <HaloChestHeader />
+          <Wrapper id="swap-page">
+            <AutoColumnDeposit>
+              <AutoColumn>
+                <HaloDepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to deposit: '}
+                  id="stake-liquidity-token"
+                  buttonText="Claim HALO"
+                  cornerRadiusBottomNone={true}
+                />
+                <HALOHALODepositPanel
+                  label={''}
+                  disableCurrencySelect={true}
+                  customBalanceText={'Available to withdraw: '}
+                  id="withdraw-liquidity-token"
+                  buttonText="Withdraw"
+                  cornerRadiusTopNone={true}
+                />
+                <RowBetweenHaloPair>
+                  <RowBetween>
+                    <HaloPairCenterContainer>
+                      <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
+                      <HaloHaloPairText>HALOHALO:HALO = x1.15</HaloHaloPairText>
+                    </HaloPairCenterContainer>
+                  </RowBetween>
+                </RowBetweenHaloPair>
+              </AutoColumn>
+            </AutoColumnDeposit>
+          </Wrapper>
+        </DepositWrapper>
+        <CardSectionContainer>
           <CardSection>
-            <AutoColumn gap="md">
-              <RowBetween
-                style={{
-                  fontFamily: 'Open Sans',
-                  fontStyle: 'normal',
-                  fontWeight: 800,
-                  lineHeight: '16px',
-                  letterSpacing: '0.2em',
-                  color: '#000000'
-                }}
-              >
-                VESTING
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: 'Fredoka One',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '36px',
-                  lineHeight: '44px',
-                  color: '#471BB2'
-                }}
-              >
-                Dessert Pool
-              </RowBetween>
-              <RowBetween
-                style={{
-                  fontFamily: 'Open Sans',
-                  fontStyle: 'normal',
-                  fontWeight: 'normal',
-                  fontSize: '16px',
-                  lineHeight: '130%',
-                  color: '#333333'
-                }}
-              >
-                This is where your HALO token rewards go. We saved you some gas and sent it straight to the Dessert Pool
-                to earn daily.
-              </RowBetween>
-            </AutoColumn>
-          </CardSection>
-          <CardSection
-            style={{
-              width: '300px',
-              height: '200px',
-              marginTop: '28px',
-              background: '#e9e4f7',
-              fontFamily: 'Open Sans',
-              fontStyle: 'normal',
-              fontWeight: 'normal',
-              fontSize: '16px',
-              lineHeight: '130%',
-              color: '#333333',
-              borderRadius: '8px',
-              paddingLeft: '40px'
-            }}
-          >
-            <RowBetween
-              style={{
-                fontFamily: 'Open Sans',
-                fontStyle: 'normal',
-                fontWeight: 800,
-                lineHeight: '16px',
-                letterSpacing: '0.1em',
-                color: '#15006D'
-              }}
-            >
-              DESSERT FACT
-            </RowBetween>
+            <RowBetweenCard>
+              <RowBetween>DESSERT FACT</RowBetween>
+            </RowBetweenCard>
             <RowBetween>
               The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
               daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
-        </VoteCard>
-        <div
-          style={{
-            width: '440px',
-            float: 'right'
-          }}
-        >
-          <HaloChestHeader />
-          <Wrapper
-            id="swap-page"
-            style={{
-              background: 'yellow'
-            }}
-          >
-            <AutoColumn
-              style={{
-                paddingBottom: '10px',
-                background: 'green'
-              }}
-            >
-              <HaloDepositPanel
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to deposit: '}
-                id="stake-liquidity-token"
-                buttonText="Deposit"
-                cornerRadiusBottomNone={true}
-              />
-              <HALOHALODepositPanel
-                label={''}
-                disableCurrencySelect={true}
-                customBalanceText={'Available to withdraw: '}
-                id="withdraw-liquidity-token"
-                buttonText="Withdraw"
-                cornerRadiusTopNone={true}
-              />
-            </AutoColumn>
-          </Wrapper>
-        </div>
+        </CardSectionContainer>
       </PageWrapper>
     </>
   )
