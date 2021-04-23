@@ -531,10 +531,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   </StyledBalanceStakeWeb>
                 </StyledFixedHeightRowWeb>
                 <StyledRowFixed>
-                  <StyledExternalLink href="#" style={{
-                    fontSize: '14px',
-                    fontWeight: 600
-                  }}>
+                  <StyledExternalLink
+                    href="#"
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 600
+                    }}
+                  >
                     To stake, get BPT tokens
                     <img
                       style={{
@@ -542,7 +545,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '14px',
                         marginBottom: '-2px'
                       }}
-                      src={LinkIcon} alt="Link Icon" />
+                      src={LinkIcon}
+                      alt="Link Icon"
+                    />
                   </StyledExternalLink>
                 </StyledRowFixed>
                 <RowBetween
@@ -705,14 +710,17 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     <StyledTextForValue fontSize={16} fontWeight={800}>
                       BALANCE: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
-                    <StyledExternalLink href="#" style={{
-                      fontSize: '14px',
-                      fontWeight: 600,
-                      letterSpacing: 0,
-                      border: 'none',
-                      padding: 0,
-                      textDecorationLine: 'underline'
-                    }}>
+                    <StyledExternalLink
+                      href="#"
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        letterSpacing: 0,
+                        border: 'none',
+                        padding: 0,
+                        textDecorationLine: 'underline'
+                      }}
+                    >
                       To stake, get BPT tokens
                       <img
                         style={{
@@ -720,7 +728,9 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                           height: '14px',
                           marginBottom: '-2px'
                         }}
-                        src={LinkIcon} alt="Link Icon" />
+                        src={LinkIcon}
+                        alt="Link Icon"
+                      />
                     </StyledExternalLink>
                     <br />
                     <NumericalInput
