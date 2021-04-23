@@ -74,15 +74,15 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: #ffffff;
   z-index: 1;
+  margin: 30px 0 0 0;
 `
 
 const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean; cornerRadiusBottomNone?: boolean }>`
   border-radius: ${({ hideInput }) => (hideInput ? '8px' : '12px')};
   border-radius: ${({ cornerRadiusTopNone }) => cornerRadiusTopNone && '0 0 12px 12px'};
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
-  border: 1px solid ${({ theme }) => theme.bg2};
   background-color: ${({ theme }) => theme.bg1};
 `
 
@@ -195,26 +195,51 @@ export default function CurrencyInputPanel({
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
           {!hideInput && (
-            <LabelRow>
-              <RowBetween>
+            <LabelRow
+              style={{
+                padding: 0
+              }}
+            >
+              <RowBetween
+                style={{
+                  display: 'block'
+                }}
+              >
                 <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
                   {label}
                 </TYPE.body>
                 {account && (
                   <TYPE.body
                     onClick={handleMaxDeposit}
-                    color={theme.text2}
-                    fontWeight={500}
-                    fontSize={14}
-                    style={{ display: 'inline', cursor: 'pointer' }}
+                    style={{
+                      cursor: 'pointer',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 800,
+                      lineHeight: '16px',
+                      letterSpacing: '0.2em',
+                      color: '#000000'
+                    }}
                   >
-                    HALOHALO Balance: {xHaloBalance}
+                    BALANCE: {xHaloBalance} HALOHALO
                   </TYPE.body>
                 )}
               </RowBetween>
             </LabelRow>
           )}
-          <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableCurrencySelect}>
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: '4px 0 0 0',
+                    borderRadius: '8px'
+                  }
+                : {
+                    padding: '4px 0 0 0'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
             {!hideInput && (
               <>
                 <NumericalInput
@@ -224,17 +249,80 @@ export default function CurrencyInputPanel({
                     onUserDepositInput(val)
                   }}
                 />
-                {account && label !== 'To' && <StyledBalanceMax onClick={handleMaxDeposit}>MAX</StyledBalanceMax>}
+                {account && label !== 'To' && (
+                  <StyledBalanceMax
+                    style={{
+                      border: '1px solid #471BB2',
+                      borderRadius: '22px',
+                      background: '#FFFFFF',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 'bold',
+                      lineHeight: '130%',
+                      width: '77px',
+                      height: '33px',
+                      margin: 0
+                    }}
+                    onClick={handleMaxDeposit}
+                  >
+                    MAX
+                  </StyledBalanceMax>
+                )}
               </>
             )}
+          </InputRow>
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: '4px 0 0 0',
+                    borderRadius: '8px'
+                  }
+                : {
+                    padding: '4px 0 0 0'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
             {!allowance || Number(allowance) === 0 ? (
-              <ButtonSelect onClick={handleApprove} disabled={requestedApproval}>
+              <ButtonSelect
+                style={{
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
+                  margin: 0,
+                  padding: 0
+                }}
+                onClick={handleApprove}
+                disabled={requestedApproval}
+              >
                 <Aligner>
-                  <StyledButtonName>Approve</StyledButtonName>
+                  <StyledButtonName
+                    style={{
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
+                      fontWeight: 900,
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      textAlign: 'center',
+                      color: '#FFFFFF'
+                    }}
+                  >
+                    Approve
+                  </StyledButtonName>
                 </Aligner>
               </ButtonSelect>
             ) : (
               <ButtonSelect
+                style={{
+                  background: '#471BB2',
+                  borderRadius: '4px',
+                  width: '100%',
+                  height: '38px',
+                  margin: 0,
+                  padding: 0
+                }}
                 disabled={
                   pendingTx ||
                   !xHaloBalance ||
@@ -252,7 +340,19 @@ export default function CurrencyInputPanel({
                 }}
               >
                 <Aligner>
-                  <StyledButtonName>Withdraw</StyledButtonName>
+                  <StyledButtonName
+                    style={{
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
+                      fontWeight: 900,
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      textAlign: 'center',
+                      color: '#FFFFFF'
+                    }}
+                  >
+                    Claim HALO
+                  </StyledButtonName>
                 </Aligner>
               </ButtonSelect>
             )}

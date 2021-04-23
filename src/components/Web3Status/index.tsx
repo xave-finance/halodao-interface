@@ -73,7 +73,7 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
   background-color: ${({ theme }) => theme.white};
   border: 1px solid #f1f1f2;
-  color: ${({ pending, theme }) => (pending ? theme.white : theme.text1)};
+  color: ${({ pending, theme }) => (pending ? theme.haloGradient : theme.text1)};
   font-weight: 500;
   :hover,
   :focus {
@@ -172,7 +172,7 @@ function Web3StatusInner() {
       <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
         {hasPendingTransactions ? (
           <RowBetween>
-            <Text>{pending?.length} Pending</Text> <Loader stroke="white" />
+            <Text color="#471BB2">{pending?.length} Pending</Text> <Loader stroke="#471BB2" />
           </RowBetween>
         ) : (
           <>
