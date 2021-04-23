@@ -703,8 +703,25 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                   >
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Balance: {formatNumber(bptBalance)} BPT
+                      BALANCE: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
+                    <StyledExternalLink href="#" style={{
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      letterSpacing: 0,
+                      border: 'none',
+                      padding: 0,
+                      textDecorationLine: 'underline'
+                    }}>
+                      To stake, get BPT tokens
+                      <img
+                        style={{
+                          marginLeft: '6px',
+                          height: '14px',
+                          marginBottom: '-2px'
+                        }}
+                        src={LinkIcon} alt="Link Icon" />
+                    </StyledExternalLink>
                     <br />
                     <NumericalInput
                       style={{ width: '100%' }}
@@ -767,7 +784,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       )}
                     </ButtonPrimaryNormal>
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Staked: {formatNumber(bptStaked)} BPT
+                      STAKED: {formatNumber(bptStaked)} BPT
                     </StyledTextForValue>
                     <NumericalInput
                       style={{ width: '100%' }}
