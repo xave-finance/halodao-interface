@@ -278,6 +278,37 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
+  const [stakeHover, setStakeHover] = useState(false);
+
+  const toggleHover = () => {
+    setStakeHover(!stakeHover)
+  }
+
+  // Stake and Unstake button designs for normal, disabled and hover
+  let stakeButnStyle;
+
+  if (stakeButtonState === StakeButtonStates.Disabled) {
+    stakeButnStyle = {
+      background: '#471BB2',
+      color: '#FFFFFF',
+      fontWeight: 900,
+      opacity: '.5'
+    }
+  } else {
+    if (stakeHover) {
+      stakeButnStyle = {
+        background: '#15006D',
+        color: '#FFFFFF',
+        fontWeight: 900
+      }
+    } else {
+      stakeButnStyle = {
+        background: '#471BB2',
+        color: '#FFFFFF',
+        fontWeight: 900
+      }
+    }
+  }
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
@@ -566,7 +597,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
-                  {console.log('stakeButtonState', stakeButtonState)}
                   <ButtonPrimaryNormal
                     id="stake-button"
                     padding="8px"
@@ -584,20 +614,8 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         approveStakeAmount()
                       }
                     }}
-                    style={
-                      stakeButtonState === StakeButtonStates.Disabled
-                        ? {
-                            background: '#471BB2',
-                            color: '#FFFFFF',
-                            fontWeight: 900,
-                            opacity: '.5'
-                          }
-                        : {
-                            background: '#471BB2',
-                            color: '#FFFFFF',
-                            fontWeight: 900
-                          }
-                    }
+                    style={stakeButnStyle}
+                    onMouseEnter={toggleHover} onMouseLeave={toggleHover}
                   >
                     {(stakeButtonState === StakeButtonStates.Disabled ||
                       stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
