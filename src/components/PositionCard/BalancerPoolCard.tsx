@@ -597,6 +597,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
+                  {console.log('stakeButtonState', stakeButtonState)}
                   <ButtonPrimaryNormal
                     id="stake-button"
                     padding="8px"
