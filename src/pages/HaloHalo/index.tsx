@@ -154,7 +154,7 @@ const CardSectionContainer = styled.div`
     line-height: 130%;
     color: #333333;
     border-radius: 8px;
-    padding: 24px 27px 24px 40px;
+    padding: 24px 24px 24px 24px;
 
     ${({ theme }) => theme.mediaWidth.upToSmall`
       width: 100%;

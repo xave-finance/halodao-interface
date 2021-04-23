@@ -351,7 +351,7 @@ export default function CurrencyInputPanel({
                       color: '#FFFFFF'
                     }}
                   >
-                    Claim HALO
+                    Deposit
                   </StyledButtonName>
                 </Aligner>
               </ButtonSelect>
