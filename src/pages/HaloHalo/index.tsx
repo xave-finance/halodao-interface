@@ -78,6 +78,12 @@ const AutoColumnVesting = styled.div`
   }
 `
 
+const AutoColumnDeposit = styled.div`
+  ${AutoColumn} {
+    padding: '10px 0 10px 0';
+  }
+`
+
 const VoteCardWrapper = styled.div`
   ${VoteCard} {
     max-width: 370px;
@@ -88,6 +94,7 @@ const VoteCardWrapper = styled.div`
 `
 
 const DepositWrapper = styled.div`
+  width: 440px;
   float: right;
   border: 1px solid #15006D;
   border-radius: 4px;
@@ -97,8 +104,37 @@ const DepositWrapper = styled.div`
   `};
 `
 
-const DepositInnerWrapper = styled.div`
-  padding: '0 30px 0 30px'
+const RowBetweenHaloPair = styled.div`
+  ${RowBetween} {
+    padding: 20px 0 0 0;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      padding: 0;
+    `};
+  }
+`
+
+const HaloIngredients = styled.img`
+  float: left;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: none;
+  `};
+`
+
+const HaloHaloPairText = styled.div`
+  margin: 8px 0 0 10px;
+  font-style: italic;
+  font-family: Open Sans;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.2em;
+  color: #000000;
+  float: left;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 16px 0 0 0;
+  `};
 `
 
 export default function Saave() {
@@ -131,65 +167,42 @@ export default function Saave() {
         </VoteCardWrapper>
         <DepositWrapper>
           <HaloChestHeader />
-          <DepositInnerWrapper>
             <Wrapper id="swap-page">
-              <AutoColumn
-                style={{
-                  padding: '10px 0 10px 0'
-                }}
-              >
-                <HaloDepositPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to deposit: '}
-                  id="stake-liquidity-token"
-                  buttonText="Claim HALO"
-                  cornerRadiusBottomNone={true}
-                />
-                <HALOHALODepositPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to withdraw: '}
-                  id="withdraw-liquidity-token"
-                  buttonText="Withdraw"
-                  cornerRadiusTopNone={true}
-                />
-                <RowBetween
-                  style={{
-                    padding: '30px 0 0 0'
-                  }}
-                >
-                  <div
-                    style={{
-                      margin: 'auto'
-                    }}
-                  >
-                    <img
-                      style={{
-                        float: 'left'
-                      }}
-                      src={HalohaloIngredients}
-                      alt="Halo Halo"
-                    />
-                    <div
-                      style={{
-                        margin: '8px 0 0 10px',
-                        fontStyle: 'italic',
-                        fontFamily: 'Open Sans',
-                        fontWeight: 600,
-                        lineHeight: '16px',
-                        letterSpacing: '0.2em',
-                        color: '#000000',
-                        float: 'left'
-                      }}
-                    >
-                      HALOHALO:HALO = x1.15
-                    </div>
-                  </div>
-                </RowBetween>
-              </AutoColumn>
+              <AutoColumnDeposit>
+                <AutoColumn>
+                  <HaloDepositPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to deposit: '}
+                    id="stake-liquidity-token"
+                    buttonText="Claim HALO"
+                    cornerRadiusBottomNone={true}
+                  />
+                  <HALOHALODepositPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to withdraw: '}
+                    id="withdraw-liquidity-token"
+                    buttonText="Withdraw"
+                    cornerRadiusTopNone={true}
+                  />
+                  <RowBetweenHaloPair>
+                    <RowBetween>
+                      <div
+                        style={{
+                          margin: 'auto'
+                        }}
+                      >
+                        <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
+                        <HaloHaloPairText>
+                          HALOHALO:HALO = x1.15
+                        </HaloHaloPairText>
+                      </div>
+                    </RowBetween>
+                  </RowBetweenHaloPair>
+                </AutoColumn>
+              </AutoColumnDeposit>
             </Wrapper>
-          </DepositInnerWrapper>
         </DepositWrapper>
         <CardSection
           style={{

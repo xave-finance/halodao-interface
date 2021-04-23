@@ -77,6 +77,9 @@ const InputPanel = styled.div<{ hideInput?: boolean }>`
   background-color: #FFFFFF;
   z-index: 1;
   margin: 30px 0 0 0;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    margin: 20px 0 0 0;
+  `};
 `
 
 const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean; cornerRadiusBottomNone?: boolean }>`
