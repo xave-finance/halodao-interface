@@ -101,6 +101,7 @@ const DepositWrapper = styled.div`
   box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
+    margin-bottom: 50px;
   `};
 `
 
@@ -136,6 +137,42 @@ const HaloHaloPairText = styled.div`
     margin: 16px 0 0 0;
   `};
 `
+
+const HaloPairCenterContainer = styled.div`
+  margin: auto;
+`
+
+const CardSectionContainer = styled.div`
+  ${CardSection} {
+    width: 350px;
+    margin-top: 28px;
+    background: #e9e4f7;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    line-height: 130%;
+    color: #333333;
+    border-radius: 8px;
+    padding: 24px 27px 24px 40px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      width: 100%;
+    `};
+  }
+`
+
+const RowBetweenCard = styled.div`
+  ${RowBetween} {
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 800;
+    line-height: 16px;
+    letter-spacing: 0.1em;
+    color: #15006D;
+    margin: 0 0 20px 0;
+  }
+`;
 
 export default function Saave() {
   return (
@@ -188,55 +225,31 @@ export default function Saave() {
                   />
                   <RowBetweenHaloPair>
                     <RowBetween>
-                      <div
-                        style={{
-                          margin: 'auto'
-                        }}
-                      >
+                      <HaloPairCenterContainer>
                         <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
                         <HaloHaloPairText>
                           HALOHALO:HALO = x1.15
                         </HaloHaloPairText>
-                      </div>
+                      </HaloPairCenterContainer>
                     </RowBetween>
                   </RowBetweenHaloPair>
                 </AutoColumn>
               </AutoColumnDeposit>
             </Wrapper>
         </DepositWrapper>
-        <CardSection
-          style={{
-            width: '350px',
-            marginTop: '28px',
-            background: '#e9e4f7',
-            fontFamily: 'Open Sans',
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            fontSize: '16px',
-            lineHeight: '130%',
-            color: '#333333',
-            borderRadius: '8px',
-            padding: '24px 27px 24px 40px'
-          }}
-        >
-          <RowBetween
-            style={{
-              fontFamily: 'Open Sans',
-              fontStyle: 'normal',
-              fontWeight: 800,
-              lineHeight: '16px',
-              letterSpacing: '0.1em',
-              color: '#15006D',
-              margin: '0 0 20px 0'
-            }}
-          >
-            DESSERT FACT
-          </RowBetween>
-          <RowBetween>
-            The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
-            daily HALO vesting multiples.
-          </RowBetween>
-        </CardSection>
+        <CardSectionContainer>
+          <CardSection>
+            <RowBetweenCard>
+              <RowBetween>
+                DESSERT FACT
+              </RowBetween>
+            </RowBetweenCard>
+            <RowBetween>
+              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
+              daily HALO vesting multiples.
+            </RowBetween>
+          </CardSection>
+        </CardSectionContainer>
       </PageWrapper>
     </>
   )
