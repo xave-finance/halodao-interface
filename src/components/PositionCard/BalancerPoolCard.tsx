@@ -563,13 +563,13 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledFixedHeightRowWeb>
                 <StyledRowFixed>
                   <StyledExternalLink
-                    href="#"
+                    href="https://balancer.exchange/#/swap"
                     style={{
                       fontSize: '14px',
                       fontWeight: 600
                     }}
                   >
-                    To stake, get BPT tokens
+                    {t('getBPTTokens')}
                     <img
                       style={{
                         marginLeft: '6px',
@@ -730,7 +730,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       BALANCE: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
                     <StyledExternalLink
-                      href="#"
+                      href="https://balancer.exchange/#/swap"
                       style={{
                         fontSize: '14px',
                         fontWeight: 600,
@@ -740,7 +740,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         textDecorationLine: 'underline'
                       }}
                     >
-                      To stake, get BPT tokens
+                      {t('getBPTTokens')}
                       <img
                         style={{
                           marginLeft: '6px',
