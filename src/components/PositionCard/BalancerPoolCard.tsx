@@ -828,7 +828,10 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setUnstakeAmount(amount)}
                       id="unstake-input"
                     />
-                    <ButtonUnstakePrimaryNormalWrapper ButtonState={unstakeButtonState} Disabled={UnstakeButtonStates.Disabled}>
+                    <ButtonUnstakePrimaryNormalWrapper
+                      ButtonState={unstakeButtonState}
+                      Disabled={UnstakeButtonStates.Disabled}
+                    >
                       <ButtonPrimaryNormal
                         id="unstake-button"
                         padding="8px"
