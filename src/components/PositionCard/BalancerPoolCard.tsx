@@ -586,7 +586,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledFixedHeightRowWeb>
                 <StyledRowFixed>
                   <StyledExternalLink
-                    href="https://balancer.exchange/#/swap"
+                    href={poolInfo.balancerUrl}
                     style={{
                       fontSize: '14px',
                       fontWeight: 600
@@ -752,7 +752,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       BALANCE: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
                     <StyledExternalLink
-                      href="https://balancer.exchange/#/swap"
+                      href={poolInfo.balancerUrl}
                       style={{
                         fontSize: '14px',
                         fontWeight: 600,
