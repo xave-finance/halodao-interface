@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+
 import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
 import { FixedHeightRow } from '.'
-import { CustomLightSpinner, HideMedium } from 'theme'
+import { CustomLightSpinner, HideMedium, ExternalLink } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
@@ -16,6 +18,7 @@ import Circle from '../../assets/images/blue-loader.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
 import Molecule from '../../assets/svg/molecule.svg'
+import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -230,6 +233,75 @@ const AutoColumnCustom = styled.div`
   `}
 `
 
+const StyledExternalLink = styled(ExternalLink)`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    border: 1px solid #518CFF;
+    box-sizing: border-box;
+    border-radius: 20px;
+    padding: 0.5rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    text-decoration: none;
+  `};
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
+`
+
+const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any }>`
+  ${ButtonPrimaryNormal} {
+    background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
+    &:hover {
+      background: ${({ Disabled }) => (Disabled === 0 ? '#9580cb' : '#16006d')}
+    }
+    color: #FFFFFF;
+    font-weight: 900;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall<{ ButtonState: any; Disabled: any }>`
+      position: relative;
+      color: #FFFFFF;
+      font-weight: 900;
+      width: 100%;
+      margin: 4% 0 4% 0;
+      height: 38px;
+      background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
+      ${StyledRowFixed}:hover & {
+        background: ${({ Disabled }) => (Disabled === 0 ? '#9580cb' : '#16006d')}
+      }
+    `};
+  }
+`
+
+const ButtonUnstakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any }>`
+  ${ButtonPrimaryNormal} {
+    &:hover {
+      background: ${({ Disabled }) => (Disabled === 0 ? '#f8f8f8' : '#7758c1')}
+      color: ${({ Disabled }) => (Disabled === 0 ? '#7758c1' : '#FFFFFF')}
+      border: ${({ Disabled }) => (Disabled === 0 ? '1px solid #7758c1' : '1px solid #FFFFFF')}
+    }
+
+    font-weight: 900;
+    background: #f8f8f8;
+    color: #7758c1;
+    border: 1px solid #471BB2;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      background: #f8f8f8;
+      color: #471BB2;
+      font-weight: 900;
+      border: 1px solid #471BB2;
+      width: 100%;
+      margin: 4% 0 4% 0;
+      height: 38px;
+    `};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: #f8f8f8;
+  `};
+`
+
 enum StakeButtonStates {
   Disabled,
   NotApproved,
@@ -259,6 +331,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
+  const [stakeHover, setStakeHover] = useState(false)
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
@@ -511,6 +584,26 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     </StyledRowFixed>
                   </StyledBalanceStakeWeb>
                 </StyledFixedHeightRowWeb>
+                <StyledRowFixed>
+                  <StyledExternalLink
+                    href={poolInfo.balancerUrl}
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 600
+                    }}
+                  >
+                    {t('getBPTTokens')}
+                    <img
+                      style={{
+                        marginLeft: '6px',
+                        height: '14px',
+                        marginBottom: '-2px'
+                      }}
+                      src={LinkIcon}
+                      alt="Link Icon"
+                    />
+                  </StyledExternalLink>
+                </StyledRowFixed>
                 <RowBetween
                   style={{
                     marginTop: '10px',
@@ -527,45 +620,42 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
-                  <ButtonPrimaryNormal
-                    id="stake-button"
-                    padding="8px"
-                    borderRadius="8px"
-                    width="100%"
-                    disabled={[
-                      StakeButtonStates.Disabled,
-                      StakeButtonStates.Approving,
-                      StakeButtonStates.Staking
-                    ].includes(stakeButtonState)}
-                    onClick={() => {
-                      if (stakeButtonState === StakeButtonStates.Approved) {
-                        stakeLpToken()
-                      } else {
-                        approveStakeAmount()
-                      }
-                    }}
-                    style={{
-                      background: '#471BB2',
-                      color: '#FFFFFF',
-                      fontWeight: 900
-                    }}
-                  >
-                    {(stakeButtonState === StakeButtonStates.Disabled ||
-                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                    {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                    {stakeButtonState === StakeButtonStates.Approving && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                    {stakeButtonState === StakeButtonStates.Staking && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                  </ButtonPrimaryNormal>
+                  <ButtonStakePrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
+                    <ButtonPrimaryNormal
+                      id="stake-button"
+                      padding="8px"
+                      borderRadius="8px"
+                      width="100%"
+                      disabled={[
+                        StakeButtonStates.Disabled,
+                        StakeButtonStates.Approving,
+                        StakeButtonStates.Staking
+                      ].includes(stakeButtonState)}
+                      onClick={() => {
+                        if (stakeButtonState === StakeButtonStates.Approved) {
+                          stakeLpToken()
+                        } else {
+                          approveStakeAmount()
+                        }
+                      }}
+                    >
+                      {(stakeButtonState === StakeButtonStates.Disabled ||
+                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                      {stakeButtonState === StakeButtonStates.Approving && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                      {stakeButtonState === StakeButtonStates.Staking && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                    </ButtonPrimaryNormal>
+                  </ButtonStakePrimaryNormalWrapper>
                 </RowBetween>
                 <RowBetween
                   style={{
@@ -583,30 +673,30 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
-                  <ButtonPrimaryNormal
-                    id="unstake-button"
-                    padding="8px"
-                    borderRadius="8px"
-                    width="100%"
-                    disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
-                      unstakeButtonState
-                    )}
-                    onClick={unstakeLpToken}
-                    style={{
-                      color: '#471BB2',
-                      fontWeight: 900,
-                      border: '1px solid #471BB2'
-                    }}
+                  <ButtonUnstakePrimaryNormalWrapper
+                    ButtonState={unstakeButtonState}
+                    Disabled={UnstakeButtonStates.Disabled}
                   >
-                    {(unstakeButtonState === UnstakeButtonStates.Disabled ||
-                      unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
-                    {unstakeButtonState === UnstakeButtonStates.Unstaking && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
-                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                  </ButtonPrimaryNormal>
+                    <ButtonPrimaryNormal
+                      id="unstake-button"
+                      padding="8px"
+                      borderRadius="8px"
+                      width="100%"
+                      disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                        unstakeButtonState
+                      )}
+                      onClick={unstakeLpToken}
+                    >
+                      {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                        unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                      {unstakeButtonState === UnstakeButtonStates.Unstaking && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                    </ButtonPrimaryNormal>
+                  </ButtonUnstakePrimaryNormalWrapper>
                 </RowBetween>
                 <RowBetween marginTop="10px">
                   <BalanceCard
@@ -659,8 +749,30 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     }}
                   >
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Balance: {formatNumber(bptBalance)} BPT
+                      BALANCE: {formatNumber(bptBalance)} BPT
                     </StyledTextForValue>
+                    <StyledExternalLink
+                      href={poolInfo.balancerUrl}
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        letterSpacing: 0,
+                        border: 'none',
+                        padding: 0,
+                        textDecorationLine: 'underline'
+                      }}
+                    >
+                      {t('getBPTTokens')}
+                      <img
+                        style={{
+                          marginLeft: '6px',
+                          height: '14px',
+                          marginBottom: '-2px'
+                        }}
+                        src={LinkIcon}
+                        alt="Link Icon"
+                      />
+                    </StyledExternalLink>
                     <br />
                     <NumericalInput
                       style={{ width: '100%' }}
@@ -668,50 +780,47 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setStakeAmount(amount)}
                       id="stake-input"
                     />
-                    <ButtonPrimaryNormal
-                      id="stake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
-                      disabled={[
-                        StakeButtonStates.Disabled,
-                        StakeButtonStates.Approving,
-                        StakeButtonStates.Staking
-                      ].includes(stakeButtonState)}
-                      onClick={() => {
-                        if (stakeButtonState === StakeButtonStates.Approved) {
-                          stakeLpToken()
-                        } else {
-                          approveStakeAmount()
-                        }
-                      }}
-                      style={{
-                        background: '#471BB2',
-                        color: '#FFFFFF',
-                        fontWeight: 900,
-                        width: '100%',
-                        margin: '4% 0 4% 0',
-                        height: '38px'
-                      }}
+                    <ButtonStakePrimaryNormalWrapper
+                      ButtonState={stakeButtonState}
+                      Disabled={StakeButtonStates.Disabled}
                     >
-                      {(stakeButtonState === StakeButtonStates.Disabled ||
-                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                      {stakeButtonState === StakeButtonStates.Approving && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                      {stakeButtonState === StakeButtonStates.Staking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
+                      <ButtonPrimaryNormal
+                        id="stake-button"
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        disabled={[
+                          StakeButtonStates.Disabled,
+                          StakeButtonStates.Approving,
+                          StakeButtonStates.Staking
+                        ].includes(stakeButtonState)}
+                        onClick={() => {
+                          if (stakeButtonState === StakeButtonStates.Approved) {
+                            stakeLpToken()
+                          } else {
+                            approveStakeAmount()
+                          }
+                        }}
+                      >
+                        {(stakeButtonState === StakeButtonStates.Disabled ||
+                          stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                        {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                        {stakeButtonState === StakeButtonStates.Approving && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                        {stakeButtonState === StakeButtonStates.Staking && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                      </ButtonPrimaryNormal>
+                    </ButtonStakePrimaryNormalWrapper>
                     <StyledTextForValue fontSize={16} fontWeight={800}>
-                      Staked: {formatNumber(bptStaked)} BPT
+                      STAKED: {formatNumber(bptStaked)} BPT
                     </StyledTextForValue>
                     <NumericalInput
                       style={{ width: '100%' }}
@@ -719,33 +828,30 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setUnstakeAmount(amount)}
                       id="unstake-input"
                     />
-                    <ButtonPrimaryNormal
-                      id="unstake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
-                      disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
-                        unstakeButtonState
-                      )}
-                      onClick={unstakeLpToken}
-                      style={{
-                        color: '#471BB2',
-                        fontWeight: 900,
-                        border: '1px solid #471BB2',
-                        width: '100%',
-                        margin: '4% 0 4% 0',
-                        height: '38px'
-                      }}
+                    <ButtonUnstakePrimaryNormalWrapper
+                      ButtonState={unstakeButtonState}
+                      Disabled={UnstakeButtonStates.Disabled}
                     >
-                      {(unstakeButtonState === UnstakeButtonStates.Disabled ||
-                        unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
-                      {unstakeButtonState === UnstakeButtonStates.Unstaking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
+                      <ButtonPrimaryNormal
+                        id="unstake-button"
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                          unstakeButtonState
+                        )}
+                        onClick={unstakeLpToken}
+                      >
+                        {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                          unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                        {unstakeButtonState === UnstakeButtonStates.Unstaking && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                      </ButtonPrimaryNormal>
+                    </ButtonUnstakePrimaryNormalWrapper>
                     <BalanceCard
                       style={{
                         backgroundColor: '#D5CDEA',
@@ -785,11 +891,15 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   borderRadius: '0px 0px 4px 4px'
                 }}
               >
-                <StyledFixedHeightRow>
+                <StyledFixedHeightRow
+                  style={{
+                    padding: '0 0 0 8%'
+                  }}
+                >
                   <StyledRowFixed
                     style={{
                       display: 'block',
-                      paddingBottom: 0
+                      padding: 0
                     }}
                   >
                     <img style={{ float: 'left' }} src={BunnyRewards} alt="Bunny Rewards" />
@@ -797,7 +907,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                   <StyledRowFixed
                     style={{
                       marginTop: '2%',
-                      paddingLeft: '7%'
+                      padding: 0
                     }}
                   >
                     <Text
@@ -831,31 +941,39 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         {formatNumber(unclaimedHalo)} HALO
                       </div>
                     </Text>
-                    <ButtonPrimaryNormal
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
+                    <Link
                       style={{
-                        marginTop: '5px',
-                        width: '90%',
-                        height: '53px',
-                        background: '#FFFFFF',
-                        borderRadius: '10px',
-                        float: 'right',
-                        fontWeight: 'bold'
+                        width: '100%'
                       }}
+                      to="/vesting"
                     >
-                      <div>
-                        <img
-                          style={{
-                            marginBottom: '-5px'
-                          }}
-                          src={Molecule}
-                          alt="Molecule"
-                        />
-                        Claim
-                      </div>
-                    </ButtonPrimaryNormal>
+                      <ButtonPrimaryNormal
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        style={{
+                          marginTop: '5px',
+                          width: '90%',
+                          height: '53px',
+                          background: '#FFFFFF',
+                          color: '#000000',
+                          borderRadius: '10px',
+                          float: 'left',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        <div>
+                          <img
+                            style={{
+                              marginBottom: '-5px'
+                            }}
+                            src={Molecule}
+                            alt="Molecule"
+                          />
+                          Claim
+                        </div>
+                      </ButtonPrimaryNormal>
+                    </Link>
                     <StyledClose
                       style={{
                         display: 'block',
@@ -951,34 +1069,36 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                         height: '100%'
                       }}
                     >
-                      <ButtonPrimaryNormal
-                        padding="8px"
-                        borderRadius="8px"
-                        width="48%"
-                        style={{
-                          width: '234px',
-                          height: '53px',
-                          background: '#FFFFFF',
-                          borderRadius: '10px',
-                          float: 'right',
-                          fontWeight: 'bold'
-                        }}
-                      >
-                        <div
+                      <Link to="/vesting">
+                        <ButtonPrimaryNormal
+                          padding="8px"
+                          borderRadius="8px"
+                          width="48%"
                           style={{
-                            color: '#333333'
+                            width: '234px',
+                            height: '53px',
+                            background: '#FFFFFF',
+                            borderRadius: '10px',
+                            float: 'right',
+                            fontWeight: 'bold'
                           }}
                         >
-                          <img
+                          <div
                             style={{
-                              marginBottom: '-5px'
+                              color: '#333333'
                             }}
-                            src={Molecule}
-                            alt="Molecule"
-                          />
-                          Claim
-                        </div>
-                      </ButtonPrimaryNormal>
+                          >
+                            <img
+                              style={{
+                                marginBottom: '-5px'
+                              }}
+                              src={Molecule}
+                              alt="Molecule"
+                            />
+                            Claim
+                          </div>
+                        </ButtonPrimaryNormal>
+                      </Link>
                     </StyledRowFixed>
                   </StyledFixedHeightRow>
                 </BalanceCard>
