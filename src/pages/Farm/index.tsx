@@ -79,14 +79,6 @@ const Farm = () => {
             </Row>
             <Row>
               <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
-                {t('getBPTTokens')}
-                <HideLarge>
-                  <LinkIcon></LinkIcon>
-                </HideLarge>
-              </StyledExternalLink>
-            </Row>
-            <Row>
-              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
                 <HideLarge>
                   <LinkIcon></LinkIcon>
