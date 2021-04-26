@@ -7,7 +7,7 @@ import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
 import { FixedHeightRow } from '.'
-import { CustomLightSpinner, HideMedium, ExternalLink } from 'theme'
+import { CustomLightSpinner, HideMedium, ExternalLink, HideSmall } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import { CardSection, DataCard } from 'components/earn/styled'
@@ -56,10 +56,11 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
-    padding: 0 0 0 30px;
+    padding: 0 30px 20px;
   `};
 `
-export const StyledCard = styled(GreyCard)<{ bgColor: any }>`
+
+const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     background: ${({ theme }) => theme.bg3};
     padding: 5px 0 0 0;
@@ -101,21 +102,6 @@ const StyledRowFixed = styled(RowFixed)`
   `};
 `
 
-const StyledRowFixedWeb = styled(RowFixed)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-`};
-`
-
-const StyledRowFixedMobile = styled(RowFixed)`
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: block;
-    width: 100%;
-    padding: 0 30px 0 0;
-  `};
-`
-
 const StyledText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     line-height: 16px;
@@ -132,23 +118,19 @@ const StyledTextForValue = styled(Text)`
   font-size: 14px;
 `
 
-const StyledButtonWeb = styled(ButtonOutlined)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`  
-    display: none;
-  `};
+const ManageCloseButton = styled(ButtonOutlined)`
+  width: 74px;
   padding: 4px 8px;
   border-radius: 5px;
-  width: fit-content;
   line-height: 130%;
+  font-weight: 700;
+  font-size: 14px;
   :hover {
     background: ${({ theme }) => theme.bg2};
     color: white;
   }
-`
 
-const StyledButtonMobile = styled(ButtonOutlined)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: flex;
     background: ${({ theme }) => theme.bg2};
     color: white;
     width: 100%;
@@ -158,15 +140,6 @@ const StyledButtonMobile = styled(ButtonOutlined)`
     font-size: 16px;
     line-height: 150%;
   `};
-  display: none;
-`
-
-const StyledButtonText = styled(Text)`
-  ${({ theme }) => theme.mediaWidth.upToSmall`  
-    font-size: 16px;
-  `};
-  font-weight: bold;
-  font-size: 14px;
 `
 
 const StyledClose = styled(Text)`
@@ -487,41 +460,15 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             </HideMedium>
             <StyledTextForValue>{formatNumber(unclaimedHalo)} HALO</StyledTextForValue>
           </StyledRowFixed>
-          {/* Manage and Close buttons for web and mobile */}
           {account && (
             <>
-              <StyledRowFixedWeb>
-                <StyledButtonWeb onClick={() => setShowMore(!showMore)}>
-                  {showMore ? (
-                    <>
-                      <StyledButtonText width="74px">{t('closeTxt')}</StyledButtonText>
-                    </>
-                  ) : (
-                    <>
-                      <StyledButtonText width="74px">{t('manage')}</StyledButtonText>
-                    </>
-                  )}
-                </StyledButtonWeb>
-              </StyledRowFixedWeb>
-              <StyledRowFixedMobile>
-                <div onClick={() => setShowMore(!showMore)}>
-                  {showMore ? (
-                    <StyledCardBoxWeb>
-                      <StyledButtonMobile>
-                        <StyledButtonText width="74px">{t('closeTxt')}</StyledButtonText>
-                      </StyledButtonMobile>
-                    </StyledCardBoxWeb>
-                  ) : (
-                    <StyledButtonMobile
-                      style={{
-                        margin: '20px 0 20px 0'
-                      }}
-                    >
-                      <StyledButtonText width="74px">{t('manage')}</StyledButtonText>
-                    </StyledButtonMobile>
-                  )}
-                </div>
-              </StyledRowFixedMobile>
+              {showMore ? (
+                <HideSmall>
+                  <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('closeTxt')}</ManageCloseButton>
+                </HideSmall>
+              ) : (
+                <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('manage')}</ManageCloseButton>
+              )}
             </>
           )}
         </StyledFixedHeightRowCustom>
@@ -539,6 +486,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledBorderBottom>
               </RowBetween>
             </HideMedium>
+
             <div
               style={{
                 padding: '20px 30px 0 30px'
@@ -883,6 +831,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                 </StyledFixedHeightRow>
               </HideMedium>
             </div>
+
             <HideMedium>
               <BalanceCard
                 style={{
