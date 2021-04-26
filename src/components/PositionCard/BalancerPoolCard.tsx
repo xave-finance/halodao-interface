@@ -276,29 +276,30 @@ const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled:
 const ButtonUnstakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any; }>`
   ${ButtonPrimaryNormal} {
     &:hover {
-      background: ${({ Disabled }) => (Disabled === 0 ? '#FFFFFF' : '#7758c1')}
+      background: ${({ Disabled }) => (Disabled === 0 ? '#f8f8f8' : '#7758c1')}
       color: ${({ Disabled }) => (Disabled === 0 ? '#7758c1' : '#FFFFFF')}
       border: ${({ Disabled }) => (Disabled === 0 ? '1px solid #7758c1' : '1px solid #FFFFFF')}
     }
 
     font-weight: 900;
-    background: #FFFFFF;
+    background: #f8f8f8;
     color: #7758c1;
     border: 1px solid #471BB2;
 
-    ${({ theme }) => theme.mediaWidth.upToSmall<{ ButtonState: any; Disabled: any; }>`
-      position: relative;
-      color: #FFFFFF;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      background: #f8f8f8;
+      color: #471BB2;
       font-weight: 900;
+      border: 1px solid #471BB2;
       width: 100%;
       margin: 4% 0 4% 0;
       height: 38px;
-      background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
-      ${StyledRowFixed}:hover & {
-        background: ${({ Disabled }) => (Disabled === 0 ? '#9580cb' : '#16006d')}
-      }
     `};
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: #f8f8f8;
+  `};
 `
 
 enum StakeButtonStates {
@@ -821,33 +822,27 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setUnstakeAmount(amount)}
                       id="unstake-input"
                     />
-                    <ButtonPrimaryNormal
-                      id="unstake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
-                      disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
-                        unstakeButtonState
-                      )}
-                      onClick={unstakeLpToken}
-                      style={{
-                        color: '#471BB2',
-                        fontWeight: 900,
-                        border: '1px solid #471BB2',
-                        width: '100%',
-                        margin: '4% 0 4% 0',
-                        height: '38px'
-                      }}
-                    >
-                      {(unstakeButtonState === UnstakeButtonStates.Disabled ||
-                        unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
-                      {unstakeButtonState === UnstakeButtonStates.Unstaking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
+                    <ButtonUnstakePrimaryNormalWrapper ButtonState={unstakeButtonState} Disabled={UnstakeButtonStates.Disabled}>
+                      <ButtonPrimaryNormal
+                        id="unstake-button"
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                          unstakeButtonState
+                        )}
+                        onClick={unstakeLpToken}
+                      >
+                        {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                          unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                        {unstakeButtonState === UnstakeButtonStates.Unstaking && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                      </ButtonPrimaryNormal>
+                    </ButtonUnstakePrimaryNormalWrapper>
                     <BalanceCard
                       style={{
                         backgroundColor: '#D5CDEA',
