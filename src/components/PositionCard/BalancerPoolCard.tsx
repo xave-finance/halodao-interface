@@ -249,7 +249,7 @@ const StyledExternalLink = styled(ExternalLink)`
   line-height: 130%;
 `
 
-const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any; }>`
+const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any }>`
   ${ButtonPrimaryNormal} {
     background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
     &:hover {
@@ -258,7 +258,7 @@ const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled:
     color: #FFFFFF;
     font-weight: 900;
 
-    ${({ theme }) => theme.mediaWidth.upToSmall<{ ButtonState: any; Disabled: any; }>`
+    ${({ theme }) => theme.mediaWidth.upToSmall<{ ButtonState: any; Disabled: any }>`
       position: relative;
       color: #FFFFFF;
       font-weight: 900;
@@ -273,7 +273,7 @@ const ButtonStakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled:
   }
 `
 
-const ButtonUnstakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any; }>`
+const ButtonUnstakePrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any }>`
   ${ButtonPrimaryNormal} {
     &:hover {
       background: ${({ Disabled }) => (Disabled === 0 ? '#f8f8f8' : '#7758c1')}
@@ -673,7 +673,10 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
-                  <ButtonUnstakePrimaryNormalWrapper ButtonState={unstakeButtonState} Disabled={UnstakeButtonStates.Disabled}>
+                  <ButtonUnstakePrimaryNormalWrapper
+                    ButtonState={unstakeButtonState}
+                    Disabled={UnstakeButtonStates.Disabled}
+                  >
                     <ButtonPrimaryNormal
                       id="unstake-button"
                       padding="8px"
@@ -777,7 +780,10 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setStakeAmount(amount)}
                       id="stake-input"
                     />
-                    <ButtonStakePrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
+                    <ButtonStakePrimaryNormalWrapper
+                      ButtonState={stakeButtonState}
+                      Disabled={StakeButtonStates.Disabled}
+                    >
                       <ButtonPrimaryNormal
                         id="stake-button"
                         padding="8px"
