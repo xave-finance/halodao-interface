@@ -249,6 +249,28 @@ const StyledExternalLink = styled(ExternalLink)`
   line-height: 130%;
 `
 
+const ButtonPrimaryNormalWrapper = styled.div<{ ButtonState: any; Disabled: any; }>`
+  ${ButtonPrimaryNormal} {
+    background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
+    &:hover {
+      background: ${({ Disabled }) => (Disabled === 0 ? '#9580cb' : '#16006d')}
+    }
+
+    ${({ theme }) => theme.mediaWidth.upToSmall<{ ButtonState: any; Disabled: any; }>`
+      position: relative;
+      color: #FFFFFF;
+      fontWeight: 900;
+      width: 100%;
+      margin: 4% 0 4% 0;
+      height: 38px;
+      background: ${({ ButtonState }) => (ButtonState === 0 ? '#9580cb' : '#471BB2')}
+      ${StyledRowFixed}:hover & {
+        background: ${({ Disabled }) => (Disabled === 0 ? '#9580cb' : '#16006d')}
+      }
+    `};
+  }
+`
+
 enum StakeButtonStates {
   Disabled,
   NotApproved,
@@ -279,36 +301,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [stakeHover, setStakeHover] = useState(false)
-
-  const toggleHover = () => {
-    setStakeHover(!stakeHover)
-  }
-
-  // Stake and Unstake button designs for normal, disabled and hover
-  let stakeButnStyle
-
-  if (stakeButtonState === StakeButtonStates.Disabled) {
-    stakeButnStyle = {
-      background: '#471BB2',
-      color: '#FFFFFF',
-      fontWeight: 900,
-      opacity: '.5'
-    }
-  } else {
-    if (stakeHover) {
-      stakeButnStyle = {
-        background: '#15006D',
-        color: '#FFFFFF',
-        fontWeight: 900
-      }
-    } else {
-      stakeButnStyle = {
-        background: '#471BB2',
-        color: '#FFFFFF',
-        fontWeight: 900
-      }
-    }
-  }
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
@@ -597,44 +589,42 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
-                  {console.log('stakeButtonState', stakeButtonState)}
-                  <ButtonPrimaryNormal
-                    id="stake-button"
-                    padding="8px"
-                    borderRadius="8px"
-                    width="100%"
-                    disabled={[
-                      StakeButtonStates.Disabled,
-                      StakeButtonStates.Approving,
-                      StakeButtonStates.Staking
-                    ].includes(stakeButtonState)}
-                    onClick={() => {
-                      if (stakeButtonState === StakeButtonStates.Approved) {
-                        stakeLpToken()
-                      } else {
-                        approveStakeAmount()
-                      }
-                    }}
-                    style={stakeButnStyle}
-                    onMouseEnter={toggleHover}
-                    onMouseLeave={toggleHover}
-                  >
-                    {(stakeButtonState === StakeButtonStates.Disabled ||
-                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                    {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                    {stakeButtonState === StakeButtonStates.Approving && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                    {stakeButtonState === StakeButtonStates.Staking && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                  </ButtonPrimaryNormal>
+                  <ButtonPrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
+                    <ButtonPrimaryNormal
+                      id="stake-button"
+                      padding="8px"
+                      borderRadius="8px"
+                      width="100%"
+                      disabled={[
+                        StakeButtonStates.Disabled,
+                        StakeButtonStates.Approving,
+                        StakeButtonStates.Staking
+                      ].includes(stakeButtonState)}
+                      onClick={() => {
+                        if (stakeButtonState === StakeButtonStates.Approved) {
+                          stakeLpToken()
+                        } else {
+                          approveStakeAmount()
+                        }
+                      }}
+                    >
+                      {(stakeButtonState === StakeButtonStates.Disabled ||
+                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                      {stakeButtonState === StakeButtonStates.Approving && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                      {stakeButtonState === StakeButtonStates.Staking && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                    </ButtonPrimaryNormal>
+                  </ButtonPrimaryNormalWrapper>
                 </RowBetween>
                 <RowBetween
                   style={{
@@ -759,60 +749,42 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
                       onUserInput={amount => setStakeAmount(amount)}
                       id="stake-input"
                     />
-                    <ButtonPrimaryNormal
-                      id="stake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="48%"
-                      disabled={[
-                        StakeButtonStates.Disabled,
-                        StakeButtonStates.Approving,
-                        StakeButtonStates.Staking
-                      ].includes(stakeButtonState)}
-                      onClick={() => {
-                        if (stakeButtonState === StakeButtonStates.Approved) {
-                          stakeLpToken()
-                        } else {
-                          approveStakeAmount()
-                        }
-                      }}
-                      style={
-                        stakeButtonState === StakeButtonStates.Disabled
-                          ? {
-                              background: '#471BB2',
-                              color: '#FFFFFF',
-                              fontWeight: 900,
-                              width: '100%',
-                              margin: '4% 0 4% 0',
-                              height: '38px',
-                              opacity: '.5'
-                            }
-                          : {
-                              background: '#471BB2',
-                              color: '#FFFFFF',
-                              fontWeight: 900,
-                              width: '100%',
-                              margin: '4% 0 4% 0',
-                              height: '38px'
-                            }
-                      }
-                    >
-                      {(stakeButtonState === StakeButtonStates.Disabled ||
-                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                      {stakeButtonState === StakeButtonStates.Approving && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                      {stakeButtonState === StakeButtonStates.Staking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
+                    <ButtonPrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
+                      <ButtonPrimaryNormal
+                        id="stake-button"
+                        padding="8px"
+                        borderRadius="8px"
+                        width="48%"
+                        disabled={[
+                          StakeButtonStates.Disabled,
+                          StakeButtonStates.Approving,
+                          StakeButtonStates.Staking
+                        ].includes(stakeButtonState)}
+                        onClick={() => {
+                          if (stakeButtonState === StakeButtonStates.Approved) {
+                            stakeLpToken()
+                          } else {
+                            approveStakeAmount()
+                          }
+                        }}
+                      >
+                        {(stakeButtonState === StakeButtonStates.Disabled ||
+                          stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                        {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                        {stakeButtonState === StakeButtonStates.Approving && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                        {stakeButtonState === StakeButtonStates.Staking && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                      </ButtonPrimaryNormal>
+                    </ButtonPrimaryNormalWrapper>
                     <StyledTextForValue fontSize={16} fontWeight={800}>
                       STAKED: {formatNumber(bptStaked)} BPT
                     </StyledTextForValue>
