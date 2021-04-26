@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
-import PoolsSummary from 'components/PoolsSummary'
+import FarmPoolCard from 'components/Farm/FarmPoolCard'
+import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
@@ -16,7 +16,7 @@ const PageWrapper = styled(AutoColumn)`
   width: 100%;
 `
 
-const PoolsSummaryRow = styled(Row)`
+const FarmSummaryRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     flex-direction: column;
   `};
@@ -65,7 +65,7 @@ const Farm = () => {
   return (
     <>
       <PageWrapper id={`farm-page`}>
-        <PoolsSummaryRow>
+        <FarmSummaryRow>
           <HeaderRow>
             <TitleRow>
               <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
@@ -87,9 +87,9 @@ const Farm = () => {
             </Row>
           </HeaderRow>
           <Row>
-            <PoolsSummary poolsInfo={poolsInfo} />
+            <FarmSummary poolsInfo={poolsInfo} />
           </Row>
-        </PoolsSummaryRow>
+        </FarmSummaryRow>
 
         <AutoColumn
           gap="sm"
@@ -126,7 +126,7 @@ const Farm = () => {
             </Card>
           </HideSmall>
           {poolsInfo.map(poolInfo => {
-            return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+            return <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
           })}
         </AutoColumn>
       </PageWrapper>

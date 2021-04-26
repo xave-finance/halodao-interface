@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { ButtonOutlined, ButtonPrimaryNormal } from '../Button'
 import { AutoColumn } from '../Column'
 import { RowFixed, RowBetween } from '../Row'
-import { FixedHeightRow } from '.'
+import { FixedHeightRow } from '../PositionCard'
 import { CustomLightSpinner, HideMedium, ExternalLink, HideSmall } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
@@ -301,12 +301,12 @@ enum UnstakeButtonStates {
   Unstaking
 }
 
-interface BalancerPoolCardProps {
+interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
 }
 
-export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolCardProps) {
+export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
 
