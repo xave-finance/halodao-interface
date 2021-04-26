@@ -97,7 +97,6 @@ const StyledRowFixed = styled(RowFixed)`
     &:last-of-type {
       width: 100%;
       margin-bottom: 0.5rem;
-      margin-top: 1.5rem;
     }
   `};
 `
@@ -116,6 +115,20 @@ const StyledTextForValue = styled(Text)`
     line-height: 130%;
   `};
   font-size: 14px;
+`
+
+const LabelText = styled(Text)`
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 12px !important;
+  text-transform: uppercase;
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    display: block;
+  `};
+  &.first {
+    margin-top: 0 !important;
+  }
 `
 
 const ManageCloseButton = styled(ButtonOutlined)`
@@ -149,13 +162,12 @@ const StyledClose = styled(Text)`
   `};
 `
 
-const StyledBorderBottom = styled(Text)`
+const LineSeparator = styled.div`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: inline;
+    display: block;
     border-bottom: 1px solid #471BB2;
-    width: 100%;
-    color: transparent;
+    margin: 10px 30px 0;
   `};
 `
 
@@ -429,35 +441,21 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="21%">
-            <HideMedium>
-              <StyledText fontWeight={600}>{t('totalPoolValue')}:</StyledText>
-            </HideMedium>
+            <LabelText className="first">{t('totalPoolValue')}:</LabelText>
             <StyledTextForValue>
               {formatNumber(getPoolLiquidity(poolInfo, tokenPrice), NumberFormat.usd)}
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
-            <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">
-                {t('stakeable')}:
-              </StyledText>
-            </HideMedium>
+            <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>{formatNumber(bptBalance)} BPT</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
-            <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">
-                {t('valueStaked')}
-              </StyledText>
-            </HideMedium>
+            <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
-            <HideMedium>
-              <StyledText fontWeight={600} marginTop="10px">
-                {t('earned')}:
-              </StyledText>
-            </HideMedium>
+          <StyledRowFixed width="16%" marginTop="0">
+            <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>{formatNumber(unclaimedHalo)} HALO</StyledTextForValue>
           </StyledRowFixed>
           {account && (
@@ -475,17 +473,7 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
 
         {showMore && (
           <AutoColumnCustom>
-            <HideMedium>
-              <RowBetween>
-                <StyledBorderBottom
-                  style={{
-                    margin: '0 30px 0 30px'
-                  }}
-                >
-                  .
-                </StyledBorderBottom>
-              </RowBetween>
-            </HideMedium>
+            <LineSeparator />
 
             <div
               style={{
