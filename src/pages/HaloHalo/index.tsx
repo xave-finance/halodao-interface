@@ -17,6 +17,7 @@ import { AutoColumn } from '../../components/Column'
 import { transparentize } from 'polished'
 
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -175,6 +176,10 @@ const RowBetweenCard = styled.div`
 `
 
 export default function Saave() {
+  const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
+
+  console.log(haloHaloPrice)
+
   return (
     <>
       <PageWrapper>
@@ -227,7 +232,7 @@ export default function Saave() {
                   <RowBetween>
                     <HaloPairCenterContainer>
                       <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText>HALOHALO:HALO = x1.15</HaloHaloPairText>
+                      <HaloHaloPairText>HALOHALO:HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -241,8 +246,8 @@ export default function Saave() {
               <RowBetween>DESSERT FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
-              daily HALO vesting multiples.
+              The longer you keep HALOHALO, the more HALO you can claim later on ({haloHaloAPY}% APY). Claim anytime but
+              lose out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
