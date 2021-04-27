@@ -26,9 +26,9 @@ const useHaloHalo = () => {
   // gets the current APY from the haloHalo contract
   const getAPY = useCallback(async () => {
     // fixed to 2 decimal points\
-    const currentBlockNumber = await providers.getDefaultProvider().getBlockNumber()
+    const currentBlockNumber = await providers?.getDefaultProvider().getBlockNumber()
     const genesisTimestamp = Number(await halohaloContract?.genesisTimestamp())
-    const currentTimestamp = await (await providers.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
+    const currentTimestamp = await (await providers?.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
 
     // one year in seconds / 31536000
     const timeElapsed = currentTimestamp - genesisTimestamp
