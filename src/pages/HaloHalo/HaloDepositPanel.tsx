@@ -148,7 +148,6 @@ export default function CurrencyInputPanel({
   const theme = useTheme()
 
   const { allowance, approve, enter } = useHaloHalo()
-  console.log('Halohalo_allowance:', allowance)
 
   const haloBalanceBigInt = useTokenBalance(chainId ? HALO_TOKEN_ADDRESS[chainId] : ' ')
   const haloBalance = formatFromBalance(haloBalanceBigInt?.value, haloBalanceBigInt?.decimals)
