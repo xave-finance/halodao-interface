@@ -61,19 +61,26 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
 `
 
 const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  ${({ theme }) => theme.mediaWidth.upToSmall`  
-    background: ${({ theme }) => theme.bg3};
-    padding: 5px 0 0 0;
-    border-radius: 4px;
-    box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
-    margin-bottom: 0.5rem;
-  `};
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
   overflow: hidden;
   padding: 5px 0 5px 0;
   border-radius: 0px;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    background: #ffffff;
+    padding: 5px 0 0 0;
+    border-radius: 4px;
+    box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #15006d;
+
+    &.expanded {
+      border-bottom: none;
+    }
+  `};
 `
 
 const StyledRowFixed = styled(RowFixed)`
@@ -203,17 +210,17 @@ export const StyledButtonWidth = styled(ButtonOutlined)`
   `}
 `
 
-const AutoColumnCustom = styled.div`
+const ExpandedCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background: #f8f8f8;
-  border-radius: 4px;
-  margin-top: 10px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #15006d;
+  margin-top: 12px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    background: none;
-    border-radius: 0;
+    border: none;
     margin-top: 0;
   `}
 `
@@ -428,7 +435,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   }
 
   return (
-    <StyledCard bgColor="#FFFFFF" className="pool-card">
+    <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
       <AutoColumn>
         <StyledFixedHeightRowCustom>
           <StyledRowFixed width="25%" gap="8px">
@@ -472,210 +479,218 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
         </StyledFixedHeightRowCustom>
 
         {showMore && (
-          <AutoColumnCustom>
+          <ExpandedCard>
             <LineSeparator />
 
+            {/* Stake and unstake */}
             <div
               style={{
                 padding: '20px 30px 0 30px'
               }}
             >
-              <StyledCardBoxWeb>
-                <StyledFixedHeightRowWeb>
-                  <StyledBalanceStakeWeb
+              {/* Balance */}
+              <StyledFixedHeightRowWeb>
+                <StyledBalanceStakeWeb
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <StyledRowFixed>
+                    <Text
+                      style={{
+                        fontFamily: 'Open Sans',
+                        fontStyle: 'normal',
+                        fontWeight: 800,
+                        fontSize: '14px',
+                        lineHeight: '16px',
+                        letterSpacing: '0.2em'
+                      }}
+                    >
+                      BALANCE: {formatNumber(bptBalance)} BPT
+                    </Text>
+                  </StyledRowFixed>
+                  <StyledRowFixed>
+                    <Text
+                      style={{
+                        fontFamily: 'Open Sans',
+                        fontStyle: 'normal',
+                        fontWeight: 800,
+                        fontSize: '14px',
+                        lineHeight: '16px',
+                        letterSpacing: '0.2em'
+                      }}
+                    >
+                      STAKED: {formatNumber(bptStaked)} BPT
+                    </Text>
+                  </StyledRowFixed>
+                </StyledBalanceStakeWeb>
+              </StyledFixedHeightRowWeb>
+
+              {/* Get BPT button */}
+              <StyledRowFixed>
+                <StyledExternalLink
+                  href={poolInfo.balancerUrl}
+                  style={{
+                    fontSize: '14px',
+                    fontWeight: 600
+                  }}
+                >
+                  {t('getBPTTokens')}
+                  <img
                     style={{
-                      display: 'flex',
-                      width: '100%',
-                      justifyContent: 'space-between'
+                      marginLeft: '6px',
+                      height: '14px',
+                      marginBottom: '-2px'
+                    }}
+                    src={LinkIcon}
+                    alt="Link Icon"
+                  />
+                </StyledExternalLink>
+              </StyledRowFixed>
+
+              {/* Stake field + button */}
+              <RowBetween
+                style={{
+                  marginTop: '10px',
+                  display: 'block',
+                  width: '48%',
+                  float: 'left'
+                }}
+              >
+                <NumericalInput
+                  style={{
+                    width: '100%'
+                  }}
+                  value={stakeAmount}
+                  onUserInput={amount => setStakeAmount(amount)}
+                  id="stake-input"
+                />
+                <ButtonStakePrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
+                  <ButtonPrimaryNormal
+                    id="stake-button"
+                    padding="8px"
+                    borderRadius="8px"
+                    width="100%"
+                    disabled={[
+                      StakeButtonStates.Disabled,
+                      StakeButtonStates.Approving,
+                      StakeButtonStates.Staking
+                    ].includes(stakeButtonState)}
+                    onClick={() => {
+                      if (stakeButtonState === StakeButtonStates.Approved) {
+                        stakeLpToken()
+                      } else {
+                        approveStakeAmount()
+                      }
                     }}
                   >
-                    <StyledRowFixed>
-                      <Text
-                        style={{
-                          fontFamily: 'Open Sans',
-                          fontStyle: 'normal',
-                          fontWeight: 800,
-                          fontSize: '14px',
-                          lineHeight: '16px',
-                          letterSpacing: '0.2em'
-                        }}
-                      >
-                        BALANCE: {formatNumber(bptBalance)} BPT
-                      </Text>
-                    </StyledRowFixed>
-                    <StyledRowFixed>
-                      <Text
-                        style={{
-                          fontFamily: 'Open Sans',
-                          fontStyle: 'normal',
-                          fontWeight: 800,
-                          fontSize: '14px',
-                          lineHeight: '16px',
-                          letterSpacing: '0.2em'
-                        }}
-                      >
-                        STAKED: {formatNumber(bptStaked)} BPT
-                      </Text>
-                    </StyledRowFixed>
-                  </StyledBalanceStakeWeb>
-                </StyledFixedHeightRowWeb>
-                <StyledRowFixed>
-                  <StyledExternalLink
-                    href={poolInfo.balancerUrl}
+                    {(stakeButtonState === StakeButtonStates.Disabled ||
+                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
+                    {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
+                    {stakeButtonState === StakeButtonStates.Approving && (
+                      <>
+                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                      </>
+                    )}
+                    {stakeButtonState === StakeButtonStates.Staking && (
+                      <>
+                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                      </>
+                    )}
+                  </ButtonPrimaryNormal>
+                </ButtonStakePrimaryNormalWrapper>
+              </RowBetween>
+
+              {/* Unstake field + button */}
+              <RowBetween
+                style={{
+                  marginTop: '10px',
+                  display: 'block',
+                  width: '48%',
+                  float: 'right'
+                }}
+              >
+                <NumericalInput
+                  style={{
+                    width: '100%'
+                  }}
+                  value={unstakeAmount}
+                  onUserInput={amount => setUnstakeAmount(amount)}
+                  id="unstake-input"
+                />
+                <ButtonUnstakePrimaryNormalWrapper
+                  ButtonState={unstakeButtonState}
+                  Disabled={UnstakeButtonStates.Disabled}
+                >
+                  <ButtonPrimaryNormal
+                    id="unstake-button"
+                    padding="8px"
+                    borderRadius="8px"
+                    width="100%"
+                    disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                      unstakeButtonState
+                    )}
+                    onClick={unstakeLpToken}
+                  >
+                    {(unstakeButtonState === UnstakeButtonStates.Disabled ||
+                      unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
+                    {unstakeButtonState === UnstakeButtonStates.Unstaking && (
+                      <>
+                        {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                        <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
+                      </>
+                    )}
+                  </ButtonPrimaryNormal>
+                </ButtonUnstakePrimaryNormalWrapper>
+              </RowBetween>
+
+              {/* Pink banner */}
+              <RowBetween marginTop="10px">
+                <BalanceCard
+                  style={{
+                    backgroundColor: 'rgba(255, 128, 128, 0.2)',
+                    borderRadius: '10px',
+                    border: '0',
+                    color: '#000000',
+                    marginTop: '20px'
+                  }}
+                >
+                  <CardSection
                     style={{
-                      fontSize: '14px',
-                      fontWeight: 600
+                      display: 'block',
+                      padding: 0,
+                      margin: '15px 25px 15px 25px'
                     }}
                   >
-                    {t('getBPTTokens')}
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 500,
+                        textAlign: 'left',
+                        width: '80%',
+                        float: 'left',
+                        marginTop: '7px'
+                      }}
+                    >
+                      {t('tokenCardRewardDescription')}
+                    </Text>
                     <img
+                      width={'40px'}
+                      src={BunnyMoon}
+                      alt="Bunny Moon"
                       style={{
-                        marginLeft: '6px',
-                        height: '14px',
-                        marginBottom: '-2px'
+                        float: 'right'
                       }}
-                      src={LinkIcon}
-                      alt="Link Icon"
                     />
-                  </StyledExternalLink>
-                </StyledRowFixed>
-                <RowBetween
-                  style={{
-                    marginTop: '10px',
-                    display: 'block',
-                    width: '48%',
-                    float: 'left'
-                  }}
-                >
-                  <NumericalInput
-                    style={{
-                      width: '100%'
-                    }}
-                    value={stakeAmount}
-                    onUserInput={amount => setStakeAmount(amount)}
-                    id="stake-input"
-                  />
-                  <ButtonStakePrimaryNormalWrapper ButtonState={stakeButtonState} Disabled={StakeButtonStates.Disabled}>
-                    <ButtonPrimaryNormal
-                      id="stake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="100%"
-                      disabled={[
-                        StakeButtonStates.Disabled,
-                        StakeButtonStates.Approving,
-                        StakeButtonStates.Staking
-                      ].includes(stakeButtonState)}
-                      onClick={() => {
-                        if (stakeButtonState === StakeButtonStates.Approved) {
-                          stakeLpToken()
-                        } else {
-                          approveStakeAmount()
-                        }
-                      }}
-                    >
-                      {(stakeButtonState === StakeButtonStates.Disabled ||
-                        stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                      {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                      {stakeButtonState === StakeButtonStates.Approving && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                      {stakeButtonState === StakeButtonStates.Staking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
-                  </ButtonStakePrimaryNormalWrapper>
-                </RowBetween>
-                <RowBetween
-                  style={{
-                    marginTop: '10px',
-                    display: 'block',
-                    width: '48%',
-                    float: 'right'
-                  }}
-                >
-                  <NumericalInput
-                    style={{
-                      width: '100%'
-                    }}
-                    value={unstakeAmount}
-                    onUserInput={amount => setUnstakeAmount(amount)}
-                    id="unstake-input"
-                  />
-                  <ButtonUnstakePrimaryNormalWrapper
-                    ButtonState={unstakeButtonState}
-                    Disabled={UnstakeButtonStates.Disabled}
-                  >
-                    <ButtonPrimaryNormal
-                      id="unstake-button"
-                      padding="8px"
-                      borderRadius="8px"
-                      width="100%"
-                      disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
-                        unstakeButtonState
-                      )}
-                      onClick={unstakeLpToken}
-                    >
-                      {(unstakeButtonState === UnstakeButtonStates.Disabled ||
-                        unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
-                      {unstakeButtonState === UnstakeButtonStates.Unstaking && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
-                          <CustomLightSpinner src={Circle} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </ButtonPrimaryNormal>
-                  </ButtonUnstakePrimaryNormalWrapper>
-                </RowBetween>
-                <RowBetween marginTop="10px">
-                  <BalanceCard
-                    style={{
-                      backgroundColor: '#D5CDEA',
-                      boxShadow: '0px 7px 14px rgba(0, 0, 0, 0.1)',
-                      borderRadius: '10px',
-                      border: '0',
-                      color: '#000000',
-                      marginTop: '20px'
-                    }}
-                  >
-                    <CardSection
-                      style={{
-                        display: 'block',
-                        padding: 0,
-                        margin: '15px 25px 15px 25px'
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: 500,
-                          textAlign: 'left',
-                          width: '80%',
-                          float: 'left',
-                          marginTop: '7px'
-                        }}
-                      >
-                        {t('tokenCardRewardDescription')}
-                      </Text>
-                      <img
-                        width={'40px'}
-                        src={BunnyMoon}
-                        alt="Bunny Moon"
-                        style={{
-                          float: 'right'
-                        }}
-                      />
-                    </CardSection>
-                  </BalanceCard>
-                </RowBetween>
-              </StyledCardBoxWeb>
-              <HideMedium>
+                  </CardSection>
+                </BalanceCard>
+              </RowBetween>
+
+              {/* <HideMedium>
                 <StyledFixedHeightRow>
                   <StyledRowFixed
                     style={{
@@ -817,9 +832,10 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     </BalanceCard>
                   </StyledRowFixed>
                 </StyledFixedHeightRow>
-              </HideMedium>
+              </HideMedium> */}
             </div>
 
+            {/* Rewards */}
             <HideMedium>
               <BalanceCard
                 style={{
@@ -1040,7 +1056,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 </BalanceCard>
               </RowBetween>
             </StyledCardBoxWeb>
-          </AutoColumnCustom>
+          </ExpandedCard>
         )}
       </AutoColumn>
     </StyledCard>
