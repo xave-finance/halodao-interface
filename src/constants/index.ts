@@ -72,7 +72,6 @@ export const HALO: ChainTokenMap = {
 }
 
 // HALO Token Addresses
-
 export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || ''
 }
@@ -82,7 +81,7 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ''
 }
 
-// HALO Chest Addressess
+// HALOHALO Addressess
 export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALOHALO_ADDRESS_KOVAN || ''
 }

@@ -99,7 +99,6 @@ const useHaloHalo = () => {
       if (amount?.value) {
         try {
           const tx = await halohaloContract?.leave(amount?.value)
-          //const tx = await halohaloContract?.leave(ethers.utils.parseUnits(amount)) // where amount is string
           return addTransaction(tx, { summary: 'Leave HALOHALO' })
         } catch (e) {
           return e
