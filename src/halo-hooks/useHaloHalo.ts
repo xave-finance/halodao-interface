@@ -9,6 +9,7 @@ import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
 import { formatEther } from 'ethers/lib/utils'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const { BigNumber } = ethers
 
@@ -27,26 +28,26 @@ const useHaloHalo = () => {
   const getAPY = useCallback(async () => {
     // fixed to 2 decimal points\
     const currentBlockNumber = await providers?.getDefaultProvider().getBlockNumber()
+    // getting it directly so it will not get affected by state changes ensuring accurate apy calculation
+    const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
     const genesisTimestamp = Number(await halohaloContract?.genesisTimestamp())
     const currentTimestamp = await (await providers?.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
 
     // one year in seconds / 31536000
-    const timeElapsed = currentTimestamp - genesisTimestamp
+    const timeElapsed = (currentTimestamp - genesisTimestamp) / 31536000
     console.log(`Genesis timestamp is ${genesisTimestamp}, current block timestamp is ${currentTimestamp}`)
 
     // 1 comes from the 1:1 ratio before adding rewards
-    const priceChange = +haloHaloPrice - 1
+    const priceChange = Number(formatEther(currentHaloHaloPrice)) - 1
+
     const APY = timeElapsed * priceChange
 
-    setHaloHaloAPY(APY.toString())
-  }, [halohaloContract, haloHaloPrice])
+    setHaloHaloAPY(formatNumber(APY, NumberFormat.percent))
+  }, [halohaloContract])
 
   const getHaloHaloPrice = useCallback(async () => {
     const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
-    const convertedHaloHaloPrice = Number(formatEther(currentHaloHaloPrice)).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 4
-    })
+    const convertedHaloHaloPrice = formatNumber(Number(formatEther(currentHaloHaloPrice)))
 
     setHaloHaloPrice(convertedHaloHaloPrice)
   }, [halohaloContract])

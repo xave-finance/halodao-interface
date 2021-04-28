@@ -246,7 +246,7 @@ export default function Saave() {
               <RowBetween>DESSERT FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on ({haloHaloAPY}% APY). Claim anytime but
+              The longer you keep HALOHALO, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but
               lose out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
