@@ -43,8 +43,12 @@ const useHaloHalo = () => {
 
   const getHaloHaloPrice = useCallback(async () => {
     const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
+    const convertedHaloHaloPrice = Number(formatEther(currentHaloHaloPrice)).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4
+    })
 
-    setHaloHaloPrice(formatEther(currentHaloHaloPrice))
+    setHaloHaloPrice(convertedHaloHaloPrice)
   }, [halohaloContract])
 
   const fetchAllowance = useCallback(async () => {
