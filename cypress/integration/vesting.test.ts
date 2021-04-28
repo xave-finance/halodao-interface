@@ -5,7 +5,7 @@ describe('Vesting', () => {
 
   it('displays vesting APY', () => {
     // Initially APY blank
-    cy.contains('% APY')
+    cy.contains('APY')
 
     // Then should reload APY
     // cy.should('not.contain', '% APY')
