@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined } from '../Button'
-import { AutoColumn } from '../Column'
+import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
 import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText } from 'theme'
@@ -354,6 +354,12 @@ const ClaimButton = styled(ButtonOutlined)`
   }
 `
 
+const ErrorText = styled(Text)`
+  text-align: center;
+  color: #ff3a3a;
+  font-size: 14px;
+`
+
 enum StakeButtonStates {
   Disabled,
   NotApproved,
@@ -567,7 +573,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     id="stake-input"
                   />
                 </RowFlat>
-                <RowFlat>
+                <Column>
                   <ButtonHalo
                     id="stake-button"
                     padding="8px"
@@ -602,7 +608,10 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                       </>
                     )}
                   </ButtonHalo>
-                </RowFlat>
+                  {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
+                    <ErrorText>{t('insufficientFunds')}</ErrorText>
+                  )}
+                </Column>
               </StakeUnstakeChild>
               <StakeUnstakeChild>
                 <FixedHeightRow>
@@ -621,7 +630,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     id="unstake-input"
                   />
                 </RowFlat>
-                <RowFlat>
+                <Column>
                   <ButtonHaloOutlined
                     id="unstake-button"
                     padding="8px"
@@ -641,7 +650,10 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                       </>
                     )}
                   </ButtonHaloOutlined>
-                </RowFlat>
+                  {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
+                    <ErrorText>{t('insufficientFunds')}</ErrorText>
+                  )}
+                </Column>
               </StakeUnstakeChild>
             </StakeUnstakeContainer>
 
