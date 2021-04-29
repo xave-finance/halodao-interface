@@ -100,7 +100,7 @@ const Farm = () => {
           <HideSmall>
             <Card
               style={{
-                padding: '10px 0 0 0'
+                padding: '20px 0 0'
               }}
             >
               <AutoColumn>
@@ -117,10 +117,10 @@ const Farm = () => {
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="15%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="9%"></RowFixed>
+                  <RowFixed width="10%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>

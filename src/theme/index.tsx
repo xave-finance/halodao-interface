@@ -157,7 +157,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
   },
   thHeader(props: TextProps) {
-    return <TextWrapper fontWeight={400} fontSize={14} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
+    return <TextWrapper fontWeight={400} fontSize={16} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={11} {...props} />
@@ -179,6 +179,9 @@ export const TYPE = {
   },
   error({ error, ...props }: { error: boolean } & TextProps) {
     return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
+  },
+  label(props: TextProps) {
+    return <TextWrapper fontWeight={800} fontSize={14} fontFamily={'Open Sans'} letterSpacing={'0.2em'} {...props} />
   }
 }
 
