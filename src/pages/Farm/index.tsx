@@ -78,7 +78,7 @@ const Farm = () => {
               </TYPE.darkGray>
             </Row>
             <Row>
-              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
+              <StyledExternalLink href="https://docs.halodao.com/v0-guide/how-to-farm" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
                 <HideLarge>
                   <LinkIcon></LinkIcon>
