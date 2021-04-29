@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import { transparentize } from 'polished'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import Spinner from '../../assets/images/spinner.svg'
+import SpinnerPurple from '../../assets/images/spinner-purple.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
 import Molecule from '../../assets/svg/molecule.svg'
@@ -646,7 +647,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     {unstakeButtonState === UnstakeButtonStates.Unstaking && (
                       <>
                         {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
-                        <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                        <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
                       </>
                     )}
                   </ButtonHaloOutlined>
