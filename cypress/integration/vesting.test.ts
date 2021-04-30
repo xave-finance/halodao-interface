@@ -4,14 +4,16 @@ describe('Vesting', () => {
   })
 
   it('displays vesting APY', () => {
-    // Initially APY blank
-    cy.contains('% APY')
-
-    // Then should reload APY
-    // cy.should('not.contain', '% APY')
+    // 1 - Initially APY blank
+    cy.contains('0 APY')
+    // 2 - Check if APY changed
+    cy.should('not.contain', '0 APY')
   })
 
-  it.skip('displays HALO:HALOHALO price', () => {
-    // @todo
+  it('displays HALO:HALOHALO price', () => {
+    // 1 - Initially price is blank
+    cy.contains('x0')
+    // 2 - Check for Halohalo price changed
+    cy.should('not.contain', 'x0')
   })
 })

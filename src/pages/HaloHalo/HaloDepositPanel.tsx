@@ -134,13 +134,9 @@ interface CurrencyInputPanelProps {
 
 export default function CurrencyInputPanel({
   label = 'Input',
-  lpTokenAddress,
   disableCurrencySelect = false,
-  hideBalance = false,
   hideInput = false,
   id,
-  customBalanceText,
-  buttonText,
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
@@ -148,7 +144,6 @@ export default function CurrencyInputPanel({
   const theme = useTheme()
 
   const { allowance, approve, enter } = useHaloHalo()
-  console.log('haloChest_allowance:', allowance)
 
   const haloBalanceBigInt = useTokenBalance(chainId ? HALO_TOKEN_ADDRESS[chainId] : ' ')
   const haloBalance = formatFromBalance(haloBalanceBigInt?.value, haloBalanceBigInt?.decimals)

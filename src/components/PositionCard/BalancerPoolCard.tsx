@@ -331,7 +331,6 @@ export default function BalancerPoolCard({ poolInfo, tokenPrice }: BalancerPoolC
   const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
-  const [stakeHover, setStakeHover] = useState(false)
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
