@@ -34,13 +34,13 @@ const useHaloHalo = () => {
     const currentTimestamp = await (await providers?.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
 
     // one year in seconds / 31536000
-    const timeElapsed = (currentTimestamp - genesisTimestamp) / 31536000
+    const timePriceChangedRatio = 31536000 / (currentTimestamp - genesisTimestamp)
     console.log(`Genesis timestamp is ${genesisTimestamp}, current block timestamp is ${currentTimestamp}`)
 
     // 1 comes from the 1:1 ratio before adding rewards
     const priceChange = Number(formatEther(currentHaloHaloPrice)) - 1
 
-    const APY = timeElapsed * priceChange
+    const APY = timePriceChangedRatio * priceChange
 
     setHaloHaloAPY(formatNumber(APY, NumberFormat.percent))
   }, [halohaloContract])
