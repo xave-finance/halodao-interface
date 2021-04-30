@@ -8,7 +8,7 @@ import HaloChestHeader from './HaloHaloHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
-import HALOHALODepositPanel from './HALOHALODepositPanel'
+import HaloHaloWithdrawPanel from './HaloHaloWithdrawPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { RowBetween } from '../../components/Row'
@@ -220,7 +220,7 @@ export default function Saave() {
                   buttonText="Claim HALO"
                   cornerRadiusBottomNone={true}
                 />
-                <HALOHALODepositPanel
+                <HaloHaloWithdrawPanel
                   label={''}
                   disableCurrencySelect={true}
                   customBalanceText={'Available to withdraw: '}
