@@ -115,17 +115,17 @@ export default function HaloHaloWithdrawPanel({
   const decimals = xHaloHaloBalanceBigInt?.decimals
   const [requestedApproval, setRequestedApproval] = useState(false)
   const [pendingTx, setPendingTx] = useState(false)
-  const [depositValue, setDepositValue] = useState('')
+  const [withdrawValue, setWithdrawValue] = useState('')
   const [maxSelected, setMaxSelected] = useState(false)
-  const maxDepositAmountInput = xHaloHaloBalanceBigInt
+  const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
 
   // Updating the state of stake button
   useEffect(() => {
     if (pendingTx) return
 
-    const depositAsFloat = parseFloat(depositValue)
-    if (depositAsFloat > 0 && depositAsFloat <= parseFloat(xHaloHaloBalance)) {
+    const withdrawAsFloat = parseFloat(withdrawValue)
+    if (withdrawAsFloat > 0 && withdrawAsFloat <= parseFloat(xHaloHaloBalance)) {
       if (allowance !== '' && parseFloat(allowance) > 0) {
         setButtonState(ButtonHaloStates.Approved)
       } else if (requestedApproval) {
@@ -136,7 +136,7 @@ export default function HaloHaloWithdrawPanel({
     } else {
       setButtonState(ButtonHaloStates.Disabled)
     }
-  }, [allowance, depositValue, xHaloHaloBalance, pendingTx, requestedApproval])
+  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval])
 
   // handle approval
   const handleApprove = useCallback(async () => {
@@ -154,15 +154,15 @@ export default function HaloHaloWithdrawPanel({
   }, [approve, setRequestedApproval])
 
   // track and parse user input for Deposit Input
-  const onUserDepositInput = useCallback((depositValue: string, max = false) => {
+  const onUserWithdrawInput = useCallback((withdrawValue: string, max = false) => {
     setMaxSelected(max)
-    setDepositValue(depositValue)
+    setWithdrawValue(withdrawValue)
   }, [])
 
   // used for max input button
-  const handleMaxDeposit = useCallback(() => {
-    maxDepositAmountInput && onUserDepositInput(xHaloHaloBalance, true)
-  }, [maxDepositAmountInput, onUserDepositInput, xHaloHaloBalance])
+  const handleMaxWithdraw = useCallback(() => {
+    maxWithdrawAmountInput && onUserWithdrawInput(xHaloHaloBalance, true)
+  }, [maxWithdrawAmountInput, onUserWithdrawInput, xHaloHaloBalance])
 
   // handles actual withdrawal
   const withdraw = async () => {
@@ -171,16 +171,16 @@ export default function HaloHaloWithdrawPanel({
 
     let amount: BalanceProps | undefined
     if (maxSelected) {
-      amount = maxDepositAmountInput
+      amount = maxWithdrawAmountInput
     } else {
-      amount = formatToBalance(depositValue, decimals)
+      amount = formatToBalance(withdrawValue, decimals)
     }
     const tx = await leave(amount)
     await tx.wait()
 
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
-    setDepositValue('')
+    setWithdrawValue('')
   }
 
   return (
@@ -207,7 +207,7 @@ export default function HaloHaloWithdrawPanel({
                 </TYPE.body>
                 {account && (
                   <TYPE.body
-                    onClick={handleMaxDeposit}
+                    onClick={handleMaxWithdraw}
                     style={{
                       cursor: 'pointer',
                       fontFamily: 'Open Sans',
@@ -241,9 +241,9 @@ export default function HaloHaloWithdrawPanel({
               <>
                 <NumericalInput
                   className="token-amount-input"
-                  value={depositValue}
+                  value={withdrawValue}
                   onUserInput={val => {
-                    onUserDepositInput(val)
+                    onUserWithdrawInput(val)
                   }}
                 />
                 {account && label !== 'To' && (
@@ -260,7 +260,7 @@ export default function HaloHaloWithdrawPanel({
                       height: '33px',
                       margin: 0
                     }}
-                    onClick={handleMaxDeposit}
+                    onClick={handleMaxWithdraw}
                   >
                     MAX
                   </StyledBalanceMax>
@@ -281,7 +281,7 @@ export default function HaloHaloWithdrawPanel({
             }
           >
             <ButtonHalo
-              id="deposit-button"
+              id="withdraw-button"
               disabled={[ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
                 buttonState
               )}
@@ -310,7 +310,7 @@ export default function HaloHaloWithdrawPanel({
                 </>
               )}
             </ButtonHalo>
-            {parseFloat(depositValue) > 0 && parseFloat(depositValue) > parseFloat(xHaloHaloBalance) && (
+            {parseFloat(withdrawValue) > 0 && parseFloat(withdrawValue) > parseFloat(xHaloHaloBalance) && (
               <ErrorText>{t('insufficientFunds')}</ErrorText>
             )}
           </Column>

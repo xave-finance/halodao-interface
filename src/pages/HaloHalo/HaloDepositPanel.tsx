@@ -1,20 +1,25 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
 import { RowBetween } from '../../components/Row'
 import { Input as NumericalInput } from '../../components/NumericalInput'
-import { TYPE } from '../../theme'
+import { CustomLightSpinner, TYPE } from '../../theme'
 
 import { useActiveWeb3React } from '../../hooks'
 import useTheme from '../../hooks/useTheme'
 
-import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
+import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
+import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { ErrorText } from 'components/Alerts'
+import Column from 'components/Column'
+import { useTranslation } from 'react-i18next'
+import Spinner from '../../assets/images/spinner.svg'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -142,17 +147,38 @@ export default function CurrencyInputPanel({
 }: CurrencyInputPanelProps) {
   const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
-
+  const { t } = useTranslation()
   const { allowance, approve, enter } = useHaloHalo()
-
   const haloBalanceBigInt = useTokenBalance(chainId ? HALO_TOKEN_ADDRESS[chainId] : ' ')
   const haloBalance = formatFromBalance(haloBalanceBigInt?.value, haloBalanceBigInt?.decimals)
   const decimals = haloBalanceBigInt?.decimals
+  const [requestedApproval, setRequestedApproval] = useState(false)
+  const [pendingTx, setPendingTx] = useState(false)
+  const [depositValue, setDepositValue] = useState('')
+  const [maxSelected, setMaxSelected] = useState(false)
+  const maxDepositAmountInput = haloBalanceBigInt
+  const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+
+  // Updating the state of stake button
+  useEffect(() => {
+    if (pendingTx) return
+
+    const depositAsFloat = parseFloat(depositValue)
+    if (depositAsFloat > 0 && depositAsFloat <= parseFloat(haloBalance)) {
+      if (allowance !== '' && parseFloat(allowance) > 0) {
+        setButtonState(ButtonHaloStates.Approved)
+      } else if (requestedApproval) {
+        setButtonState(ButtonHaloStates.Approving)
+      } else {
+        setButtonState(ButtonHaloStates.NotApproved)
+      }
+    } else {
+      setButtonState(ButtonHaloStates.Disabled)
+    }
+  }, [allowance, depositValue, haloBalance, pendingTx, requestedApproval])
 
   // handle approval
-  const [requestedApproval, setRequestedApproval] = useState(false)
   const handleApprove = useCallback(async () => {
-    //console.log("SEEKING APPROVAL");
     try {
       setRequestedApproval(true)
       const txHash = await approve()
@@ -166,22 +192,35 @@ export default function CurrencyInputPanel({
     }
   }, [approve, setRequestedApproval])
 
-  // disable buttons if pendingTx, todo: styles could be improved
-  const [pendingTx, setPendingTx] = useState(false)
-
   // track and parse user input for Deposit Input
-  const [depositValue, setDepositValue] = useState('')
-  const [maxSelected, setMaxSelected] = useState(false)
   const onUserDepositInput = useCallback((depositValue: string, max = false) => {
     setMaxSelected(max)
     setDepositValue(depositValue)
   }, [])
+
   // used for max input button
-  const maxDepositAmountInput = haloBalanceBigInt
-  //const atMaxDepositAmount = true
   const handleMaxDeposit = useCallback(() => {
     maxDepositAmountInput && onUserDepositInput(haloBalance, true)
   }, [maxDepositAmountInput, onUserDepositInput, haloBalance])
+
+  // handles actual deposit
+  const deposit = async () => {
+    setPendingTx(true)
+    setButtonState(ButtonHaloStates.TxInProgress)
+
+    let amount: BalanceProps | undefined
+    if (maxSelected) {
+      amount = maxDepositAmountInput
+    } else {
+      amount = formatToBalance(depositValue, decimals)
+    }
+    const tx = await enter(amount)
+    await tx.wait()
+
+    setPendingTx(false)
+    setButtonState(ButtonHaloStates.Disabled)
+    setDepositValue('')
+  }
 
   return (
     <>
@@ -269,7 +308,7 @@ export default function CurrencyInputPanel({
               </>
             )}
           </InputRow>
-          <InputRow
+          <Column
             style={
               hideInput
                 ? {
@@ -280,78 +319,41 @@ export default function CurrencyInputPanel({
                     padding: '4px 0 0 0'
                   }
             }
-            selected={disableCurrencySelect}
           >
-            {!allowance || Number(allowance) === 0 ? (
-              <ButtonSelect
-                style={{
-                  background: '#471BB2',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '38px',
-                  margin: 0,
-                  padding: 0
-                }}
-                onClick={handleApprove}
-                disabled={requestedApproval}
-              >
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: 'Inter',
-                      fontStyle: 'normal',
-                      fontWeight: 900,
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      textAlign: 'center',
-                      color: '#FFFFFF'
-                    }}
-                  >
-                    Approve
-                  </StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
-            ) : (
-              <ButtonSelect
-                style={{
-                  background: '#471BB2',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '38px',
-                  margin: 0,
-                  padding: 0
-                }}
-                disabled={
-                  pendingTx || !haloBalance || Number(depositValue) === 0 || Number(depositValue) > Number(haloBalance)
+            <ButtonHalo
+              id="deposit-button"
+              disabled={[ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                buttonState
+              )}
+              onClick={async () => {
+                if (buttonState === ButtonHaloStates.Approved) {
+                  deposit()
+                } else {
+                  handleApprove()
                 }
-                onClick={async () => {
-                  setPendingTx(true)
-                  if (maxSelected) {
-                    await enter(maxDepositAmountInput)
-                  } else {
-                    await enter(formatToBalance(depositValue, decimals))
-                  }
-                  setPendingTx(false)
-                }}
-              >
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: 'Inter',
-                      fontStyle: 'normal',
-                      fontWeight: 900,
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      textAlign: 'center',
-                      color: '#FFFFFF'
-                    }}
-                  >
-                    Deposit
-                  </StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
+              }}
+            >
+              {(buttonState === ButtonHaloStates.Disabled || buttonState === ButtonHaloStates.Approved) && (
+                <>{t('deposit')}</>
+              )}
+              {buttonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+              {buttonState === ButtonHaloStates.Approving && (
+                <>
+                  {t('approving')}&nbsp;
+                  <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                </>
+              )}
+              {buttonState === ButtonHaloStates.TxInProgress && (
+                <>
+                  {t('deposit')}&nbsp;
+                  <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                </>
+              )}
+            </ButtonHalo>
+            {parseFloat(depositValue) > 0 && parseFloat(depositValue) > parseFloat(haloBalance) && (
+              <ErrorText>{t('insufficientFunds')}</ErrorText>
             )}
-          </InputRow>
+          </Column>
         </Container>
       </InputPanel>
     </>
