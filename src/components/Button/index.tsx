@@ -402,14 +402,14 @@ export const ButtonHalo = styled(Base)`
   font-weight: 900;
   background-color: ${({ theme }) => theme.primary1};
   color: white;
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.1, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
+  &:focus:enabled {
+    box-shadow: 0 0 0 1pt #15006d;
+    background-color: #15006d;
   }
-  &:hover {
-    background-color: ${({ theme }) => darken(0.1, theme.primary1)};
+  &:hover:enabled {
+    background-color: #15006d;
   }
-  &:active {
+  &:active:enabled {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.2, theme.primary1)};
     background-color: ${({ theme }) => darken(0.2, theme.primary1)};
   }
@@ -427,14 +427,17 @@ export const ButtonHaloOutlined = styled(Base)`
   background-color: transparent;
   color: ${({ theme }) => theme.primary1};
 
-  &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+  &:focus:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
   }
-  &:hover {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+  &:hover:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
   }
-  &:active {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+  &:active:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
   }
   &:disabled {
     opacity: 50%;
