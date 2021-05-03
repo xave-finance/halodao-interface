@@ -84,7 +84,59 @@ export const useBalancer = (poolAddresses: string[]) => {
         }
       }
 
-      const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
+      //const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
+      const result = {
+        pools: [
+          {
+            totalWeight: 1,
+            id: '0xbea012aaf56949a95759b9ce0b494a97edf389e6',
+            pair: 'ETH/DAI',
+            liquidity: '0',
+            tokens: [
+              {
+                symbol: 'ETH',
+                address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4733',
+                balance: '0',
+                denormWeight: 0.5,
+                name: 'ETH',
+                decimals: 18
+              },
+              {
+                symbol: 'HLP1',
+                address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4734',
+                balance: '0',
+                denormWeight: 0.5,
+                name: 'Halo Dummy Token 1',
+                decimals: 18
+              }
+            ]
+          },
+          {
+            totalWeight: 1,
+            id: '0x9c303c18397cb5fa62d9e68a0c7f2cc6e00f0066',
+            pair: 'ETH/DAI',
+            liquidity: '0',
+            tokens: [
+              {
+                symbol: 'ETH',
+                address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4733',
+                balance: '0',
+                denormWeight: 0.5,
+                name: 'ETH',
+                decimals: 18
+              },
+              {
+                symbol: 'HLP1',
+                address: '0xc7ad46e0b8a400bb3c915120d284aafba8fc4734',
+                balance: '0',
+                denormWeight: 0.5,
+                name: 'Halo Dummy Token 2',
+                decimals: 18
+              }
+            ]
+          }
+        ]
+      }
 
       const newPoolsInfo: PoolInfo[] = []
       const newPoolTokensAddresses: string[] = []
