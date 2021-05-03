@@ -48,7 +48,7 @@ const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   padding: 5px 0 5px 0;
   border-radius: 0px;
 
@@ -178,6 +178,7 @@ const ExpandedCard = styled.div`
   border-radius: 5px;
   border: 1px solid #15006d;
   margin-top: 12px;
+  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border: none;
@@ -274,6 +275,8 @@ const RewardsContainer = styled.div`
   background: #15006d;
   color: white;
   align-items: center;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
