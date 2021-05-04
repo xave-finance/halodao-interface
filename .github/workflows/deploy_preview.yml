@@ -8,7 +8,7 @@ on:
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
-    environment: preview
+    #environment: preview
     steps:
       - uses: actions/checkout@v2
       - run: yarn && yarn build

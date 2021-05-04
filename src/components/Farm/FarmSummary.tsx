@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import React from 'react'
 
-import Row from '../../components/Row'
-import { IndigoCard } from '../../components/Card'
+import Row from '../Row'
+import { IndigoCard } from '../Card'
 import { RowBetween } from 'components/Row'
 import { transparentize } from 'polished'
 import styled from 'styled-components'
 import { TYPE, HideSmall } from 'theme'
-import usePoolsSummary from 'halo-hooks/usePoolsSummary'
+import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/useBalancer'
 
 import HaloHalo from '../../assets/svg/halohalo.svg'
@@ -50,12 +50,12 @@ const EarnCard = styled(IndigoCard)`
   height: 190px;
 `
 
-interface PoolsSummaryProps {
+interface FarmSummaryProps {
   poolsInfo: PoolInfo[]
 }
 
-const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
-  const summary = usePoolsSummary(poolsInfo)
+const FarmSummary = ({ poolsInfo }: FarmSummaryProps) => {
+  const summary = useFarmSummary(poolsInfo)
   const { t } = useTranslation()
 
   return (
@@ -142,4 +142,4 @@ const PoolsSummary = ({ poolsInfo }: PoolsSummaryProps) => {
   )
 }
 
-export default PoolsSummary
+export default FarmSummary

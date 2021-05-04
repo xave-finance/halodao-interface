@@ -48,7 +48,7 @@ export function colors(darkMode: boolean): Colors {
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
-    bg1: darkMode ? '#18212e' : '#FFFFFF',
+    bg1: darkMode ? '#18212e' : '#FBFAFF',
     bg2: darkMode ? '#202d3f' : '#471BB2',
     bg3: darkMode ? '#2a3a50' : '#F1F1F1',
     bg4: darkMode ? '#3a506f' : '#CED0D9',
@@ -157,7 +157,7 @@ export const TYPE = {
     return <TextWrapper fontWeight={400} fontSize={14} {...props} />
   },
   thHeader(props: TextProps) {
-    return <TextWrapper fontWeight={400} fontSize={14} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
+    return <TextWrapper fontWeight={400} fontSize={16} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
   },
   small(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={11} {...props} />
@@ -179,6 +179,9 @@ export const TYPE = {
   },
   error({ error, ...props }: { error: boolean } & TextProps) {
     return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
+  },
+  label(props: TextProps) {
+    return <TextWrapper fontWeight={800} fontSize={14} fontFamily={'Open Sans'} letterSpacing={'0.2em'} {...props} />
   }
 }
 

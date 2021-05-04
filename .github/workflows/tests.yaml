@@ -13,7 +13,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-16.04
-    environment: test
+    #environment: test
     steps:
       - name: Checkout
         uses: actions/checkout@v1
@@ -43,6 +43,7 @@ jobs:
           REACT_APP_HALO_REWARDS_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN }}
           REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
           REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
+          REACT_APP_HALOHALO_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALOHALO_ADDRESS_KOVAN }}
       - run: yarn integration-test
 
   unit-tests:

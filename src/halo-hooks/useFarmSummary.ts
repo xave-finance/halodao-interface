@@ -6,7 +6,7 @@ import { PoolInfo } from './useBalancer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useStakedBPTPerPool, useTotalClaimedHALO, useUnclaimedHALOPerPool } from './useRewards'
 
-const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
+const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get user balance for each pool
   const { account } = useActiveWeb3React()
   const poolsAsTokens = poolsInfo.map(poolInfo => poolInfo.asToken)
@@ -77,4 +77,4 @@ const usePoolsSummary = (poolsInfo: PoolInfo[]) => {
   }, [poolsInfo, balances, totalSupplies, claimedHALO, unclaimedHALOs, stakedBPTs])
 }
 
-export default usePoolsSummary
+export default useFarmSummary
