@@ -27,35 +27,6 @@ const InputRow = styled.div<{ selected: boolean }>`
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
 `
 
-const ButtonSelect = styled.button`
-  align-items: center;
-  height: 2.2rem;
-  font-size: 20px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.primary1};
-  color: ${({ theme }) => theme.white};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  outline: none;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  padding: 0 0.5rem;
-  margin: 0 0.25rem;
-  width: 6rem;
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:disabled {
-    opacity: 50%;
-    cursor: auto;
-  }
-`
-
 const LabelRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -67,12 +38,6 @@ const LabelRow = styled.div`
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
-`
-
-const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
@@ -92,11 +57,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   border-radius: ${({ cornerRadiusTopNone }) => cornerRadiusTopNone && '0 0 12px 12px'};
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
   background-color: ${({ theme }) => theme.bg1};
-`
-
-const StyledButtonName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 auto;' : '  margin: 0 auto;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
 `
 
 const StyledBalanceMax = styled.button`
