@@ -37,6 +37,8 @@ export const useUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress
     () =>
       poolAddresses.length > 0
         ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+            if (!results[i]) return memo
+
             const unclaimed = results[i].result
             if (unclaimed) {
               memo[address] = parseFloat(formatEther(unclaimed.toString()))
@@ -59,6 +61,8 @@ export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: st
     () =>
       poolAddresses.length > 0
         ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+            if (!results[i]) return memo
+
             const bptStaked = results[i].result
             if (bptStaked) {
               memo[address] = parseFloat(formatEther(bptStaked.toString()))
