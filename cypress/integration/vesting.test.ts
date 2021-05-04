@@ -10,7 +10,7 @@ describe('Vesting', () => {
     cy.should('not.contain', '0 APY')
   })
 
-  it('displays HALO:HALOHALO price', () => {
+  it('displays HALO:DSRT price', () => {
     // 1 - Initially price is blank
     cy.contains('x0')
     // 2 - Check for Halohalo price changed

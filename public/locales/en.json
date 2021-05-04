@@ -99,7 +99,7 @@
   "poolSummaryStaked": "My Staked Value",
   "poolSummaryHaloEarned": "Unclaimed HALO Earned",
   "totalPoolValue": "Total Pool Value",
-  "tokenCardRewardDescription": "Every HALO token you earn is automatically staked in HALOHALO to earn vesting rewards! Press Claim or go to the Vesting tab to manage rewards.",
+  "tokenCardRewardDescription": "Every HALO token you earn is automatically staked in DESSERT to earn vesting rewards! Press Claim or go to the Vesting tab to manage rewards.",
   "valueStaked": "Value Staked",
   "earned": "Earned",
   "getBPTTokens": "To stake, get BPT Tokens here",
