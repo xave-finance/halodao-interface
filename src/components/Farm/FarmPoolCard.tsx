@@ -17,7 +17,7 @@ import Spinner from '../../assets/images/spinner.svg'
 import SpinnerPurple from '../../assets/images/spinner-purple.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
-import Molecule from '../../assets/svg/molecule.svg'
+import ArrowRight from '../../assets/svg/arrow-right.svg'
 import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
@@ -662,8 +662,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               <RewardsChild>
                 <Link to="/vesting">
                   <ClaimButton>
-                    <img src={Molecule} alt="Rewards icon" />
-                    &nbsp;Claim
+                    {t('harvest')}&nbsp;&nbsp;
+                    <img src={ArrowRight} alt="Harvest icon" />
                   </ClaimButton>
                 </Link>
               </RewardsChild>

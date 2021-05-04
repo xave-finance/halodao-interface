@@ -97,7 +97,7 @@
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
-  "poolSummaryHaloEarned": "My HALO Earned",
+  "poolSummaryHaloEarned": "Unclaimed HALO Earned",
   "totalPoolValue": "Total Pool Value",
   "tokenCardRewardDescription": "Every HALO token you earn is automatically staked in HALOHALO to earn vesting rewards! Press Claim or go to the Vesting tab to manage rewards.",
   "valueStaked": "Value Staked",
@@ -109,5 +109,6 @@
   "approve": "Approve",
   "vote": "Vote",
   "insufficientFunds": "Insufficient funds",
-  "claimHalo": "Claim HALO"
+  "claimHalo": "Claim HALO",
+  "harvest": "Harvest"
 }

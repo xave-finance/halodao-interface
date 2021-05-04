@@ -54,7 +54,7 @@ export default function SwapHeader() {
       <RowBetweenWrapper>
         <RowBetween>
           <HaloImg src={Halohalo} alt="Halo Halo" />
-          <HaloTitle>HALO → HALOHALO</HaloTitle>
+          <HaloTitle>HALO → DESSERT (DSRT)</HaloTitle>
         </RowBetween>
       </RowBetweenWrapper>
     </StyledSwapHeader>
