@@ -96,13 +96,9 @@ interface HaloHaloWithdrawPanelProps {
 
 export default function HaloHaloWithdrawPanel({
   label = 'Input',
-  lpTokenAddress,
   disableCurrencySelect = false,
-  hideBalance = false,
   hideInput = false,
   id,
-  customBalanceText,
-  buttonText,
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: HaloHaloWithdrawPanelProps) {

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 // import AppBody from '../AppBody'
-import HaloChestHeader from './HaloHaloHeader'
+import HaloHaloHeader from './HaloHaloHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
@@ -208,7 +208,7 @@ export default function Saave() {
           </VoteCard>
         </VoteCardWrapper>
         <DepositWrapper>
-          <HaloChestHeader />
+          <HaloHaloHeader />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
