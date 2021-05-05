@@ -302,6 +302,7 @@ export default function Swap() {
       <AppBody>
         <SwapHeader />
         <Wrapper id="swap-page">
+          {/* === Confirm modal === */}
           <ConfirmSwapModal
             isOpen={showConfirm}
             trade={trade}
@@ -316,7 +317,10 @@ export default function Swap() {
             onDismiss={handleConfirmDismiss}
           />
           {/* <AutoColumn gap={isExpertMode ? 'md' : 'none'} style={{ paddingBottom: '1rem' }}> */}
+
+          {/* === Input section === */}
           <AutoColumn gap={isExpertMode ? 'md' : '3px'}>
+            {/* === "From" token input === */}
             <CurrencyInputPanel
               label={independentField === Field.OUTPUT && !showWrap && trade ? 'From (estimated)' : 'From'}
               value={formattedAmounts[Field.INPUT]}
@@ -330,6 +334,8 @@ export default function Swap() {
               cornerRadiusBottomNone={isExpertMode ? false : true}
               //containerBackground={'#101b31'}
             />
+
+            {/* === Between "From"  & "To" token input === */}
             {isExpertMode && !showWrap && (
               <AutoColumn justify="space-between">
                 <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>
@@ -377,6 +383,8 @@ export default function Swap() {
                 </div>
               </div>
             )}
+
+            {/* === "To" token input === */}
             <CurrencyInputPanel
               value={formattedAmounts[Field.OUTPUT]}
               onUserInput={handleTypeOutput}
@@ -404,6 +412,8 @@ export default function Swap() {
               </>
             ) : null}
           </AutoColumn>
+
+          {/* === Button section === */}
           <BottomGrouping style={{ paddingBottom: '1rem' }}>
             {swapIsUnsupported ? (
               <ButtonPrimary disabled={true}>
@@ -508,6 +518,8 @@ export default function Swap() {
               <DefaultVersionLink />
             ) : null}
           </BottomGrouping>
+
+          {/* === Bottom section === */}
           <AutoColumn>
             {showWrap ? null : (
               <Card padding={showWrap ? '.25rem 1rem 0 1rem' : '0px'} borderRadius={'20px'}>
@@ -537,10 +549,13 @@ export default function Swap() {
                 </AutoColumn>
               </Card>
             )}
+
+            {/* === Advanced swap details === */}
             <AdvancedSwapDetailsSection trade={trade} />
           </AutoColumn>
         </Wrapper>
       </AppBody>
+
       {!swapIsUnsupported ? null : (
         <UnsupportedCurrencyFooter show={swapIsUnsupported} currencies={[currencies.INPUT, currencies.OUTPUT]} />
       )}

@@ -358,9 +358,9 @@ export default function Header() {
           <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
-          <StyledExternalLink id={`swap-nav-link`} href={'https://balancer.exchange/#/swap'}>
+          <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
             {t('swap')}
-          </StyledExternalLink>
+          </StyledNavLink>
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
             {t('vote')}
           </StyledExternalLink>
