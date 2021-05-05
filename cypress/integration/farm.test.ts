@@ -16,11 +16,11 @@ describe('Farm', () => {
   })
 
   it('displays the pools', () => {
-    cy.get('.pool-card')
+    cy.get('.pool-card', { timeout: 30000 })
   })
 
   it('can stake BPT', () => {
-    cy.contains('Manage').click()
+    cy.contains('Manage', { timeout: 30000 }).click()
     cy.get('#stake-input').type('1')
     cy.get('#stake-button').click()
 
