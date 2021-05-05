@@ -108,5 +108,6 @@
   "learnAboutStaking": "Learn about staking",
   "approve": "Approve",
   "vote": "Vote",
-  "insufficientFunds": "Insufficient funds"
+  "insufficientFunds": "Insufficient funds",
+  "claimHalo": "Claim HALO"
 }

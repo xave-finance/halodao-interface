@@ -89,7 +89,8 @@ const useHaloHalo = () => {
       if (amount?.value) {
         try {
           const tx = await halohaloContract?.enter(amount?.value)
-          return addTransaction(tx, { summary: 'Enter HALOHALO' })
+          addTransaction(tx, { summary: 'Deposit HALO' })
+          return tx
         } catch (e) {
           return e
         }
@@ -104,7 +105,8 @@ const useHaloHalo = () => {
       if (amount?.value) {
         try {
           const tx = await halohaloContract?.leave(amount?.value)
-          return addTransaction(tx, { summary: 'Leave HALOHALO' })
+          addTransaction(tx, { summary: 'Claim HALO' })
+          return tx
         } catch (e) {
           return e
         }
