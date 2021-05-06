@@ -69,6 +69,13 @@ export const HALO: ChainTokenMap = {
     'HALO',
     'HALOToken'
   ),
+  [ChainId.RINKEBY]: new Token(
+    ChainId.RINKEBY,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
+    18,
+    'HALO',
+    'HALOToken'
+  ),
   [ChainId.GÖRLI]: new Token(
     ChainId.GÖRLI,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
@@ -88,6 +95,7 @@ export const HALO: ChainTokenMap = {
 // HALO Token Addresses
 export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ''
 }
@@ -95,6 +103,7 @@ export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
 // HALO Rewards Addresses
 export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || '',
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_GOERLI || '',
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || ''
 }
@@ -102,6 +111,7 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
 // HALOHALO Addressess
 export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALOHALO_ADDRESS_KOVAN || '',
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALOHALO_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALOHALO_ADDRESS_GOERLI || '',
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || ''
 }
@@ -127,6 +137,7 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
     '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244'
   },
+  [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},
   [ChainId.BSC_TESTNET]: {}
 }
