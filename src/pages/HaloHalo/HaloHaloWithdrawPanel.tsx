@@ -96,13 +96,9 @@ interface HaloHaloWithdrawPanelProps {
 
 export default function HaloHaloWithdrawPanel({
   label = 'Input',
-  lpTokenAddress,
   disableCurrencySelect = false,
-  hideBalance = false,
   hideInput = false,
   id,
-  customBalanceText,
-  buttonText,
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: HaloHaloWithdrawPanelProps) {
@@ -218,7 +214,7 @@ export default function HaloHaloWithdrawPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloHaloBalance} HALOHALO
+                    BALANCE: {xHaloHaloBalance} DSRT
                   </TYPE.body>
                 )}
               </RowBetween>

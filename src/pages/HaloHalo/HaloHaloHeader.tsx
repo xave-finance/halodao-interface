@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { RowBetween } from '../../components/Row'
 import Halohalo from '../../assets/svg/halohalo-2.svg'
 
-const StyledSwapHeader = styled.div`
+const StyledHaloHaloHeader = styled.div`
   padding: 30px 0 0 30px;
   margin-bottom: -4px;
   width: 100%;
@@ -48,15 +48,15 @@ const RowBetweenWrapper = styled.div`
   }
 `
 
-export default function SwapHeader() {
+export default function HaloHaloHeader() {
   return (
-    <StyledSwapHeader>
+    <StyledHaloHaloHeader>
       <RowBetweenWrapper>
         <RowBetween>
           <HaloImg src={Halohalo} alt="Halo Halo" />
-          <HaloTitle>HALO → HALOHALO</HaloTitle>
+          <HaloTitle>HALO → DESSERT (DSRT)</HaloTitle>
         </RowBetween>
       </RowBetweenWrapper>
-    </StyledSwapHeader>
+    </StyledHaloHaloHeader>
   )
 }

@@ -218,7 +218,7 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {haloBalance} HALO Tokens
+                    BALANCE: {haloBalance} HALO
                   </TYPE.body>
                 )}
               </RowBetween>

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 // import AppBody from '../AppBody'
-import HaloChestHeader from './HaloHaloHeader'
+import HaloHaloHeader from './HaloHaloHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
@@ -208,7 +208,7 @@ export default function Saave() {
           </VoteCard>
         </VoteCardWrapper>
         <DepositWrapper>
-          <HaloChestHeader />
+          <HaloHaloHeader />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
@@ -232,7 +232,7 @@ export default function Saave() {
                   <RowBetween>
                     <HaloPairCenterContainer>
                       <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText id="haloHaloPrice">HALOHALO:HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">DSRT:HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -246,8 +246,8 @@ export default function Saave() {
               <RowBetween>DESSERT FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep HALOHALO, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but
-              lose out on daily HALO vesting multiples.
+              The longer you keep DSRT, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
+              out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
