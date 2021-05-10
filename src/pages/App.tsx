@@ -15,6 +15,7 @@ import { RedirectPathToFarmOnly } from './Swap/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
 import Swap from './Swap'
+import Pool from './Pool'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -77,6 +78,7 @@ export default function App() {
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
               <Route exact strict path="/swap" component={Swap} />
+              <Route exact strict path="/pool" component={Pool} />
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>

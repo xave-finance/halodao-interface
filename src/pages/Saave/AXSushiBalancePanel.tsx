@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pair } from '@sushiswap/sdk'
+import { Pair } from '@halodao/sdk-poc'
 import styled from 'styled-components'
 import { darken } from 'polished'
 

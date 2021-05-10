@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@sushiswap/sdk'
+import { Token, TokenAmount } from '@halodao/sdk-poc'
 import { useMemo } from 'react'
 import { useAllTokenBalances } from '../../state/wallet/hooks'
 

@@ -1,4 +1,4 @@
-import { TokenAmount } from '@sushiswap/sdk'
+import { TokenAmount } from '@halodao/sdk-poc'
 import React, { useEffect } from 'react'
 import { X } from 'react-feather'
 import styled, { keyframes } from 'styled-components'

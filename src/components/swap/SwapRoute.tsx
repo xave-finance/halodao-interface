@@ -1,4 +1,4 @@
-import { Trade } from '@sushiswap/sdk'
+import { Trade } from '@halodao/sdk-poc'
 import React, { Fragment, memo, useContext } from 'react'
 import { ChevronRight } from 'react-feather'
 import { Flex } from 'rebass'

@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import DEFAULT_TOKEN_LIST from '@sushiswap/default-token-list'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk-poc'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -51,7 +51,13 @@ const EMPTY_LIST: TokenAddressMap = {
   [ChainId.BSC]: {},
   [ChainId.BSC_TESTNET]: {},
   [ChainId.ARBITRUM]: {},
-  [ChainId.MOONBASE]: {}
+  [ChainId.MOONBASE]: {},
+  [ChainId.AVALANCHE]: {},
+  [ChainId.FUJI]: {},
+  [ChainId.HECO]: {},
+  [ChainId.HECO_TESTNET]: {},
+  [ChainId.HARMONY]: {},
+  [ChainId.HARMONY_TESTNET]: {}
 }
 
 const listCache: WeakMap<TokenList, TokenAddressMap> | null =
@@ -115,7 +121,13 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     56: { ...map1[56], ...map2[56] }, // bsc
     97: { ...map1[97], ...map2[97] }, // bsc testnet
     79377087078960: { ...map1[79377087078960], ...map2[79377087078960] }, // arbitrum
-    1287: { ...map1[1287], ...map2[1287] } // moonbase
+    1287: { ...map1[1287], ...map2[1287] }, // moonbase
+    43114: { ...map1[43114], ...map2[43114] }, // avalanche
+    43113: { ...map1[43113], ...map2[43113] }, // fuji
+    128: { ...map1[128], ...map2[128] }, // heco
+    256: { ...map1[256], ...map2[256] }, // heco testnet
+    1666600000: { ...map1[1666600000], ...map2[1666600000] }, // harmony
+    1666700000: { ...map1[1666700000], ...map2[1666700000] } // harmony testnet
   }
 }
 

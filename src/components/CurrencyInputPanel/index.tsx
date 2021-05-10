@@ -1,4 +1,4 @@
-import { Currency, Pair } from '@sushiswap/sdk'
+import { Currency, Pair } from '@halodao/sdk-poc'
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'

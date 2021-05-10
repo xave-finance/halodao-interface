@@ -1,4 +1,4 @@
-import { JSBI, Token } from '@sushiswap/sdk'
+import { JSBI, Token } from '@halodao/sdk-poc'
 import React, { useCallback, useContext, useMemo, useState, useEffect } from 'react'
 import { ThemeContext } from 'styled-components'
 import { AutoColumn } from '../../components/Column'

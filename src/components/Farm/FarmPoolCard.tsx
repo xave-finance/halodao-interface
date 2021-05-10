@@ -27,7 +27,7 @@ import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import { JSBI, TokenAmount } from '@halodao/sdk-poc'
 import {
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,

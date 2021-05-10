@@ -1,5 +1,5 @@
 import { HALO } from './../../constants/index'
-import { TokenAmount, JSBI, ChainId } from '@sushiswap/sdk'
+import { TokenAmount, JSBI, ChainId } from '@halodao/sdk-poc'
 import { TransactionResponse } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { useActiveWeb3React } from '../../hooks'

@@ -1,4 +1,4 @@
-import { currencyEquals, Trade } from '@sushiswap/sdk'
+import { currencyEquals, Trade } from '@halodao/sdk-poc'
 import React, { useCallback, useMemo } from 'react'
 import TransactionConfirmationModal, {
   ConfirmationModalContent,

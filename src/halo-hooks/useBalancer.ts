@@ -2,7 +2,7 @@ import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL, COINGECKO_KNOWN_TOKENS } from
 import { useEffect, useState } from 'react'
 import { subgraphRequest } from 'utils/balancer'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk-poc'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 

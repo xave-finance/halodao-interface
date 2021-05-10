@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@sushiswap/sdk'
+import { ChainId, JSBI, Pair, Route, Token, TokenAmount, Trade, TradeType } from '@halodao/sdk-poc'
 import { computeTradePriceBreakdown } from './prices'
 
 describe('prices', () => {

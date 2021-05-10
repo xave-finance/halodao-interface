@@ -1,5 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk-poc'
 import { useMemo } from 'react'
 import SUSHI_ABI from '../constants/sushiAbis/sushi.json'
 import MASTERCHEF_ABI from '../constants/sushiAbis/masterchef.json'
@@ -32,7 +32,7 @@ import {
   MAKER_ADDRESS,
   TIMELOCK_ADDRESS,
   ROUTER_ADDRESS
-} from '@sushiswap/sdk'
+} from '@halodao/sdk-poc'
 
 // returns null on errors
 export function useContract(

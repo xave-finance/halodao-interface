@@ -6,7 +6,7 @@ import { TYPE, ExternalLinkIcon, TrashIcon, ButtonText, ExternalLink } from 'the
 import { useToken } from 'hooks/Tokens'
 import styled from 'styled-components'
 import { useUserAddedTokens, useRemoveUserAddedToken } from 'state/user/hooks'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk-poc'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { getExplorerLink, isAddress } from 'utils'
 import { useActiveWeb3React } from 'hooks'

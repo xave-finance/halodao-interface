@@ -17,7 +17,7 @@ import { isAddress } from 'ethers/lib/utils'
 import Confetti from '../Confetti'
 import { CardNoise, CardBGImage, CardBGImageSmaller } from '../earn/styled'
 import { useIsTransactionPending } from '../../state/transactions/hooks'
-import { TokenAmount } from '@sushiswap/sdk'
+import { TokenAmount } from '@halodao/sdk-poc'
 import { getExplorerLink, shortenAddress } from '../../utils'
 
 const ContentWrapper = styled(AutoColumn)`

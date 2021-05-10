@@ -1,4 +1,4 @@
-import { Fraction as SDKFraction } from '@sushiswap/sdk'
+import { Fraction as SDKFraction } from '@halodao/sdk-poc'
 import { ethers } from 'ethers'
 import { formatBalance, isEmptyValue, parseBalance } from '../utils'
 
