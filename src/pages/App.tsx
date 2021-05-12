@@ -12,10 +12,18 @@ import { ApplicationModal } from '../state/application/actions'
 import { useModalOpen, useToggleModal } from '../state/application/hooks'
 import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { RedirectPathToFarmOnly } from './Swap/redirects'
+import {
+  RedirectDuplicateTokenIds,
+  RedirectOldAddLiquidityPathStructure,
+  RedirectToAddLiquidity
+} from './AddLiquidity/redirects'
+import { RedirectOldRemoveLiquidityPathStructure } from './RemoveLiquidity/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
 import Swap from './Swap'
 import Pool from './Pool'
+import AddLiquidity from './AddLiquidity'
+import RemoveLiquidity from './RemoveLiquidity'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -78,7 +86,21 @@ export default function App() {
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
               <Route exact strict path="/swap" component={Swap} />
+
               <Route exact strict path="/pool" component={Pool} />
+
+              <Route exact strict path="/create" component={RedirectToAddLiquidity} />
+              <Route exact path="/create" component={AddLiquidity} />
+              <Route exact path="/create/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact path="/create/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+
+              <Route exact path="/add" component={AddLiquidity} />
+              <Route exact path="/add/:currencyIdA" component={RedirectOldAddLiquidityPathStructure} />
+              <Route exact path="/add/:currencyIdA/:currencyIdB" component={RedirectDuplicateTokenIds} />
+
+              <Route exact strict path="/remove/:tokens" component={RedirectOldRemoveLiquidityPathStructure} />
+              <Route exact strict path="/remove/:currencyIdA/:currencyIdB" component={RemoveLiquidity} />
+
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>

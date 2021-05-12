@@ -1968,10 +1968,15 @@
   resolved "https://registry.yarnpkg.com/@graphql-typed-document-node/core/-/core-3.1.0.tgz#0eee6373e11418bfe0b5638f654df7a4ca6a3950"
   integrity sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==
 
-"@halodao/sdk-poc@0.1.0":
+"@halodao/default-token-list-poc@0.1.0":
   version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@halodao/sdk-poc/-/sdk-poc-0.1.0.tgz#3b7759ba02d603b47c38ae471f58995eafff4f78"
-  integrity sha512-/njdBsDDecbHbn1tOkdVbBz5bKEhudFwAUw7Z9hN3OwbW0ggyMwlqEIgakdDICG7RwW/tklJi/WWgPXRMIgMPw==
+  resolved "https://registry.yarnpkg.com/@halodao/default-token-list-poc/-/default-token-list-poc-0.1.0.tgz#6f4197d5fe6273313e287eddbee648f717eace77"
+  integrity sha512-XQM3kkTpxq+jA/uiQEPC4SJLV0KeRqHcVMDlL2ADAbo1YVsGTvRW2v0ktyt40ixD8mf2vwEVYRfx84h1D715NA==
+
+"@halodao/sdk-poc@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@halodao/sdk-poc/-/sdk-poc-0.1.2.tgz#4ff34deee388c7c2b3fee49d2b19b9367a8f8e26"
+  integrity sha512-RDcJ6YAbMDUXrluJleyXQthc+4E9WyY4wXs9Zl0zpqkQbL0iAyluLGDb60yKHk20iyTKlWtMI4su8qe1trnByw==
   dependencies:
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
@@ -2617,11 +2622,6 @@
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@sushiswap/core/-/core-1.4.2.tgz#065a6613f842ab7ac6d12878072b59327bffa296"
   integrity sha512-Khd2i6Bob9uk7dCgVkhUioEoxRP28m6aj25MegAHvnJyxZPVzZDhxSkeL6wdv5MeAp2DwHkYqUq03KDfVTTP4Q==
-
-"@sushiswap/default-token-list@3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@sushiswap/default-token-list/-/default-token-list-3.3.0.tgz#022d2ffe0f06bb61372e9cb12f166a40aaa687af"
-  integrity sha512-lnBb5MsJQrHMG1/y15xr8iBjtlJNZIPOXW1SjVM4hqPeUkO3MXZfWLuA0HQg9pevI3g6844hzq2fbBnYxizNVQ==
 
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"
