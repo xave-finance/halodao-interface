@@ -18,11 +18,23 @@ const NetworkButton = styled.button`
   cursor: pointer;
   margin: 10px;
   padding: 10px;
+  border-radius: 10px;
 
   :hover {
     opacity: 0.7;
   }
 `
+
+const ModalBody = styled(Box)`
+  padding-left: 45px;
+  padding-top: 10px;
+  padding-bottom: 20px;
+`
+
+const ModalBodyDescription = styled.div`
+  padding-left: 10px;
+`
+
 const PARAMS: {
   [chainId in ChainId]?: {
     chainId: string
@@ -151,11 +163,11 @@ export default function NetworkModal(): JSX.Element | null {
   return (
     <Modal isOpen={networkModalOpen} onDismiss={toggleNetworkModal}>
       <Flex>
-        <Box width={1} style={{ paddingLeft: '40px', paddingBottom: '10px' }}>
-          <div style={{ paddingLeft: '10px' }}>
+        <ModalBody>
+          <ModalBodyDescription>
             <ModalHeader onClose={toggleNetworkModal} title="Select a Network" />
             <div style={{ width: '90%' }}>You are currently browsing HALO on the {NETWORK_LABEL[chainId]} network</div>
-          </div>
+          </ModalBodyDescription>
           {[
             ChainId.MAINNET,
             ChainId.FANTOM,
@@ -199,7 +211,7 @@ export default function NetworkModal(): JSX.Element | null {
               </NetworkButton>
             )
           })}
-        </Box>
+        </ModalBody>
       </Flex>
     </Modal>
   )
