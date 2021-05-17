@@ -1,5 +1,5 @@
 import React from 'react'
-import Typography from './Typography'
+import { TYPE } from 'theme'
 
 function ModalHeader({
   title = undefined,
@@ -12,11 +12,7 @@ function ModalHeader({
 }): JSX.Element {
   return (
     <div className={`relative mb-2 ${className}`}>
-      {title && (
-        <Typography component="h2" variant="h5" className="mt-2.5 font-bold">
-          {title}
-        </Typography>
-      )}
+      {title && <TYPE.largeHeader>{title}</TYPE.largeHeader>}
       {/*
       <div
         className="absolute top-0 right-0 w-5 h-5 rounded-full border-2 text-primary hover:text-high-emphesis border-primary  flex items-center justify-center cursor-pointer"
