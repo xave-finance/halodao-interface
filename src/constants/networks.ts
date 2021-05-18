@@ -1,4 +1,4 @@
-//import Arbitrum from '../assets/networks/arbitrum-network.jpg'
+import Arbitrum from '../assets/networks/arbitrum-network.jpg'
 //import Avalanche from '../assets/networks/avalanche-network.jpg'
 import Bsc from '../assets/networks/bsc-network.jpg'
 import { ChainId } from '@sushiswap/sdk'
@@ -14,7 +14,7 @@ import Moonbeam from '../assets/networks/moonbeam-network.jpg'
 import Polygon from '../assets/networks/polygon-network.jpg'
 import Rinkeby from '../assets/networks/rinkeby-network.jpg'
 import Ropsten from '../assets/networks/ropsten-network.jpg'
-//import xDai from '../assets/networks/xdai-network.jpg'
+import xDai from '../assets/networks/xdai-network.jpg'
 
 export const NETWORK_ICON = {
   [ChainId.MAINNET]: Mainnet,
@@ -22,14 +22,14 @@ export const NETWORK_ICON = {
   [ChainId.RINKEBY]: Rinkeby,
   [ChainId.GÖRLI]: Goerli,
   [ChainId.KOVAN]: Kovan,
-  // [ChainId.FANTOM]: Fantom,
-  // [ChainId.FANTOM_TESTNET]: Fantom,
+  [ChainId.FANTOM]: Fantom,
+  [ChainId.FANTOM_TESTNET]: Fantom,
   [ChainId.BSC]: Bsc,
   [ChainId.BSC_TESTNET]: Bsc,
   [ChainId.MATIC]: Polygon,
   [ChainId.MATIC_TESTNET]: Matic,
-  //[ChainId.XDAI]: xDai,
-  //[ChainId.ARBITRUM]: Arbitrum
+  [ChainId.XDAI]: xDai,
+  [ChainId.ARBITRUM]: Arbitrum,
   [ChainId.MOONBASE]: Moonbeam
   //[ChainId.AVALANCHE]: Avalanche,
   //[ChainId.FUJI]: Avalanche,
@@ -51,7 +51,7 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   //[ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
   [ChainId.MATIC]: 'Polygon (Matic)',
   [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  // [ChainId.XDAI]: 'xDai',
+  //[ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
   [ChainId.MOONBASE]: 'Moonbase'
@@ -136,7 +136,6 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://http-mainnet.hecochain.com'],
     blockExplorerUrls: ['https://hecoinfo.com']
   },
-
   [ChainId.XDAI]: {
     chainId: '0x64',
     chainName: 'xDai',
