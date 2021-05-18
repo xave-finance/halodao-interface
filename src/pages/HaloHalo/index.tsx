@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
@@ -18,6 +18,8 @@ import { transparentize } from 'polished'
 
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import VestingModal from 'components/VestingModal'
+import { useVestingModalToggle } from 'state/application/hooks'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -177,11 +179,15 @@ const RowBetweenCard = styled.div`
 
 export default function Saave() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
+  const toggleVestingModal = useVestingModalToggle()
 
-  console.log(haloHaloPrice)
+  useEffect(() => {
+    toggleVestingModal()
+  }, [])
 
   return (
     <>
+      <VestingModal />
       <PageWrapper>
         <VoteCardWrapper>
           <VoteCard>

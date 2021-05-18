@@ -409,7 +409,7 @@ export enum ButtonHaloStates {
 export const ButtonHalo = styled(Base)`
   font-weight: 900;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   background-color: ${({ theme }) => theme.primary1};
   color: white;
   &:focus:enabled {
@@ -434,7 +434,7 @@ export const ButtonHalo = styled(Base)`
 export const ButtonHaloOutlined = styled(Base)`
   font-weight: 900;
   padding: 8px;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid ${({ theme }) => theme.primary1};
   background-color: transparent;
   color: ${({ theme }) => theme.primary1};
@@ -455,4 +455,10 @@ export const ButtonHaloOutlined = styled(Base)`
     opacity: 50%;
     cursor: auto;
   }
+`
+
+export const ButtonHaloWhite = styled(ButtonWhite)`
+  border-radius: 4px;
+  color: ${({ theme }) => theme.primary1};
+  font-weight: 700;
 `
