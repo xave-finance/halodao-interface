@@ -140,7 +140,18 @@ export const NETWORK_PARAMS: {
     },
     rpcUrls: ['https://rpc.xdaichain.com'],
     blockExplorerUrls: ['https://blockscout.com/poa/xdai']
-  }
+  },
+  [ChainId.MOONBASE]: {
+    chainId: '0x507',
+    chainName: 'Moonbase Alpha',
+    nativeCurrency: {
+      name: 'Dev',
+      symbol: 'DEV',
+      decimals: 18
+    },
+    rpcUrls: ['https://rpc.testnet.moonbeam.network'], //['https://matic-mainnet.chainstacklabs.com/'],
+    blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network']
+  },
   /*
     [ChainId.HARMONY]: {
         chainId: '0x63564C40',
