@@ -1,4 +1,4 @@
-import Arbitrum from '../assets/networks/arbitrum-network.jpg'
+//import Arbitrum from '../assets/networks/arbitrum-network.jpg'
 //import Avalanche from '../assets/networks/avalanche-network.jpg'
 import Bsc from '../assets/networks/bsc-network.jpg'
 import { ChainId } from '@sushiswap/sdk'
@@ -14,7 +14,7 @@ import Moonbeam from '../assets/networks/moonbeam-network.jpg'
 import Polygon from '../assets/networks/polygon-network.jpg'
 import Rinkeby from '../assets/networks/rinkeby-network.jpg'
 import Ropsten from '../assets/networks/ropsten-network.jpg'
-import xDai from '../assets/networks/xdai-network.jpg'
+//import xDai from '../assets/networks/xdai-network.jpg'
 
 export const NETWORK_ICON = {
   [ChainId.MAINNET]: Mainnet,
@@ -22,14 +22,14 @@ export const NETWORK_ICON = {
   [ChainId.RINKEBY]: Rinkeby,
   [ChainId.GÖRLI]: Goerli,
   [ChainId.KOVAN]: Kovan,
-  [ChainId.FANTOM]: Fantom,
-  [ChainId.FANTOM_TESTNET]: Fantom,
+  // [ChainId.FANTOM]: Fantom,
+  // [ChainId.FANTOM_TESTNET]: Fantom,
   [ChainId.BSC]: Bsc,
   [ChainId.BSC_TESTNET]: Bsc,
   [ChainId.MATIC]: Polygon,
   [ChainId.MATIC_TESTNET]: Matic,
-  [ChainId.XDAI]: xDai,
-  [ChainId.ARBITRUM]: Arbitrum,
+  //[ChainId.XDAI]: xDai,
+  //[ChainId.ARBITRUM]: Arbitrum
   [ChainId.MOONBASE]: Moonbeam
   //[ChainId.AVALANCHE]: Avalanche,
   //[ChainId.FUJI]: Avalanche,
@@ -47,11 +47,11 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.ROPSTEN]: 'Ropsten',
   [ChainId.GÖRLI]: 'Görli',
   [ChainId.KOVAN]: 'Kovan',
-  [ChainId.FANTOM]: 'Fantom',
-  [ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
+  //[ChainId.FANTOM]: 'Fantom',
+  //[ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
   [ChainId.MATIC]: 'Polygon (Matic)',
   [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  [ChainId.XDAI]: 'xDai',
+  // [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
   [ChainId.MOONBASE]: 'Moonbase'
@@ -89,6 +89,7 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://mainnet.infura.io/v3'],
     blockExplorerUrls: ['https://etherscan.com']
   },
+  /*
   [ChainId.FANTOM]: {
     chainId: '0xfa',
     chainName: 'Fantom',
@@ -100,6 +101,7 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://rpcapi.fantom.network'],
     blockExplorerUrls: ['https://ftmscan.com']
   },
+  */
   [ChainId.BSC]: {
     chainId: '0x38',
     chainName: 'Binance Smart Chain',
@@ -134,7 +136,7 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://http-mainnet.hecochain.com'],
     blockExplorerUrls: ['https://hecoinfo.com']
   },
-  */
+
   [ChainId.XDAI]: {
     chainId: '0x64',
     chainName: 'xDai',
@@ -146,6 +148,7 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://rpc.xdaichain.com'],
     blockExplorerUrls: ['https://blockscout.com/poa/xdai']
   },
+    */
   [ChainId.MOONBASE]: {
     chainId: '0x507',
     chainName: 'Moonbase Alpha',

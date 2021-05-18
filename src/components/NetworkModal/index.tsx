@@ -52,11 +52,11 @@ export default function NetworkModal(): JSX.Element | null {
           </ModalBodyDescription>
           {[
             ChainId.MAINNET,
-            ChainId.FANTOM,
+            //ChainId.FANTOM,
             ChainId.BSC,
             ChainId.MATIC,
             //ChainId.HECO,
-            ChainId.XDAI,
+            //ChainId.XDAI,
             //ChainId.HARMONY,
             //ChainId.AVALANCHE,
             //ChainId.OKEX
