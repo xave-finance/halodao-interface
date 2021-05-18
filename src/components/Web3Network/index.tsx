@@ -2,7 +2,7 @@ import React from 'react'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { useNetworkModalToggle } from '../../state/application/hooks'
 import { NETWORK_LABEL } from '../../constants/networks'
-import NetworkModel from '../NetworkModal'
+import NetworkModal from '../NetworkModal'
 
 function Web3Network(): JSX.Element | null {
   const { chainId } = useActiveWeb3React()
@@ -31,7 +31,7 @@ function Web3Network(): JSX.Element | null {
                 className="bg-cover bg-no-repeat bg-chain-static hover:bg-chain-animated"
                 style={{ width: 22, height: 22 }}
             /> */}
-      <NetworkModel />
+      <NetworkModal />
     </div>
   )
 }

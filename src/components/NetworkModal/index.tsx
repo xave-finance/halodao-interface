@@ -9,7 +9,7 @@ import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { Box, Flex } from 'rebass'
 import Row from '../Row'
 import styled from 'styled-components'
-import { NETWORK_PARAMS } from '../../constants/index'
+import { NETWORK_PARAMS } from '../../constants/networks'
 
 const NetworkButton = styled.button`
   width: 80%;

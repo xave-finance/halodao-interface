@@ -3,12 +3,12 @@ import { TYPE } from 'theme'
 
 function ModalHeader({
   title = undefined,
-  onClose,
+  // onClose,
   className = ''
 }: {
   title?: string
   className?: string
-  onClose: () => void
+  onClose?: () => void
 }): JSX.Element {
   return (
     <div className={`relative mb-2 ${className}`}>
