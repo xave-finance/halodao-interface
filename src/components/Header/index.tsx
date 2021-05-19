@@ -29,6 +29,7 @@ import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
 
 const HeaderFrame = styled.div`
+  background: #ffffff;
   display: grid;
   grid-template-columns: 1fr 120px;
   align-items: center;

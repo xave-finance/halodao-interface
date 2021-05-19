@@ -397,3 +397,62 @@ export function ButtonRadio({ active, ...rest }: { active?: boolean } & ButtonPr
     return <ButtonPrimary {...rest} />
   }
 }
+
+export enum ButtonHaloStates {
+  Disabled,
+  NotApproved,
+  Approving,
+  Approved,
+  TxInProgress
+}
+
+export const ButtonHalo = styled(Base)`
+  font-weight: 900;
+  padding: 8px;
+  border-radius: 8px;
+  background-color: ${({ theme }) => theme.primary1};
+  color: white;
+  &:focus:enabled {
+    box-shadow: 0 0 0 1pt #15006d;
+    background-color: #15006d;
+  }
+  &:hover:enabled {
+    background-color: #15006d;
+  }
+  &:active:enabled {
+    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.2, theme.primary1)};
+    background-color: ${({ theme }) => darken(0.2, theme.primary1)};
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+    box-shadow: none;
+    outline: none;
+  }
+`
+
+export const ButtonHaloOutlined = styled(Base)`
+  font-weight: 900;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid ${({ theme }) => theme.primary1};
+  background-color: transparent;
+  color: ${({ theme }) => theme.primary1};
+
+  &:focus:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
+  }
+  &:hover:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
+  }
+  &:active:enabled {
+    background: ${({ theme }) => theme.primary1};
+    color: white;
+  }
+  &:disabled {
+    opacity: 50%;
+    cursor: auto;
+  }
+`

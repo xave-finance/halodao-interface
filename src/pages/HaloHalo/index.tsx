@@ -4,11 +4,11 @@ import styled from 'styled-components'
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
 // import AppBody from '../AppBody'
-import HaloChestHeader from './HaloHaloHeader'
+import HaloHaloHeader from './HaloHaloHeader'
 import { Wrapper } from '../../components/swap/styleds'
 
 import HaloDepositPanel from './HaloDepositPanel'
-import HALOHALODepositPanel from './HALOHALODepositPanel'
+import HaloHaloWithdrawPanel from './HaloHaloWithdrawPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
 import { RowBetween } from '../../components/Row'
@@ -17,6 +17,7 @@ import { AutoColumn } from '../../components/Column'
 import { transparentize } from 'polished'
 
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -175,6 +176,10 @@ const RowBetweenCard = styled.div`
 `
 
 export default function Saave() {
+  const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
+
+  console.log(haloHaloPrice)
+
   return (
     <>
       <PageWrapper>
@@ -203,7 +208,7 @@ export default function Saave() {
           </VoteCard>
         </VoteCardWrapper>
         <DepositWrapper>
-          <HaloChestHeader />
+          <HaloHaloHeader />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
@@ -215,7 +220,7 @@ export default function Saave() {
                   buttonText="Claim HALO"
                   cornerRadiusBottomNone={true}
                 />
-                <HALOHALODepositPanel
+                <HaloHaloWithdrawPanel
                   label={''}
                   disableCurrencySelect={true}
                   customBalanceText={'Available to withdraw: '}
@@ -227,7 +232,7 @@ export default function Saave() {
                   <RowBetween>
                     <HaloPairCenterContainer>
                       <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText>HALOHALO:HALO = x1.15</HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">DSRT:HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -240,9 +245,9 @@ export default function Saave() {
             <RowBetweenCard>
               <RowBetween>DESSERT FACT</RowBetween>
             </RowBetweenCard>
-            <RowBetween>
-              The longer you keep HALOHALO, the more HALO you can claim later on (% APY). Claim anytime but lose out on
-              daily HALO vesting multiples.
+            <RowBetween id="haloHaloAPY">
+              The longer you keep DSRT, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
+              out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

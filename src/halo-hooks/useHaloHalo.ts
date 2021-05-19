@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react'
-import { ethers } from 'ethers'
+import { ethers, providers } from 'ethers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from '../hooks'
 
@@ -8,6 +8,8 @@ import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
 import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
+import { formatEther } from 'ethers/lib/utils'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const { BigNumber } = ethers
 
@@ -16,52 +18,85 @@ const useHaloHalo = () => {
   const addTransaction = useTransactionAdder()
 
   const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[chainId] : undefined || '') // withSigner
-  const chestContract = useContract(chainId ? HALOHALO_ADDRESS[chainId] : undefined || '', HALOHALO_ABI) // withSigner
+  const halohaloContract = useContract(chainId ? HALOHALO_ADDRESS[chainId] : undefined || '', HALOHALO_ABI) // withSigner
 
   const [allowance, setAllowance] = useState('0')
+  const [haloHaloAPY, setHaloHaloAPY] = useState('0')
+  const [haloHaloPrice, setHaloHaloPrice] = useState('0')
+
+  // gets the current APY from the haloHalo contract
+  const getAPY = useCallback(async () => {
+    // fixed to 2 decimal points\
+    const currentBlockNumber = await providers?.getDefaultProvider().getBlockNumber()
+    // getting it directly so it will not get affected by state changes ensuring accurate apy calculation
+    const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
+    const genesisTimestamp = Number(await halohaloContract?.genesisTimestamp())
+    const currentTimestamp = await (await providers?.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
+
+    // one year in seconds / 31536000
+    const timePriceChangedRatio = 31536000 / (currentTimestamp - genesisTimestamp)
+    console.log(`Genesis timestamp is ${genesisTimestamp}, current block timestamp is ${currentTimestamp}`)
+
+    // 1 comes from the 1:1 ratio before adding rewards
+    const priceChange = Number(formatEther(currentHaloHaloPrice)) - 1
+
+    const APY = timePriceChangedRatio * priceChange
+
+    setHaloHaloAPY(formatNumber(APY, NumberFormat.percent))
+  }, [halohaloContract])
+
+  const getHaloHaloPrice = useCallback(async () => {
+    const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
+    const convertedHaloHaloPrice = formatNumber(Number(formatEther(currentHaloHaloPrice)))
+
+    setHaloHaloPrice(convertedHaloHaloPrice)
+  }, [halohaloContract])
 
   const fetchAllowance = useCallback(async () => {
     if (account) {
       try {
-        const allowance = await haloContract?.allowance(account, chestContract?.address)
+        const allowance = await haloContract?.allowance(account, halohaloContract?.address)
         const formatted = Fraction.from(BigNumber.from(allowance), BigNumber.from(10).pow(18)).toString()
         setAllowance(formatted)
       } catch {
         setAllowance('0')
       }
     }
-  }, [account, chestContract, haloContract])
+  }, [account, halohaloContract, haloContract])
 
   useEffect(() => {
-    if (account && chestContract && haloContract) {
+    if (account && halohaloContract && haloContract) {
       fetchAllowance()
+      getHaloHaloPrice()
+      getAPY()
     }
     const refreshInterval = setInterval(fetchAllowance, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, chestContract, fetchAllowance, haloContract])
+  }, [account, halohaloContract, fetchAllowance, haloContract, getAPY, getHaloHaloPrice])
 
   const approve = useCallback(async () => {
     try {
-      const tx = await haloContract?.approve(chestContract?.address, ethers.constants.MaxUint256.toString())
+      const tx = await haloContract?.approve(halohaloContract?.address, ethers.constants.MaxUint256.toString())
       return addTransaction(tx, { summary: 'Approve' })
     } catch (e) {
       return e
     }
-  }, [addTransaction, chestContract, haloContract])
+  }, [addTransaction, halohaloContract, haloContract])
 
   const enter = useCallback(
     // todo: this should be updated with BigNumber as opposed to string
     async (amount: BalanceProps | undefined) => {
       if (amount?.value) {
         try {
-          const tx = await chestContract?.enter(amount?.value)
-          return addTransaction(tx, { summary: 'Enter HALOHALO' })
+          const tx = await halohaloContract?.enter(amount?.value)
+          addTransaction(tx, { summary: 'Deposit HALO' })
+          return tx
         } catch (e) {
           return e
         }
       }
     },
-    [addTransaction, chestContract]
+    [addTransaction, halohaloContract]
   )
 
   const leave = useCallback(
@@ -69,18 +104,18 @@ const useHaloHalo = () => {
     async (amount: BalanceProps | undefined) => {
       if (amount?.value) {
         try {
-          const tx = await chestContract?.leave(amount?.value)
-          //const tx = await chestContract?.leave(ethers.utils.parseUnits(amount)) // where amount is string
-          return addTransaction(tx, { summary: 'Leave HALOHALO' })
+          const tx = await halohaloContract?.leave(amount?.value)
+          addTransaction(tx, { summary: 'Claim HALO' })
+          return tx
         } catch (e) {
           return e
         }
       }
     },
-    [addTransaction, chestContract]
+    [addTransaction, halohaloContract]
   )
 
-  return { allowance, approve, enter, leave }
+  return { allowance, approve, enter, leave, haloHaloAPY, haloHaloPrice }
 }
 
 export default useHaloHalo

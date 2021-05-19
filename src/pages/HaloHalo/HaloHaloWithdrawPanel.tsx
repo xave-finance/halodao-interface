@@ -1,54 +1,30 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
 import { RowBetween } from '../../components/Row'
 import { Input as NumericalInput } from '../../components/NumericalInput'
-import { TYPE } from '../../theme'
+import { CustomLightSpinner, TYPE } from '../../theme'
 
 import { useActiveWeb3React } from '../../hooks'
 import useTheme from '../../hooks/useTheme'
 
-import useTokenBalance from '../../sushi-hooks/queries/useTokenBalance'
+import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALOHALO_ADDRESS } from '../../constants'
+import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { useTranslation } from 'react-i18next'
+import Spinner from '../../assets/images/spinner.svg'
+import { ErrorText } from 'components/Alerts'
+import Column from 'components/Column'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
-`
-
-const ButtonSelect = styled.button`
-  align-items: center;
-  height: 2.2rem;
-  font-size: 20px;
-  font-weight: 500;
-  background-color: ${({ theme }) => theme.primary1};
-  color: ${({ theme }) => theme.white};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  outline: none;
-  cursor: pointer;
-  user-select: none;
-  border: none;
-  padding: 0 0.5rem;
-  margin: 0 0.25rem;
-  width: 6rem;
-  &:focus {
-    box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:hover {
-    background-color: ${({ theme }) => darken(0.05, theme.primary1)};
-  }
-  &:disabled {
-    opacity: 50%;
-    cursor: auto;
-  }
 `
 
 const LabelRow = styled.div`
@@ -62,12 +38,6 @@ const LabelRow = styled.div`
     cursor: pointer;
     color: ${({ theme }) => darken(0.2, theme.text2)};
   }
-`
-
-const Aligner = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 `
 
 const InputPanel = styled.div<{ hideInput?: boolean }>`
@@ -84,11 +54,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   border-radius: ${({ cornerRadiusTopNone }) => cornerRadiusTopNone && '0 0 12px 12px'};
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
   background-color: ${({ theme }) => theme.bg1};
-`
-
-const StyledButtonName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 auto;' : '  margin: 0 auto;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
 `
 
 const StyledBalanceMax = styled.button`
@@ -115,7 +80,7 @@ const StyledBalanceMax = styled.button`
   `};
 `
 
-interface CurrencyInputPanelProps {
+interface HaloHaloWithdrawPanelProps {
   label?: string
   lpTokenAddress?: string
   disableCurrencySelect?: boolean
@@ -129,32 +94,48 @@ interface CurrencyInputPanelProps {
   cornerRadiusTopNone?: boolean
 }
 
-export default function CurrencyInputPanel({
+export default function HaloHaloWithdrawPanel({
   label = 'Input',
-  lpTokenAddress,
   disableCurrencySelect = false,
-  hideBalance = false,
   hideInput = false,
   id,
-  customBalanceText,
-  buttonText,
   cornerRadiusBottomNone,
   cornerRadiusTopNone
-}: CurrencyInputPanelProps) {
+}: HaloHaloWithdrawPanelProps) {
   const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
-
+  const { t } = useTranslation()
   const { allowance, approve, leave } = useHaloHalo()
-  console.log('halochest:', allowance)
+  const xHaloHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
+  const xHaloHaloBalance = formatFromBalance(xHaloHaloBalanceBigInt?.value, xHaloHaloBalanceBigInt?.decimals)
+  const decimals = xHaloHaloBalanceBigInt?.decimals
+  const [requestedApproval, setRequestedApproval] = useState(false)
+  const [pendingTx, setPendingTx] = useState(false)
+  const [withdrawValue, setWithdrawValue] = useState('')
+  const [maxSelected, setMaxSelected] = useState(false)
+  const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
+  const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
 
-  const xHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
-  const xHaloBalance = formatFromBalance(xHaloBalanceBigInt?.value, xHaloBalanceBigInt?.decimals)
-  const decimals = xHaloBalanceBigInt?.decimals
+  // Updating the state of stake button
+  useEffect(() => {
+    if (pendingTx) return
+
+    const withdrawAsFloat = parseFloat(withdrawValue)
+    if (withdrawAsFloat > 0 && withdrawAsFloat <= parseFloat(xHaloHaloBalance)) {
+      if (allowance !== '' && parseFloat(allowance) > 0) {
+        setButtonState(ButtonHaloStates.Approved)
+      } else if (requestedApproval) {
+        setButtonState(ButtonHaloStates.Approving)
+      } else {
+        setButtonState(ButtonHaloStates.NotApproved)
+      }
+    } else {
+      setButtonState(ButtonHaloStates.Disabled)
+    }
+  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval])
 
   // handle approval
-  const [requestedApproval, setRequestedApproval] = useState(false)
   const handleApprove = useCallback(async () => {
-    //console.log("SEEKING APPROVAL");
     try {
       setRequestedApproval(true)
       const txHash = await approve()
@@ -168,26 +149,38 @@ export default function CurrencyInputPanel({
     }
   }, [approve, setRequestedApproval])
 
-  // disable buttons if pendingTx, todo: styles could be improved
-  const [pendingTx, setPendingTx] = useState(false)
-
   // track and parse user input for Deposit Input
-  const [depositValue, setDepositValue] = useState('')
-  const [maxSelected, setMaxSelected] = useState(false)
-  const onUserDepositInput = useCallback((depositValue: string, max = false) => {
+  const onUserWithdrawInput = useCallback((withdrawValue: string, max = false) => {
     setMaxSelected(max)
-    setDepositValue(depositValue)
+    setWithdrawValue(withdrawValue)
   }, [])
+
   // used for max input button
-  const maxDepositAmountInput = xHaloBalanceBigInt
-  //const atMaxDepositAmount = true
-  const handleMaxDeposit = useCallback(() => {
-    maxDepositAmountInput && onUserDepositInput(xHaloBalance, true)
-  }, [maxDepositAmountInput, onUserDepositInput, xHaloBalance])
+  const handleMaxWithdraw = useCallback(() => {
+    maxWithdrawAmountInput && onUserWithdrawInput(xHaloHaloBalance, true)
+  }, [maxWithdrawAmountInput, onUserWithdrawInput, xHaloHaloBalance])
+
+  // handles actual withdrawal
+  const withdraw = async () => {
+    setPendingTx(true)
+    setButtonState(ButtonHaloStates.TxInProgress)
+
+    let amount: BalanceProps | undefined
+    if (maxSelected) {
+      amount = maxWithdrawAmountInput
+    } else {
+      amount = formatToBalance(withdrawValue, decimals)
+    }
+    const tx = await leave(amount)
+    await tx.wait()
+
+    setPendingTx(false)
+    setButtonState(ButtonHaloStates.Disabled)
+    setWithdrawValue('')
+  }
 
   return (
     <>
-      {/* Deposit Input */}
       <InputPanel id={id}>
         <Container
           hideInput={hideInput}
@@ -210,7 +203,7 @@ export default function CurrencyInputPanel({
                 </TYPE.body>
                 {account && (
                   <TYPE.body
-                    onClick={handleMaxDeposit}
+                    onClick={handleMaxWithdraw}
                     style={{
                       cursor: 'pointer',
                       fontFamily: 'Open Sans',
@@ -221,7 +214,7 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloBalance} HALOHALO
+                    BALANCE: {xHaloHaloBalance} DSRT
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -244,9 +237,9 @@ export default function CurrencyInputPanel({
               <>
                 <NumericalInput
                   className="token-amount-input"
-                  value={depositValue}
+                  value={withdrawValue}
                   onUserInput={val => {
-                    onUserDepositInput(val)
+                    onUserWithdrawInput(val)
                   }}
                 />
                 {account && label !== 'To' && (
@@ -263,7 +256,7 @@ export default function CurrencyInputPanel({
                       height: '33px',
                       margin: 0
                     }}
-                    onClick={handleMaxDeposit}
+                    onClick={handleMaxWithdraw}
                   >
                     MAX
                   </StyledBalanceMax>
@@ -271,7 +264,7 @@ export default function CurrencyInputPanel({
               </>
             )}
           </InputRow>
-          <InputRow
+          <Column
             style={
               hideInput
                 ? {
@@ -282,81 +275,41 @@ export default function CurrencyInputPanel({
                     padding: '4px 0 0 0'
                   }
             }
-            selected={disableCurrencySelect}
           >
-            {!allowance || Number(allowance) === 0 ? (
-              <ButtonSelect
-                style={{
-                  background: '#471BB2',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '38px',
-                  margin: 0,
-                  padding: 0
-                }}
-                onClick={handleApprove}
-                disabled={requestedApproval}
-              >
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: 'Inter',
-                      fontStyle: 'normal',
-                      fontWeight: 900,
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      textAlign: 'center',
-                      color: '#FFFFFF'
-                    }}
-                  >
-                    Approve
-                  </StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
-            ) : (
-              <ButtonSelect
-                style={{
-                  background: '#471BB2',
-                  borderRadius: '4px',
-                  width: '100%',
-                  height: '38px',
-                  margin: 0,
-                  padding: 0
-                }}
-                disabled={
-                  pendingTx ||
-                  !xHaloBalance ||
-                  Number(depositValue) === 0 ||
-                  Number(depositValue) > Number(xHaloBalance)
+            <ButtonHalo
+              id="withdraw-button"
+              disabled={[ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                buttonState
+              )}
+              onClick={async () => {
+                if (buttonState === ButtonHaloStates.Approved) {
+                  withdraw()
+                } else {
+                  handleApprove()
                 }
-                onClick={async () => {
-                  setPendingTx(true)
-                  if (maxSelected) {
-                    await leave(maxDepositAmountInput)
-                  } else {
-                    await leave(formatToBalance(depositValue, decimals))
-                  }
-                  setPendingTx(false)
-                }}
-              >
-                <Aligner>
-                  <StyledButtonName
-                    style={{
-                      fontFamily: 'Inter',
-                      fontStyle: 'normal',
-                      fontWeight: 900,
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      textAlign: 'center',
-                      color: '#FFFFFF'
-                    }}
-                  >
-                    Claim HALO
-                  </StyledButtonName>
-                </Aligner>
-              </ButtonSelect>
+              }}
+            >
+              {(buttonState === ButtonHaloStates.Disabled || buttonState === ButtonHaloStates.Approved) && (
+                <>{t('claimHalo')}</>
+              )}
+              {buttonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+              {buttonState === ButtonHaloStates.Approving && (
+                <>
+                  {t('approving')}&nbsp;
+                  <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                </>
+              )}
+              {buttonState === ButtonHaloStates.TxInProgress && (
+                <>
+                  {t('claimHalo')}&nbsp;
+                  <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                </>
+              )}
+            </ButtonHalo>
+            {parseFloat(withdrawValue) > 0 && parseFloat(withdrawValue) > parseFloat(xHaloHaloBalance) && (
+              <ErrorText>{t('insufficientFunds')}</ErrorText>
             )}
-          </InputRow>
+          </Column>
         </Container>
       </InputPanel>
     </>

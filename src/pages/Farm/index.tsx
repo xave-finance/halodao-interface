@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import BalancerPoolCard from 'components/PositionCard/BalancerPoolCard'
-import PoolsSummary from 'components/PoolsSummary'
+import FarmPoolCard from 'components/Farm/FarmPoolCard'
+import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
@@ -16,7 +16,7 @@ const PageWrapper = styled(AutoColumn)`
   width: 100%;
 `
 
-const PoolsSummaryRow = styled(Row)`
+const FarmSummaryRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     flex-direction: column;
   `};
@@ -65,7 +65,7 @@ const Farm = () => {
   return (
     <>
       <PageWrapper id={`farm-page`}>
-        <PoolsSummaryRow>
+        <FarmSummaryRow>
           <HeaderRow>
             <TitleRow>
               <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
@@ -78,15 +78,7 @@ const Farm = () => {
               </TYPE.darkGray>
             </Row>
             <Row>
-              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
-                {t('getBPTTokens')}
-                <HideLarge>
-                  <LinkIcon></LinkIcon>
-                </HideLarge>
-              </StyledExternalLink>
-            </Row>
-            <Row>
-              <StyledExternalLink href="#" style={{ fontSize: '16px' }}>
+              <StyledExternalLink href="https://docs.halodao.com/v0-guide/how-to-farm" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
                 <HideLarge>
                   <LinkIcon></LinkIcon>
@@ -95,9 +87,9 @@ const Farm = () => {
             </Row>
           </HeaderRow>
           <Row>
-            <PoolsSummary poolsInfo={poolsInfo} />
+            <FarmSummary poolsInfo={poolsInfo} />
           </Row>
-        </PoolsSummaryRow>
+        </FarmSummaryRow>
 
         <AutoColumn
           gap="sm"
@@ -108,7 +100,7 @@ const Farm = () => {
           <HideSmall>
             <Card
               style={{
-                padding: '10px 0 0 0'
+                padding: '20px 0 0'
               }}
             >
               <AutoColumn>
@@ -125,16 +117,16 @@ const Farm = () => {
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="15%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="9%"></RowFixed>
+                  <RowFixed width="10%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>
           </HideSmall>
           {poolsInfo.map(poolInfo => {
-            return <BalancerPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+            return <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
           })}
         </AutoColumn>
       </PageWrapper>
