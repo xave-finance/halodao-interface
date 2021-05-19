@@ -91,9 +91,9 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
           <div className="bal-dsrt">{formatNumber(earningDSRT)} DSRT</div>
           <div className="bal-halo">({formatNumber(earningHALO)} HALO)</div>
           <img src={BunnyWithSweets} alt="Bunny Mascot" />
-          <TYPE.body color="white">As DSRT, you're earning right now!</TYPE.body>
+          <TYPE.body color="white">As DSRT, you&apos;re earning right now!</TYPE.body>
           <ButtonHaloWhite padding="8px" onClick={toggleModal}>
-            Let's Vest!
+            Let&apos;s Vest!
           </ButtonHaloWhite>
           <StyledExternalLink href="https://docs.halodao.com/products/dessert-pool/how-vesting-works">
             Learn more
