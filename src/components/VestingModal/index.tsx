@@ -1,13 +1,14 @@
 import React from 'react'
 import Modal from 'components/Modal'
 import styled from 'styled-components'
-import { Button, ExternalLink, TYPE } from 'theme'
+import { ExternalLink, TYPE } from 'theme'
 import { formatNumber } from 'utils/formatNumber'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVestingModalToggle } from 'state/application/hooks'
 import { ReactComponent as CloseIcon } from '../../assets/images/x.svg'
 import BunnyWithSweets from '../../assets/svg/bunny-with-sweets.svg'
 import { ButtonHaloWhite } from 'components/Button'
+import { PoolVestingInfo } from 'state/user/actions'
 
 const StyledWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -68,12 +69,16 @@ const StyledExternalLink = styled(ExternalLink)`
   color: white;
 `
 
-const VestingModal = () => {
+interface VestingModalProps {
+  poolVestingInfo?: PoolVestingInfo
+}
+
+const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
   const isOpen = useModalOpen(ApplicationModal.VESTING)
   const toggleModal = useVestingModalToggle()
-  const poolName = 'pool'
-  const earningDSRT = 0,
-    earningHALO = 0
+  const poolName = poolVestingInfo?.name ?? 'pool'
+  const earningDSRT = poolVestingInfo?.balance.dsrt ?? 0,
+    earningHALO = poolVestingInfo?.balance.halo ?? 0
 
   return (
     <Modal isOpen={isOpen} onDismiss={toggleModal}>

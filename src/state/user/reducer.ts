@@ -14,7 +14,10 @@ import {
   updateUserSlippageTolerance,
   updateUserDeadline,
   toggleURLWarning,
-  updateUserSingleHopOnly
+  updateUserSingleHopOnly,
+  PoolVestingInfo,
+  updatePoolToHarvest,
+  removePoolToHarvest
 } from './actions'
 
 const currentTimestamp = () => new Date().getTime()
@@ -51,6 +54,8 @@ export interface UserState {
 
   timestamp: number
   URLWarningVisible: boolean
+
+  poolToHarvest?: PoolVestingInfo
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -141,5 +146,13 @@ export default createReducer(initialState, builder =>
     })
     .addCase(toggleURLWarning, state => {
       state.URLWarningVisible = !state.URLWarningVisible
+    })
+    .addCase(updatePoolToHarvest, (state, { payload: { vestingInfo } }) => {
+      state.poolToHarvest = vestingInfo
+      state.timestamp = currentTimestamp()
+    })
+    .addCase(removePoolToHarvest, state => {
+      state.poolToHarvest = undefined
+      state.timestamp = currentTimestamp()
     })
 )
