@@ -97,7 +97,7 @@
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
-  "poolSummaryHaloEarned": "Unclaimed HALO Earned",
+  "poolSummaryHaloEarned": "My HALO Earned",
   "totalPoolValue": "Total Pool Value",
   "tokenCardRewardDescription": "Every HALO token you earn is automatically staked in DESSERT to earn vesting rewards! Press Claim or go to the Vesting tab to manage rewards.",
   "valueStaked": "Value Staked",

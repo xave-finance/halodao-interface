@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates } from '../Button'
 import Column, { AutoColumn } from '../Column'
@@ -35,6 +35,9 @@ import {
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
+import { updatePoolToHarvest } from 'state/user/actions'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -373,6 +376,8 @@ interface FarmPoolCardProps {
 export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
+  const dispatch = useDispatch<AppDispatch>()
+  const history = useHistory()
 
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
@@ -489,6 +494,27 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     setUnstakeAmount('')
     setUnstakeButtonState(UnstakeButtonStates.Disabled)
     setIsTxInProgress(false)
+  }
+
+  /**
+   * Handles the user clicking "Harvest" button
+   */
+  const handleClaim = () => {
+    // @TODO: HDF-246 -> should call `Rewards.withdrawUnclaimedPoolRewards()` before redirecting to Vesting page
+
+    // Below info will change based on HDF-78
+    const vestingInfo = {
+      name: poolInfo.pair,
+      balance: {
+        dsrt: 0,
+        halo: unclaimedHalo
+      }
+    }
+
+    // Updates `AppState.user.poolToHarvest` so Vesting page can display the Harvest modal
+    dispatch(updatePoolToHarvest({ vestingInfo }))
+
+    history.push('/vesting')
   }
 
   return (
@@ -660,12 +686,10 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Text className="balance">{formatNumber(unclaimedHalo)} HALO</Text>
               </RewardsChild>
               <RewardsChild>
-                <Link to="/vesting">
-                  <ClaimButton>
-                    {t('harvest')}&nbsp;&nbsp;
-                    <img src={ArrowRight} alt="Harvest icon" />
-                  </ClaimButton>
-                </Link>
+                <ClaimButton onClick={handleClaim}>
+                  {t('harvest')}&nbsp;&nbsp;
+                  <img src={ArrowRight} alt="Harvest icon" />
+                </ClaimButton>
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>

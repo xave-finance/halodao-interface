@@ -13,6 +13,14 @@ export interface SerializedPair {
   token1: SerializedToken
 }
 
+export interface PoolVestingInfo {
+  name: string
+  balance: {
+    dsrt: number
+    halo: number
+  }
+}
+
 export const updateMatchesDarkMode = createAction<{ matchesDarkMode: boolean }>('user/updateMatchesDarkMode')
 export const updateUserDarkMode = createAction<{ userDarkMode: boolean }>('user/updateUserDarkMode')
 export const updateUserExpertMode = createAction<{ userExpertMode: boolean }>('user/updateUserExpertMode')
@@ -28,3 +36,5 @@ export const removeSerializedPair = createAction<{ chainId: number; tokenAAddres
   'user/removeSerializedPair'
 )
 export const toggleURLWarning = createAction<void>('app/toggleURLWarning')
+export const updatePoolToHarvest = createAction<{ vestingInfo: PoolVestingInfo }>('user/updatePoolToHarvest')
+export const removePoolToHarvest = createAction('user/removePoolToHarvest')

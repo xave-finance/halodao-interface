@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
@@ -18,6 +18,11 @@ import { transparentize } from 'polished'
 
 import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import VestingModal from 'components/VestingModal'
+import { useVestingModalToggle } from 'state/application/hooks'
+import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, AppState } from 'state'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -177,11 +182,23 @@ const RowBetweenCard = styled.div`
 
 export default function Saave() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
+  const toggleVestingModal = useVestingModalToggle()
+  const dispatch = useDispatch<AppDispatch>()
+  const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
+  const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
 
-  console.log(haloHaloPrice)
+  useEffect(() => {
+    // Load vesting modal if user clicks "Harvest" button from Farm page
+    if (poolToHarvest) {
+      setPoolVestingInfo(poolToHarvest)
+      toggleVestingModal()
+      dispatch(removePoolToHarvest()) // remove from AppState after copying the value to poolVestingInfo
+    }
+  }, [poolToHarvest, dispatch, toggleVestingModal])
 
   return (
     <>
+      <VestingModal poolVestingInfo={poolVestingInfo} />
       <PageWrapper>
         <VoteCardWrapper>
           <VoteCard>
