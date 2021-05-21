@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { PoolInfo } from './useBalancer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useStakedBPTPerPool, useTotalClaimedHALO, useUnclaimedHALOPerPool } from './useRewards'
+import { useClaimedAndUnclaimedHALOPerPool, useStakedBPTPerPool } from './useRewards'
 
 const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get user balance for each pool
@@ -15,12 +15,9 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get totalSupply of each pool
   const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolsAsTokens)[0]
 
-  // Get user total claimed HALO (all pools)
-  const claimedHALO = useTotalClaimedHALO()
-
-  // Get user unclaimed HALO per pool
+  // Get user total claimed HALO (claimeed + unclaimed on all pools)
   const poolAddresses = poolsInfo.map(poolInfo => poolInfo.address)
-  const unclaimedHALOs = useUnclaimedHALOPerPool(poolAddresses)
+  const claimedAndUnclaimedHALOs = useClaimedAndUnclaimedHALOPerPool(poolAddresses)
 
   // Get user staked BPT per pool
   const stakedBPTs = useStakedBPTPerPool(poolAddresses)
@@ -39,13 +36,13 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
     let totalStakeableValue = 0
     let totalStakedValue = 0
-    let totalHALOEarned = claimedHALO
+    let totalHALOEarned = 0
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const unclaimed = unclaimedHALOs[poolInfo.address]
-      if (unclaimed) {
-        totalHALOEarned += unclaimed
+      const claimedAndUnclaimed = claimedAndUnclaimedHALOs[poolInfo.address]
+      if (claimedAndUnclaimed) {
+        totalHALOEarned += claimedAndUnclaimed
       }
 
       // Calculate BPT price per pool
@@ -74,7 +71,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, claimedHALO, unclaimedHALOs, stakedBPTs])
+  }, [poolsInfo, balances, totalSupplies, claimedAndUnclaimedHALOs, stakedBPTs])
 }
 
 export default useFarmSummary

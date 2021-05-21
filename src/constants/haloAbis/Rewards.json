@@ -3,28 +3,8 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_haloTokenAddress",
+        "name": "_rewardsTokenAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_startingRewards",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_decayBase",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_epochLength",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_minterLpRewardsRatio",
-        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -33,17 +13,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_vestingRewardsRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_minter",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_genesisTs",
+        "name": "_genesisBlock",
         "type": "uint256"
       },
       {
@@ -88,7 +58,7 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "lpAddress",
         "type": "address"
@@ -102,11 +72,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "lastRewardTs",
+        "name": "lastRewardBlock",
         "type": "uint256"
       }
     ],
-    "name": "AmmRewardPoolUpdated",
+    "name": "AmmLPRewardUpdatedEvent",
     "type": "event"
   },
   {
@@ -131,7 +101,26 @@
         "type": "uint256"
       }
     ],
-    "name": "DepositLPTokens",
+    "name": "DepositAMMLPTokensEvent",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositEpochReward",
     "type": "event"
   },
   {
@@ -156,14 +145,14 @@
         "type": "uint256"
       }
     ],
-    "name": "DepositMinter",
+    "name": "DepositMinterCollateralByAddress",
     "type": "event"
   },
   {
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "collateralAddress",
         "type": "address"
@@ -177,11 +166,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "lastRewardTs",
+        "name": "lastRewardBlock",
         "type": "uint256"
       }
     ],
-    "name": "MinterRewardPoolUpdated",
+    "name": "MinterRewardPoolRatioUpdatedEvent",
     "type": "event"
   },
   {
@@ -207,6 +196,25 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "rewardsManagerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "RewardsManagerAddressChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
@@ -219,7 +227,7 @@
         "type": "uint256"
       }
     ],
-    "name": "VestedRewardsReleased",
+    "name": "VestedRewardsReleasedEvent",
     "type": "event"
   },
   {
@@ -244,7 +252,7 @@
         "type": "uint256"
       }
     ],
-    "name": "WithdrawLPTokens",
+    "name": "WithdrawAMMLPTokensEvent",
     "type": "event"
   },
   {
@@ -269,12 +277,12 @@
         "type": "uint256"
       }
     ],
-    "name": "WithdrawMinter",
+    "name": "WithdrawMinterCollateralByAddress",
     "type": "event"
   },
   {
     "inputs": [],
-    "name": "BPS",
+    "name": "BASIS_POINTS",
     "outputs": [
       {
         "internalType": "uint256",
@@ -356,7 +364,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "lastRewardTs",
+        "name": "lastRewardBlock",
         "type": "uint256"
       },
       {
@@ -413,12 +421,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_from",
+        "type": "uint256"
       }
     ],
-    "name": "claimedHalo",
+    "name": "calcReward",
     "outputs": [
       {
         "internalType": "uint256",
@@ -430,8 +438,14 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "decayBase",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "claimedRewardsToken",
     "outputs": [
       {
         "internalType": "uint256",
@@ -440,6 +454,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_epochRewardAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "depositEpochRewardAmount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -485,7 +512,7 @@
   },
   {
     "inputs": [],
-    "name": "epochLength",
+    "name": "epochRewardAmount",
     "outputs": [
       {
         "internalType": "uint256",
@@ -498,7 +525,7 @@
   },
   {
     "inputs": [],
-    "name": "genesisTs",
+    "name": "genesisBlock",
     "outputs": [
       {
         "internalType": "uint256",
@@ -533,7 +560,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "lastRewardTs",
+            "name": "lastRewardBlock",
             "type": "uint256"
           },
           {
@@ -545,6 +572,54 @@
         "internalType": "struct Rewards.PoolInfo",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lpAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "getClaimedAndUnclaimedPoolRewardsByUserByPool",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_lpAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "getClaimedPoolRewardsByUserByPool",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -575,6 +650,32 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "getEpochRewardAmount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMinterContractAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -598,7 +699,7 @@
           },
           {
             "internalType": "uint256",
-            "name": "lastRewardTs",
+            "name": "lastRewardBlock",
             "type": "uint256"
           },
           {
@@ -610,6 +711,32 @@
         "internalType": "struct Rewards.PoolInfo",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getMinterLpRewardsRatio",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRewardsManagerAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -710,51 +837,12 @@
   },
   {
     "inputs": [],
-    "name": "getUnclaimedVestingRewards",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "getWhitelistedAMMPoolAddresses",
     "outputs": [
       {
         "internalType": "address[]",
         "name": "",
         "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "haloChestContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "haloTokenAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -800,7 +888,7 @@
   },
   {
     "inputs": [],
-    "name": "lastHaloVestRewardTs",
+    "name": "lastHaloVestRewardBlock",
     "outputs": [
       {
         "internalType": "uint256",
@@ -846,7 +934,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "lastRewardTs",
+        "name": "lastRewardBlock",
         "type": "uint256"
       },
       {
@@ -914,13 +1002,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "releaseVestedRewards",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -954,6 +1035,45 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "rewardPerBlock",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rewardsManagerAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rewardsTokenAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -975,24 +1095,11 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_genesisTs",
+        "name": "_genesisBlock",
         "type": "uint256"
       }
     ],
-    "name": "setGenesisTs",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_haloChest",
-        "type": "address"
-      }
-    ],
-    "name": "setHaloChest",
+    "name": "setGenesisBlock",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1005,7 +1112,7 @@
         "type": "address"
       }
     ],
-    "name": "setMinter",
+    "name": "setMinterContractAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1029,16 +1136,29 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "startingRewards",
-    "outputs": [
+    "inputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_minterLpRewardsRatio",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "setMinterLpRewardsRatio",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_rewardsManager",
+        "type": "address"
+      }
+    ],
+    "name": "setRewardsManagerAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1109,19 +1229,6 @@
   {
     "inputs": [],
     "name": "vestingRewardsDebt",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "vestingRewardsRatio",
     "outputs": [
       {
         "internalType": "uint256",

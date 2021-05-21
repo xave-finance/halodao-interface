@@ -29,6 +29,7 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
+  useClaimedAndUnclaimedHALOPerPool,
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,
   useUnclaimedHALOPerPool
@@ -402,7 +403,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
   // Get user earned HALO
   const unclaimedHALOs = useUnclaimedHALOPerPool([poolInfo.address])
-  const unclaimedHalo = unclaimedHALOs[poolInfo.address] ?? 0
+  const unclaimedHALO = unclaimedHALOs[poolInfo.address] ?? 0
+  const claimedAndUnclaimedHALOs = useClaimedAndUnclaimedHALOPerPool([poolInfo.address])
+  const claimedAndUnclaimedHALO = claimedAndUnclaimedHALOs[poolInfo.address] ?? 0
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
@@ -507,7 +510,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
       name: poolInfo.pair,
       balance: {
         dsrt: 0,
-        halo: unclaimedHalo
+        halo: unclaimedHALO
       }
     }
 
@@ -547,7 +550,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="15%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHalo)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(claimedAndUnclaimedHALO)} HALO</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             {account && (
@@ -683,7 +686,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHalo)} HALO</Text>
+                <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton onClick={handleClaim}>
