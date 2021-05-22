@@ -32,7 +32,8 @@ import {
   useClaimedAndUnclaimedRewardsPerPool,
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,
-  useUnclaimedRewardsPerPool
+  useUnclaimedRewardsPerPool,
+  useClaimRewardsCallback
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -421,6 +422,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const [depositPoolTokens, withdrawPoolTokens] = useDepositWithdrawPoolTokensCallback()
 
+  const [claimRewards] = useClaimRewardsCallback()
+
   /**
    * Updating the state of stake button
    */
@@ -508,10 +511,21 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   /**
    * Handles the user clicking "Harvest" button
    */
-  const handleClaim = () => {
-    // @TODO: HDF-246 -> should call `Rewards.withdrawUnclaimedPoolRewards()` before redirecting to Vesting page
+  const handleClaim = async () => {
+    // Claim rewards
+    setIsTxInProgress(true)
 
-    // Below info will change based on HDF-78
+    try {
+      const tx = await claimRewards(poolInfo.address)
+      await tx.wait()
+      setIsTxInProgress(false)
+    } catch (e) {
+      console.error('Claim error: ', e)
+      setIsTxInProgress(false)
+      return
+    }
+
+    // Redirect to vesting page
     const vestingInfo = {
       name: poolInfo.pair,
       balance: {
@@ -695,9 +709,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
               </RewardsChild>
               <RewardsChild>
-                <ClaimButton onClick={handleClaim}>
+                <ClaimButton onClick={handleClaim} disabled={isTxInProgress}>
                   {t('harvest')}&nbsp;&nbsp;
-                  <img src={ArrowRight} alt="Harvest icon" />
+                  {isTxInProgress ? (
+                    <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                  ) : (
+                    <img src={ArrowRight} alt="Harvest icon" />
+                  )}
                 </ClaimButton>
               </RewardsChild>
               <RewardsChild className="close">

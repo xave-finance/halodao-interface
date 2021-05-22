@@ -120,3 +120,24 @@ export const useDepositWithdrawPoolTokensCallback = () => {
 
   return [depositPoolTokens, withdrawPoolTokens]
 }
+
+export const useClaimRewardsCallback = () => {
+  const rewardsContract = useHALORewardsContract()
+  const addTransaction = useTransactionAdder()
+
+  const claimRewards = useCallback(
+    async (poolTokenAddress: string) => {
+      if (!rewardsContract) return
+
+      const tx = await rewardsContract.withdrawUnclaimedPoolRewards(poolTokenAddress)
+      addTransaction(tx, {
+        summary: `Claim rewards (DSRT)`
+      })
+
+      return tx
+    },
+    [rewardsContract, addTransaction]
+  )
+
+  return [claimRewards]
+}
