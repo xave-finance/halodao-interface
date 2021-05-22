@@ -14,7 +14,7 @@ export const useWhitelistedPoolAddresses = () => {
   }, [data])
 }
 
-export const useUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
+export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
@@ -38,7 +38,7 @@ export const useUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress
   )
 }
 
-export const useClaimedAndUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
+export const useClaimedAndUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 

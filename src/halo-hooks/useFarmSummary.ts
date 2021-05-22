@@ -4,11 +4,13 @@ import { useMemo } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { PoolInfo } from './useBalancer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useClaimedAndUnclaimedHALOPerPool, useStakedBPTPerPool } from './useRewards'
+import { useClaimedAndUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
+import useHaloHalo from './useHaloHalo'
 
 const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get user balance for each pool
   const { account } = useActiveWeb3React()
+  const { haloHaloPrice } = useHaloHalo()
   const poolsAsTokens = poolsInfo.map(poolInfo => poolInfo.asToken)
   const balances = useTokenBalances(account ?? undefined, poolsAsTokens)
 
@@ -17,10 +19,13 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
   // Get user total claimed HALO (claimeed + unclaimed on all pools)
   const poolAddresses = poolsInfo.map(poolInfo => poolInfo.address)
-  const claimedAndUnclaimedHALOs = useClaimedAndUnclaimedHALOPerPool(poolAddresses)
+  const claimedAndUnclaimedRewards = useClaimedAndUnclaimedRewardsPerPool(poolAddresses)
 
   // Get user staked BPT per pool
   const stakedBPTs = useStakedBPTPerPool(poolAddresses)
+
+  // Denotes how many rewards token in 1 HALO
+  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   /**
    * Main logic to calculate pool summary based on the inputs above
@@ -40,9 +45,9 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const claimedAndUnclaimed = claimedAndUnclaimedHALOs[poolInfo.address]
-      if (claimedAndUnclaimed) {
-        totalHALOEarned += claimedAndUnclaimed
+      const poolRewardsEarned = claimedAndUnclaimedRewards[poolInfo.address]
+      if (poolRewardsEarned) {
+        totalHALOEarned += poolRewardsEarned * rewardsToHALOPrice
       }
 
       // Calculate BPT price per pool
@@ -71,7 +76,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, claimedAndUnclaimedHALOs, stakedBPTs])
+  }, [poolsInfo, balances, totalSupplies, claimedAndUnclaimedRewards, stakedBPTs, rewardsToHALOPrice])
 }
 
 export default useFarmSummary

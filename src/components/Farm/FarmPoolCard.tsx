@@ -29,16 +29,17 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
-  useClaimedAndUnclaimedHALOPerPool,
+  useClaimedAndUnclaimedRewardsPerPool,
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,
-  useUnclaimedHALOPerPool
+  useUnclaimedRewardsPerPool
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
 import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -379,6 +380,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const history = useHistory()
+  const { haloHaloPrice } = useHaloHalo()
 
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
@@ -401,11 +403,15 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
   const bptStakedValue = bptStaked * bptPrice
 
+  // Denotes how many rewards token in 1 HALO
+  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
+
   // Get user earned HALO
-  const unclaimedHALOs = useUnclaimedHALOPerPool([poolInfo.address])
-  const unclaimedHALO = unclaimedHALOs[poolInfo.address] ?? 0
-  const claimedAndUnclaimedHALOs = useClaimedAndUnclaimedHALOPerPool([poolInfo.address])
-  const claimedAndUnclaimedHALO = claimedAndUnclaimedHALOs[poolInfo.address] ?? 0
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.address])
+  const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
+  const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
+  const claimedAndUnclaimedRewards = useClaimedAndUnclaimedRewardsPerPool([poolInfo.address])
+  const totalEarnedHALO = claimedAndUnclaimedRewards[poolInfo.address] * rewardsToHALOPrice ?? 0
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
@@ -509,7 +515,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     const vestingInfo = {
       name: poolInfo.pair,
       balance: {
-        dsrt: 0,
+        dsrt: unclaimedPoolRewards,
         halo: unclaimedHALO
       }
     }
@@ -550,7 +556,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="15%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(claimedAndUnclaimedHALO)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(totalEarnedHALO)} HALO</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             {account && (
