@@ -3,7 +3,7 @@ import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates } from '../Button'
+import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates, ButtonHaloSimpleStates } from '../Button'
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
@@ -365,12 +365,6 @@ const ClaimButton = styled(ButtonOutlined)`
   }
 `
 
-enum UnstakeButtonStates {
-  Disabled,
-  Enabled,
-  Unstaking
-}
-
 interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
@@ -387,7 +381,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
   const [stakeButtonState, setStakeButtonState] = useState(ButtonHaloStates.Disabled)
-  const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
+  const [unstakeButtonState, setUnstakeButtonState] = useState(ButtonHaloSimpleStates.Disabled)
+  const [harvestButtonState, setHarvestButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
 
   // Get user BPT balance
@@ -452,11 +447,24 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
     const amountAsFloat = parseFloat(unstakeAmount)
     if (amountAsFloat > 0 && amountAsFloat <= bptStaked) {
-      setUnstakeButtonState(UnstakeButtonStates.Enabled)
+      setUnstakeButtonState(ButtonHaloSimpleStates.Enabled)
     } else {
-      setUnstakeButtonState(UnstakeButtonStates.Disabled)
+      setUnstakeButtonState(ButtonHaloSimpleStates.Disabled)
     }
   }, [unstakeAmount, bptStaked, isTxInProgress])
+
+  /**
+   * Updating the state of harvest button
+   */
+  useEffect(() => {
+    if (isTxInProgress) return
+
+    if (unclaimedHALO > 0) {
+      setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
+    } else {
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+    }
+  }, [unclaimedHALO, isTxInProgress])
 
   /**
    * Approves the stake amount
@@ -494,7 +502,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
    */
   const unstakeLpToken = async () => {
     setIsTxInProgress(true)
-    setUnstakeButtonState(UnstakeButtonStates.Unstaking)
+    setUnstakeButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     try {
       const tx = await withdrawPoolTokens(poolInfo.address, parseFloat(unstakeAmount) ?? 0)
@@ -504,7 +512,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     }
 
     setUnstakeAmount('')
-    setUnstakeButtonState(UnstakeButtonStates.Disabled)
+    setUnstakeButtonState(ButtonHaloSimpleStates.Disabled)
     setIsTxInProgress(false)
   }
 
@@ -512,16 +520,17 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
    * Handles the user clicking "Harvest" button
    */
   const handleClaim = async () => {
-    // Claim rewards
     setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
+    // Claim/withdraw rewards
     try {
       const tx = await claimRewards(poolInfo.address)
       await tx.wait()
-      setIsTxInProgress(false)
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
       console.error('Claim error: ', e)
-      setIsTxInProgress(false)
+      setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
 
@@ -670,14 +679,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Column>
                   <ButtonHaloOutlined
                     id="unstake-button"
-                    disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
+                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
                       unstakeButtonState
                     )}
                     onClick={unstakeLpToken}
                   >
-                    {(unstakeButtonState === UnstakeButtonStates.Disabled ||
-                      unstakeButtonState === UnstakeButtonStates.Enabled) && <>{t('unstake')}</>}
-                    {unstakeButtonState === UnstakeButtonStates.Unstaking && (
+                    {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
+                      unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
+                    {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
                       <>
                         {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
                         <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
@@ -709,9 +718,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
               </RewardsChild>
               <RewardsChild>
-                <ClaimButton onClick={handleClaim} disabled={isTxInProgress}>
+                <ClaimButton
+                  onClick={handleClaim}
+                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                    harvestButtonState
+                  )}
+                >
                   {t('harvest')}&nbsp;&nbsp;
-                  {isTxInProgress ? (
+                  {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
                     <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
                   ) : (
                     <img src={ArrowRight} alt="Harvest icon" />

@@ -406,6 +406,12 @@ export enum ButtonHaloStates {
   TxInProgress
 }
 
+export enum ButtonHaloSimpleStates {
+  Disabled,
+  Enabled,
+  TxInProgress
+}
+
 export const ButtonHalo = styled(Base)`
   font-weight: 900;
   padding: 8px;
