@@ -7,6 +7,9 @@
       "hosting": {
         "app": [
           "dev-app-halodao"
+        ],
+        "test": [
+          "test-app-halodao"
         ]
       }
     }
