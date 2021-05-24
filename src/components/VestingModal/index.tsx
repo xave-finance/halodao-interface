@@ -77,8 +77,8 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
   const isOpen = useModalOpen(ApplicationModal.VESTING)
   const toggleModal = useVestingModalToggle()
   const poolName = poolVestingInfo?.name ?? 'pool'
-  const earningDSRT = poolVestingInfo?.balance.dsrt ?? 0,
-    earningHALO = poolVestingInfo?.balance.halo ?? 0
+  const earningDSRT = poolVestingInfo?.balance.dsrt ?? 0
+  const earningHALO = poolVestingInfo?.balance.halo ?? 0
 
   return (
     <Modal isOpen={isOpen} onDismiss={toggleModal}>
