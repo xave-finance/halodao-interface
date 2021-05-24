@@ -110,10 +110,7 @@
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
     "build-serve": "yarn build && serve build -l 3000",
     "cy": "$(npm bin)/cypress open",
-    "deploy:dev": "firebase use default && firebase deploy --only hosting:dev",
-    "deploy:dev-beta": "firebase use default && firebase deploy --only hosting:dev-beta",
-    "deploy:prod": "firebase use prod && firebase deploy --only hosting:prod",
-    "deploy:beta": "firebase use prod && firebase deploy --only hosting:beta"
+    "deploy:test": "yarn build && firebase deploy --only hosting:test"
   },
   "eslintConfig": {
     "extends": "react-app",
