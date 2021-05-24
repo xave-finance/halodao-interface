@@ -54,7 +54,7 @@ export default function HaloHaloHeader() {
       <RowBetweenWrapper>
         <RowBetween>
           <HaloImg src={Halohalo} alt="Halo Halo" />
-          <HaloTitle>HALO → DESSERT (DSRT)</HaloTitle>
+          <HaloTitle>HALO → RAINBOW DROP (RNBW)</HaloTitle>
         </RowBetween>
       </RowBetweenWrapper>
     </StyledHaloHaloHeader>
