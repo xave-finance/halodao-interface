@@ -38,12 +38,12 @@ export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddr
   )
 }
 
-export const useClaimedAndUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
+export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
   const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  const results = useSingleContractMultipleData(rewardsContract, 'getClaimedAndUnclaimedPoolRewardsByUserByPool', args)
+  const results = useSingleContractMultipleData(rewardsContract, 'getClaimedPoolRewardsByUserByPool', args)
 
   return useMemo(
     () =>

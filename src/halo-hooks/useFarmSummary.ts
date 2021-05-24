@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { PoolInfo } from './useBalancer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useClaimedAndUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
+import { useClaimedRewardsPerPool, useUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
 import useHaloHalo from './useHaloHalo'
 
 const useFarmSummary = (poolsInfo: PoolInfo[]) => {
@@ -19,7 +19,8 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
   // Get user total claimed HALO (claimeed + unclaimed on all pools)
   const poolAddresses = poolsInfo.map(poolInfo => poolInfo.address)
-  const claimedAndUnclaimedRewards = useClaimedAndUnclaimedRewardsPerPool(poolAddresses)
+  const claimedRewards = useClaimedRewardsPerPool(poolAddresses)
+  const unclaimedRewards = useUnclaimedRewardsPerPool(poolAddresses)
 
   // Get user staked BPT per pool
   const stakedBPTs = useStakedBPTPerPool(poolAddresses)
@@ -45,10 +46,9 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const poolRewardsEarned = claimedAndUnclaimedRewards[poolInfo.address]
-      if (poolRewardsEarned) {
-        totalHALOEarned += poolRewardsEarned * rewardsToHALOPrice
-      }
+      const claimedPoolRewards = claimedRewards[poolInfo.address] ?? 0
+      const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
+      totalHALOEarned += (claimedPoolRewards + unclaimedPoolRewards) * rewardsToHALOPrice
 
       // Calculate BPT price per pool
       // FORMULA: BPT price = liquidity / totalSupply
@@ -76,7 +76,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, claimedAndUnclaimedRewards, stakedBPTs, rewardsToHALOPrice])
+  }, [poolsInfo, balances, totalSupplies, claimedRewards, unclaimedRewards, stakedBPTs, rewardsToHALOPrice])
 }
 
 export default useFarmSummary

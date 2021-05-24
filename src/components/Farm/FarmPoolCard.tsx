@@ -29,7 +29,7 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
-  useClaimedAndUnclaimedRewardsPerPool,
+  useClaimedRewardsPerPool,
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
@@ -406,8 +406,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.address])
   const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
-  const claimedAndUnclaimedRewards = useClaimedAndUnclaimedRewardsPerPool([poolInfo.address])
-  const totalEarnedHALO = claimedAndUnclaimedRewards[poolInfo.address] * rewardsToHALOPrice ?? 0
+  const claimedRewards = useClaimedRewardsPerPool([poolInfo.address])
+  const claimedPoolRewards = claimedRewards[poolInfo.address] ?? 0
+  const totalEarnedHALO = (unclaimedPoolRewards + claimedPoolRewards) * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
