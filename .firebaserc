@@ -9,18 +9,8 @@
         "dev": [
           "dev-app-halodao"
         ],
-        "dev-beta": [
-          "dev-beta-app-halodao"
-        ]
-      }
-    },
-    "halo-prod-f792f": {
-      "hosting": {
-        "prod": [
-          "app-halodao"
-        ],
-        "beta": [
-          "beta-app-halodao"
+        "test": [
+          "test-app-halodao"
         ]
       }
     }
