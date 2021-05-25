@@ -63,13 +63,9 @@ interface CurrencyInputPanelProps {
 
 export default function CurrencyInputPanel({
   label = 'Input',
-  lpTokenAddress,
   disableCurrencySelect = false,
-  hideBalance = false,
   hideInput = false,
   id,
-  customBalanceText,
-  buttonText,
   cornerRadiusBottomNone,
   cornerRadiusTopNone
 }: CurrencyInputPanelProps) {
