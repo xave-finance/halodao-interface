@@ -36,7 +36,7 @@ const StyledContent = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
 
-  .bal-dsrt {
+  .bal-rewards {
     margin-top: 8px;
     font-family: 'Fredoka One';
     font-size: 36px;
@@ -77,7 +77,7 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
   const isOpen = useModalOpen(ApplicationModal.VESTING)
   const toggleModal = useVestingModalToggle()
   const poolName = poolVestingInfo?.name ?? 'pool'
-  const earningDSRT = poolVestingInfo?.balance.dsrt ?? 0
+  const earningRewards = poolVestingInfo?.balance.rewardToken ?? 0
   const earningHALO = poolVestingInfo?.balance.halo ?? 0
 
   return (
@@ -88,10 +88,10 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
         </StyledCloseIconWrapper>
         <StyledContent>
           <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
-          <div className="bal-dsrt">{formatNumber(earningDSRT)} DSRT</div>
+          <div className="bal-rewards">{formatNumber(earningRewards)} RNBW</div>
           <div className="bal-halo">({formatNumber(earningHALO)} HALO)</div>
           <img src={BunnyWithSweets} alt="Bunny Mascot" />
-          <TYPE.body color="white">As DSRT, you&apos;re earning right now!</TYPE.body>
+          <TYPE.body color="white">As RNBW, you&apos;re earning right now!</TYPE.body>
           <ButtonHaloWhite padding="8px" onClick={toggleModal}>
             Let&apos;s Vest!
           </ButtonHaloWhite>

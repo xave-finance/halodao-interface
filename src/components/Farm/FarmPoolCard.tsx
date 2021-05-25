@@ -539,7 +539,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     const vestingInfo = {
       name: poolInfo.pair,
       balance: {
-        dsrt: unclaimedPoolRewards,
+        rewardToken: unclaimedPoolRewards,
         halo: unclaimedHALO
       }
     }

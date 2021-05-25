@@ -16,7 +16,7 @@ export interface SerializedPair {
 export interface PoolVestingInfo {
   name: string
   balance: {
-    dsrt: number
+    rewardToken: number
     halo: number
   }
 }

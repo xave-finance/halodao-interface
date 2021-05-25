@@ -133,7 +133,7 @@ export const useClaimRewardsCallback = () => {
 
       const tx = await rewardsContract.withdrawUnclaimedPoolRewards(poolTokenAddress)
       addTransaction(tx, {
-        summary: `Claim rewards (DSRT)`
+        summary: `Claim rewards (RNBW)`
       })
 
       return tx
