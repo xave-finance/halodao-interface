@@ -3,7 +3,7 @@ import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
-import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined } from '../Button'
+import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates } from '../Button'
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
@@ -17,7 +17,7 @@ import Spinner from '../../assets/images/spinner.svg'
 import SpinnerPurple from '../../assets/images/spinner-purple.svg'
 import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
-import Molecule from '../../assets/svg/molecule.svg'
+import ArrowRight from '../../assets/svg/arrow-right.svg'
 import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
@@ -34,6 +34,7 @@ import {
   useUnclaimedHALOPerPool
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
+import { ErrorText } from 'components/Alerts'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -358,20 +359,6 @@ const ClaimButton = styled(ButtonOutlined)`
   }
 `
 
-const ErrorText = styled(Text)`
-  text-align: center;
-  color: #ff3a3a;
-  font-size: 14px;
-`
-
-enum StakeButtonStates {
-  Disabled,
-  NotApproved,
-  Approving,
-  Approved,
-  Staking
-}
-
 enum UnstakeButtonStates {
   Disabled,
   Enabled,
@@ -390,7 +377,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [stakeButtonState, setStakeButtonState] = useState(StakeButtonStates.Disabled)
+  const [stakeButtonState, setStakeButtonState] = useState(ButtonHaloStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(UnstakeButtonStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
 
@@ -429,14 +416,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     const amountAsFloat = parseFloat(stakeAmount)
     if (amountAsFloat > 0 && amountAsFloat <= bptBalance) {
       if (approveState === ApprovalState.APPROVED) {
-        setStakeButtonState(StakeButtonStates.Approved)
+        setStakeButtonState(ButtonHaloStates.Approved)
       } else if (approveState === ApprovalState.PENDING) {
-        setStakeButtonState(StakeButtonStates.Approving)
+        setStakeButtonState(ButtonHaloStates.Approving)
       } else {
-        setStakeButtonState(StakeButtonStates.NotApproved)
+        setStakeButtonState(ButtonHaloStates.NotApproved)
       }
     } else {
-      setStakeButtonState(StakeButtonStates.Disabled)
+      setStakeButtonState(ButtonHaloStates.Disabled)
     }
   }, [approveState, stakeAmount, bptBalance, isTxInProgress])
 
@@ -459,7 +446,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
    */
   const approveStakeAmount = async () => {
     setIsTxInProgress(true)
-    setStakeButtonState(StakeButtonStates.Approving)
+    setStakeButtonState(ButtonHaloStates.Approving)
 
     await approveCallback()
 
@@ -471,7 +458,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
    */
   const stakeLpToken = async () => {
     setIsTxInProgress(true)
-    setStakeButtonState(StakeButtonStates.Staking)
+    setStakeButtonState(ButtonHaloStates.TxInProgress)
 
     try {
       const tx = await depositPoolTokens(poolInfo.address, parseFloat(stakeAmount) ?? 0)
@@ -481,7 +468,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     }
 
     setStakeAmount('')
-    setStakeButtonState(StakeButtonStates.Disabled)
+    setStakeButtonState(ButtonHaloStates.Disabled)
     setIsTxInProgress(false)
   }
 
@@ -580,32 +567,29 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Column>
                   <ButtonHalo
                     id="stake-button"
-                    padding="8px"
-                    borderRadius="8px"
-                    width="100%"
                     disabled={[
-                      StakeButtonStates.Disabled,
-                      StakeButtonStates.Approving,
-                      StakeButtonStates.Staking
+                      ButtonHaloStates.Disabled,
+                      ButtonHaloStates.Approving,
+                      ButtonHaloStates.TxInProgress
                     ].includes(stakeButtonState)}
                     onClick={() => {
-                      if (stakeButtonState === StakeButtonStates.Approved) {
+                      if (stakeButtonState === ButtonHaloStates.Approved) {
                         stakeLpToken()
                       } else {
                         approveStakeAmount()
                       }
                     }}
                   >
-                    {(stakeButtonState === StakeButtonStates.Disabled ||
-                      stakeButtonState === StakeButtonStates.Approved) && <>{t('stake')}</>}
-                    {stakeButtonState === StakeButtonStates.NotApproved && <>{t('approve')}</>}
-                    {stakeButtonState === StakeButtonStates.Approving && (
+                    {(stakeButtonState === ButtonHaloStates.Disabled ||
+                      stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                    {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                    {stakeButtonState === ButtonHaloStates.Approving && (
                       <>
                         {HALO_REWARDS_MESSAGE.approving}&nbsp;
                         <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
                       </>
                     )}
-                    {stakeButtonState === StakeButtonStates.Staking && (
+                    {stakeButtonState === ButtonHaloStates.TxInProgress && (
                       <>
                         {HALO_REWARDS_MESSAGE.staking}&nbsp;
                         <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
@@ -637,9 +621,6 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Column>
                   <ButtonHaloOutlined
                     id="unstake-button"
-                    padding="8px"
-                    borderRadius="8px"
-                    width="100%"
                     disabled={[UnstakeButtonStates.Disabled, UnstakeButtonStates.Unstaking].includes(
                       unstakeButtonState
                     )}
@@ -681,8 +662,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               <RewardsChild>
                 <Link to="/vesting">
                   <ClaimButton>
-                    <img src={Molecule} alt="Rewards icon" />
-                    &nbsp;Claim
+                    {t('harvest')}&nbsp;&nbsp;
+                    <img src={ArrowRight} alt="Harvest icon" />
                   </ClaimButton>
                 </Link>
               </RewardsChild>
