@@ -210,12 +210,12 @@ export default function Saave() {
                       <RowBetween>VESTING</RowBetween>
                     </VestingRow>
                     <DessertPoolRow>
-                      <RowBetween>Dessert Pool</RowBetween>
+                      <RowBetween>Rainbow Pool</RowBetween>
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
                         This is where your HALO token rewards go. We saved you some gas and sent it straight to the
-                        Dessert Pool to earn daily.
+                        Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -249,7 +249,7 @@ export default function Saave() {
                   <RowBetween>
                     <HaloPairCenterContainer>
                       <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText id="haloHaloPrice">DSRT:HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">RNBW:HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -260,10 +260,10 @@ export default function Saave() {
         <CardSectionContainer>
           <CardSection>
             <RowBetweenCard>
-              <RowBetween>DESSERT FACT</RowBetween>
+              <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep DSRT, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
+              The longer you keep RNBW, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
               out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>

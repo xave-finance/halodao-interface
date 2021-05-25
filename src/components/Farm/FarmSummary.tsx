@@ -10,7 +10,7 @@ import { TYPE, HideSmall } from 'theme'
 import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/useBalancer'
 
-import HaloHalo from '../../assets/svg/halohalo.svg'
+import HaloHalo from '../../assets/images/halo-token.png'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
