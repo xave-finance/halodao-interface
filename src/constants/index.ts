@@ -126,7 +126,7 @@ export const BALANCER_SUBGRAPH_URL =
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
 export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
   [ChainId.KOVAN]: {
-    weth: '0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1',
+    weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
     dai: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
     maker: '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
     'usd-coin': '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
@@ -135,8 +135,7 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     'basic-attention-token': '0x1f1f156E0317167c11Aa412E3d1435ea29Dc3cCE',
     havven: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
     aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
-    '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
-    xsgd: '0xEdF71Fb4D08C9f9939d73E1EAb282219129180A9'
+    '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244'
   },
   [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},
