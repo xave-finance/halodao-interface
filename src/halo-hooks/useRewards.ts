@@ -38,28 +38,30 @@ export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddr
   )
 }
 
+// eslint-disable-next-line
 export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  return {}
+  // const { account } = useActiveWeb3React()
+  // const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  const results = useSingleContractMultipleData(rewardsContract, 'getClaimedPoolRewardsByUserByPool', args)
+  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
+  // const results = useSingleContractMultipleData(rewardsContract, 'getClaimedPoolRewardsByUserByPool', args)
 
-  return useMemo(
-    () =>
-      poolAddresses.length > 0
-        ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-            if (!results[i]) return memo
+  // return useMemo(
+  //   () =>
+  //     poolAddresses.length > 0
+  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+  //           if (!results[i]) return memo
 
-            const claimedUnclaimed = results[i].result
-            if (claimedUnclaimed) {
-              memo[address] = parseFloat(formatEther(claimedUnclaimed.toString()))
-            }
-            return memo
-          }, {})
-        : {},
-    [poolAddresses, results]
-  )
+  //           const claimedUnclaimed = results[i].result
+  //           if (claimedUnclaimed) {
+  //             memo[address] = parseFloat(formatEther(claimedUnclaimed.toString()))
+  //           }
+  //           return memo
+  //         }, {})
+  //       : {},
+  //   [poolAddresses, results]
+  // )
 }
 
 export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
