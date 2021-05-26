@@ -27,7 +27,8 @@ export enum ApplicationModal {
   MENU,
   DELEGATE,
   NETWORK,
-  VOTE
+  VOTE,
+  VESTING
 }
 
 export const updateBlockNumber = createAction<{ chainId: number; blockNumber: number }>('application/updateBlockNumber')

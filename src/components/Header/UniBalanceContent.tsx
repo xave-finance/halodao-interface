@@ -22,6 +22,7 @@ const ModalUpper = styled(DataCard)`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.haloGradient};
   padding: 0.5rem;
+  border-radius: 10px;
 `
 
 const StyledClose = styled(X)`
