@@ -165,18 +165,21 @@ export default function CurrencyInputPanel({
 
   // handles actual deposit
   const deposit = async () => {
-    setPendingTx(true)
-    setButtonState(ButtonHaloStates.TxInProgress)
+    try {
+      setPendingTx(true)
+      setButtonState(ButtonHaloStates.TxInProgress)
 
-    let amount: BalanceProps | undefined
-    if (maxSelected) {
-      amount = maxDepositAmountInput
-    } else {
-      amount = formatToBalance(depositValue, decimals)
+      let amount: BalanceProps | undefined
+      if (maxSelected) {
+        amount = maxDepositAmountInput
+      } else {
+        amount = formatToBalance(depositValue, decimals)
+      }
+      const tx = await enter(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
     }
-    const tx = await enter(amount)
-    await tx.wait()
-
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
