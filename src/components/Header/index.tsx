@@ -27,6 +27,7 @@ import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
+import Web3Network from 'components/Web3Network'
 
 const HeaderFrame = styled.div`
   background: #ffffff;
@@ -166,6 +167,7 @@ const NetworkCard = styled(YellowCard)`
   border-radius: ${({ theme }) => theme.borderRadius};
   padding: 8px 12px;
   white-space: nowrap;
+  cursor: pointer;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
     margin-right: 0.5rem;
@@ -174,6 +176,10 @@ const NetworkCard = styled(YellowCard)`
     text-overflow: ellipsis;
     flex-shrink: 1;
   `};
+
+  :hover {
+    opacity: 0.8;
+  }
 `
 
 const BalanceText = styled(Text)`
@@ -316,7 +322,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 }
 
 export default function Header() {
-  const { account, chainId } = useActiveWeb3React()
+  const { account, chainId, library } = useActiveWeb3React()
   const { t } = useTranslation()
 
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
@@ -375,8 +381,10 @@ export default function Header() {
       <HeaderControls>
         <HeaderElement>
           <HideSmall>
-            {chainId && NETWORK_LABELS[chainId] && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>{NETWORK_LABELS[chainId]}</NetworkCard>
+            {chainId && (
+              <NetworkCard title={NETWORK_LABELS[chainId]}>
+                <Web3Network />
+              </NetworkCard>
             )}
           </HideSmall>
           {availableClaim && !showClaimPopup && (
@@ -388,6 +396,9 @@ export default function Header() {
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
+          )}
+          {library && library.provider.isMetaMask && (
+            <AccountElement active={true} style={{ pointerEvents: 'auto' }}></AccountElement>
           )}
           {!availableClaim && aggregateBalance && chainId && [1, 3, 4, 5, 42].includes(chainId) && (
             <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
