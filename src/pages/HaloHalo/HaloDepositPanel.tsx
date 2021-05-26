@@ -181,7 +181,7 @@ export default function CurrencyInputPanel({
       console.log(e)
     }
     setPendingTx(false)
-    setButtonState(ButtonHaloStates.Disabled) 
+    setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
   }
 
