@@ -233,9 +233,9 @@ export default function Saave() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" /> 
+                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
-                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" /> 
+                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
