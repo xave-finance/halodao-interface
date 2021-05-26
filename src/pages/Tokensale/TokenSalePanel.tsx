@@ -170,9 +170,13 @@ export default function CurrencyInputPanel({
     } else {
       amount = formatToBalance(depositValue, decimals)
     }
-    const tx = await commitTokens(amount)
-    //await tx.wait()
-    console.log(tx)
+
+    try {
+      const tx = await commitTokens(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
+    }
 
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)

@@ -19,17 +19,23 @@ const useMisoDutchAuction = () => {
   const [endTime, setEndtime] = useState<string>()
   const [currentTokenPrice, setCurrentTokenPrice] = useState<string>()
   const [marketParticipationAgreement, setMarketParticipationAgreement] = useState<string>()
+  const [userTokensClaimable, setUserTokensClaimable] = useState<string>()
+  const [tokenAveragePrice, setAveragePrice] = useState<string>()
 
   const getAuctionDetails = useCallback(async () => {
     const marketInfo = await dutchAuctionContract?.marketInfo()
     const currentTokenPrice = await dutchAuctionContract?.priceFunction()
+    const averagePrice = await dutchAuctionContract?.tokenPrice()
     const marketParticipationAgreement = await dutchAuctionContract?.marketParticipationAgreement()
     const auctionEndTime = new Date(Number(marketInfo.endTime) * 1000)
+    const tokensClaimable = await dutchAuctionContract?.tokensClaimable(account)
 
     setEndtime(auctionEndTime.toString())
     setCurrentTokenPrice(formatNumber(+formatEther(currentTokenPrice)))
     setMarketParticipationAgreement(marketParticipationAgreement)
-  }, [dutchAuctionContract])
+    setUserTokensClaimable(formatNumber(+formatEther(tokensClaimable)))
+    setAveragePrice(formatNumber(+formatEther(averagePrice)))
+  }, [dutchAuctionContract, account])
 
   const fetchAllowance = useCallback(async () => {
     if (account) {
@@ -44,13 +50,16 @@ const useMisoDutchAuction = () => {
   }, [account, paymentCurrency, dutchAuctionContract])
 
   useEffect(() => {
-    if (account && dutchAuctionContract) {
+    if (account && dutchAuctionContract && paymentCurrency) {
       getAuctionDetails()
       fetchAllowance()
     }
-    const refreshInterval = setInterval(fetchAllowance, 10000)
+    const refreshInterval = setInterval(() => {
+      fetchAllowance()
+      getAuctionDetails()
+    }, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, dutchAuctionContract, getAuctionDetails, fetchAllowance])
+  }, [account, dutchAuctionContract, paymentCurrency, getAuctionDetails, fetchAllowance])
 
   const commitTokens = useCallback(
     async (amount: BalanceProps) => {
@@ -75,7 +84,16 @@ const useMisoDutchAuction = () => {
     }
   }, [addTransaction, paymentCurrency, dutchAuctionContract])
 
-  return { endTime, currentTokenPrice, marketParticipationAgreement, commitTokens, allowance, approve }
+  return {
+    endTime,
+    currentTokenPrice,
+    marketParticipationAgreement,
+    allowance,
+    userTokensClaimable,
+    tokenAveragePrice,
+    commitTokens,
+    approve
+  }
 }
 
 export default useMisoDutchAuction

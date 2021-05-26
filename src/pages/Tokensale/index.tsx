@@ -57,7 +57,13 @@ const StakeCard = styled(IndigoCard)`
 `
 
 export default function TokenSale() {
-  const { endTime, marketParticipationAgreement, currentTokenPrice } = useMisoDutchAuction()
+  const {
+    endTime,
+    marketParticipationAgreement,
+    currentTokenPrice,
+    userTokensClaimable,
+    tokenAveragePrice
+  } = useMisoDutchAuction()
 
   return (
     <PageWrapper gap="lg" justify="center">
@@ -90,14 +96,38 @@ export default function TokenSale() {
             </InfoTitleRow>
             <Row>
               <TYPE.body
-                style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+                style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '0.77rem', justifySelf: 'flex-start' }}
                 id="text-stakeable-value"
               >
                 {endTime || 'not active'}
               </TYPE.body>
             </Row>
           </StakeCard>
-
+          <StakeCard>
+            <InfoTitleRow>
+              <TYPE.subHeader
+                style={{
+                  letterSpacing: '0.1em',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  fontSize: '0.75rem',
+                  justifySelf: 'flex-start'
+                }}
+              >
+                Total user claimable HALO:
+              </TYPE.subHeader>
+            </InfoTitleRow>
+            <Row>
+              <TYPE.body
+                style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+                id="text-stakeable-value"
+              >
+                {userTokensClaimable} HALO
+              </TYPE.body>
+            </Row>
+          </StakeCard>
+        </InfoRow>
+        <InfoRow>
           <StakeCard>
             <InfoTitleRow>
               <TYPE.subHeader
@@ -117,7 +147,31 @@ export default function TokenSale() {
                 style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
                 id="text-stakeable-value"
               >
-                {currentTokenPrice}
+                {currentTokenPrice} USDC
+              </TYPE.body>
+            </Row>
+          </StakeCard>
+
+          <StakeCard>
+            <InfoTitleRow>
+              <TYPE.subHeader
+                style={{
+                  letterSpacing: '0.1em',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  fontSize: '0.75rem',
+                  justifySelf: 'flex-start'
+                }}
+              >
+                Average Price
+              </TYPE.subHeader>
+            </InfoTitleRow>
+            <Row>
+              <TYPE.body
+                style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
+                id="text-stakeable-value"
+              >
+                {tokenAveragePrice} USDC
               </TYPE.body>
             </Row>
           </StakeCard>
