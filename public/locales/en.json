@@ -97,7 +97,11 @@
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
+<<<<<<< refs/remotes/origin/develop
   "poolSummaryHaloEarned": "Unclaimed RNBW Earned",
+=======
+  "poolSummaryHaloEarned": "Unclaimed HALO Earned",
+>>>>>>> Drop: Earned column + rename My HALO earned to Unclaimed HALO earned
   "totalPoolValue": "Total Pool Value",
   "tokenCardRewardDescription": "Every Rainbow Candy (RNBW) you earn is automatically staked in Rainbow Pool to earn xRNBW, vesting rewards! Press Harvest or go to the Vesting tab to manage rewards.",
   "valueStaked": "Value Staked",
