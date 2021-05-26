@@ -14,6 +14,7 @@ import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { RedirectPathToFarmOnly } from './Swap/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
+import TokenSale from './Tokensale'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -75,6 +76,7 @@ export default function App() {
             <Switch>
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
+              <Route exact strict path="/tokensale" component={TokenSale} />
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>

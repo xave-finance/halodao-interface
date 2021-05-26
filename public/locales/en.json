@@ -92,6 +92,8 @@
   "close": "Close",
   "farm": "Farm",
   "stake": "Stake",
+  "mint": "Mint",
+  "tokensale": "Token sale",
   "vesting": "Vesting",
   "unstake": "Unstake",
   "stakeable": "Stakable",
