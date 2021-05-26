@@ -16,7 +16,8 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
+import RainbowTokenIcon from '../../assets/svg/rainbow-token-icon.svg'
+import HaloTokenIcon from '../../assets/svg/halo-token-icon.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
@@ -123,14 +124,14 @@ const RowBetweenHaloPair = styled.div`
 
 const HaloIngredients = styled.img`
   float: left;
-
+  margin-left: 5px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
 `
 
 const HaloHaloPairText = styled.div`
-  margin: 8px 0 0 10px;
+  margin: 0 0 0 0px;
   font-style: italic;
   font-family: Open Sans;
   font-weight: 600;
@@ -146,6 +147,7 @@ const HaloHaloPairText = styled.div`
 
 const HaloPairCenterContainer = styled.div`
   margin: auto;
+  margin-top: 8px;
 `
 
 const CardSectionContainer = styled.div`
@@ -248,8 +250,10 @@ export default function Saave() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW:HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
+                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
