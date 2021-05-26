@@ -162,16 +162,16 @@ export default function HaloHaloWithdrawPanel({
 
   // handles actual withdrawal
   const withdraw = async () => {
-    try {
-      setPendingTx(true)
-      setButtonState(ButtonHaloStates.TxInProgress)
+    setPendingTx(true)
+    setButtonState(ButtonHaloStates.TxInProgress)
 
-      let amount: BalanceProps | undefined
-      if (maxSelected) {
-        amount = maxWithdrawAmountInput
-      } else {
-        amount = formatToBalance(withdrawValue, decimals)
-      }
+    let amount: BalanceProps | undefined
+    if (maxSelected) {
+      amount = maxWithdrawAmountInput
+    } else {
+      amount = formatToBalance(withdrawValue, decimals)
+    }
+    try {
       const tx = await leave(amount)
       await tx.wait()
     } catch (e) {
