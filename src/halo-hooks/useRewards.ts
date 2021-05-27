@@ -14,19 +14,7 @@ export const useWhitelistedPoolAddresses = () => {
   }, [data])
 }
 
-export const useTotalClaimedHALO = (): number => {
-  const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
-
-  const args = useMemo(() => (account ? [account] : []), [account])
-  const data = useSingleCallResult(rewardsContract, 'getTotalRewardsClaimedByUser', args)
-
-  return useMemo<number>(() => {
-    return data.result ? parseFloat(formatEther(data.result.toString())) : 0
-  }, [data])
-}
-
-export const useUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
+export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
@@ -48,6 +36,32 @@ export const useUnclaimedHALOPerPool = (poolAddresses: string[]): { [poolAddress
         : {},
     [poolAddresses, results]
   )
+}
+
+// eslint-disable-next-line
+export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
+  return {}
+  // const { account } = useActiveWeb3React()
+  // const rewardsContract = useHALORewardsContract()
+
+  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
+  // const results = useSingleContractMultipleData(rewardsContract, 'getClaimedPoolRewardsByUserByPool', args)
+
+  // return useMemo(
+  //   () =>
+  //     poolAddresses.length > 0
+  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+  //           if (!results[i]) return memo
+
+  //           const claimedUnclaimed = results[i].result
+  //           if (claimedUnclaimed) {
+  //             memo[address] = parseFloat(formatEther(claimedUnclaimed.toString()))
+  //           }
+  //           return memo
+  //         }, {})
+  //       : {},
+  //   [poolAddresses, results]
+  // )
 }
 
 export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
@@ -107,4 +121,25 @@ export const useDepositWithdrawPoolTokensCallback = () => {
   )
 
   return [depositPoolTokens, withdrawPoolTokens]
+}
+
+export const useClaimRewardsCallback = () => {
+  const rewardsContract = useHALORewardsContract()
+  const addTransaction = useTransactionAdder()
+
+  const claimRewards = useCallback(
+    async (poolTokenAddress: string) => {
+      if (!rewardsContract) return
+
+      const tx = await rewardsContract.withdrawUnclaimedPoolRewards(poolTokenAddress)
+      addTransaction(tx, {
+        summary: `Claim rewards (RNBW)`
+      })
+
+      return tx
+    },
+    [rewardsContract, addTransaction]
+  )
+
+  return [claimRewards]
 }

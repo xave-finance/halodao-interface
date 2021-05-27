@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
@@ -16,8 +16,14 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import HalohaloIngredients from '../../assets/svg/halohalo-ingredients.svg'
+import RainbowTokenIcon from '../../assets/svg/rainbow-token-icon.svg'
+import HaloTokenIcon from '../../assets/svg/halo-token-icon.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import VestingModal from 'components/VestingModal'
+import { useVestingModalToggle } from 'state/application/hooks'
+import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, AppState } from 'state'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -118,14 +124,14 @@ const RowBetweenHaloPair = styled.div`
 
 const HaloIngredients = styled.img`
   float: left;
-
+  margin-left: 5px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
 `
 
 const HaloHaloPairText = styled.div`
-  margin: 8px 0 0 10px;
+  margin: 0 0 0 0px;
   font-style: italic;
   font-family: Open Sans;
   font-weight: 600;
@@ -141,6 +147,7 @@ const HaloHaloPairText = styled.div`
 
 const HaloPairCenterContainer = styled.div`
   margin: auto;
+  margin-top: 8px;
 `
 
 const CardSectionContainer = styled.div`
@@ -177,11 +184,23 @@ const RowBetweenCard = styled.div`
 
 export default function Saave() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
+  const toggleVestingModal = useVestingModalToggle()
+  const dispatch = useDispatch<AppDispatch>()
+  const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
+  const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
 
-  console.log(haloHaloPrice)
+  useEffect(() => {
+    // Load vesting modal if user clicks "Harvest" button from Farm page
+    if (poolToHarvest) {
+      setPoolVestingInfo(poolToHarvest)
+      toggleVestingModal()
+      dispatch(removePoolToHarvest()) // remove from AppState after copying the value to poolVestingInfo
+    }
+  }, [poolToHarvest, dispatch, toggleVestingModal])
 
   return (
     <>
+      <VestingModal poolVestingInfo={poolVestingInfo} />
       <PageWrapper>
         <VoteCardWrapper>
           <VoteCard>
@@ -193,12 +212,12 @@ export default function Saave() {
                       <RowBetween>VESTING</RowBetween>
                     </VestingRow>
                     <DessertPoolRow>
-                      <RowBetween>Dessert Pool</RowBetween>
+                      <RowBetween>Rainbow Pool</RowBetween>
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
                         This is where your HALO token rewards go. We saved you some gas and sent it straight to the
-                        Dessert Pool to earn daily.
+                        Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -231,8 +250,10 @@ export default function Saave() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={HalohaloIngredients} alt="Halo Halo" />
-                      <HaloHaloPairText id="haloHaloPrice">DSRT:HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
+                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -243,10 +264,10 @@ export default function Saave() {
         <CardSectionContainer>
           <CardSection>
             <RowBetweenCard>
-              <RowBetween>DESSERT FACT</RowBetween>
+              <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep DSRT, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
+              The longer you keep RNBW, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
               out on daily HALO vesting multiples.
             </RowBetween>
           </CardSection>

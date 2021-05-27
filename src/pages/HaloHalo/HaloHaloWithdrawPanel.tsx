@@ -214,7 +214,7 @@ export default function HaloHaloWithdrawPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloHaloBalance} DSRT
+                    BALANCE: {xHaloHaloBalance} RNBW
                   </TYPE.body>
                 )}
               </RowBetween>

@@ -4,26 +4,29 @@ import { useMemo } from 'react'
 import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'state/wallet/hooks'
 import { PoolInfo } from './useBalancer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useStakedBPTPerPool, useTotalClaimedHALO, useUnclaimedHALOPerPool } from './useRewards'
+import { useClaimedRewardsPerPool, useUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
+import useHaloHalo from './useHaloHalo'
 
 const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get user balance for each pool
   const { account } = useActiveWeb3React()
+  const { haloHaloPrice } = useHaloHalo()
   const poolsAsTokens = poolsInfo.map(poolInfo => poolInfo.asToken)
   const balances = useTokenBalances(account ?? undefined, poolsAsTokens)
 
   // Get totalSupply of each pool
   const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolsAsTokens)[0]
 
-  // Get user total claimed HALO (all pools)
-  const claimedHALO = useTotalClaimedHALO()
-
-  // Get user unclaimed HALO per pool
+  // Get user total claimed HALO (claimeed + unclaimed on all pools)
   const poolAddresses = poolsInfo.map(poolInfo => poolInfo.address)
-  const unclaimedHALOs = useUnclaimedHALOPerPool(poolAddresses)
+  const claimedRewards = useClaimedRewardsPerPool(poolAddresses)
+  const unclaimedRewards = useUnclaimedRewardsPerPool(poolAddresses)
 
   // Get user staked BPT per pool
   const stakedBPTs = useStakedBPTPerPool(poolAddresses)
+
+  // Denotes how many rewards token in 1 HALO
+  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   /**
    * Main logic to calculate pool summary based on the inputs above
@@ -39,14 +42,13 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
     let totalStakeableValue = 0
     let totalStakedValue = 0
-    let totalHALOEarned = claimedHALO
+    let totalHALOEarned = 0
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const unclaimed = unclaimedHALOs[poolInfo.address]
-      if (unclaimed) {
-        totalHALOEarned += unclaimed
-      }
+      const claimedPoolRewards = claimedRewards[poolInfo.address] ?? 0
+      const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
+      totalHALOEarned += (claimedPoolRewards + unclaimedPoolRewards) * rewardsToHALOPrice
 
       // Calculate BPT price per pool
       // FORMULA: BPT price = liquidity / totalSupply
@@ -74,7 +76,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, claimedHALO, unclaimedHALOs, stakedBPTs])
+  }, [poolsInfo, balances, totalSupplies, claimedRewards, unclaimedRewards, stakedBPTs, rewardsToHALOPrice])
 }
 
 export default useFarmSummary
