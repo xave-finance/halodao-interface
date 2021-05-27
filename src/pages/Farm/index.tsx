@@ -9,7 +9,8 @@ import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
-import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
+import { POOL_ADDRESSES } from 'constants/farm'
+import { useActiveWeb3React } from 'hooks'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -58,8 +59,9 @@ const StyledExternalLink = styled(ExternalLink)`
 `
 
 const Farm = () => {
-  const poolAddresses = useWhitelistedPoolAddresses()
-  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
+  const { chainId } = useActiveWeb3React()
+  const poolAddresses = chainId ? POOL_ADDRESSES[chainId] : []
+  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses ?? [])
   const { t } = useTranslation()
 
   return (

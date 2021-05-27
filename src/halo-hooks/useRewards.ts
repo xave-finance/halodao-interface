@@ -1,18 +1,9 @@
 import { useActiveWeb3React } from 'hooks'
 import { useHALORewardsContract } from 'hooks/useContract'
 import { useCallback, useMemo } from 'react'
-import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
+import { useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
-
-export const useWhitelistedPoolAddresses = () => {
-  const rewardsContract = useHALORewardsContract()
-  const data = useSingleCallResult(rewardsContract, 'getWhitelistedAMMPoolAddresses')
-
-  return useMemo<string[]>(() => {
-    return data.result ? data.result[0] : []
-  }, [data])
-}
 
 export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
   const { account } = useActiveWeb3React()
