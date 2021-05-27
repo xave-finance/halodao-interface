@@ -27,6 +27,7 @@ jobs:
           REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET }}
           REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET: ${{ secrets.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET }}
           REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET: ${{ secrets.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET }}
+          REACT_APP_POOL_ADDRESSES_KOVAN: ${{ secrets.REACT_APP_POOL_ADDRESSES_KOVAN }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
