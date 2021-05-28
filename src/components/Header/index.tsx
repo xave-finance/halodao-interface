@@ -373,6 +373,9 @@ export default function Header() {
           <StyledExternalLink id={`mint-nav-link`} href={'https://dev.minter.halodao.com'}>
             {t('mint')}
           </StyledExternalLink>
+          <StyledNavLink id={`sale-nav-link`} to={'/tokensale'}>
+            {t('tokensale')}
+          </StyledNavLink>
         </HeaderLinks>
       </HeaderRow>
       <HeaderControls>
