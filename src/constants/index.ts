@@ -117,11 +117,13 @@ export const HALOHALO_ADDRESS: ChainAddressMap = {
 }
 
 export const AUCTION_ADDRESS: ChainAddressMap = {
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_AUCTION_ADDRESS_BSC_TESTNET || ''
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_AUCTION_ADDRESS_BSC_TESTNET || '',
+  [ChainId.GÖRLI]: process.env.REACT_APP_AUCTION_ADDRESS_GOERLI || ''
 }
 
 export const PAYMENT_AUCTION_ADDRESS: ChainAddressMap = {
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_PAYMENT_AUCTION_ADDRESS_BSC_TESTNET || ''
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_PAYMENT_AUCTION_ADDRESS_BSC_TESTNET || '',
+  [ChainId.GÖRLI]: process.env.REACT_APP_PAYMENT_AUCTION_ADDRESS_BSC_TESTNET || ''
 }
 
 // Balancer URLs

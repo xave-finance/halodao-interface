@@ -30,7 +30,7 @@ const useMisoDutchAuction = () => {
     const auctionEndTime = new Date(Number(marketInfo.endTime) * 1000)
     const tokensClaimable = await dutchAuctionContract?.tokensClaimable(account)
 
-    setEndtime(auctionEndTime.toString())
+    setEndtime(auctionEndTime ? auctionEndTime.toString() : '')
     setCurrentTokenPrice(formatNumber(+formatEther(currentTokenPrice)))
     setMarketParticipationAgreement(marketParticipationAgreement)
     setUserTokensClaimable(formatNumber(+formatEther(tokensClaimable)))
