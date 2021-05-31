@@ -171,9 +171,12 @@ export default function HaloHaloWithdrawPanel({
     } else {
       amount = formatToBalance(withdrawValue, decimals)
     }
-    const tx = await leave(amount)
-    await tx.wait()
-
+    try {
+      const tx = await leave(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
+    }
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setWithdrawValue('')

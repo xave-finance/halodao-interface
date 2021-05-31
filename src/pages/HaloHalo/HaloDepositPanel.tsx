@@ -174,9 +174,12 @@ export default function CurrencyInputPanel({
     } else {
       amount = formatToBalance(depositValue, decimals)
     }
-    const tx = await enter(amount)
-    await tx.wait()
-
+    try {
+      const tx = await enter(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
+    }
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
