@@ -5,37 +5,35 @@ import { useSingleCallResult, useSingleContractMultipleData } from 'state/multic
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 
-export const useWhitelistedPoolAddresses = () => {
-  const rewardsContract = useHALORewardsContract()
-  const data = useSingleCallResult(rewardsContract, 'getWhitelistedAMMPoolAddresses')
-
-  return useMemo<string[]>(() => {
-    return data.result ? data.result[0] : []
-  }, [data])
+export const usePoolAddresses = () => {
+  const length = usePoolLength()
+  const addresses = useLpToken(length)
+  return addresses
 }
 
 export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  return {}
+  // const { account } = useActiveWeb3React()
+  // const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  const results = useSingleContractMultipleData(rewardsContract, 'getUnclaimedPoolRewardsByUserByPool', args)
+  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
+  // const results = useSingleContractMultipleData(rewardsContract, 'getUnclaimedPoolRewardsByUserByPool', args)
 
-  return useMemo(
-    () =>
-      poolAddresses.length > 0
-        ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-            if (!results[i]) return memo
+  // return useMemo(
+  //   () =>
+  //     poolAddresses.length > 0
+  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+  //           if (!results[i]) return memo
 
-            const unclaimed = results[i].result
-            if (unclaimed) {
-              memo[address] = parseFloat(formatEther(unclaimed.toString()))
-            }
-            return memo
-          }, {})
-        : {},
-    [poolAddresses, results]
-  )
+  //           const unclaimed = results[i].result
+  //           if (unclaimed) {
+  //             memo[address] = parseFloat(formatEther(unclaimed.toString()))
+  //           }
+  //           return memo
+  //         }, {})
+  //       : {},
+  //   [poolAddresses, results]
+  // )
 }
 
 // eslint-disable-next-line
@@ -65,27 +63,28 @@ export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddres
 }
 
 export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  return {}
+  // const { account } = useActiveWeb3React()
+  // const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  const results = useSingleContractMultipleData(rewardsContract, 'getDepositedPoolTokenBalanceByUser', args)
+  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
+  // const results = useSingleContractMultipleData(rewardsContract, 'getDepositedPoolTokenBalanceByUser', args)
 
-  return useMemo(
-    () =>
-      poolAddresses.length > 0
-        ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-            if (!results[i]) return memo
+  // return useMemo(
+  //   () =>
+  //     poolAddresses.length > 0
+  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
+  //           if (!results[i]) return memo
 
-            const bptStaked = results[i].result
-            if (bptStaked) {
-              memo[address] = parseFloat(formatEther(bptStaked.toString()))
-            }
-            return memo
-          }, {})
-        : {},
-    [poolAddresses, results]
-  )
+  //           const bptStaked = results[i].result
+  //           if (bptStaked) {
+  //             memo[address] = parseFloat(formatEther(bptStaked.toString()))
+  //           }
+  //           return memo
+  //         }, {})
+  //       : {},
+  //   [poolAddresses, results]
+  // )
 }
 
 export const useDepositWithdrawPoolTokensCallback = () => {
@@ -142,4 +141,45 @@ export const useClaimRewardsCallback = () => {
   )
 
   return [claimRewards]
+}
+
+/**
+ * Internal Methods
+ */
+
+const usePoolLength = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'poolLength')
+
+  return useMemo<number>(() => {
+    console.log('length: ', data.result ? data.result[0].toString() : 'ewan')
+    return data.result ? parseInt(`${data.result[0]}`) : 0
+  }, [data])
+}
+
+const useLpToken = (poolLength: number): string[] => {
+  const rewardsContract = useHALORewardsContract()
+
+  const args = useMemo(() => {
+    console.log('poolLength:', poolLength)
+    var pids: string[][] = []
+    for (var i = 0; i < poolLength; i++) {
+      pids.push([`${i}`])
+    }
+    console.log('pids:', pids)
+    return pids
+  }, [poolLength])
+
+  const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
+
+  return useMemo<string[]>(() => {
+    var addresses: string[] = []
+    for (var i = 0; i < poolLength; i++) {
+      const address = results[i].result
+      if (address) {
+        addresses.push(`${address}`)
+      }
+    }
+    return addresses
+  }, [poolLength, results])
 }
