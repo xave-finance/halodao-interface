@@ -1,18 +1,19 @@
-import { useActiveWeb3React } from 'hooks'
 import { useHALORewardsContract } from 'hooks/useContract'
 import { useCallback, useMemo } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import { parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 
 export const usePoolAddresses = () => {
   const length = usePoolLength()
   const addresses = useLpToken(length)
-  return addresses
+  return useMemo(() => addresses, [addresses])
 }
 
 export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return {}
+  return useMemo(() => {
+    return {}
+  }, [poolAddresses])
   // const { account } = useActiveWeb3React()
   // const rewardsContract = useHALORewardsContract()
 
@@ -38,7 +39,9 @@ export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddr
 
 // eslint-disable-next-line
 export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return {}
+  return useMemo(() => {
+    return {}
+  }, [poolAddresses])
   // const { account } = useActiveWeb3React()
   // const rewardsContract = useHALORewardsContract()
 
@@ -63,7 +66,9 @@ export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddres
 }
 
 export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return {}
+  return useMemo(() => {
+    return {}
+  }, [poolAddresses])
   // const { account } = useActiveWeb3React()
   // const rewardsContract = useHALORewardsContract()
 
@@ -152,7 +157,6 @@ const usePoolLength = () => {
   const data = useSingleCallResult(rewardsContract, 'poolLength')
 
   return useMemo<number>(() => {
-    console.log('length: ', data.result ? data.result[0].toString() : 'ewan')
     return data.result ? parseInt(`${data.result[0]}`) : 0
   }, [data])
 }
@@ -161,12 +165,10 @@ const useLpToken = (poolLength: number): string[] => {
   const rewardsContract = useHALORewardsContract()
 
   const args = useMemo(() => {
-    console.log('poolLength:', poolLength)
     var pids: string[][] = []
     for (var i = 0; i < poolLength; i++) {
       pids.push([`${i}`])
     }
-    console.log('pids:', pids)
     return pids
   }, [poolLength])
 
