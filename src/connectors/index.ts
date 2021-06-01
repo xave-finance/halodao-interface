@@ -10,11 +10,11 @@ import { NetworkConnector } from './NetworkConnector'
 import { ChainId } from '@sushiswap/sdk'
 
 const RPC = {
-  [ChainId.MAINNET]: 'https://eth-mainnet.alchemyapi.io/v2/q1gSNoSMEzJms47Qn93f9-9Xg5clkmEC',
-  [ChainId.ROPSTEN]: 'https://eth-ropsten.alchemyapi.io/v2/cidKix2Xr-snU3f6f6Zjq_rYdalKKHmW',
-  [ChainId.RINKEBY]: 'https://eth-rinkeby.alchemyapi.io/v2/XVLwDlhGP6ApBXFz_lfv0aZ6VmurWhYD',
-  [ChainId.GÖRLI]: 'https://eth-goerli.alchemyapi.io/v2/Dkk5d02QjttYEoGmhZnJG37rKt8Yl3Im',
-  [ChainId.KOVAN]: 'https://eth-kovan.alchemyapi.io/v2/6OVAa_B_rypWWl9HqtiYK26IRxXiYqER',
+  [ChainId.MAINNET]: `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_MAINNET}`,
+  [ChainId.ROPSTEN]: `https://eth-ropsten.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_ROPSTEN}`,
+  [ChainId.RINKEBY]: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_RINKEBY}`,
+  [ChainId.GÖRLI]: `https://eth-goerli.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_GOERLI}`,
+  [ChainId.KOVAN]: `https://eth-kovan.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_KOVAN}`,
   [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
   [ChainId.FANTOM_TESTNET]: 'https://rpc.testnet.fantom.network',
   [ChainId.MATIC]: 'https://rpc-mainnet.maticvigil.com',
@@ -27,7 +27,7 @@ const RPC = {
 
 // Use uniswap's infura URL for local development to prevent 403 error
 if (process.env.NODE_ENV === 'development') {
-  RPC[ChainId.MAINNET] = 'https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847'
+  RPC[ChainId.MAINNET] = `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
 }
 
 export const network = new NetworkConnector({
