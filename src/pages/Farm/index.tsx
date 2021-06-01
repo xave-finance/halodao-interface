@@ -9,7 +9,7 @@ import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
-import { useWhitelistedPoolAddresses } from 'halo-hooks/useRewards'
+import { usePoolAddresses } from 'halo-hooks/useRewards'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -58,7 +58,7 @@ const StyledExternalLink = styled(ExternalLink)`
 `
 
 const Farm = () => {
-  const poolAddresses = useWhitelistedPoolAddresses()
+  const poolAddresses = usePoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
   const { t } = useTranslation()
 
