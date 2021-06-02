@@ -11,34 +11,31 @@ export const usePoolAddresses = () => {
   return useMemo(() => addresses, [addresses])
 }
 
-export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return useMemo(() => {
-    return {}
-  }, [poolAddresses])
-  // const { account } = useActiveWeb3React()
-  // const rewardsContract = useHALORewardsContract()
+export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number]: number } => {
+  const { account } = useActiveWeb3React()
+  const rewardsContract = useHALORewardsContract()
 
-  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  // const results = useSingleContractMultipleData(rewardsContract, 'getUnclaimedPoolRewardsByUserByPool', args)
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? '']), [poolIds, account])
+  const results = useSingleContractMultipleData(rewardsContract, 'pendingRewardToken', args)
 
-  // return useMemo(
-  //   () =>
-  //     poolAddresses.length > 0
-  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-  //           if (!results[i]) return memo
+  return useMemo(
+    () =>
+      poolIds.length > 0
+        ? poolIds.reduce<{ [poolId: number]: number }>((memo, poolId, i) => {
+            if (!results[i]) return memo
 
-  //           const unclaimed = results[i].result
-  //           if (unclaimed) {
-  //             memo[address] = parseFloat(formatEther(unclaimed.toString()))
-  //           }
-  //           return memo
-  //         }, {})
-  //       : {},
-  //   [poolAddresses, results]
-  // )
+            const reward = results[i].result
+            if (reward) {
+              memo[poolId] = parseFloat(formatEther(reward.toString()))
+            }
+            return memo
+          }, {})
+        : {},
+    [poolIds, results]
+  )
 }
 
-export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: string]: number } => {
+export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
@@ -127,7 +124,7 @@ const usePoolLength = () => {
   const data = useSingleCallResult(rewardsContract, 'poolLength')
 
   return useMemo<number>(() => {
-    return data.result ? parseInt(`${data.result[0]}`) : 0
+    return data.result ? data.result[0].toNumber() : 0
   }, [data])
 }
 

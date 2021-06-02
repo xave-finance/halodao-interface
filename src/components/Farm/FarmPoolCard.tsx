@@ -403,8 +403,8 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   // Get user earned HALO
-  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.address])
-  const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolId])
+  const unclaimedPoolRewards = unclaimedRewards[poolId] ?? 0
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
