@@ -29,10 +29,9 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
-  useDepositWithdrawPoolTokensCallback,
+  useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
-  useUnclaimedRewardsPerPool,
-  useClaimRewardsCallback
+  useUnclaimedRewardsPerPool
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -413,9 +412,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
-  const [depositPoolTokens, withdrawPoolTokens] = useDepositWithdrawPoolTokensCallback()
-
-  const [claimRewards] = useClaimRewardsCallback()
+  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
   /**
    * Updating the state of stake button
@@ -484,7 +481,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     setStakeButtonState(ButtonHaloStates.TxInProgress)
 
     try {
-      const tx = await depositPoolTokens(poolInfo.address, parseFloat(stakeAmount) ?? 0)
+      const tx = await deposit(poolId, parseFloat(stakeAmount) ?? 0)
       await tx.wait()
     } catch (e) {
       console.error('Stake error: ', e)
@@ -503,7 +500,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     setUnstakeButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     try {
-      const tx = await withdrawPoolTokens(poolInfo.address, parseFloat(unstakeAmount) ?? 0)
+      const tx = await withdraw(poolId, parseFloat(unstakeAmount) ?? 0)
       await tx.wait()
     } catch (e) {
       console.error('Unstake error: ', e)
@@ -523,7 +520,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
     // Claim/withdraw rewards
     try {
-      const tx = await claimRewards(poolInfo.address)
+      const tx = await harvest(poolId)
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {

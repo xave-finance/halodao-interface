@@ -59,60 +59,45 @@ export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: numb
   )
 }
 
-export const useDepositWithdrawPoolTokensCallback = () => {
+export const useDepositWithdrawHarvestCallback = () => {
+  const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
   const addTransaction = useTransactionAdder()
 
-  const depositPoolTokens = useCallback(
-    async (poolTokenAddress: string, amount: number) => {
-      if (!rewardsContract) return
-
-      const tx = await rewardsContract.depositPoolTokens(poolTokenAddress, parseEther(`${amount}`).toString())
+  const deposit = useCallback(
+    async (poolId: number, amount: number) => {
+      const tx = await rewardsContract?.deposit(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
         summary: `Stake ${amount} BPT`
       })
-
       return tx
     },
-    [rewardsContract, addTransaction]
+    [rewardsContract, addTransaction, account]
   )
 
-  const withdrawPoolTokens = useCallback(
-    async (poolTokenAddress: string, amount: number) => {
-      if (!rewardsContract) return
-
-      const tx = await rewardsContract.withdrawPoolTokens(poolTokenAddress, parseEther(`${amount}`).toString())
+  const withdraw = useCallback(
+    async (poolId: number, amount: number) => {
+      const tx = await rewardsContract?.withdraw(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
         summary: `Unstake ${amount} BPT`
       })
-
       return tx
     },
-    [rewardsContract, addTransaction]
+    [rewardsContract, addTransaction, account]
   )
 
-  return [depositPoolTokens, withdrawPoolTokens]
-}
-
-export const useClaimRewardsCallback = () => {
-  const rewardsContract = useHALORewardsContract()
-  const addTransaction = useTransactionAdder()
-
-  const claimRewards = useCallback(
-    async (poolTokenAddress: string) => {
-      if (!rewardsContract) return
-
-      const tx = await rewardsContract.withdrawUnclaimedPoolRewards(poolTokenAddress)
+  const harvest = useCallback(
+    async (poolId: number) => {
+      const tx = await rewardsContract?.harvest(poolId, account)
       addTransaction(tx, {
-        summary: `Claim rewards (RNBW)`
+        summary: `Harvest rewards (RNBW)`
       })
-
       return tx
     },
-    [rewardsContract, addTransaction]
+    [rewardsContract, addTransaction, account]
   )
 
-  return [claimRewards]
+  return { deposit, withdraw, harvest }
 }
 
 /**
