@@ -117,8 +117,8 @@ const useLpToken = (poolLength: number): string[] => {
   const rewardsContract = useHALORewardsContract()
 
   const args = useMemo(() => {
-    var pids: string[][] = []
-    for (var i = 0; i < poolLength; i++) {
+    const pids: string[][] = []
+    for (let i = 0; i < poolLength; i++) {
       pids.push([`${i}`])
     }
     return pids
@@ -127,8 +127,8 @@ const useLpToken = (poolLength: number): string[] => {
   const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
 
   return useMemo<string[]>(() => {
-    var addresses: string[] = []
-    for (var i = 0; i < poolLength; i++) {
+    const addresses: string[] = []
+    for (let i = 0; i < poolLength; i++) {
       const address = results[i].result
       if (address) {
         addresses.push(`${address}`)
