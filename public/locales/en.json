@@ -97,7 +97,7 @@
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
-  "poolSummaryHaloEarned": "My HALO Earned",
+  "poolSummaryHaloEarned": "Unclaimed HALO Earned",
   "totalPoolValue": "Total Pool Value",
   "tokenCardRewardDescription": "Every HALO token you earn is automatically staked in Rainbow Drop (RNBW) to earn vesting rewards! Press Harvest or go to the Vesting tab to manage rewards.",
   "valueStaked": "Value Staked",

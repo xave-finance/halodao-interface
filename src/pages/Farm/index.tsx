@@ -125,8 +125,8 @@ const Farm = () => {
               </AutoColumn>
             </Card>
           </HideSmall>
-          {poolsInfo.map(poolInfo => {
-            return <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+          {poolsInfo.map((poolInfo, index) => {
+            return <FarmPoolCard key={poolInfo.address} poolId={index} poolInfo={poolInfo} tokenPrice={tokenPrice} />
           })}
         </AutoColumn>
       </PageWrapper>

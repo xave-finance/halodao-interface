@@ -29,7 +29,6 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
-  useClaimedRewardsPerPool,
   useDepositWithdrawPoolTokensCallback,
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
@@ -366,11 +365,12 @@ const ClaimButton = styled(ButtonOutlined)`
 `
 
 interface FarmPoolCardProps {
+  poolId: number
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
+export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
@@ -390,8 +390,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
-  const stakedBPTs = useStakedBPTPerPool([poolInfo.address])
-  const bptStaked = stakedBPTs[poolInfo.address] ?? 0
+  const stakedBPTs = useStakedBPTPerPool([poolId])
+  const bptStaked = stakedBPTs[poolId] ?? 0
 
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
@@ -406,9 +406,6 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.address])
   const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
-  const claimedRewards = useClaimedRewardsPerPool([poolInfo.address])
-  const claimedPoolRewards = claimedRewards[poolInfo.address] ?? 0
-  const totalEarnedHALO = (unclaimedPoolRewards + claimedPoolRewards) * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
@@ -580,7 +577,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="15%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(totalEarnedHALO)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHALO)} HALO</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             {account && (

@@ -1,8 +1,9 @@
 import { useHALORewardsContract } from 'hooks/useContract'
 import { useCallback, useMemo } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
-import { parseEther } from 'ethers/lib/utils'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export const usePoolAddresses = () => {
   const length = usePoolLength()
@@ -37,59 +38,28 @@ export const useUnclaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddr
   // )
 }
 
-// eslint-disable-next-line
-export const useClaimedRewardsPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return useMemo(() => {
-    return {}
-  }, [poolAddresses])
-  // const { account } = useActiveWeb3React()
-  // const rewardsContract = useHALORewardsContract()
+export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: string]: number } => {
+  const { account } = useActiveWeb3React()
+  const rewardsContract = useHALORewardsContract()
 
-  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  // const results = useSingleContractMultipleData(rewardsContract, 'getClaimedPoolRewardsByUserByPool', args)
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? '']), [poolIds, account])
+  const results = useSingleContractMultipleData(rewardsContract, 'userInfo', args)
 
-  // return useMemo(
-  //   () =>
-  //     poolAddresses.length > 0
-  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-  //           if (!results[i]) return memo
+  return useMemo(
+    () =>
+      poolIds.length > 0
+        ? poolIds.reduce<{ [poolId: number]: number }>((memo, poolId, i) => {
+            if (!results[i]) return memo
 
-  //           const claimedUnclaimed = results[i].result
-  //           if (claimedUnclaimed) {
-  //             memo[address] = parseFloat(formatEther(claimedUnclaimed.toString()))
-  //           }
-  //           return memo
-  //         }, {})
-  //       : {},
-  //   [poolAddresses, results]
-  // )
-}
-
-export const useStakedBPTPerPool = (poolAddresses: string[]): { [poolAddress: string]: number } => {
-  return useMemo(() => {
-    return {}
-  }, [poolAddresses])
-  // const { account } = useActiveWeb3React()
-  // const rewardsContract = useHALORewardsContract()
-
-  // const args = useMemo(() => poolAddresses.map(address => [address, account ?? '']), [poolAddresses, account])
-  // const results = useSingleContractMultipleData(rewardsContract, 'getDepositedPoolTokenBalanceByUser', args)
-
-  // return useMemo(
-  //   () =>
-  //     poolAddresses.length > 0
-  //       ? poolAddresses.reduce<{ [poolAddress: string]: number }>((memo, address, i) => {
-  //           if (!results[i]) return memo
-
-  //           const bptStaked = results[i].result
-  //           if (bptStaked) {
-  //             memo[address] = parseFloat(formatEther(bptStaked.toString()))
-  //           }
-  //           return memo
-  //         }, {})
-  //       : {},
-  //   [poolAddresses, results]
-  // )
+            const userInfo = results[i].result
+            if (userInfo) {
+              memo[poolId] = parseFloat(formatEther(userInfo.amount.toString()))
+            }
+            return memo
+          }, {})
+        : {},
+    [poolIds, results]
+  )
 }
 
 export const useDepositWithdrawPoolTokensCallback = () => {
