@@ -5,6 +5,7 @@ import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
+import { useAllocPoint } from 'halo-hooks/useRewards'
 
 export type PoolInfo = {
   pair: string
@@ -31,6 +32,15 @@ export const useBalancer = (poolAddresses: string[]) => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
   const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
+
+  for (const [index, poolAddress] of poolAddresses.entries()) {
+    console.log('++++++++++++++++')
+    console.log(index, poolAddress)
+    console.log('++++++++++++++++')
+  }
+
+  const allocPoint = useAllocPoint(1);
+  console.log('allocPoint', allocPoint);
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
@@ -88,6 +98,8 @@ export const useBalancer = (poolAddresses: string[]) => {
 
       const newPoolsInfo: PoolInfo[] = []
       const newPoolTokensAddresses: string[] = []
+
+      console.log('xx', result)
 
       // Convert result to `poolsInfo` so we can easily use it in the components
       for (const poolAddress of poolAddresses) {

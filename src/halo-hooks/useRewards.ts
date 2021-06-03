@@ -141,3 +141,70 @@ export const useDepositWithdrawHarvestCallback = () => {
 
   return { deposit, withdraw, harvest }
 }
+
+export const useRewardTokenPerSecond = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
+
+  return useMemo<string[]>(() => {
+    return data.result ? data.result[0] : []
+  }, [data])
+}
+
+export const useTotalAllocPoint = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
+
+  return useMemo<string[]>(() => {
+    return data.result ? data.result[0] : []
+  }, [data])
+}
+
+export const useAllocPoint = (poolIndex: number) => {
+  const rewardsContract = useHALORewardsContract()
+  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', [[poolIndex]])
+
+  return useMemo(() => {
+    const result = results[0].result ? parseFloat(results[0].result['allocPoint'].toString()) : 0;
+
+    return result;
+  }, [results])
+}
+
+/**
+ * Internal Methods
+ */
+
+const usePoolLength = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'poolLength')
+
+  return useMemo<number>(() => {
+    return data.result ? data.result[0].toNumber() : 0
+  }, [data])
+}
+
+const useLpToken = (poolLength: number): string[] => {
+  const rewardsContract = useHALORewardsContract()
+
+  const args = useMemo(() => {
+    const pids: string[][] = []
+    for (let i = 0; i < poolLength; i++) {
+      pids.push([`${i}`])
+    }
+    return pids
+  }, [poolLength])
+
+  const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
+
+  return useMemo<string[]>(() => {
+    const addresses: string[] = []
+    for (let i = 0; i < poolLength; i++) {
+      const address = results[i].result
+      if (address) {
+        addresses.push(`${address}`)
+      }
+    }
+    return addresses
+  }, [poolLength, results])
+}
