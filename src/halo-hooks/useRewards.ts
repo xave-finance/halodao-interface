@@ -100,6 +100,35 @@ export const useDepositWithdrawHarvestCallback = () => {
   return { deposit, withdraw, harvest }
 }
 
+export const useRewardTokenPerSecond = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
+
+  return useMemo<string[]>(() => {
+    return data.result ? data.result[0] : []
+  }, [data])
+}
+
+export const useTotalAllocPoint = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
+
+  return useMemo<string[]>(() => {
+    return data.result ? data.result[0] : []
+  }, [data])
+}
+
+export const useAllocPoint = (poolIndex: number) => {
+  const rewardsContract = useHALORewardsContract()
+  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', [[poolIndex]])
+
+  return useMemo(() => {
+    const result = results[0].result ? parseFloat(results[0].result['allocPoint'].toString()) : 0;
+
+    return result;
+  }, [results])
+}
+
 /**
  * Internal Methods
  */
