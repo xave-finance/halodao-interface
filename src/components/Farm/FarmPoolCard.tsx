@@ -628,7 +628,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
-                  <ButtonMax onClick={() => setStakeAmount(formatNumber(bptBalance))}>{t('max')}</ButtonMax>
+                  <ButtonMax onClick={() => setStakeAmount(`${bptBalance}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHalo
@@ -683,7 +683,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
-                  <ButtonMax onClick={() => setUnstakeAmount(formatNumber(bptStaked))}>{t('max')}</ButtonMax>
+                  <ButtonMax onClick={() => setUnstakeAmount(`${bptStaked}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHaloOutlined
