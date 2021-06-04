@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
+import { formatNumber } from 'utils/formatNumber'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -105,7 +106,7 @@ export default function HaloHaloWithdrawPanel({
   const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
   const { t } = useTranslation()
-  const { allowance, approve, leave } = useHaloHalo()
+  const { allowance, approve, leave, haloHaloPrice } = useHaloHalo()
   const xHaloHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
   const xHaloHaloBalance = formatFromBalance(xHaloHaloBalanceBigInt?.value, xHaloHaloBalanceBigInt?.decimals)
   const decimals = xHaloHaloBalanceBigInt?.decimals
@@ -115,6 +116,7 @@ export default function HaloHaloWithdrawPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+  const [haloToClaim, setHaloToClaim] = useState(0)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -150,10 +152,14 @@ export default function HaloHaloWithdrawPanel({
   }, [approve, setRequestedApproval])
 
   // track and parse user input for Deposit Input
-  const onUserWithdrawInput = useCallback((withdrawValue: string, max = false) => {
-    setMaxSelected(max)
-    setWithdrawValue(withdrawValue)
-  }, [])
+  const onUserWithdrawInput = useCallback(
+    (withdrawValue: string, max = false) => {
+      setMaxSelected(max)
+      setWithdrawValue(withdrawValue)
+      setHaloToClaim(parseFloat(withdrawValue) * parseFloat(haloHaloPrice))
+    },
+    [haloHaloPrice]
+  )
 
   // used for max input button
   const handleMaxWithdraw = useCallback(() => {
@@ -274,8 +280,9 @@ export default function HaloHaloWithdrawPanel({
                 }
               }}
             >
-              {(buttonState === ButtonHaloStates.Disabled || buttonState === ButtonHaloStates.Approved) && (
-                <>{t('claimHalo')}</>
+              {buttonState === ButtonHaloStates.Disabled && <>{t('claimHalo')}</>}
+              {buttonState === ButtonHaloStates.Approved && (
+                <>{t('claimXHalo', { amount: formatNumber(haloToClaim) })}</>
               )}
               {buttonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
               {buttonState === ButtonHaloStates.Approving && (
