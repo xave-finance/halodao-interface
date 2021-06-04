@@ -146,8 +146,8 @@ export const useRewardTokenPerSecond = () => {
   const rewardsContract = useHALORewardsContract()
   const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
 
-  return useMemo<string[]>(() => {
-    return data.result ? data.result[0] : []
+  return useMemo<number>(() => {
+    return data.result ? parseFloat(formatEther(data.result[0].toString())) : 0
   }, [data])
 }
 
@@ -155,8 +155,8 @@ export const useTotalAllocPoint = () => {
   const rewardsContract = useHALORewardsContract()
   const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
 
-  return useMemo<string[]>(() => {
-    return data.result ? data.result[0] : []
+  return useMemo<number>(() => {
+    return data.result ? data.result[0].toNumber() : 0
   }, [data])
 }
 
