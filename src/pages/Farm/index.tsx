@@ -105,10 +105,10 @@ const Farm = () => {
             >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="20%">
+                  <RowFixed width="15%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="4%">
+                  <RowFixed width="9%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apy')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="19%">
