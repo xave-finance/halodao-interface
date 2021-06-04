@@ -160,51 +160,13 @@ export const useTotalAllocPoint = () => {
   }, [data])
 }
 
-export const useAllocPoint = (poolIndex: number) => {
+export const useAllocPoint = () => {
   const rewardsContract = useHALORewardsContract()
-  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', [[poolIndex]])
+  const poolAddresses = usePoolAddresses();
+  const args = poolAddresses.map((v, i) => [i]);
+  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 
   return useMemo(() => {
-    const result = results[0].result ? parseFloat(results[0].result['allocPoint'].toString()) : 0;
-
-    return result;
+    return results.map((v,i) => v.result ? parseFloat(v.result['allocPoint'].toString()) : 0)
   }, [results])
-}
-
-/**
- * Internal Methods
- */
-
-const usePoolLength = () => {
-  const rewardsContract = useHALORewardsContract()
-  const data = useSingleCallResult(rewardsContract, 'poolLength')
-
-  return useMemo<number>(() => {
-    return data.result ? data.result[0].toNumber() : 0
-  }, [data])
-}
-
-const useLpToken = (poolLength: number): string[] => {
-  const rewardsContract = useHALORewardsContract()
-
-  const args = useMemo(() => {
-    const pids: string[][] = []
-    for (let i = 0; i < poolLength; i++) {
-      pids.push([`${i}`])
-    }
-    return pids
-  }, [poolLength])
-
-  const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
-
-  return useMemo<string[]>(() => {
-    const addresses: string[] = []
-    for (let i = 0; i < poolLength; i++) {
-      const address = results[i].result
-      if (address) {
-        addresses.push(`${address}`)
-      }
-    }
-    return addresses
-  }, [poolLength, results])
 }

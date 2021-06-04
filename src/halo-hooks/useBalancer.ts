@@ -13,7 +13,8 @@ export type PoolInfo = {
   balancerUrl: string
   liquidity: number
   tokens: PoolTokenInfo[]
-  asToken: Token
+  asToken: Token,
+  allocPoint: number
 }
 
 type PoolTokenInfo = {
@@ -32,15 +33,7 @@ export const useBalancer = (poolAddresses: string[]) => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
   const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
-
-  for (const [index, poolAddress] of poolAddresses.entries()) {
-    console.log('++++++++++++++++')
-    console.log(index, poolAddress)
-    console.log('++++++++++++++++')
-  }
-
-  const allocPoint = useAllocPoint(1);
-  console.log('allocPoint', allocPoint);
+  const allocPoints = useAllocPoint();
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
@@ -99,10 +92,8 @@ export const useBalancer = (poolAddresses: string[]) => {
       const newPoolsInfo: PoolInfo[] = []
       const newPoolTokensAddresses: string[] = []
 
-      console.log('xx', result)
-
       // Convert result to `poolsInfo` so we can easily use it in the components
-      for (const poolAddress of poolAddresses) {
+      for (const [index, poolAddress] of poolAddresses.entries()) {
         // Find the pool info of each poolAddress from graphql response
         const matchingPools = result.pools.filter((p: any) => p.id.toLowerCase() === poolAddress.toLowerCase())
         const pool = matchingPools.length ? matchingPools[0] : undefined
@@ -136,7 +127,8 @@ export const useBalancer = (poolAddresses: string[]) => {
           balancerUrl: `${BALANCER_POOL_URL}${pool.id}`,
           liquidity: parseFloat(pool.liquidity),
           tokens: poolTokensInfo,
-          asToken: poolAsToken
+          asToken: poolAsToken,
+          allocPoint: allocPoints[index]
         })
       }
 

@@ -110,5 +110,6 @@
   "vote": "Vote",
   "insufficientFunds": "Insufficient funds",
   "claimHalo": "Claim HALO",
-  "harvest": "Harvest"
+  "harvest": "Harvest",
+  "apy": "APY"
 }
