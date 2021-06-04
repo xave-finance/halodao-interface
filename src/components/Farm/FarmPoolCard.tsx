@@ -439,12 +439,12 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const USDPrice = tokenPrice[WETHAddr];
   const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
   const monthlyAPY = rewardMonthUSDValue / getPoolLiquidity(poolInfo, tokenPrice);
-  const _apy = (monthlyAPY * 12) * 100;
+  const _apy = monthlyAPY ? ((monthlyAPY * 12) / 100) : 0;
 
   console.log('-----------------------------------')
-  console.log(monthlyAPY ? BigInt(monthlyAPY).toString() : 0, 'monthlyAPY')
-  console.log(_apy ? BigInt(_apy).toString() : 0, '_apy')
-  console.log(_apy ? JSBI.BigInt(_apy).toString() : 0, 'JSBI')
+  console.log(parseFloat(formatEther(monthlyAPY.toString())), 'parseFloat(formatEther(monthlyAPYRaw.toString()))')
+  console.log(formatNumber(monthlyAPY * 12, NumberFormat.percentShort), 'formatNumber(monthlyAPY * 12, NumberFormat.percent)')
+  console.log(getPoolLiquidity(poolInfo, tokenPrice), 'getPoolLiquidity(poolInfo, tokenPrice)')
   console.log('-----------------------------------')
 
   /**
@@ -582,7 +582,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="20%">
+          <StyledRowFixed width="15%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -591,10 +591,10 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="4%">
+          <StyledRowFixed width="9%">
             <LabelText className="first">{t('apy')}:</LabelText>
             <StyledTextForValue>
-              {/* {_apy}% */}
+              {_apy}%
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
