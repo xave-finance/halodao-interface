@@ -15,7 +15,7 @@ import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALOHALO_ADDRESS } from '../../constants'
-import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
@@ -245,25 +245,7 @@ export default function HaloHaloWithdrawPanel({
                     onUserWithdrawInput(val)
                   }}
                 />
-                {account && label !== 'To' && (
-                  <StyledBalanceMax
-                    style={{
-                      border: '1px solid #471BB2',
-                      borderRadius: '22px',
-                      background: '#FFFFFF',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 'bold',
-                      lineHeight: '130%',
-                      width: '77px',
-                      height: '33px',
-                      margin: 0
-                    }}
-                    onClick={handleMaxWithdraw}
-                  >
-                    MAX
-                  </StyledBalanceMax>
-                )}
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
               </>
             )}
           </InputRow>

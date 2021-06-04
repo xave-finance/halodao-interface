@@ -15,7 +15,7 @@ import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
-import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
@@ -249,25 +249,7 @@ export default function CurrencyInputPanel({
                     onUserDepositInput(val)
                   }}
                 />
-                {account && label !== 'To' && (
-                  <StyledBalanceMax
-                    style={{
-                      border: '1px solid #471BB2',
-                      borderRadius: '22px',
-                      background: '#FFFFFF',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 'bold',
-                      lineHeight: '130%',
-                      width: '77px',
-                      height: '33px',
-                      margin: 0
-                    }}
-                    onClick={handleMaxDeposit}
-                  >
-                    MAX
-                  </StyledBalanceMax>
-                )}
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
               </>
             )}
           </InputRow>

@@ -182,7 +182,7 @@ const RowBetweenCard = styled.div`
   }
 `
 
-export default function Saave() {
+export default function HaloHalo() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
   const toggleVestingModal = useVestingModalToggle()
   const dispatch = useDispatch<AppDispatch>()

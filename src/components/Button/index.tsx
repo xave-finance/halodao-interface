@@ -468,3 +468,19 @@ export const ButtonHaloWhite = styled(ButtonWhite)`
   color: ${({ theme }) => theme.primary1};
   font-weight: 700;
 `
+
+export const ButtonMax = styled(ButtonOutlined)`
+  height: 28px;
+  width: 77px;
+  padding: 0;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  fontfamily: 'Open Sans';
+
+  :hover {
+    background: ${({ theme }) => theme.bg2};
+    color: white;
+  }
+`
