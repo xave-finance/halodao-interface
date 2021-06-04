@@ -45,7 +45,7 @@ const useHaloHalo = () => {
     const APY = timePriceChangedRatio * priceChange
 
     setHaloHaloAPY(formatNumber(APY, NumberFormat.percent))
-  }, [halohaloContract])
+  }, [halohaloContract, currentTimestamp])
 
   const getHaloHaloPrice = useCallback(async () => {
     const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
