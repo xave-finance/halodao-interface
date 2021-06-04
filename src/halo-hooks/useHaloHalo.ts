@@ -1,5 +1,5 @@
 import { useCallback, useState, useEffect } from 'react'
-import { ethers, providers } from 'ethers'
+import { ethers } from 'ethers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from '../hooks'
 
@@ -10,6 +10,8 @@ import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
 import { formatEther } from 'ethers/lib/utils'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { useBlockNumber } from 'state/application/hooks'
+import { useTimestampFromBlock } from 'hooks/useTimestampFromBlock'
 
 const { BigNumber } = ethers
 
@@ -24,14 +26,14 @@ const useHaloHalo = () => {
   const [haloHaloAPY, setHaloHaloAPY] = useState('0')
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')
 
+  const currentBlockNumber = useBlockNumber()
+  const currentTimestamp = useTimestampFromBlock(currentBlockNumber) ?? 0
+
   // gets the current APY from the haloHalo contract
   const getAPY = useCallback(async () => {
-    // fixed to 2 decimal points\
-    const currentBlockNumber = await providers?.getDefaultProvider().getBlockNumber()
     // getting it directly so it will not get affected by state changes ensuring accurate apy calculation
     const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
     const genesisTimestamp = Number(await halohaloContract?.genesisTimestamp())
-    const currentTimestamp = await (await providers?.getDefaultProvider().getBlock(currentBlockNumber)).timestamp
 
     // one year in seconds / 31536000
     const timePriceChangedRatio = 31536000 / (currentTimestamp - genesisTimestamp)
