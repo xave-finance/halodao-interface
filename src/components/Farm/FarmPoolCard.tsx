@@ -428,24 +428,34 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
+  // Pool Liquidity
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
+
   // APY
-  const rewardTokenPerSecond = parseInt(useRewardTokenPerSecond().toString());
+  const rewardTokenPerSecond = useRewardTokenPerSecond();
 
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
   const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
-  const totalAllocPoint = parseInt(useTotalAllocPoint().toString());
+  const totalAllocPoint = useTotalAllocPoint();
   const WETHAddr = poolInfo.tokens[1].address;  // WETH address
   const USDPrice = tokenPrice[WETHAddr];
   const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
-  const monthlyAPY = rewardMonthUSDValue / getPoolLiquidity(poolInfo, tokenPrice);
-  const _apy = monthlyAPY ? ((monthlyAPY * 12) / 100) : 0;
+  const monthlyAPY = rewardMonthUSDValue / poolLiquidity;
+  const _apy = monthlyAPY ? ((monthlyAPY * 100) * 12).toFixed(2) : 0
 
-  console.log('-----------------------------------')
-  console.log(parseFloat(formatEther(monthlyAPY.toString())), 'parseFloat(formatEther(monthlyAPYRaw.toString()))')
-  console.log(formatNumber(monthlyAPY * 12, NumberFormat.percentShort), 'formatNumber(monthlyAPY * 12, NumberFormat.percent)')
-  console.log(getPoolLiquidity(poolInfo, tokenPrice), 'getPoolLiquidity(poolInfo, tokenPrice)')
-  console.log('-----------------------------------')
+  // console.log('-----------------------------------')
+  // console.log(rewardTokenPerSecond, 'rewardTokenPerSecond')
+  // console.log(monthlyReward, 'monthlyReward')
+  // console.log(totalAllocPoint, 'totalAllocPoint')
+  // console.log(poolInfo.allocPoint, 'poolInfo.allocPoint')
+  // console.log(USDPrice, 'USDPrice/WETH')
+  // console.log(rewardMonthUSDValue, 'rewardMonthUSDValue')
+  // console.log(poolLiquidity, 'poolLiquidity')
+  // console.log(monthlyAPY, 'monthlyAPY')
+  // console.log(monthlyAPY * 100, 'monthlyAPY * 100')
+  // console.log(_apy, '_apy')
+  // console.log('-----------------------------------')
 
   /**
    * Updating the state of stake button
@@ -591,7 +601,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="9%">
+          <StyledRowFixed width="14%">
             <LabelText className="first">{t('apy')}:</LabelText>
             <StyledTextForValue>
               {_apy}%
@@ -600,7 +610,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
             <StyledTextForValue>
-              {formatNumber(getPoolLiquidity(poolInfo, tokenPrice), NumberFormat.usd)}
+              {formatNumber(poolLiquidity, NumberFormat.usd)}
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
@@ -611,7 +621,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="15%">
+          <StyledRowFixed width="10%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>{formatNumber(unclaimedHALO)} HALO</StyledTextForValue>
           </StyledRowFixed>
