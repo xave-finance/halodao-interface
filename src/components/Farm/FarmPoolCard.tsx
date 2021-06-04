@@ -417,20 +417,20 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
   // Pool Liquidity
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
 
   // APY
-  const rewardTokenPerSecond = useRewardTokenPerSecond();
+  const rewardTokenPerSecond = useRewardTokenPerSecond()
 
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
-  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
-  const totalAllocPoint = useTotalAllocPoint();
-  const WETHAddr = poolInfo.tokens[1].address;  // WETH address
-  const USDPrice = tokenPrice[WETHAddr];
-  const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
-  const monthlyAPY = rewardMonthUSDValue / poolLiquidity;
-  const _apy = monthlyAPY ? ((monthlyAPY * 100) * 12).toFixed(2) : 0
+  const monthlyReward = rewardTokenPerSecond ? 30 * 24 * 60 * 60 * rewardTokenPerSecond : 0
+  const totalAllocPoint = useTotalAllocPoint()
+  const WETHAddr = poolInfo.tokens[1].address // WETH address
+  const USDPrice = tokenPrice[WETHAddr]
+  const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice)
+  const monthlyAPY = rewardMonthUSDValue / poolLiquidity
+  const _apy = monthlyAPY ? (monthlyAPY * 100 * 12).toFixed(2) : 0
 
   // console.log('-----------------------------------')
   // console.log(rewardTokenPerSecond, 'rewardTokenPerSecond')
@@ -591,15 +591,11 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="14%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>
-              {_apy}%
-            </StyledTextForValue>
+            <StyledTextForValue>{_apy}%</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
-            <StyledTextForValue>
-              {formatNumber(poolLiquidity, NumberFormat.usd)}
-            </StyledTextForValue>
+            <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText>{t('stakeable')}:</LabelText>

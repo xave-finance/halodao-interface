@@ -13,7 +13,7 @@ export type PoolInfo = {
   balancerUrl: string
   liquidity: number
   tokens: PoolTokenInfo[]
-  asToken: Token,
+  asToken: Token
   allocPoint: number
 }
 
@@ -33,7 +33,7 @@ export const useBalancer = (poolAddresses: string[]) => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
   const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
-  const allocPoints = useAllocPoint();
+  const allocPoints = useAllocPoint()
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
