@@ -10,11 +10,11 @@ import { NetworkConnector } from './NetworkConnector'
 import { ChainId } from '@sushiswap/sdk'
 
 const RPC = {
-  [ChainId.MAINNET]: `https://eth-mainnet.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_MAINNET}`,
-  [ChainId.ROPSTEN]: `https://eth-ropsten.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_ROPSTEN}`,
-  [ChainId.RINKEBY]: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_RINKEBY}`,
-  [ChainId.GÖRLI]: `https://eth-goerli.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_GOERLI}`,
-  [ChainId.KOVAN]: `https://eth-kovan.alchemyapi.io/v2/${process.env.REACT_APP_ALCHEMY_KEY_KOVAN}`,
+  [ChainId.MAINNET]: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
+  [ChainId.ROPSTEN]: `https://ropsten.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
+  [ChainId.RINKEBY]: `https://rinkeby.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
+  [ChainId.GÖRLI]: `https://goerli.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
+  [ChainId.KOVAN]: `https://kovan.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
   [ChainId.FANTOM]: 'https://rpcapi.fantom.network',
   [ChainId.FANTOM_TESTNET]: 'https://rpc.testnet.fantom.network',
   [ChainId.MATIC]: 'https://rpc-mainnet.maticvigil.com',
@@ -23,11 +23,6 @@ const RPC = {
   [ChainId.BSC]: 'https://bsc-dataseed.binance.org/',
   [ChainId.BSC_TESTNET]: 'https://data-seed-prebsc-2-s3.binance.org:8545',
   [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network'
-}
-
-// Use uniswap's infura URL for local development to prevent 403 error
-if (process.env.NODE_ENV === 'development') {
-  RPC[ChainId.MAINNET] = `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
 }
 
 export const network = new NetworkConnector({
@@ -72,7 +67,7 @@ export const walletconnect = new WalletConnectConnector({
 export const lattice = new LatticeConnector({
   chainId: 1,
   url: RPC[ChainId.MAINNET],
-  appName: 'SushiSwap'
+  appName: 'HaloDAO'
 })
 
 // mainnet only
@@ -90,6 +85,6 @@ export const portis = new PortisConnector({
 // mainnet only
 export const walletlink = new WalletLinkConnector({
   url: RPC[ChainId.MAINNET],
-  appName: 'SushiSwap',
-  appLogoUrl: 'https://raw.githubusercontent.com/sushiswap/art/master/sushi/logo-256x256.png'
+  appName: 'HaloDAO',
+  appLogoUrl: 'https://dev.app.halodao.com/static/media/logo.4ca8f6ca.svg'
 })
