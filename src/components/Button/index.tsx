@@ -480,7 +480,7 @@ export const ButtonMax = styled(ButtonOutlined)`
   fontfamily: 'Open Sans';
 
   :hover {
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.text4};
     color: white;
   }
 `
