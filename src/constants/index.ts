@@ -122,7 +122,9 @@ export const BALANCER_SUBGRAPH_URL =
   process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
 
-const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN : '';
+const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
+  ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
+  : ''
 
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
