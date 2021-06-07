@@ -432,19 +432,6 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const monthlyAPY = rewardMonthUSDValue / poolLiquidity;
   const _apy = monthlyAPY ? ((monthlyAPY * 100) * 12).toFixed(2) : 0
 
-  // console.log('-----------------------------------')
-  // console.log(rewardTokenPerSecond, 'rewardTokenPerSecond')
-  // console.log(monthlyReward, 'monthlyReward')
-  // console.log(totalAllocPoint, 'totalAllocPoint')
-  // console.log(poolInfo.allocPoint, 'poolInfo.allocPoint')
-  // console.log(USDPrice, 'USDPrice/WETH')
-  // console.log(rewardMonthUSDValue, 'rewardMonthUSDValue')
-  // console.log(poolLiquidity, 'poolLiquidity')
-  // console.log(monthlyAPY, 'monthlyAPY')
-  // console.log(monthlyAPY * 100, 'monthlyAPY * 100')
-  // console.log(_apy, '_apy')
-  // console.log('-----------------------------------')
-
   /**
    * Updating the state of stake button
    */
