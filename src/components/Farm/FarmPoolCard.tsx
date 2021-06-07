@@ -422,15 +422,17 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   // APY
   const rewardTokenPerSecond = useRewardTokenPerSecond()
 
+  // HALO address
+  const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN : '';
+
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
   const monthlyReward = rewardTokenPerSecond ? 30 * 24 * 60 * 60 * rewardTokenPerSecond : 0
   const totalAllocPoint = useTotalAllocPoint()
-  const WETHAddr = poolInfo.tokens[1].address // WETH address
-  const USDPrice = tokenPrice[WETHAddr]
+  const USDPrice = tokenPrice[HALOToken]
   const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice)
   const monthlyAPY = rewardMonthUSDValue / poolLiquidity
-  const _apy = monthlyAPY ? (monthlyAPY * 100 * 12).toFixed(2) : 0
+  const _apy = monthlyAPY ? parseFloat((monthlyAPY * 100 * 12).toFixed(2)) : 0
 
   /**
    * Updating the state of stake button
@@ -567,7 +569,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="15%">
+          <StyledRowFixed width="17%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -576,15 +578,15 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="14%">
+          <StyledRowFixed width="16%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{_apy}%</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(_apy, NumberFormat.long)}%</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
             <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="12%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>{formatNumber(bptBalance)} BPT</StyledTextForValue>
           </StyledRowFixed>
