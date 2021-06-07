@@ -90,7 +90,14 @@ export const useBalancer = (poolAddresses: string[]) => {
       const newPoolTokensAddresses: string[] = []
 
       // Convert result to `poolsInfo` so we can easily use it in the components
-      for (const pool of result.pools) {
+      for (const poolAddress of poolAddresses) {
+        // Find the pool info of each poolAddress from graphql response
+        const matchingPools = result.pools.filter((p: any) => p.id.toLowerCase() === poolAddress.toLowerCase())
+        const pool = matchingPools.length ? matchingPools[0] : undefined
+        if (!pool) {
+          continue
+        }
+
         // Process pool tokens info
         const poolTokensInfo: PoolTokenInfo[] = []
         const tokenSymbols: string[] = []
