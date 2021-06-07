@@ -423,7 +423,9 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const rewardTokenPerSecond = useRewardTokenPerSecond()
 
   // HALO address
-  const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN : '';
+  const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
+    ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
+    : ''
 
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
