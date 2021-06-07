@@ -11,6 +11,7 @@ import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { RedirectPathToFarmOnly } from './Swap/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
+import DisclaimerAlert from 'components/Header/DisclaimerAlert'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -55,6 +56,7 @@ export default function App() {
       <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <URLWarning />
+        <DisclaimerAlert />
         <HeaderWrapper>
           <Header />
         </HeaderWrapper>
