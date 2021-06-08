@@ -419,7 +419,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
 
   // APY
-  const _apy = usePoolAPY(tokenPrice, poolInfo);
+  const poolAPY = usePoolAPY(tokenPrice, poolInfo);
 
   /**
    * Updating the state of stake button
@@ -567,7 +567,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{formatNumber(_apy, NumberFormat.long)}%</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(poolAPY, NumberFormat.long)}%</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
