@@ -426,12 +426,12 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
-  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0
+  const monthlyReward = rewardTokenPerSecond ? 30 * 24 * 60 * 60 * rewardTokenPerSecond : 0
   const totalAllocPoint = useTotalAllocPoint()
   const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!]
   const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice)
   const monthlyInterest = rewardMonthUSDValue / poolLiquidity
-  const _apy = monthlyInterest ? parseFloat(((monthlyInterest * 100) * 12).toFixed(2)) : 0
+  const _apy = monthlyInterest ? parseFloat((monthlyInterest * 100 * 12).toFixed(2)) : 0
 
   /**
    * Updating the state of stake button
