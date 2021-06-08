@@ -122,10 +122,6 @@ export const BALANCER_SUBGRAPH_URL =
   process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
   'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
 
-const HALOToken = process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
-  ? process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN
-  : ''
-
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
 export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
@@ -140,7 +136,7 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     havven: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
     aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
     '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
-    halo: HALOToken
+    halo: HALO_TOKEN_ADDRESS[ChainId.KOVAN]!
   },
   [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},
