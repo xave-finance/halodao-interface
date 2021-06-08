@@ -19,7 +19,8 @@ import {
   updateUserExpertMode,
   updateUserSlippageTolerance,
   toggleURLWarning,
-  updateUserSingleHopOnly
+  updateUserSingleHopOnly,
+  toggleIsDisclaimerVisible
 } from './actions'
 
 function serializeToken(token: Token): SerializedToken {
@@ -191,6 +192,31 @@ export function useURLWarningVisible(): boolean {
 export function useURLWarningToggle(): () => void {
   const dispatch = useDispatch()
   return useCallback(() => dispatch(toggleURLWarning()), [dispatch])
+}
+
+export function useIsDisclaimerVisible(): boolean {
+  const dispatch = useDispatch()
+  const isVisible = useSelector((state: AppState) => state.user.isDisclaimerVisible ?? true)
+  const lastDismissed = useSelector((state: AppState) => state.user.disclaimerDismissed)
+
+  return useMemo(() => {
+    if (lastDismissed && !isVisible) {
+      // make sure to show disclaimer alert once every day
+      const currentTimestamp = new Date().getTime()
+      const oneDayInSeconds = 60 * 60 * 24 * 1000
+      if (currentTimestamp - lastDismissed > oneDayInSeconds) {
+        dispatch(toggleIsDisclaimerVisible())
+        return true
+      }
+    }
+
+    return isVisible
+  }, [isVisible, lastDismissed, dispatch])
+}
+
+export function useIsDisclaimerVisibleToggle(): () => void {
+  const dispatch = useDispatch()
+  return useCallback(() => dispatch(toggleIsDisclaimerVisible()), [dispatch])
 }
 
 /**

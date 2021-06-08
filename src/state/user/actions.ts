@@ -38,3 +38,4 @@ export const removeSerializedPair = createAction<{ chainId: number; tokenAAddres
 export const toggleURLWarning = createAction<void>('app/toggleURLWarning')
 export const updatePoolToHarvest = createAction<{ vestingInfo: PoolVestingInfo }>('user/updatePoolToHarvest')
 export const removePoolToHarvest = createAction('user/removePoolToHarvest')
+export const toggleIsDisclaimerVisible = createAction<void>('app/toggleIsDisclaimerVisible')

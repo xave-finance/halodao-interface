@@ -1,18 +1,20 @@
 import { ButtonOutlined } from 'components/Button'
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
-import { TYPE } from 'theme'
+import { ButtonText, CloseIcon, ExtraSmallOnly, HideSmall } from 'theme'
 import warningLogo from '../../assets/svg/logo_warning.svg'
+import { useIsDisclaimerVisible, useIsDisclaimerVisibleToggle } from 'state/user/hooks'
+import DisclaimerModal from './DisclaimerModal'
 
-const StyledAlert = styled.div`
-  display: flex;
+const StyledAlert = styled.div<{ isVisible: any }>`
+  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
   align-items: center;
   position: fixed;
   width: 550px;
   bottom: 40px;
   left: calc((100vw - 550px) / 2);
   padding: 20px;
-  z-index: 99999;
+  z-index: 2;
   background-color: ${({ theme }) => theme.modalBGAlt};
   border-radius: 3px;
   box-shadow: 0px 4px 6px rgba(122, 122, 122, 0.3);
@@ -38,7 +40,7 @@ const StyledText = styled.div`
   padding: 0 30px 0 15px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0 0 15px 0;
+    padding: 0;
   `};
 `
 
@@ -52,6 +54,7 @@ const StyledButton = styled(ButtonOutlined)`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
+    margin: 15px 0;
   `};
 
   &:focus {
@@ -65,16 +68,51 @@ const StyledButton = styled(ButtonOutlined)`
   }
 `
 
+const StyledCloseWrapper = styled.div`
+  .close-button {
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .close-icon {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+  }
+`
+
 const DisclaimerAlert = () => {
+  const toggleVisibility = useIsDisclaimerVisibleToggle()
+  const isVisible = useIsDisclaimerVisible()
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   return (
-    <StyledAlert>
-      <img src={warningLogo} alt="Warning logo" />
-      <StyledText>
-        This app is in beta and the contracts have been audited, supply liquidity at your own risk and do your own
-        research.
-      </StyledText>
-      <StyledButton>Read our disclaimer</StyledButton>
-    </StyledAlert>
+    <>
+      {isModalOpen && <DisclaimerModal onDismiss={() => setIsModalOpen(false)} />}
+
+      <StyledAlert isVisible={isVisible}>
+        <img src={warningLogo} alt="Warning logo" />
+        <StyledText>
+          This app is in beta and the contracts have been audited, supply liquidity at your own risk and do your own
+          research.
+        </StyledText>
+        <StyledButton onClick={() => setIsModalOpen(true)}>Read our disclaimer</StyledButton>
+        <StyledCloseWrapper>
+          <ExtraSmallOnly>
+            <ButtonText className="close-button" onClick={toggleVisibility}>
+              Close
+            </ButtonText>
+          </ExtraSmallOnly>
+          <HideSmall>
+            <CloseIcon className="close-icon" onClick={toggleVisibility} color="white" />
+          </HideSmall>
+        </StyledCloseWrapper>
+      </StyledAlert>
+    </>
   )
 }
 
