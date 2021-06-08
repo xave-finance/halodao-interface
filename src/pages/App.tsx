@@ -12,6 +12,7 @@ import { RedirectPathToFarmOnly } from './Swap/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
 import DisclaimerAlert from 'components/Header/DisclaimerAlert'
+import Demo from './Test/Demo'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ export default function App() {
             <Switch>
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
+              {process.env.NODE_ENV === 'development' && <Route exact strict path="/demo" component={Demo} />}
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>
