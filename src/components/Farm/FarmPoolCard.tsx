@@ -416,10 +416,10 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
   // Pool Liquidity
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
 
   // APY
-  const poolAPY = usePoolAPY(tokenPrice, poolInfo);
+  const poolAPY = usePoolAPY(tokenPrice, poolInfo)
 
   /**
    * Updating the state of stake button
