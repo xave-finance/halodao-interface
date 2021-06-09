@@ -196,9 +196,9 @@ export const usePoolAPY = (
   return useMemo<number>(() => {
     const tokenAddr = chainId ? HALO_TOKEN_ADDRESS[chainId] : ''
     // (days * hrs * min * s) * reward token/s
-    const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
+    const monthlyReward = rewardTokenPerSecond ? 30 * 24 * 60 * 60 * rewardTokenPerSecond : 0
     const USDPrice = tokenAddr ? tokenPrice[tokenAddr] : 0
-    const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
+    const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice)
     // Note that this is not a monthlyAPY
     const monthlyInterest = rewardMonthUSDValue / poolLiquidity
 
