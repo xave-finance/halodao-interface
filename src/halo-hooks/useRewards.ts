@@ -201,7 +201,7 @@ export const usePoolAPY = (
     const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
     // Note that this is not a monthlyAPY
     const monthlyInterest = rewardMonthUSDValue / poolLiquidity
-    
+
     // Convert monthlyInterest to monthly APY before multiplying to get the APY
     return monthlyInterest ? parseFloat((monthlyInterest * 100 * 12).toFixed(2)) : 0
   }, [chainId, rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity])
