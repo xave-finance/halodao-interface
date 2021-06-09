@@ -3,7 +3,14 @@ import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
 
-import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates, ButtonHaloSimpleStates } from '../Button'
+import {
+  ButtonHalo,
+  ButtonHaloOutlined,
+  ButtonOutlined,
+  ButtonHaloStates,
+  ButtonHaloSimpleStates,
+  ButtonMax
+} from '../Button'
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
@@ -126,12 +133,12 @@ const ManageCloseButton = styled(ButtonOutlined)`
   font-size: 16px;
 
   :hover {
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.text4};
     color: white;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.text4};
     color: white;
     width: 100%;
     border-radius: 4px;
@@ -234,6 +241,11 @@ const StakeUnstakeChild = styled.div`
     width: 100%;
     margin-bottom: 20px;
   `};
+
+  #stake-button,
+  #unstake-button {
+    margin-top: 6px;
+  }
 `
 
 const HideSmallFullWidth = styled(HideSmall)`
@@ -616,6 +628,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
+                  <ButtonMax onClick={() => setStakeAmount(`${bptBalance}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHalo
@@ -670,6 +683,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
+                  <ButtonMax onClick={() => setUnstakeAmount(`${bptStaked}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHaloOutlined

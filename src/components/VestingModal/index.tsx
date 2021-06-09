@@ -48,11 +48,6 @@ const StyledContent = styled.div`
     font-size: 16px;
     font-weight: 700;
     line-height: 20.8px;
-    margin-bottom: 27px;
-  }
-
-  img {
-    margin-bottom: 15px;
   }
 
   button {
