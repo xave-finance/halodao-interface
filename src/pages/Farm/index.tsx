@@ -10,6 +10,8 @@ import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
+import { useActiveWeb3React } from '../../hooks'
+import { ChainId } from '@sushiswap/sdk'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -61,6 +63,13 @@ const Farm = () => {
   const poolAddresses = usePoolAddresses()
   const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
   const { t } = useTranslation()
+
+  const stakeToEarnMessage = {
+    [ChainId.BSC]: t('stakeToEarnSushi'),
+    [ChainId.BSC_TESTNET]: t('stakeToEarnSushi'),
+    [ChainId.MAINNET]: t('stakeToEarn'),
+    [ChainId.KOVAN]: t('stakeToEarn')
+  }
 
   return (
     <>

@@ -1,8 +1,8 @@
-import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL, COINGECKO_KNOWN_TOKENS } from '../constants'
+import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL, COINGECKO_KNOWN_TOKENS, SUSHI_SUBGRAPH_URL } from '../constants'
 import { useEffect, useState } from 'react'
 import { subgraphRequest } from 'utils/balancer'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
-import { Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 
@@ -84,7 +84,14 @@ export const useBalancer = (poolAddresses: string[]) => {
         }
       }
 
-      const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
+      const querySushi = {
+        
+      }
+
+      const result = await subgraphRequest(
+        chainId === ChainId.BSC_TESTNET ? SUSHI_SUBGRAPH_URL : BALANCER_SUBGRAPH_URL,
+        query
+      )
 
       const newPoolsInfo: PoolInfo[] = []
       const newPoolTokensAddresses: string[] = []

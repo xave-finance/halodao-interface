@@ -31,6 +31,8 @@ const useLpToken = (poolLength: number): string[] => {
 
   const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
 
+  console.log(results[0])
+
   return useMemo<string[]>(() => {
     const addresses: string[] = []
     for (let i = 0; i < poolLength; i++) {
@@ -50,6 +52,8 @@ const useLpToken = (poolLength: number): string[] => {
 export const usePoolAddresses = () => {
   const length = usePoolLength()
   const addresses = useLpToken(length)
+
+  console.log('Pool addresses', addresses)
   return useMemo(() => addresses, [addresses])
 }
 

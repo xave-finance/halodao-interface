@@ -116,6 +116,9 @@ export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || ''
 }
 
+// Sushi Url
+export const SUSHI_SUBGRAPH_URL = process.env.REACT_APP_SUSHI_SUBGRAPH_URL || ''
+
 // Balancer URLs
 export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'https://pools.balancer.exchange/#/pool'
 export const BALANCER_SUBGRAPH_URL =
