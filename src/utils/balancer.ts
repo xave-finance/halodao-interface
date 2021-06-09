@@ -1,5 +1,6 @@
 import { jsonToGraphQLQuery } from 'json-to-graphql-query'
-import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 export async function subgraphRequest(url: string, query: {}) {
   const res = await fetch(url, {

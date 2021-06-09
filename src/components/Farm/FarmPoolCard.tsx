@@ -29,7 +29,8 @@ import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
@@ -614,7 +615,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                   <TYPE.label>BALANCE: {formatNumber(bptBalance)} BPT</TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
-                  <GetBPTButton href={poolInfo.balancerUrl}>
+                  <GetBPTButton href={poolInfo.addLiquidityUrl}>
                     {t('getBPTTokens')}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>

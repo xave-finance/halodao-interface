@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
 import styled from 'styled-components'
 import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
@@ -8,10 +7,9 @@ import { AutoColumn } from '../../components/Column'
 import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import FarmSummary from 'components/Farm/FarmSummary'
 import Card from 'components/Card'
-import { useBalancer } from 'halo-hooks/useBalancer'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
-import { useActiveWeb3React } from '../../hooks'
-import { ChainId } from '@sushiswap/sdk'
+import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
+import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -61,8 +59,18 @@ const StyledExternalLink = styled(ExternalLink)`
 
 const Farm = () => {
   const poolAddresses = usePoolAddresses()
-  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
+  const fetchPoolInfo = usePoolInfo(poolAddresses)
   const { t } = useTranslation()
+  const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(tokenAddresses)
+
+  useEffect(() => {
+    fetchPoolInfo().then(result => {
+      setPoolsInfo(result.poolsInfo)
+      setTokenAddresses(result.tokenAddresses)
+    })
+  }, [fetchPoolInfo])
 
   const stakeToEarnMessage = {
     [ChainId.BSC]: t('stakeToEarnSushi'),
