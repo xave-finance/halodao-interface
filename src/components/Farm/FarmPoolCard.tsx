@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
-import { ChainId } from '@sushiswap/sdk'
 
 import {
   ButtonHalo,
@@ -40,8 +39,7 @@ import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
-  useRewardTokenPerSecond,
-  useTotalAllocPoint
+  usePoolAPY
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -49,7 +47,6 @@ import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
-import { HALO_TOKEN_ADDRESS } from '../../constants/index'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -431,19 +428,10 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
   // Pool Liquidity
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
 
   // APY
-  const rewardTokenPerSecond = useRewardTokenPerSecond()
-
-  // 1 month in seconds
-  // (days * hrs * min * s) * reward token per second
-  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0
-  const totalAllocPoint = useTotalAllocPoint()
-  const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!]
-  const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice)
-  const monthlyInterest = rewardMonthUSDValue / poolLiquidity
-  const _apy = monthlyInterest ? parseFloat(((monthlyInterest * 100) * 12).toFixed(2)) : 0
+  const _apy = usePoolAPY(tokenPrice, poolInfo);
 
   /**
    * Updating the state of stake button
