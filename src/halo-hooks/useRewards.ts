@@ -4,7 +4,6 @@ import { useSingleCallResult, useSingleContractMultipleData } from 'state/multic
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
-import { ChainId } from '@sushiswap/sdk'
 
 import { TokenPrice } from './useBalancer'
 import { HALO_TOKEN_ADDRESS } from '../constants/index'
@@ -192,15 +191,18 @@ export const usePoolAPY = (
   allocPoint: number,
   poolLiquidity: number
 ) => {
+  const { chainId } = useActiveWeb3React()
+
   return useMemo<number>(() => {
+    const tokenAddr = chainId ? HALO_TOKEN_ADDRESS[chainId] : ''
     // (days * hrs * min * s) * reward token/s
     const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
-    const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!];
+    const USDPrice = tokenAddr ? tokenPrice[tokenAddr] : 0
     const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
-    // Not in percent so not APY yet
+    // Note that this is not a monthlyAPY
     const monthlyInterest = rewardMonthUSDValue / poolLiquidity
     
     // Convert monthlyInterest to monthly APY before multiplying to get the APY
     return monthlyInterest ? parseFloat((monthlyInterest * 100 * 12).toFixed(2)) : 0
-  }, [rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity])
+  }, [chainId, rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity])
 }

@@ -141,7 +141,7 @@ export const useBalancer = (poolAddresses: string[]) => {
     } else {
       setPoolsInfo([])
     }
-  }, [poolAddresses, chainId])
+  }, [poolAddresses, allocPoints, chainId])
 
   /**
    * Gets the price of the all the pool tokens & stores it in `tokenPrice` state
