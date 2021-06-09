@@ -59,30 +59,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   background-color: ${({ theme }) => theme.bg1};
 `
 
-const StyledBalanceMax = styled.button`
-  height: 28px;
-  padding-right: 8px;
-  padding-left: 8px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
-  }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
-`
-
 interface CurrencyInputPanelProps {
   label?: string
   lpTokenAddress?: string
