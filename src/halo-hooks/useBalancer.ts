@@ -116,7 +116,7 @@ export const useBalancer = (poolAddresses: string[]) => {
 
         // Process pool info
         const pair = tokenSymbols.join('/')
-        const poolAsToken = new Token(chainId, pool.id, 18, 'BPT', `BPT: ${pool.pair}`)
+        const poolAsToken = new Token(chainId, getAddress(pool.id), 18, 'BPT', `BPT: ${pool.pair}`)
 
         newPoolsInfo.push({
           pair,
