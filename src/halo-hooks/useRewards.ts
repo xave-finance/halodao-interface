@@ -171,7 +171,7 @@ export const useAllocPoint = () => {
   const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 
   return useMemo(() => {
-    return results.map((v, i) => (v.result ? parseFloat(v.result['allocPoint'].toString()) : 0))
+    return results.map(v => (v.result ? v.result['allocPoint'].toNumber() : 0))
   }, [results])
 }
 
@@ -192,16 +192,15 @@ export const usePoolAPY = (
   allocPoint: number,
   poolLiquidity: number
 ) => {
-  // (days * hrs * min * s) * reward token/s
-  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
-  const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!];
-  const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
-  // Not in percent so not APY yet
-  const monthlyInterest = rewardMonthUSDValue / poolLiquidity;
-  // Convert monthlyInterest to monthly APY before multiplying to get the APY
-  const apy = monthlyInterest ? parseFloat(((monthlyInterest * 100) * 12).toFixed(2)) : 0;
-
   return useMemo<number>(() => {
-    return apy
-  }, [apy])
+    // (days * hrs * min * s) * reward token/s
+    const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
+    const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!];
+    const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
+    // Not in percent so not APY yet
+    const monthlyInterest = rewardMonthUSDValue / poolLiquidity
+    
+    // Convert monthlyInterest to monthly APY before multiplying to get the APY
+    return monthlyInterest ? parseFloat((monthlyInterest * 100 * 12).toFixed(2)) : 0
+  }, [rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity])
 }
