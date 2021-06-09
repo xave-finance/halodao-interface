@@ -428,17 +428,24 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
-  // ** APY
-  const rewardTokenPerSecond = useRewardTokenPerSecond();
-  console.log('rewardTokenPerSecond', rewardTokenPerSecond.toString());
+  // APY
+  const rewardTokenPerSecond = parseInt(useRewardTokenPerSecond().toString());
 
   // 1 month in seconds
   // (days * hrs * min * s) * reward token per second
-  const monthlyReward = (30 * 24 * 60 * 60) * parseFloat(rewardTokenPerSecond.toString());
-  console.log('monthlyReward', monthlyReward);
+  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
+  const totalAllocPoint = parseInt(useTotalAllocPoint().toString());
+  const WETHAddr = poolInfo.tokens[1].address;  // WETH address
+  const USDPrice = tokenPrice[WETHAddr];
+  const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
+  const monthlyAPY = rewardMonthUSDValue / getPoolLiquidity(poolInfo, tokenPrice);
+  const _apy = (monthlyAPY * 12) * 100;
 
-  const totalAllocPoint = useTotalAllocPoint();
-  console.log('totalAllocPoint', totalAllocPoint.toString());
+  console.log('-----------------------------------')
+  console.log(monthlyAPY ? BigInt(monthlyAPY).toString() : 0, 'monthlyAPY')
+  console.log(_apy ? BigInt(_apy).toString() : 0, '_apy')
+  console.log(_apy ? JSBI.BigInt(_apy).toString() : 0, 'JSBI')
+  console.log('-----------------------------------')
 
   /**
    * Updating the state of stake button
@@ -575,7 +582,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="22%">
+          <StyledRowFixed width="20%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -583,6 +590,12 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             />
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed width="4%">
+            <LabelText className="first">{t('apy')}:</LabelText>
+            <StyledTextForValue>
+              {/* {_apy}% */}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
