@@ -22,6 +22,10 @@ const StyledWrapper = styled(AutoColumn)`
 `
 
 const Demo = () => {
+  const handleButtonClick = () => {
+    console.log('button clicked!')
+  }
+
   return (
     <StyledWrapper>
       <h1>App Theme</h1>
@@ -87,30 +91,30 @@ const Demo = () => {
       <h2>Component: Icons</h2>
       <RowBetween>
         <Column>
-          <CloseIcon color={themeColor.primary1} onClick={() => {}} />
+          <CloseIcon color={themeColor.primary1} onClick={handleButtonClick} />
           CloseIcon
         </Column>
       </RowBetween>
 
       <h2>Component: Buttons</h2>
       <RowFixed marginBottom={10}>
-        <Button onClick={() => {}}>Button</Button>
-        <ButtonText onClick={() => {}}>ButtonText</ButtonText>
+        <Button onClick={handleButtonClick}>Button</Button>
+        <ButtonText onClick={handleButtonClick}>ButtonText</ButtonText>
       </RowFixed>
       <RowFixed marginBottom={10}>
-        <ButtonPrimary onClick={() => {}}>ButtonPrimary</ButtonPrimary>
-        <ButtonPrimaryNormal onClick={() => {}}>ButtonPrimaryNormal</ButtonPrimaryNormal>
-        <ButtonOutlined onClick={() => {}}>ButtonOutlined</ButtonOutlined>
+        <ButtonPrimary onClick={handleButtonClick}>ButtonPrimary</ButtonPrimary>
+        <ButtonPrimaryNormal onClick={handleButtonClick}>ButtonPrimaryNormal</ButtonPrimaryNormal>
+        <ButtonOutlined onClick={handleButtonClick}>ButtonOutlined</ButtonOutlined>
       </RowFixed>
       <RowFixed>
-        <ButtonSecondary onClick={() => {}}>ButtonSecondary</ButtonSecondary>
+        <ButtonSecondary onClick={handleButtonClick}>ButtonSecondary</ButtonSecondary>
       </RowFixed>
 
       <h2>Component: HALO buttons</h2>
       <RowFixed>
-        <ButtonHalo onClick={() => {}}>ButtonHalo</ButtonHalo>
-        <ButtonHaloOutlined onClick={() => {}}>ButtonHaloOutlined</ButtonHaloOutlined>
-        <ButtonHaloWhite onClick={() => {}}>ButtonHaloWhite</ButtonHaloWhite>
+        <ButtonHalo onClick={handleButtonClick}>ButtonHalo</ButtonHalo>
+        <ButtonHaloOutlined onClick={handleButtonClick}>ButtonHaloOutlined</ButtonHaloOutlined>
+        <ButtonHaloWhite onClick={handleButtonClick}>ButtonHaloWhite</ButtonHaloWhite>
       </RowFixed>
     </StyledWrapper>
   )
