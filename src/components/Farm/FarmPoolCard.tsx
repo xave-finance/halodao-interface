@@ -38,7 +38,9 @@ import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
-  useUnclaimedRewardsPerPool
+  useUnclaimedRewardsPerPool,
+  useRewardTokenPerSecond,
+  useTotalAllocPoint
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -425,6 +427,18 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
+
+  // ** APY
+  const rewardTokenPerSecond = useRewardTokenPerSecond();
+  console.log('rewardTokenPerSecond', rewardTokenPerSecond.toString());
+
+  // 1 month in seconds
+  // (days * hrs * min * s) * reward token per second
+  const monthlyReward = (30 * 24 * 60 * 60) * parseFloat(rewardTokenPerSecond.toString());
+  console.log('monthlyReward', monthlyReward);
+
+  const totalAllocPoint = useTotalAllocPoint();
+  console.log('totalAllocPoint', totalAllocPoint.toString());
 
   /**
    * Updating the state of stake button
