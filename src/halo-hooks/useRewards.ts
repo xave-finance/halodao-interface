@@ -6,8 +6,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { ChainId } from '@sushiswap/sdk'
 
-import { PoolInfo, TokenPrice } from './useBalancer'
-import { getPoolLiquidity } from '../utils/balancer'
+import { TokenPrice } from './useBalancer'
 import { HALO_TOKEN_ADDRESS } from '../constants/index'
 
 /**
@@ -176,15 +175,27 @@ export const useAllocPoint = () => {
   }, [results])
 }
 
-export const usePoolAPY = (tokenPrice: TokenPrice, poolInfo: PoolInfo) => {
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice);
-  const rewardTokenPerSecond = useRewardTokenPerSecond();
-
+/**
+ * Returns APY in percentage
+ *
+ * @param {number} rewardTokenPerSecond From the contract
+ * @param {number} totalAllocPoint From the contract
+ * @param {TokenPrice} tokenPrice From coingecko
+ * @param {number} allocPoint Pool allocation point from contract
+ * @param {number} poolLiquidity Staked USD in a pool
+ * @return {float} APY in percentage
+ */
+export const usePoolAPY = (
+  rewardTokenPerSecond: number,
+  totalAllocPoint: number,
+  tokenPrice: TokenPrice,
+  allocPoint: number,
+  poolLiquidity: number
+) => {
   // (days * hrs * min * s) * reward token/s
   const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0;
-  const totalAllocPoint = useTotalAllocPoint();
   const USDPrice = tokenPrice[HALO_TOKEN_ADDRESS[ChainId.KOVAN]!];
-  const rewardMonthUSDValue = (poolInfo.allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
+  const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * USDPrice);
   // Not in percent so not APY yet
   const monthlyInterest = rewardMonthUSDValue / poolLiquidity;
   // Convert monthlyInterest to monthly APY before multiplying to get the APY
