@@ -8,7 +8,7 @@ import { transparentize } from 'polished'
 import styled from 'styled-components'
 import { TYPE, HideSmall } from 'theme'
 import useFarmSummary from 'halo-hooks/useFarmSummary'
-import { PoolInfo } from 'halo-hooks/useBalancer'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
 import HaloHalo from '../../assets/images/halo-token.png'
 
