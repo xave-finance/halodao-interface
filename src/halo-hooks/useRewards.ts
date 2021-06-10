@@ -64,14 +64,14 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
     () =>
       poolIds.length > 0
         ? poolIds.reduce<{ [poolId: number]: number }>((memo, poolId, i) => {
-            if (!results[i]) return memo
+          if (!results[i]) return memo
 
-            const reward = results[i].result
-            if (reward) {
-              memo[poolId] = parseFloat(formatEther(reward.toString()))
-            }
-            return memo
-          }, {})
+          const reward = results[i].result
+          if (reward) {
+            memo[poolId] = parseFloat(formatEther(reward.toString()))
+          }
+          return memo
+        }, {})
         : {},
     [poolIds, results]
   )
@@ -88,14 +88,14 @@ export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: numb
     () =>
       poolIds.length > 0
         ? poolIds.reduce<{ [poolId: number]: number }>((memo, poolId, i) => {
-            if (!results[i]) return memo
+          if (!results[i]) return memo
 
-            const userInfo = results[i].result
-            if (userInfo) {
-              memo[poolId] = parseFloat(formatEther(userInfo.amount.toString()))
-            }
-            return memo
-          }, {})
+          const userInfo = results[i].result
+          if (userInfo) {
+            memo[poolId] = parseFloat(formatEther(userInfo.amount.toString()))
+          }
+          return memo
+        }, {})
         : {},
     [poolIds, results]
   )
@@ -163,7 +163,7 @@ export const useTotalAllocPoint = () => {
 export const useAllocPoints = () => {
   const rewardsContract = useHALORewardsContract()
   const poolAddresses = usePoolAddresses()
-  const args = poolAddresses.map((v, i) => [i])
+  const args = useMemo(() => poolAddresses.map((v, i) => [i]), [poolAddresses])
   const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 
   return useMemo(() => {
