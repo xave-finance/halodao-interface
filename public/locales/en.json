@@ -97,19 +97,9 @@
   "stakeable": "Stakable",
   "poolSummaryStakeable": "My Stakeable Value",
   "poolSummaryStaked": "My Staked Value",
-<<<<<<< refs/remotes/origin/develop
-<<<<<<< refs/remotes/origin/develop
   "poolSummaryHaloEarned": "Unclaimed RNBW Earned",
-=======
-  "poolSummaryHaloEarned": "Unclaimed HALO Earned",
->>>>>>> Drop: Earned column + rename My HALO earned to Unclaimed HALO earned
   "totalPoolValue": "Total Pool Value",
   "tokenCardRewardDescription": "Every Rainbow Candy (RNBW) you earn is automatically staked in Rainbow Pool to earn xRNBW, vesting rewards! Press Harvest or go to the Vesting tab to manage rewards.",
-=======
-  "poolSummaryHaloEarned": "Unclaimed RNBW Earned",
-  "totalPoolValue": "Total Pool Value",
-  "tokenCardRewardDescription": "Every Rainbow (RNBW) token you earn is automatically staked in Rainbow Drop (xRNBW) to earn vesting rewards! Press Harvest or go to the Vesting tab to manage rewards.",
->>>>>>> Rename HALO to RNBW and xRNBW
   "valueStaked": "Value Staked",
   "earned": "Earned",
   "getTokens": "To stake, get %s Tokens here",
@@ -121,7 +111,6 @@
   "vote": "Vote",
   "insufficientFunds": "Insufficient funds",
   "claimHalo": "Claim RNBW",
-<<<<<<< refs/remotes/origin/develop
   "claimXHalo": "Claim {{amount}} RNBW",
   "harvest": "Harvest",
   "max": "MAX",
@@ -132,7 +121,4 @@
   "emptyStateSubTitleInFarm": "You’re one step away from earning. Connect your wallet to join the farm.",
   "emptyStateSubTitleInVest": "You’re one step away from earning. Connect your wallet to start to vest.",
   "add": "Add"
-=======
-  "harvest": "Harvest"
->>>>>>> Rename HALO to RNBW and xRNBW
 }

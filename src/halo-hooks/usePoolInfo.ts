@@ -32,6 +32,7 @@ export type PoolTokenInfo = {
 }
 
 export const usePoolInfo = (poolAddresses: string[]) => {
+  console.log('poolAddresses', poolAddresses)
   const { balancer, uni, sushi } = groupByPoolProvider(poolAddresses)
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
@@ -41,7 +42,7 @@ export const usePoolInfo = (poolAddresses: string[]) => {
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
     let tokenAddresses: string[] = []
-
+    console.log('bal', balancer.length)
     if (balancer.length) {
       const balancerResult = await fetchBalancerPoolInfo()
       poolsInfo = [...poolsInfo, ...balancerResult.poolsInfo]
