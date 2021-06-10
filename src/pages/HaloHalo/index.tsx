@@ -221,13 +221,8 @@ export default function HaloHalo() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-<<<<<<< refs/remotes/origin/develop
                         This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight
                         to the Rainbow Pool to earn daily.
-=======
-                        This is where your RNBW token rewards go. We saved you some gas and sent it straight to the
-                        Rainbow Pool to earn daily.
->>>>>>> Rename HALO to RNBW and xRNBW
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -260,15 +255,9 @@ export default function HaloHalo() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-<<<<<<< refs/remotes/origin/develop
                       <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
                       <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-=======
-                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
->>>>>>> Rename HALO to RNBW and xRNBW
                       <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
@@ -283,13 +272,8 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-<<<<<<< refs/remotes/origin/develop
               The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but
               lose out on daily RNBW vesting multiples.
-=======
-              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
-              out on daily RNBW vesting multiples.
->>>>>>> Rename HALO to RNBW and xRNBW
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
