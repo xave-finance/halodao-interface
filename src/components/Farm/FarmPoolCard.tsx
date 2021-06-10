@@ -33,6 +33,7 @@ import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
@@ -40,9 +41,7 @@ import {
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
-  useTotalAllocPoint,
-  useMonthlyReward,
-  usePoolAPY
+  useTotalAllocPoint
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -435,9 +434,10 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
   // APY
   const rewardTokenPerSecond = useRewardTokenPerSecond()
+  const _monthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const poolAPY = usePoolAPY(chainId ?? 0, rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = apy(chainId ?? 0, _monthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
 
   /**
    * Updating the state of stake button

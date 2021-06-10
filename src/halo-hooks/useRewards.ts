@@ -1,14 +1,9 @@
-import { ChainId } from '@sushiswap/sdk'
-
 import { useHALORewardsContract } from 'hooks/useContract'
 import { useCallback, useMemo } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
-
-import { TokenPrice } from './useBalancer'
-import { HALO_TOKEN_ADDRESS } from '../constants/index'
 
 /**
  * Internal Methods
@@ -174,46 +169,4 @@ export const useAllocPoints = () => {
   return useMemo(() => {
     return results.map(v => (v.result ? v.result['allocPoint'].toNumber() : 0))
   }, [results])
-}
-
-export const useMonthlyReward = (rewardTokenPerSecond: number) => {
-  const monthlyReward = rewardTokenPerSecond ? (30 * 24 * 60 * 60) * rewardTokenPerSecond : 0
-
-  return useMemo<number>(() => {
-    return monthlyReward
-  }, [monthlyReward])
-}
-
-/**
- * Returns APY in percentage
- *
- * @param {number} rewardTokenPerSecond From the contract
- * @param {number} totalAllocPoint From the contract
- * @param {TokenPrice} tokenPrice From coingecko
- * @param {number} allocPoint Pool allocation point from contract
- * @param {number} poolLiquidity Staked USD in a pool
- * @return {float} APY in percentage
- */
-export const usePoolAPY = (
-  chainId: ChainId,
-  rewardTokenPerSecond: number,
-  totalAllocPoint: number,
-  tokenPrice: TokenPrice | number,
-  allocPoint: number,
-  poolLiquidity: number
-) => {
-  return useMemo<number>(() => {
-    const tokenAddr = HALO_TOKEN_ADDRESS[chainId] ?? ''
-
-    // (days * hrs * min * s) * reward token/s
-    const monthlyReward = rewardTokenPerSecond ? 30 * 24 * 60 * 60 * rewardTokenPerSecond : 0
-    // Can accept number or token price address
-    const USDPrice = typeof tokenPrice === 'object' && tokenAddr !== undefined ? tokenPrice[tokenAddr] : tokenPrice
-    const rewardMonthUSDValue = (allocPoint / totalAllocPoint) * (monthlyReward * +USDPrice)
-    // Note that this is not a monthlyAPY
-    const monthlyInterest = rewardMonthUSDValue / poolLiquidity
-
-    // Convert monthlyInterest to monthly APY before multiplying to get the APY
-    return monthlyInterest ? parseFloat((monthlyInterest * 100 * 12).toFixed(2)) : 0
-  }, [chainId, rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity])
 }
