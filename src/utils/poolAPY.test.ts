@@ -1,10 +1,4 @@
-import {
-  monthlyReward,
-  rewardMonthUSDValue,
-  monthlyInterest,
-  monthlyAPY,
-  apy
-} from 'utils/poolAPY'
+import { monthlyReward, rewardMonthUSDValue, monthlyInterest, monthlyAPY, apy } from 'utils/poolAPY'
 
 describe('Percentage Yield', () => {
   /**
@@ -25,8 +19,8 @@ describe('Percentage Yield', () => {
   const totalAllocPoint = 100
   const allocPoint = 100
   const poolLiquidity = 100
-  const _monthlyReward = 1000;
-  const _monthlyRewardUSD = 1000;
+  const _monthlyReward = 1000
+  const _monthlyRewardUSD = 1000
   const _monthlyInterest = 10
   const _monthlyAPY = 1000
   const _apy = 12000
@@ -36,12 +30,9 @@ describe('Percentage Yield', () => {
   })
 
   it('monthly reward in USD', () => {
-    expect(rewardMonthUSDValue(
-      allocPoint,
-      totalAllocPoint,
-      monthlyReward(rewardTokenPerSecond),
-      USDPrice
-    )).toEqual(_monthlyRewardUSD)
+    expect(rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward(rewardTokenPerSecond), USDPrice)).toEqual(
+      _monthlyRewardUSD
+    )
   })
 
   it('monthly interest', () => {
