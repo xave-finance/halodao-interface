@@ -216,7 +216,7 @@ export default function HaloHalo() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the
+                        This is where your RNBW token rewards go. We saved you some gas and sent it straight to the
                         Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
@@ -236,7 +236,7 @@ export default function HaloHalo() {
                   disableCurrencySelect={true}
                   customBalanceText={'Available to deposit: '}
                   id="stake-liquidity-token"
-                  buttonText="Claim HALO"
+                  buttonText="Claim RNBW"
                   cornerRadiusBottomNone={true}
                 />
                 <HaloHaloWithdrawPanel
@@ -251,9 +251,9 @@ export default function HaloHalo() {
                   <RowBetween>
                     <HaloPairCenterContainer>
                       <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
                       <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -267,8 +267,8 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep RNBW, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
-              out on daily HALO vesting multiples.
+              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
+              out on daily RNBW vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

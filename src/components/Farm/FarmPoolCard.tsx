@@ -724,7 +724,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
+                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
