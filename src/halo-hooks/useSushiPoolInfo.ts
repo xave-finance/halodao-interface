@@ -19,29 +19,29 @@ const XSGD_TOKEN_ADDRESS = '0x979b00492a1cbf691b1fae867936c01bab0b8c4d'
 
 export const useSushiPoolInfo = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
+
+  // BSC Testnet Pairs
   const BUSD_BNB_SLP_Contract = useContract(BUSD_BNB_LPT_ADDRESS, PAIR)
   const BUSD_XSGD_SLP_Contract = useContract(BUSD_XSGD_LPT_ADDRESS, PAIR)
+
+  // Matic Testnet Pairs
 
   const fetchPoolInfo = useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
     const tokenAddresses: string[] = []
-    /**
-     * tokenPrice[0] BUSD
-     * tokenPrice[1] xSGD
-     * tokenPrice[2] BNB
-     */
+
+    // get token prices from main net
     const tokenPrice = await getTokensUSDPrice(GetPriceBy.id, ['busd', 'xsgd', 'binancecoin'])
 
-    // ? - Add reserves in liqudity and
+    // get reserves from the contract
     const BUSD_BNB_RESERVES = await BUSD_BNB_SLP_Contract?.getReserves()
     const BUSD_XSGD_RESERVES = await BUSD_XSGD_SLP_Contract?.getReserves()
-
-    //console.log(tokenPrices)
 
     if (!chainId) return { poolsInfo, tokenAddresses }
 
     /**
      * For now we'll hardcode the pool token addresses & other info
+     * Liquidity is calculated as reserves * coingecko token price in USD
      */
     for (const poolAddress of poolAddresses) {
       if (poolAddress === BUSD_BNB_LPT_ADDRESS) {
