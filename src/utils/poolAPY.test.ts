@@ -7,6 +7,18 @@ import {
 } from 'utils/poolAPY'
 
 describe('Percentage Yield', () => {
+  /**
+   * Based from the scenario given by Chris
+   *
+   * 100 USD staked in the pool by 1 wallet,
+   * 1k HALO per month at 1 USD/HALO,
+   * 100 pool alloc points and 100 total alloc points
+   *
+   * If theres 100 USD in a pool, then 1000 USD is rewarded to it in
+   * a month then thats x10 which is 1000% in a month. then x12 is 12,000%
+   *
+   * So APY should be 12000
+   */
   const chainId = 42
   const rewardTokenPerSecond = 0.00038580246913580245 // 1k rewards/mo
   const USDPrice = 1
@@ -17,7 +29,7 @@ describe('Percentage Yield', () => {
   const _monthlyRewardUSD = 1000;
   const _monthlyInterest = 10
   const _monthlyAPY = 1000
-  const _apy = _monthlyAPY * 12
+  const _apy = 12000
 
   it('monthly reward', () => {
     expect(monthlyReward(rewardTokenPerSecond)).toEqual(_monthlyReward)
