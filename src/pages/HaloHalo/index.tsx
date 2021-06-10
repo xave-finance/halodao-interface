@@ -218,8 +218,8 @@ export default function HaloHalo() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight to the
-                        Rainbow Pool to earn daily.
+                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight
+                        to the Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -269,8 +269,8 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
-              out on daily RNBW vesting multiples.
+              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but
+              lose out on daily RNBW vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

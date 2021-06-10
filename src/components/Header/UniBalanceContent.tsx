@@ -111,7 +111,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
             </RowBetween>
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-              RNBW supply:
+                RNBW supply:
               </TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
