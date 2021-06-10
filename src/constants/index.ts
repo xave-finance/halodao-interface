@@ -142,7 +142,10 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
   },
   [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},
-  [ChainId.BSC_TESTNET]: {}
+  [ChainId.BSC_TESTNET]: {
+    busd: '0x4fabb145d64652a948d72533023f6e7a623c7c53',
+    xsgd: '0x70e8de73ce538da2beed35d14187f6959a8eca96'
+  }
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {

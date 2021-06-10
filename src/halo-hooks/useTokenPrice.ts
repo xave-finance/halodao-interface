@@ -19,9 +19,11 @@ export const useTokenPrice = (tokenAddresses: string[]) => {
     if (!chainId) return
 
     const knownTokens = COINGECKO_KNOWN_TOKENS[chainId]
+
     if (!knownTokens) return
 
     const tokenIds = Object.keys(knownTokens)
+
     if (!tokenIds.length) return
 
     getTokensUSDPrice(GetPriceBy.id, tokenIds).then(price => {
@@ -29,6 +31,7 @@ export const useTokenPrice = (tokenAddresses: string[]) => {
       for (const key in price) {
         newPrice[knownTokens[key]] = price[key]
       }
+
       setTokenPrice(newPrice)
     })
   }, [chainId])
