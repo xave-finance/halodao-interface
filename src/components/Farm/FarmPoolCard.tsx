@@ -586,7 +586,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="15%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHALO)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             {account && (

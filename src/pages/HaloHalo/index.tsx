@@ -16,8 +16,8 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import RainbowTokenIcon from '../../assets/svg/rainbow-token-icon.svg'
-import HaloTokenIcon from '../../assets/svg/halo-token-icon.svg'
+import xRnbwTokenIcon from '../../assets/svg/xrnbw-token.svg'
+import RnbwTokenIcon from '../../assets/svg/rnbw-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
@@ -125,6 +125,8 @@ const RowBetweenHaloPair = styled.div`
 const HaloIngredients = styled.img`
   float: left;
   margin-left: 5px;
+  width: 1.1rem;
+  height: 1.1rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
@@ -216,7 +218,7 @@ export default function HaloHalo() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your RNBW token rewards go. We saved you some gas and sent it straight to the
+                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight to the
                         Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
@@ -250,9 +252,9 @@ export default function HaloHalo() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
+                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
+                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
