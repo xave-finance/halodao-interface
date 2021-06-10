@@ -41,6 +41,7 @@ import {
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
   useTotalAllocPoint,
+  useMonthlyReward,
   usePoolAPY
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
@@ -59,7 +60,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   `};
 `
 
-const StyledCard = styled(GreyCard)<{ bgColor: any }>`
+const StyledCard = styled(GreyCard) <{ bgColor: any }>`
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
@@ -436,7 +437,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const rewardTokenPerSecond = useRewardTokenPerSecond()
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const poolAPY = usePoolAPY(rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = usePoolAPY(chainId ?? 0, rewardTokenPerSecond, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
 
   /**
    * Updating the state of stake button
