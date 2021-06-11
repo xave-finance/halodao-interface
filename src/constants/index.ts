@@ -87,15 +87,15 @@ export const HALO: ChainTokenMap = {
     ChainId.BSC_TESTNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || '',
     18,
-    'HALO',
-    'HALOToken'
+    'RNBW',
+    'RNBWToken'
   ),
   [ChainId.MATIC_TESTNET]: new Token(
     ChainId.BSC_TESTNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || '',
     18,
-    'HALO',
-    'HALOToken'
+    'RNBW',
+    'RNBWToken'
   )
 }
 
