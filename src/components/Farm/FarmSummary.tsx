@@ -10,7 +10,7 @@ import { TYPE, HideSmall } from 'theme'
 import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
-import HaloHalo from '../../assets/images/halo-token.png'
+import HaloHalo from '../../assets/images/rnbw-token.png'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
@@ -112,7 +112,7 @@ const FarmSummary = ({ poolsInfo }: FarmSummaryProps) => {
         <EarnCard>
           <HideSmall>
             <Row>
-              <img style={{ marginBottom: '0.5rem' }} width={'85px'} src={HaloHalo} alt="Halo halo" />
+              <img style={{ marginBottom: '0.5rem' }} width={'85px'} src={HaloHalo} alt="xRNBW" />
             </Row>
           </HideSmall>
           <EarnedTitleRow>

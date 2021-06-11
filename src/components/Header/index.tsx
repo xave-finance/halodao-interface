@@ -385,7 +385,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                HALO
+                RNBW
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>

@@ -66,22 +66,22 @@ export const HALO: ChainTokenMap = {
     ChainId.KOVAN,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
     18,
-    'HALO',
-    'HALOToken'
+    'RNBW',
+    'RNBWToken'
   ),
   [ChainId.RINKEBY]: new Token(
     ChainId.RINKEBY,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
     18,
-    'HALO',
-    'HALOToken'
+    'RNBW',
+    'RNBWToken'
   ),
   [ChainId.GÖRLI]: new Token(
     ChainId.GÖRLI,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
     18,
-    'HALO',
-    'HALOToken'
+    'RNBW',
+    'RNBWToken'
   ),
   [ChainId.BSC_TESTNET]: new Token(
     ChainId.BSC_TESTNET,
