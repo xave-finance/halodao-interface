@@ -89,6 +89,13 @@ export const HALO: ChainTokenMap = {
     18,
     'HALO',
     'HALOToken'
+  ),
+  [ChainId.MATIC_TESTNET]: new Token(
+    ChainId.BSC_TESTNET,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || '',
+    18,
+    'HALO',
+    'HALOToken'
   )
 }
 
@@ -97,7 +104,8 @@ export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
   [ChainId.RINKEBY]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ''
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || '',
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ''
 }
 
 // HALO Rewards Addresses
@@ -105,7 +113,8 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || '',
   [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || ''
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || '',
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_MUMBAI || ''
 }
 
 // HALOHALO Addressess
@@ -113,7 +122,8 @@ export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.KOVAN]: process.env.REACT_APP_HALOHALO_ADDRESS_KOVAN || '',
   [ChainId.RINKEBY]: process.env.REACT_APP_HALOHALO_ADDRESS_RINKEBY || '',
   [ChainId.GÖRLI]: process.env.REACT_APP_HALOHALO_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || ''
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || '',
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_MUMBAI || ''
 }
 
 // Sushi Url

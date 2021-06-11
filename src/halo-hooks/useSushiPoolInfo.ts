@@ -41,7 +41,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
 
     /**
      * For now we'll hardcode the pool token addresses & other info
-     * Liquidity is calculated as reserves * coingecko token price in USD
+     * Total pool value is calculated as reserves * coingecko token price in USD
      */
     for (const poolAddress of poolAddresses) {
       if (poolAddress === BUSD_BNB_LPT_ADDRESS) {
