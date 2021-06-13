@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
@@ -24,6 +25,7 @@ import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
+import EmptyState from 'components/EmptyState'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -190,6 +192,7 @@ export default function HaloHalo() {
   const dispatch = useDispatch<AppDispatch>()
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
+  const { t } = useTranslation()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -274,6 +277,7 @@ export default function HaloHalo() {
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
+        <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </PageWrapper>
     </>
   )

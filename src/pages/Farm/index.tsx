@@ -2,14 +2,15 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import styled from 'styled-components'
-import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
-import Row, { RowBetween, RowFixed } from '../../components/Row'
+import { TYPE, ExternalLink, LinkIcon, HideLarge } from '../../theme'
+import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import FarmSummary from 'components/Farm/FarmSummary'
-import Card from 'components/Card'
+import EmptyState from 'components/EmptyState'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
+
+import FarmPoolTable from './FarmPoolTable'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -59,7 +60,7 @@ const StyledExternalLink = styled(ExternalLink)`
 
 const Farm = () => {
   const poolAddresses = usePoolAddresses()
-  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
+  const { poolsInfo } = useBalancer(poolAddresses)
   const { t } = useTranslation()
 
   return (
@@ -90,45 +91,8 @@ const Farm = () => {
             <FarmSummary poolsInfo={poolsInfo} />
           </Row>
         </FarmSummaryRow>
-
-        <AutoColumn
-          gap="sm"
-          style={{
-            width: '100%'
-          }}
-        >
-          <HideSmall>
-            <Card
-              style={{
-                padding: '20px 0 0'
-              }}
-            >
-              <AutoColumn>
-                <RowBetween>
-                  <RowFixed width="22%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="19%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="16%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="16%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="15%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="10%"></RowFixed>
-                </RowBetween>
-              </AutoColumn>
-            </Card>
-          </HideSmall>
-          {poolsInfo.map((poolInfo, index) => {
-            return <FarmPoolCard key={poolInfo.address} poolId={index} poolInfo={poolInfo} tokenPrice={tokenPrice} />
-          })}
-        </AutoColumn>
+        <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
+        <FarmPoolTable />
       </PageWrapper>
     </>
   )
