@@ -113,7 +113,5 @@
   "claimHalo": "Claim RNBW",
   "claimXHalo": "Claim {{amount}} RNBW",
   "harvest": "Harvest",
-  "max": "MAX",
-  "apy": "APY",
-  "new": "New"
+  "emptyStateTitleInFarm": "Let's get farming!",
 }
