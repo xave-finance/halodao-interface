@@ -114,4 +114,7 @@
   "claimXHalo": "Claim {{amount}} RNBW",
   "harvest": "Harvest",
   "emptyStateTitleInFarm": "Let's get farming!",
+  "emptyStateTitleInVest": "Let's get vesting!",
+  "emptyStateSubTitleInVest": "Your one step away from earning. Connect your wallet to start to vest."
+  "emptyStateSubTitleInFarm": "Your one step away from earning. Connect your wallet to join the farm.",
 }
