@@ -5,6 +5,7 @@ import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
+import { useAllocPoints } from 'halo-hooks/useRewards'
 
 export type PoolInfo = {
   pair: string
@@ -13,6 +14,7 @@ export type PoolInfo = {
   liquidity: number
   tokens: PoolTokenInfo[]
   asToken: Token
+  allocPoint: number
 }
 
 type PoolTokenInfo = {
@@ -31,6 +33,7 @@ export const useBalancer = (poolAddresses: string[]) => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [poolTokensAddresses, setPoolTokensAddresses] = useState<string[]>([])
   const [tokenPrice, setTokenPrice] = useState<TokenPrice>({})
+  const allocPoints = useAllocPoints()
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
@@ -90,7 +93,7 @@ export const useBalancer = (poolAddresses: string[]) => {
       const newPoolTokensAddresses: string[] = []
 
       // Convert result to `poolsInfo` so we can easily use it in the components
-      for (const poolAddress of poolAddresses) {
+      for (const [index, poolAddress] of poolAddresses.entries()) {
         // Find the pool info of each poolAddress from graphql response
         const matchingPools = result.pools.filter((p: any) => p.id.toLowerCase() === poolAddress.toLowerCase())
         const pool = matchingPools.length ? matchingPools[0] : undefined
@@ -124,7 +127,8 @@ export const useBalancer = (poolAddresses: string[]) => {
           balancerUrl: `${BALANCER_POOL_URL}${pool.id}`,
           liquidity: parseFloat(pool.liquidity),
           tokens: poolTokensInfo,
-          asToken: poolAsToken
+          asToken: poolAsToken,
+          allocPoint: allocPoints[index]
         })
       }
 
@@ -137,7 +141,7 @@ export const useBalancer = (poolAddresses: string[]) => {
     } else {
       setPoolsInfo([])
     }
-  }, [poolAddresses, chainId])
+  }, [poolAddresses, allocPoints, chainId])
 
   /**
    * Gets the price of the all the pool tokens & stores it in `tokenPrice` state
