@@ -22,51 +22,51 @@ describe('Percentage Yield', () => {
   const totalAllocPoint = 100
   const allocPoint = 100
   const poolLiquidity = 100
-  const _monthlyReward = 1000
-  const _monthlyRewardUSD = 1000
-  const _monthlyInterest = 10
-  const _monthlyAPY = 1000
-  const _apy = 12000
+  const expectedMonthlyReward = 1000
+  const monthlyRewardUSD = 1000
+  const expectedMonthlyInterest = 10
+  const expectedMonthlyAPY = 1000
+  const expectedApy = 12000
 
   it('monthly reward', () => {
-    expect(monthlyReward(rewardTokenPerSecond)).toEqual(_monthlyReward)
+    expect(monthlyReward(rewardTokenPerSecond)).toEqual(expectedMonthlyReward)
   })
 
   it('monthly reward in USD', () => {
     expect(rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward(rewardTokenPerSecond), USDPrice)).toEqual(
-      _monthlyRewardUSD
+      monthlyRewardUSD
     )
   })
 
   it('monthly interest', () => {
-    const _rewardMonthUSDValue = rewardMonthUSDValue(
+    const expectedRewardMonthUSDValue = rewardMonthUSDValue(
       allocPoint,
       totalAllocPoint,
       monthlyReward(rewardTokenPerSecond),
       USDPrice
     )
 
-    expect(monthlyInterest(_rewardMonthUSDValue, poolLiquidity)).toEqual(_monthlyInterest)
+    expect(monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)).toEqual(expectedMonthlyInterest)
   })
 
   it('monthly percentage yield', () => {
-    const _rewardMonthUSDValue = rewardMonthUSDValue(
+    const expectedRewardMonthUSDValue = rewardMonthUSDValue(
       allocPoint,
       totalAllocPoint,
       monthlyReward(rewardTokenPerSecond),
       USDPrice
     )
-    const _monthlyInterest = monthlyInterest(_rewardMonthUSDValue, poolLiquidity)
+    const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)
 
-    expect(monthlyAPY(_monthlyInterest)).toEqual(_monthlyAPY)
+    expect(monthlyAPY(expectedMonthlyInterest)).toEqual(expectedMonthlyAPY)
   })
 
   it('annual percentage yield', () => {
-    const _monthlyReward = monthlyReward(rewardTokenPerSecond)
+    const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
     const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.KOVAN]]: 1 }
 
-    const poolAPY = apy(chainId, _monthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
+    const poolAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
 
-    expect(poolAPY).toEqual(_apy)
+    expect(poolAPY).toEqual(expectedApy)
   })
 })

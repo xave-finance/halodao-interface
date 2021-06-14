@@ -36,10 +36,10 @@ export const apy = (
 
   // Can accept number or token price address
   const USDPrice = tokenPrice[tokenAddr] ?? 0
-  const _rewardMonthUSDValue = rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward, +USDPrice)
+  const expectedRewardMonthUSDValue = rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward, +USDPrice)
   // Note that this is not a monthlyAPY
-  const _monthlyInterest = monthlyInterest(_rewardMonthUSDValue, poolLiquidity)
+  const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)
 
   // APY
-  return monthlyAPY(_monthlyInterest) * 12
+  return monthlyAPY(expectedMonthlyInterest) * 12
 }

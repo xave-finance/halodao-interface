@@ -434,10 +434,10 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
   // APY
   const rewardTokenPerSecond = useRewardTokenPerSecond()
-  const _monthlyReward = monthlyReward(rewardTokenPerSecond)
+  const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const poolAPY = apy(chainId ?? 0, _monthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = apy(chainId ?? 0, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
 
   /**
    * Updating the state of stake button
