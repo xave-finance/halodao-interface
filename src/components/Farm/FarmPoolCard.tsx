@@ -59,7 +59,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   `};
 `
 
-const StyledCard = styled(GreyCard)<{ bgColor: any }>`
+const StyledCard = styled(GreyCard) <{ bgColor: any }>`
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;

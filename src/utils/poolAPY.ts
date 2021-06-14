@@ -28,19 +28,18 @@ export const apy = (
   chainId: ChainId,
   monthlyReward: number,
   totalAllocPoint: number,
-  tokenPrice: TokenPrice | number,
+  tokenPrice: TokenPrice,
   allocPoint: number,
   poolLiquidity: number
 ) => {
   const tokenAddr = HALO_TOKEN_ADDRESS[chainId] ?? ''
 
   // Can accept number or token price address
-  const USDPrice = typeof tokenPrice === 'object' && tokenAddr !== undefined ? tokenPrice[tokenAddr] : tokenPrice
+  const USDPrice = tokenPrice[tokenAddr] ?? 0
   const _rewardMonthUSDValue = rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward, +USDPrice)
   // Note that this is not a monthlyAPY
   const _monthlyInterest = monthlyInterest(_rewardMonthUSDValue, poolLiquidity)
-  const _monthlyAPY = monthlyAPY(_monthlyInterest)
 
   // APY
-  return _monthlyAPY ? parseFloat((_monthlyAPY * 12).toFixed(2)) : 0
+  return monthlyAPY(_monthlyInterest) * 12
 }

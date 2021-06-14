@@ -1,3 +1,6 @@
+import { ChainId } from '@sushiswap/sdk'
+import { HALO_TOKEN_ADDRESS } from '../constants/index'
+
 import { monthlyReward, rewardMonthUSDValue, monthlyInterest, monthlyAPY, apy } from 'utils/poolAPY'
 
 describe('Percentage Yield', () => {
@@ -13,7 +16,7 @@ describe('Percentage Yield', () => {
    *
    * So APY should be 12000
    */
-  const chainId = 42
+  const chainId = ChainId.KOVAN
   const rewardTokenPerSecond = 0.00038580246913580245 // 1k rewards/mo
   const USDPrice = 1
   const totalAllocPoint = 100
@@ -60,6 +63,8 @@ describe('Percentage Yield', () => {
 
   it('annual percentage yield', () => {
     const _monthlyReward = monthlyReward(rewardTokenPerSecond)
+    const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.KOVAN]]: 1 }
+
     const poolAPY = apy(chainId, _monthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
 
     expect(poolAPY).toEqual(_apy)
