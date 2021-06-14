@@ -59,7 +59,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   `};
 `
 
-const StyledCard = styled(GreyCard)<{ bgColor: any }>`
+const StyledCard = styled(GreyCard) <{ bgColor: any }>`
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
@@ -437,7 +437,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const poolAPY = apy(chainId ?? 0, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
 
   /**
    * Updating the state of stake button
