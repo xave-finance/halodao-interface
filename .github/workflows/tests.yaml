@@ -39,6 +39,9 @@ jobs:
         env:
           CI: false
           REACT_APP_NETWORK_URL: "https://mainnet.infura.io/v3/4bf032f2d38a4ed6bb975b80d6340847"
+          REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
+          REACT_APP_PORTIS_ID: ${{ secrets.REACT_APP_PORTIS_ID }}
+          REACT_APP_FORTMATIC_API_KEY: ${{ secrets.REACT_APP_FORTMATIC_API_KEY }}
           REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
           REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
           REACT_APP_HALO_TOKEN_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN }}
@@ -81,6 +84,9 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn test
         env:
+          REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
+          REACT_APP_PORTIS_ID: ${{ secrets.REACT_APP_PORTIS_ID }}
+          REACT_APP_FORTMATIC_API_KEY: ${{ secrets.REACT_APP_FORTMATIC_API_KEY }}
           REACT_APP_BALANCER_POOL_URL: ${{ secrets.REACT_APP_BALANCER_POOL_URL }}
           REACT_APP_BALANCER_SUBGRAPH_URL: ${{ secrets.REACT_APP_BALANCER_SUBGRAPH_URL }}
           REACT_APP_HALO_TOKEN_ADDRESS_KOVAN: ${{ secrets.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN }}
