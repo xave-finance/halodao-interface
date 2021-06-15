@@ -59,7 +59,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   `};
 `
 
-const StyledCard = styled(GreyCard) <{ bgColor: any }>`
+const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   border: none
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
@@ -602,7 +602,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHALO)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="10%">
             {account && (
@@ -740,7 +740,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
+                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton

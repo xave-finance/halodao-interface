@@ -3,7 +3,7 @@ import React from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 // import tokenLogo from '../../assets/images/token-logo.png'
-import tokenLogo from '../../assets/images/halo-token.png'
+import tokenLogo from '../../assets/svg/rnbw-token.svg'
 import { HALO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
@@ -22,7 +22,7 @@ const ModalUpper = styled(DataCard)`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.haloGradient};
   padding: 0.5rem;
-  border-radius: 10px;
+  border-radius: 4px;
 `
 
 const StyledClose = styled(X)`
@@ -53,7 +53,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="md">
           <RowBetween>
             <TYPE.white color="white" fontWeight="bold">
-              Your HALO Breakdown
+              Your RNBW Breakdown
             </TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
@@ -105,19 +105,19 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
           <AutoColumn gap="md">
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                HALO price:
+                RNBW price:
               </TYPE.white>
               <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
             </RowBetween>
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                HALO supply:
+                RNBW supply:
               </TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
             {uni && uni.chainId === ChainId.MAINNET ? (
               <ExternalLink href={`https://analytics.sushi.com/tokens/${uni.address}`}>
-                View HALO Analytics
+                View RNBW Analytics
               </ExternalLink>
             ) : null}
           </AutoColumn>
