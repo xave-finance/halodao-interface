@@ -17,7 +17,7 @@ export const rewardMonthUSDValue = (
 }
 
 export const monthlyInterest = (rewardMonthUSDValue: number, poolLiquidity: number) => {
-  return rewardMonthUSDValue / poolLiquidity
+  return poolLiquidity ? rewardMonthUSDValue / poolLiquidity : 0
 }
 
 export const monthlyAPY = (monthlyInterest: number) => {

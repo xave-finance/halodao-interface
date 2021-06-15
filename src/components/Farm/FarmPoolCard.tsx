@@ -437,7 +437,8 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const poolAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const rawAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**
    * Updating the state of stake button
@@ -585,7 +586,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{formatNumber(poolAPY, NumberFormat.long)}%</StyledTextForValue>
+            <StyledTextForValue>{poolAPY}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
