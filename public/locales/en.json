@@ -114,5 +114,6 @@
   "claimXHalo": "Claim {{amount}} RNBW",
   "harvest": "Harvest",
   "max": "MAX",
-  "apy": "APY"
+  "apy": "APY",
+  "new": "New"
 }
