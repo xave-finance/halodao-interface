@@ -148,11 +148,8 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
               }}
               id={`connect-${key}`}
               key={key}
-              active={option.connector && option.connector === connector}
-              color={option.color}
               link={option.href}
               header={option.name}
-              subheader={null}
               icon={require('../../assets/images/' + option.iconName)}
             />
           )
@@ -192,11 +189,8 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
                 : !option.href && tryActivation(option.connector)
             }}
             key={key}
-            active={option.connector === connector}
-            color={option.color}
             link={option.href}
             header={option.name}
-            subheader={null} //use option.descriptio to bring back multi-line
             icon={require('../../assets/images/' + option.iconName)}
           />
         )
