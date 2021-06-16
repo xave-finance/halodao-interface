@@ -27,11 +27,11 @@ export const usePoolInfo = (poolAddresses: string[]) => {
     chainId === ChainId.KOVAN || chainId === ChainId.MAINNET ? poolAddresses : []
   )
   const fetchSushiPoolInfo = useSushiPoolInfo(
-    chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC ? poolAddresses : []
+    chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC || chainId === ChainId.MATIC_TESTNET ? poolAddresses : []
   )
 
   return useMemo(() => {
-    if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC) {
+    if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC || chainId === ChainId.MATIC_TESTNET) {
       return fetchSushiPoolInfo
     } else {
       return fetchBalancerPoolInfo
