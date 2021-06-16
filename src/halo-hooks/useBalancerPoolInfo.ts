@@ -42,7 +42,7 @@ export const useBalancerPoolInfo = (poolAddresses: string[]) => {
     }
 
     const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
-    console.log('[useBalancerPoolInfo] subgraph response received!')
+    // console.log('[useBalancerPoolInfo] subgraph response received!')
 
     // Convert result to `poolsInfo` so we can easily use it in the components
     for (const poolAddress of poolAddresses) {

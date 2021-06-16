@@ -16,6 +16,7 @@ const BNB_TOKEN_ADDRESS = '0xae13d989dac2f0debff460ac112a837c89baa7cd'
 const XSGD_TOKEN_ADDRESS = '0x979b00492a1cbf691b1fae867936c01bab0b8c4d'
 
 // Matic Testnet
+const SUSHI_xSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
 
 export const useSushiPoolInfo = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
@@ -31,7 +32,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
     const tokenAddresses: string[] = []
 
     // get token prices from main net
-    const tokenPrice = await getTokensUSDPrice(GetPriceBy.id, ['busd', 'xsgd', 'binancecoin'])
+    const tokenPrice = await getTokensUSDPrice(GetPriceBy.id, ['busd', 'xsgd', 'binancecoin', 'sushi'])
 
     // get reserves from the contract
     const BUSD_BNB_RESERVES = await BUSD_BNB_SLP_Contract?.getReserves()
@@ -43,6 +44,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
      * For now we'll hardcode the pool token addresses & other info
      * Total pool value is calculated as reserves * coingecko token price in USD
      */
+    console.log(poolAddresses)
     for (const poolAddress of poolAddresses) {
       if (poolAddress === BUSD_BNB_LPT_ADDRESS) {
         poolsInfo.push({
@@ -91,6 +93,28 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
             }
           ],
           asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/xSGD SLP')
+        })
+      } else if (poolAddress === SUSHI_xSGD_ADDRESS) {
+        poolsInfo.push({
+          pair: 'SUHSI/xSGD',
+          address: getAddress(poolAddress),
+          addLiquidityUrl: `https://app.sushi.com/`,
+          liquidity: tokenPrice['sushi'] + tokenPrice['xsgd'],
+          tokens: [
+            {
+              address: '',
+              balance: 0,
+              weightPercentage: 0.5,
+              asToken: new Token(chainId, getAddress(BUSD_TOKEN_ADDRESS), 18, 'SUSHI', 'Sushi Token')
+            },
+            {
+              address: '',
+              balance: 0,
+              weightPercentage: 0.5,
+              asToken: new Token(chainId, getAddress(XSGD_TOKEN_ADDRESS), 18, 'xSGD', 'Singapore Dollar')
+            }
+          ],
+          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'SUSHI/xSGD SLP')
         })
       }
     }

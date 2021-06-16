@@ -91,7 +91,7 @@ export const HALO: ChainTokenMap = {
     'RNBWToken'
   ),
   [ChainId.MATIC_TESTNET]: new Token(
-    ChainId.BSC_TESTNET,
+    ChainId.MATIC_TESTNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || '',
     18,
     'RNBW',
