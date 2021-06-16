@@ -15,7 +15,7 @@ const WalletCard = styled(Card)`
     margin-bottom: 1rem;
   `};
   flex: 1 0 25%;
-  background: #c4c4c4;
+  background: #ffffff;
   border-radius: 5px;
   margin: 1rem;
   margin-bottom: 1.5rem;
@@ -24,6 +24,12 @@ const WalletCard = styled(Card)`
   padding-left: 1.5rem;
   width: 170px;
   height: 147px;
+  :hover {
+    cursor: pointer;
+    background: #ffffff;
+    box-shadow: 0px 4px 6px rgba(122, 122, 122, 0.3);
+    border-radius: 3px;
+  }
 `
 const InfoTitleRow = styled(RowBetween)`
   color: #333333;
