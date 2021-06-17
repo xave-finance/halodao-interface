@@ -35,15 +35,18 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
 
     // get token prices from main net
     const tokenPrice = await getTokensUSDPrice(GetPriceBy.id, ['busd', 'xsgd', 'binancecoin', 'sushi'])
-    const SLP_BALANCE_VALUE = +formatEther(await slpTokenContract?.totalSupply())
 
     // get reserves from the contract
 
-    var BUSD_BNB_RESERVES, BUSD_XSGD_RESERVES
+    var BUSD_BNB_RESERVES, BUSD_XSGD_RESERVES, SLP_BALANCE_VALUE
 
     if (chainId === ChainId.BSC_TESTNET) {
       BUSD_BNB_RESERVES = await BUSD_BNB_SLP_Contract?.getReserves()
       BUSD_XSGD_RESERVES = await BUSD_XSGD_SLP_Contract?.getReserves()
+    }
+
+    if (chainId === ChainId.MATIC_TESTNET) {
+      SLP_BALANCE_VALUE = +formatEther(await slpTokenContract?.totalSupply())
     }
 
     if (!chainId) return { poolsInfo, tokenAddresses }
@@ -107,7 +110,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
           pair: 'SUSHI/xSGD',
           address: getAddress(poolAddress),
           addLiquidityUrl: `https://app.sushi.com/`,
-          liquidity: SLP_BALANCE_VALUE * (tokenPrice['sushi'] + tokenPrice['xsgd']),
+          liquidity: SLP_BALANCE_VALUE || 1 * (tokenPrice['sushi'] + tokenPrice['xsgd']),
           tokens: [
             {
               address: '',
