@@ -142,3 +142,32 @@ export const useDepositWithdrawHarvestCallback = () => {
 
   return { deposit, withdraw, harvest }
 }
+
+export const useRewardTokenPerSecond = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
+
+  return useMemo<number>(() => {
+    return data.result ? parseFloat(formatEther(data.result[0].toString())) : 0
+  }, [data])
+}
+
+export const useTotalAllocPoint = () => {
+  const rewardsContract = useHALORewardsContract()
+  const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
+
+  return useMemo<number>(() => {
+    return data.result ? data.result[0].toNumber() : 0
+  }, [data])
+}
+
+export const useAllocPoints = () => {
+  const rewardsContract = useHALORewardsContract()
+  const poolAddresses = usePoolAddresses()
+  const args = useMemo(() => poolAddresses.map((_, i) => [i]), [poolAddresses])
+  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
+
+  return useMemo(() => {
+    return results.map(v => (v.result ? v.result['allocPoint'].toNumber() : 0))
+  }, [results])
+}

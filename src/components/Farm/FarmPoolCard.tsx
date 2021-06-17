@@ -34,12 +34,15 @@ import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { ChainId, JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
-  useUnclaimedRewardsPerPool
+  useUnclaimedRewardsPerPool,
+  useRewardTokenPerSecond,
+  useTotalAllocPoint
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -463,6 +466,17 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
+  // Pool Liquidity
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+
+  // APY
+  const rewardTokenPerSecond = useRewardTokenPerSecond()
+  const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
+  const totalAllocPoint = useTotalAllocPoint()
+  const allocPoint = poolInfo.allocPoint
+  const rawAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
+
   /**
    * Updating the state of stake button
    */
@@ -598,7 +612,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="22%">
+          <StyledRowFixed width="17%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -607,13 +621,15 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
+          <StyledRowFixed width="16%">
+            <LabelText className="first">{t('apy')}:</LabelText>
+            <StyledTextForValue>{poolAPY}</StyledTextForValue>
+          </StyledRowFixed>
           <StyledRowFixed width="19%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
-            <StyledTextForValue>
-              {formatNumber(getPoolLiquidity(poolInfo, tokenPrice), NumberFormat.usd)}
-            </StyledTextForValue>
+            <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="12%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>
               {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
@@ -623,7 +639,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="15%">
+          <StyledRowFixed width="10%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
           </StyledRowFixed>

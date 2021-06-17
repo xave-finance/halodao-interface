@@ -1,4 +1,4 @@
-import { ChainId, TokenAmount, Currency } from '@sushiswap/sdk'
+import { TokenAmount, Currency } from '@sushiswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
@@ -10,7 +10,6 @@ import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { ExternalLink, TYPE } from '../../theme'
-import { YellowCard } from '../Card'
 import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -154,25 +153,6 @@ const HideSmall = styled.span`
   `};
 `
 
-const NetworkCard = styled(YellowCard)`
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: 8px 12px;
-  white-space: nowrap;
-  cursor: pointer;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0;
-    margin-right: 0.5rem;
-    width: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-  `};
-
-  :hover {
-    opacity: 0.8;
-  }
-`
-
 const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
@@ -297,21 +277,6 @@ export const StyledMenuButton = styled.button`
   `};
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.FANTOM]: 'Fantom',
-  [ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
-  [ChainId.MATIC]: 'Matic',
-  [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  [ChainId.XDAI]: 'xDai',
-  [ChainId.BSC]: 'BSC',
-  [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
-}
-
 export default function Header() {
   const { account, chainId, library } = useActiveWeb3React()
   const { t } = useTranslation()
@@ -354,13 +319,7 @@ export default function Header() {
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>
-            {chainId && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>
-                <Web3Network />
-              </NetworkCard>
-            )}
-          </HideSmall>
+          <HideSmall>{chainId && <Web3Network />}</HideSmall>
           {library && library.provider.isMetaMask && (
             <AccountElement active={true} style={{ pointerEvents: 'auto' }}></AccountElement>
           )}

@@ -136,19 +136,22 @@ const Farm = () => {
             >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="22%">
+                  <RowFixed width="17%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="16%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apy')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="19%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="12%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="15%">
+                  <RowFixed width="10%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="10%"></RowFixed>
