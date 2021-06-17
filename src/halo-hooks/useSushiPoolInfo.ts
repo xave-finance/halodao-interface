@@ -40,7 +40,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
 
     // get reserves from the contract
 
-    var BUSD_BNB_RESERVES, BUSD_XSGD_RESERVES, SLP_BALANCE_VALUE
+    let BUSD_BNB_RESERVES, BUSD_XSGD_RESERVES, SLP_BALANCE_VALUE
 
     if (chainId === ChainId.BSC_TESTNET) {
       BUSD_BNB_RESERVES = await BUSD_BNB_SLP_Contract?.getReserves()
