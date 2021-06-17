@@ -161,9 +161,8 @@ export const useTotalAllocPoint = () => {
   }, [data])
 }
 
-export const useAllocPoints = () => {
+export const useAllocPoints = (poolAddresses: string[]) => {
   const rewardsContract = useHALORewardsContract()
-  const poolAddresses = usePoolAddresses()
   const args = useMemo(() => poolAddresses.map((_, i) => [i]), [poolAddresses])
   const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 

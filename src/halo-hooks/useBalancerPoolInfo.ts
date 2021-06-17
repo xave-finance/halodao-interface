@@ -5,9 +5,11 @@ import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolTokenInfo } from './usePoolInfo'
+import { useAllocPoints } from './useRewards'
 
 export const useBalancerPoolInfo = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
+  const allocPoints = useAllocPoints(poolAddresses)
 
   /**
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
@@ -45,7 +47,7 @@ export const useBalancerPoolInfo = (poolAddresses: string[]) => {
     // console.log('[useBalancerPoolInfo] subgraph response received!')
 
     // Convert result to `poolsInfo` so we can easily use it in the components
-    for (const poolAddress of poolAddresses) {
+    for (const [index, poolAddress] of poolAddresses.entries()) {
       // Find the pool info of each poolAddress from graphql response
       const matchingPools = result.pools.filter((p: any) => p.id.toLowerCase() === poolAddress.toLowerCase())
       const pool = matchingPools.length ? matchingPools[0] : undefined
@@ -79,12 +81,13 @@ export const useBalancerPoolInfo = (poolAddresses: string[]) => {
         addLiquidityUrl: `${BALANCER_POOL_URL}${pool.id}`,
         liquidity: parseFloat(pool.liquidity),
         tokens: poolTokensInfo,
-        asToken: poolAsToken
+        asToken: poolAsToken,
+        allocPoint: allocPoints[index]
       })
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [poolAddresses, chainId])
+  }, [poolAddresses, chainId, allocPoints])
 
   return fetchPoolInfo
 }

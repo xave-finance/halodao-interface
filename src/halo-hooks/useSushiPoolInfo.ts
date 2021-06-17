@@ -7,6 +7,7 @@ import PAIR from '../constants/sushiAbis/pair.json'
 import { useContract, useTokenContract } from 'hooks/useContract'
 import { formatEther } from '@ethersproject/units'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
+import { useAllocPoints } from './useRewards'
 
 // BSC Testnet
 const BUSD_BNB_LPT_ADDRESS = '0x71e3c96C21D734bFA64D652EA99611Aa64F7D9F6'
@@ -20,6 +21,7 @@ const SUSHI_xSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
 
 export const useSushiPoolInfo = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
+  const allocPoints = useAllocPoints(poolAddresses)
 
   // BSC Testnet Pairs
   const BUSD_BNB_SLP_Contract = useContract(BUSD_BNB_LPT_ADDRESS, PAIR)
@@ -53,7 +55,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
      * Total pool value is calculated as reserves * coingecko token price in USD
      */
 
-    for (const poolAddress of poolAddresses) {
+    for (const [index, poolAddress] of poolAddresses.entries()) {
       if (poolAddress === BUSD_BNB_LPT_ADDRESS) {
         poolsInfo.push({
           pair: 'BUSD/BNB',
@@ -76,7 +78,8 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
               asToken: new Token(chainId, getAddress(BNB_TOKEN_ADDRESS), 18, 'BNB', 'Wrapped BNB')
             }
           ],
-          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/BNB SLP')
+          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/BNB SLP'),
+          allocPoint: allocPoints[index]
         })
       } else if (poolAddress === BUSD_XSGD_LPT_ADDRESS) {
         poolsInfo.push({
@@ -100,7 +103,8 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
               asToken: new Token(chainId, getAddress(XSGD_TOKEN_ADDRESS), 18, 'xSGD', 'Singapore Dollar')
             }
           ],
-          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/xSGD SLP')
+          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/xSGD SLP'),
+          allocPoint: allocPoints[index]
         })
       } else if (poolAddress === SUSHI_xSGD_ADDRESS) {
         poolsInfo.push({
@@ -122,7 +126,8 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
               asToken: new Token(chainId, getAddress(XSGD_TOKEN_ADDRESS), 18, 'xSGD', 'Singapore Dollar')
             }
           ],
-          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'SUSHI/xSGD SLP')
+          asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'SUSHI/xSGD SLP'),
+          allocPoint: allocPoints[index]
         })
       }
     }
@@ -132,7 +137,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
     tokenAddresses.push(XSGD_TOKEN_ADDRESS)
 
     return { poolsInfo, tokenAddresses }
-  }, [poolAddresses, chainId, BUSD_BNB_SLP_Contract, BUSD_XSGD_SLP_Contract, slpTokenContract])
+  }, [poolAddresses, chainId, allocPoints, BUSD_BNB_SLP_Contract, BUSD_XSGD_SLP_Contract, slpTokenContract])
 
   return fetchPoolInfo
 }

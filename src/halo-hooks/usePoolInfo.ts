@@ -11,6 +11,7 @@ export type PoolInfo = {
   liquidity: number
   tokens: PoolTokenInfo[]
   asToken: Token
+  allocPoint: number
 }
 
 export type PoolTokenInfo = {
