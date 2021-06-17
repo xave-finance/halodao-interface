@@ -116,6 +116,6 @@
   "max": "MAX",
   "emptyStateTitleInFarm": "Let's get farming!",
   "emptyStateTitleInVest": "Let's get vesting!",
-  "emptyStateSubTitleInFarm": "Your one step away from earning. Connect your wallet to join the farm.",
+  "emptyStateSubTitleInFarm": "You’re one step away from earning. Connect your wallet to join the farm.",
   "emptyStateSubTitleInVest": "Your one step away from earning. Connect your wallet to start to vest."
 }
