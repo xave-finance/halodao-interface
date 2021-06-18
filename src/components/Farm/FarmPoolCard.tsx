@@ -29,13 +29,14 @@ import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/balancer'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import { ChainId, JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
@@ -426,6 +427,42 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
+  // Changes the copy depending on the network
+  const tokenSymbol = {
+    [ChainId.BSC]: 'SLP',
+    [ChainId.BSC_TESTNET]: 'SLP',
+    [ChainId.MAINNET]: 'BPT',
+    [ChainId.ROPSTEN]: 'BPT',
+    [ChainId.KOVAN]: 'BPT',
+    [ChainId.RINKEBY]: 'BPT',
+    [ChainId.GÖRLI]: 'BPT',
+    [ChainId.MATIC]: 'SLP',
+    [ChainId.MATIC_TESTNET]: 'SLP',
+    [ChainId.FANTOM]: '',
+    [ChainId.FANTOM_TESTNET]: '',
+    [ChainId.XDAI]: '',
+    [ChainId.ARBITRUM]: '',
+    [ChainId.MOONBASE]: ''
+  }
+
+  // Changes the copy depending on the network
+  const getTokensCopy = {
+    [ChainId.BSC]: t('getSLPTokens'),
+    [ChainId.BSC_TESTNET]: t('getSLPTokens'),
+    [ChainId.MAINNET]: t('getBPTTokens'),
+    [ChainId.ROPSTEN]: t('getBPTTokens'),
+    [ChainId.KOVAN]: t('getBPTTokens'),
+    [ChainId.RINKEBY]: t('getBPTTokens'),
+    [ChainId.GÖRLI]: t('getBPTTokens'),
+    [ChainId.MATIC]: t('getSLPTokens'),
+    [ChainId.MATIC_TESTNET]: t('getSLPTokens'),
+    [ChainId.FANTOM]: '',
+    [ChainId.FANTOM_TESTNET]: '',
+    [ChainId.XDAI]: '',
+    [ChainId.ARBITRUM]: '',
+    [ChainId.MOONBASE]: ''
+  }
+
   // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
@@ -594,7 +631,9 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="12%">
             <LabelText>{t('stakeable')}:</LabelText>
-            <StyledTextForValue>{formatNumber(bptBalance)} BPT</StyledTextForValue>
+            <StyledTextForValue>
+              {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText>{t('valueStaked')}</LabelText>
@@ -627,11 +666,13 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             <StakeUnstakeContainer>
               <StakeUnstakeChild>
                 <FixedHeightRow>
-                  <TYPE.label>BALANCE: {formatNumber(bptBalance)} BPT</TYPE.label>
+                  <TYPE.label>
+                    BALANCE: {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
+                  </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
-                  <GetBPTButton href={poolInfo.balancerUrl}>
-                    {t('getBPTTokens')}
+                  <GetBPTButton href={poolInfo.addLiquidityUrl}>
+                    {chainId && getTokensCopy[chainId]}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>
                 </RowFlat>
@@ -685,7 +726,9 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               </StakeUnstakeChild>
               <StakeUnstakeChild>
                 <FixedHeightRow>
-                  <TYPE.label>STAKED: {formatNumber(bptStaked)} BPT</TYPE.label>
+                  <TYPE.label>
+                    STAKED: {formatNumber(bptStaked)} {chainId && tokenSymbol[chainId]}
+                  </TYPE.label>
                 </FixedHeightRow>
                 <HideSmallFullWidth>
                   <Row height={23}>&nbsp;</Row>
