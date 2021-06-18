@@ -17,19 +17,19 @@ const BNB_TOKEN_ADDRESS = '0xae13d989dac2f0debff460ac112a837c89baa7cd'
 const XSGD_TOKEN_ADDRESS = '0x979b00492a1cbf691b1fae867936c01bab0b8c4d'
 
 // Matic Testnet
-const SUSHI_xSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
+const SUSHI_XSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
 
 export const useSushiPoolInfo = (poolAddresses: string[]) => {
   const { chainId } = useActiveWeb3React()
   const allocPoints = useAllocPoints(poolAddresses)
 
   // BSC Testnet Pairs
-  const BUSD_BNB_SLP_Contract = useContract(BUSD_BNB_LPT_ADDRESS, PAIR)
-  const BUSD_XSGD_SLP_Contract = useContract(BUSD_XSGD_LPT_ADDRESS, PAIR)
+  const BUSD_BNB_SLP_CONTRACT = useContract(BUSD_BNB_LPT_ADDRESS, PAIR)
+  const BUSD_XSGD_SLP_CONTRACT = useContract(BUSD_XSGD_LPT_ADDRESS, PAIR)
 
   // Matic Testnet Pairs
 
-  const slpTokenContract = useTokenContract(SUSHI_xSGD_ADDRESS)
+  const slpTokenContract = useTokenContract(SUSHI_XSGD_ADDRESS)
 
   const fetchPoolInfo = useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
@@ -43,8 +43,8 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
     let BUSD_BNB_RESERVES, BUSD_XSGD_RESERVES, SLP_BALANCE_VALUE
 
     if (chainId === ChainId.BSC_TESTNET) {
-      BUSD_BNB_RESERVES = await BUSD_BNB_SLP_Contract?.getReserves()
-      BUSD_XSGD_RESERVES = await BUSD_XSGD_SLP_Contract?.getReserves()
+      BUSD_BNB_RESERVES = await BUSD_BNB_SLP_CONTRACT?.getReserves()
+      BUSD_XSGD_RESERVES = await BUSD_XSGD_SLP_CONTRACT?.getReserves()
     }
 
     if (chainId === ChainId.MATIC_TESTNET) {
@@ -109,7 +109,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
           asToken: new Token(chainId, getAddress(poolAddress), 18, 'SLP', 'BUSD/xSGD SLP'),
           allocPoint: allocPoints[index]
         })
-      } else if (poolAddress === SUSHI_xSGD_ADDRESS) {
+      } else if (poolAddress === SUSHI_XSGD_ADDRESS) {
         poolsInfo.push({
           pair: 'SUSHI/xSGD',
           address: getAddress(poolAddress),
@@ -140,7 +140,7 @@ export const useSushiPoolInfo = (poolAddresses: string[]) => {
     tokenAddresses.push(XSGD_TOKEN_ADDRESS)
 
     return { poolsInfo, tokenAddresses }
-  }, [poolAddresses, chainId, allocPoints, BUSD_BNB_SLP_Contract, BUSD_XSGD_SLP_Contract, slpTokenContract])
+  }, [poolAddresses, chainId, allocPoints, BUSD_BNB_SLP_CONTRACT, BUSD_XSGD_SLP_CONTRACT, slpTokenContract])
 
   return fetchPoolInfo
 }
