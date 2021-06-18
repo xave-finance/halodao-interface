@@ -113,21 +113,11 @@
   "claimHalo": "Claim RNBW",
   "claimXHalo": "Claim {{amount}} RNBW",
   "harvest": "Harvest",
-<<<<<<< HEAD
-  "emptyStateTitleInFarm": "Let's get farming!",
-  "emptyStateTitleInVest": "Let's get vesting!",
-<<<<<<< refs/remotes/origin/develop
-  "emptyStateSubTitleInVest": "Your one step away from earning. Connect your wallet to start to vest."
-  "emptyStateSubTitleInFarm": "Your one step away from earning. Connect your wallet to join the farm.",
-=======
-  "emptyStateSubTitleInFarm": "You’re one step away from earning. Connect your wallet to join the farm.",
-  "emptyStateSubTitleInVest": "You’re one step away from earning. Connect your wallet to start to vest."
->>>>>>> Update public/locales/en.json
-=======
   "max": "MAX",
+  "apy": "APY",
+  "new": "New",
   "emptyStateTitleInFarm": "Let's get farming!",
   "emptyStateTitleInVest": "Let's get vesting!",
   "emptyStateSubTitleInFarm": "You’re one step away from earning. Connect your wallet to join the farm.",
   "emptyStateSubTitleInVest": "You’re one step away from earning. Connect your wallet to start to vest."
->>>>>>> hdf-275
 }
