@@ -97,8 +97,8 @@ const DisclaimerAlert = () => {
       <StyledAlert isVisible={isVisible}>
         <img src={warningLogo} alt="Warning logo" />
         <StyledText>
-          This app is in beta and the contracts have been audited, supply liquidity at your own risk and do your own
-          research.
+          This app is in beta, the contracts are currently undergoing last stage of audit. Supply liquidity at your own
+          risk and do your own research.
         </StyledText>
         <StyledButton onClick={() => setIsModalOpen(true)}>Read our disclaimer</StyledButton>
         <StyledCloseWrapper>
