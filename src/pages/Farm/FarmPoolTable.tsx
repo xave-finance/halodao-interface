@@ -19,7 +19,7 @@ const FarmPoolTable = () => {
   if (account) {
     return (
       <>
-       <AutoColumn
+        <AutoColumn
           gap="sm"
           style={{
             width: '100%'
