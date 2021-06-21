@@ -644,11 +644,14 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
       <AutoColumn>
         {/* Pool Row default */}
-        <StyledFixedHeightRowCustom className={showMore ? 'active' : 'inactive'} onClick={() => {
-          if (!showMore) {
-            setShowMore(true)
-          }
-        }}>
+        <StyledFixedHeightRowCustom
+          className={showMore ? 'active' : 'inactive'}
+          onClick={() => {
+            if (!showMore) {
+              setShowMore(true)
+            }
+          }}
+        >
           <StyledRowFixed width="18%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
