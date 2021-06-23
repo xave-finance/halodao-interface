@@ -160,6 +160,12 @@ export const TYPE = {
   thHeader(props: TextProps) {
     return <TextWrapper fontWeight={400} fontSize={16} fontFamily={'Fredoka One'} color={'#838383'} {...props} />
   },
+  emptyStateHeader(props: TextProps) {
+    return <TextWrapper fontWeight={700} fontSize={14} lineHeight={'130%'} justifySelf={'flex-start'} {...props} />
+  },
+  emptyStateSubHeader(props: TextProps) {
+    return <TextWrapper fontWeight={400} fontSize={12} lineHeight={'130%'} marginTop={'0.1rem'} justifySelf={'flex-start'} color={'text1'} {...props} />
+  },
   small(props: TextProps) {
     return <TextWrapper fontWeight={500} fontSize={11} {...props} />
   },

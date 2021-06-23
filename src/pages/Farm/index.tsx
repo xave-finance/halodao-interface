@@ -10,7 +10,7 @@ import EmptyState from 'components/EmptyState'
 import { useBalancer } from 'halo-hooks/useBalancer'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
 
-import FarmPoolTable from './FarmPoolTable'
+import FarmPoolTable from 'components/Farm/FarmPoolTable'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;

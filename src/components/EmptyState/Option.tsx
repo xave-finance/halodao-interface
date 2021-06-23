@@ -5,6 +5,7 @@ import Card from '../Card'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
 import { TYPE } from 'theme'
+import { Text } from 'rebass'
 import { ExternalLink } from '../../theme'
 
 const WalletCard = styled(Card)`
@@ -36,50 +37,31 @@ const InfoTitleRow = styled(RowBetween)`
   margin-bottom: 0.5rem;
 `
 
-export default function Option({
-  link = null,
+const Option = ({
+  link,
   onClick,
   header,
   icon,
   id
 }: {
   link?: string | null
-  size?: number | null
   onClick: () => void
   header: React.ReactNode
   icon: string
   id: string
-}) {
+}) => {
   const content = (
     <WalletCard id={id} onClick={onClick}>
       <Row>
-        <img style={{ marginBottom: '0.5rem' }} width={'44px'} src={icon} alt="logo" />
+        <img style={{ marginBottom: '0.5rem' }} height={'44px'} src={icon} alt="logo" />
       </Row>
       <InfoTitleRow>
-        <TYPE.subHeader
-          style={{
-            fontWeight: 700,
-            fontSize: '0.90rem',
-            justifySelf: 'flex-start',
-            lineHeight: '130%'
-          }}
-        >
-          {header}
-        </TYPE.subHeader>
+        <TYPE.emptyStateHeader>{header}</TYPE.emptyStateHeader>
       </InfoTitleRow>
       <Row>
-        <TYPE.body
-          style={{
-            marginTop: '0.1rem',
-            fontWeight: 400,
-            fontSize: '0.75rem',
-            justifySelf: 'flex-start',
-            lineHeight: '130%'
-          }}
-          id="text-stakeable-value"
-        >
+        <TYPE.emptyStateSubHeader id="text-stakeable-value">
           Use {header} to connect to HaloDAO
-        </TYPE.body>
+        </TYPE.emptyStateSubHeader>
       </Row>
     </WalletCard>
   )
@@ -89,3 +71,5 @@ export default function Option({
 
   return content
 }
+
+export default Option
