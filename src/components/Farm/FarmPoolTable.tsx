@@ -1,19 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWeb3React } from '@web3-react/core'
 
 import { TYPE, HideSmall } from '../../theme'
-import { RowBetween, RowFixed } from '../../components/Row'
-import { AutoColumn } from '../../components/Column'
+import { RowBetween, RowFixed } from '../Row'
+import { AutoColumn } from '../Column'
 import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import Card from 'components/Card'
-import { useBalancer } from 'halo-hooks/useBalancer'
+import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
+import { useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { ChainId } from '@sushiswap/sdk'
+import { useActiveWeb3React } from 'hooks'
 
 const FarmPoolTable = () => {
   const poolAddresses = usePoolAddresses()
-  const { poolsInfo, tokenPrice } = useBalancer(poolAddresses)
+  const fetchPoolInfo = usePoolInfo(poolAddresses)
   const { t } = useTranslation()
+  const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
+  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(tokenAddresses)
+  const { chainId } = useActiveWeb3React()
+
+  useEffect(() => {
+    fetchPoolInfo().then(result => {
+      setPoolsInfo(result.poolsInfo)
+      setTokenAddresses(result.tokenAddresses)
+    })
+  }, [fetchPoolInfo])
+
+  // Changes the copy depending on the network
+  const stakeToEarnMessage = {
+    [ChainId.BSC]: t('stakeToEarnSushi'),
+    [ChainId.BSC_TESTNET]: t('stakeToEarnSushi'),
+    [ChainId.MAINNET]: t('stakeToEarn'),
+    [ChainId.ROPSTEN]: t('stakeToEarn'),
+    [ChainId.KOVAN]: t('stakeToEarn'),
+    [ChainId.RINKEBY]: t('stakeToEarn'),
+    [ChainId.GÖRLI]: t('stakeToEarn'),
+    [ChainId.MATIC]: t('stakeToEarnSushi'),
+    [ChainId.MATIC_TESTNET]: t('stakeToEarnSushi'),
+    [ChainId.FANTOM]: '',
+    [ChainId.FANTOM_TESTNET]: '',
+    [ChainId.XDAI]: '',
+    [ChainId.ARBITRUM]: '',
+    [ChainId.MOONBASE]: ''
+  }
 
   const { account } = useWeb3React()
   if (account) {
@@ -31,7 +63,7 @@ const FarmPoolTable = () => {
                 padding: '20px 0 0'
               }}
             >
-              <AutoColumn>
+                            <AutoColumn>
                 <RowBetween>
                   <RowFixed width="17%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
