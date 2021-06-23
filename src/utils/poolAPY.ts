@@ -1,6 +1,6 @@
 import { ChainId } from '@sushiswap/sdk'
 import { HALO_TOKEN_ADDRESS } from '../constants/index'
-import { TokenPrice } from 'halo-hooks/useBalancer'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 export const monthlyReward = (rewardTokenPerSecond: number) => {
   // (days * hrs * min * s) * reward token/s

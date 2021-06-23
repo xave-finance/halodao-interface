@@ -50,6 +50,7 @@ const useLpToken = (poolLength: number): string[] => {
 export const usePoolAddresses = () => {
   const length = usePoolLength()
   const addresses = useLpToken(length)
+
   return useMemo(() => addresses, [addresses])
 }
 
@@ -160,9 +161,8 @@ export const useTotalAllocPoint = () => {
   }, [data])
 }
 
-export const useAllocPoints = () => {
+export const useAllocPoints = (poolAddresses: string[]) => {
   const rewardsContract = useHALORewardsContract()
-  const poolAddresses = usePoolAddresses()
   const args = useMemo(() => poolAddresses.map((_, i) => [i]), [poolAddresses])
   const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 
