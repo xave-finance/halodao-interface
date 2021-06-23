@@ -63,7 +63,7 @@ const FarmPoolTable = () => {
                 padding: '20px 0 0'
               }}
             >
-                            <AutoColumn>
+              <AutoColumn>
                 <RowBetween>
                   <RowFixed width="17%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
