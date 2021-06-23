@@ -9,8 +9,8 @@ import { injected, portis } from '../../connectors'
 import Row from '../Row'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
-import { TYPE } from 'theme'
 import { ExternalLink } from '../../theme'
+import { Text } from 'rebass'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 
@@ -47,6 +47,21 @@ const SubTitleRow = styled(RowBetween)`
   margin-bottom: 1rem;
 `
 
+const TitleText = styled(Text)`
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 130%;
+  justify-self: 'flex-start';
+`
+
+const SubTitleText = styled(Text)`
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 130%;
+  color: #333333;
+  justify-self: 'flex-start';
+`
+
 const Blurb = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -70,7 +85,6 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
   const { connector, activate } = useWeb3React()
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-
   const [pendingError, setPendingError] = useState<boolean>()
 
   const tryActivation = async (connector: AbstractConnector | undefined) => {
@@ -89,6 +103,8 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
     })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
+    console.log(walletView)
+    console.log(pendingWallet)
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
@@ -101,21 +117,22 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
           activate(connector) // a little janky...can't use setError because the connector isn't set
         } else {
           setPendingError(true)
+          console.log(pendingError)
         }
       })
   }
   const Web2Status = () => {
-    // function Web2Status() {
+  // function Web2Status() {
     const { account, error } = useWeb3React()
-
+    
     if (!account && !error) {
       return (
         <MainRow>
           <TitleRow>
-            <TYPE.largeHeader>{header}</TYPE.largeHeader>
+            <TitleText>{header}</TitleText>
           </TitleRow>
           <SubTitleRow>
-            <TYPE.darkGray style={{ fontSize: '12px', lineHeight: '130%' }}>{subHeader}</TYPE.darkGray>
+            <SubTitleText>{subHeader}</SubTitleText>
           </SubTitleRow>
           <WalletRow>{getOptions()}</WalletRow>
           <Blurb style={{ lineHeight: '130%' }}>
@@ -130,7 +147,7 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
   }
   // get wallets user can switch too, depending on device/browser\
   const getOptions = () => {
-    // function getOptions() {
+  // function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key]

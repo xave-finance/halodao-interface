@@ -6,10 +6,8 @@ import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
-import Card from 'components/Card'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
-import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 
@@ -67,7 +65,6 @@ const Farm = () => {
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
-  const tokenPrice = useTokenPrice(tokenAddresses)
   const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
@@ -77,6 +74,7 @@ const Farm = () => {
     })
   }, [fetchPoolInfo])
 
+  console.log(tokenAddresses)
   // Changes the copy depending on the network
   const stakeToEarnMessage = {
     [ChainId.BSC]: t('stakeToEarnSushi'),
@@ -94,7 +92,7 @@ const Farm = () => {
     [ChainId.ARBITRUM]: '',
     [ChainId.MOONBASE]: ''
   }
-
+  
   return (
     <>
       <PageWrapper id={`farm-page`}>

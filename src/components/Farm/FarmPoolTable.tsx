@@ -10,8 +10,6 @@ import Card from 'components/Card'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
-import { ChainId } from '@sushiswap/sdk'
-import { useActiveWeb3React } from 'hooks'
 
 const FarmPoolTable = () => {
   const poolAddresses = usePoolAddresses()
@@ -20,7 +18,6 @@ const FarmPoolTable = () => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
   const tokenPrice = useTokenPrice(tokenAddresses)
-  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
@@ -28,24 +25,6 @@ const FarmPoolTable = () => {
       setTokenAddresses(result.tokenAddresses)
     })
   }, [fetchPoolInfo])
-
-  // Changes the copy depending on the network
-  const stakeToEarnMessage = {
-    [ChainId.BSC]: t('stakeToEarnSushi'),
-    [ChainId.BSC_TESTNET]: t('stakeToEarnSushi'),
-    [ChainId.MAINNET]: t('stakeToEarn'),
-    [ChainId.ROPSTEN]: t('stakeToEarn'),
-    [ChainId.KOVAN]: t('stakeToEarn'),
-    [ChainId.RINKEBY]: t('stakeToEarn'),
-    [ChainId.GÖRLI]: t('stakeToEarn'),
-    [ChainId.MATIC]: t('stakeToEarnSushi'),
-    [ChainId.MATIC_TESTNET]: t('stakeToEarnSushi'),
-    [ChainId.FANTOM]: '',
-    [ChainId.FANTOM_TESTNET]: '',
-    [ChainId.XDAI]: '',
-    [ChainId.ARBITRUM]: '',
-    [ChainId.MOONBASE]: ''
-  }
 
   const { account } = useWeb3React()
   if (account) {

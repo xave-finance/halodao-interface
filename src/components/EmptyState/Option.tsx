@@ -4,7 +4,6 @@ import Row from '../Row'
 import Card from '../Card'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
-import { TYPE } from 'theme'
 import { Text } from 'rebass'
 import { ExternalLink } from '../../theme'
 
@@ -37,6 +36,21 @@ const InfoTitleRow = styled(RowBetween)`
   margin-bottom: 0.5rem;
 `
 
+const TitleText = styled(Text)`
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 130%;
+  justify-self: 'flex-start';
+`
+
+const SubTitleText = styled(Text)`
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 130%;
+  color: #333333;
+  justify-self: 'flex-start';
+`
+
 const Option = ({
   link,
   onClick,
@@ -56,12 +70,12 @@ const Option = ({
         <img style={{ marginBottom: '0.5rem' }} height={'44px'} src={icon} alt="logo" />
       </Row>
       <InfoTitleRow>
-        <TYPE.emptyStateHeader>{header}</TYPE.emptyStateHeader>
+        <TitleText>{header}</TitleText>
       </InfoTitleRow>
       <Row>
-        <TYPE.emptyStateSubHeader id="text-stakeable-value">
+        <SubTitleText id="text-stakeable-value">
           Use {header} to connect to HaloDAO
-        </TYPE.emptyStateSubHeader>
+        </SubTitleText>
       </Row>
     </WalletCard>
   )
