@@ -92,7 +92,7 @@ const Farm = () => {
     [ChainId.ARBITRUM]: '',
     [ChainId.MOONBASE]: ''
   }
-  
+
   return (
     <>
       <PageWrapper id={`farm-page`}>

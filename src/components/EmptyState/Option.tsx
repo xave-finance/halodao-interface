@@ -73,9 +73,7 @@ const Option = ({
         <TitleText>{header}</TitleText>
       </InfoTitleRow>
       <Row>
-        <SubTitleText id="text-stakeable-value">
-          Use {header} to connect to HaloDAO
-        </SubTitleText>
+        <SubTitleText id="text-stakeable-value">Use {header} to connect to HaloDAO</SubTitleText>
       </Row>
     </WalletCard>
   )

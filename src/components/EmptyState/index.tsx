@@ -122,9 +122,9 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
       })
   }
   const Web2Status = () => {
-  // function Web2Status() {
+    // function Web2Status() {
     const { account, error } = useWeb3React()
-    
+
     if (!account && !error) {
       return (
         <MainRow>
@@ -147,7 +147,7 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
   }
   // get wallets user can switch too, depending on device/browser\
   const getOptions = () => {
-  // function getOptions() {
+    // function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key]
