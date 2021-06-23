@@ -344,7 +344,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                RNBW
+                LPOP
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>

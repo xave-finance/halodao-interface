@@ -197,7 +197,7 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {haloBalance} RNBW
+                    BALANCE: {haloBalance} LPOP
                   </TYPE.body>
                 )}
               </RowBetween>

@@ -3,7 +3,7 @@ import React from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
 // import tokenLogo from '../../assets/images/token-logo.png'
-import tokenLogo from '../../assets/svg/rnbw-token.svg'
+import tokenLogo from '../../assets/svg/lpop-token.svg'
 import { HALO } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
@@ -53,7 +53,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="md">
           <RowBetween>
             <TYPE.white color="white" fontWeight="bold">
-              Your RNBW Breakdown
+              Your LPOP Breakdown
             </TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
@@ -105,19 +105,19 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
           <AutoColumn gap="md">
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                RNBW price:
+                LPOP price:
               </TYPE.white>
               <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
             </RowBetween>
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                RNBW supply:
+                LPOP supply:
               </TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
             {uni && uni.chainId === ChainId.MAINNET ? (
               <ExternalLink href={`https://analytics.sushi.com/tokens/${uni.address}`}>
-                View RNBW Analytics
+                View LPOP Analytics
               </ExternalLink>
             ) : null}
           </AutoColumn>

@@ -10,7 +10,7 @@ describe('Vesting', () => {
     cy.get('body', { timeout: 30000 }).should('not.contain', '0 APY')
   })
 
-  it('displays RNBW:xRNBW price', () => {
+  it('displays LPOP:xLPOP price', () => {
     // 1 - Initially price is blank
     cy.get('body').contains('x0')
     // 2 - Check for Halohalo price changed

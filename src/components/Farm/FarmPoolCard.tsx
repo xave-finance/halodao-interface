@@ -681,7 +681,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           </StyledRowFixed>
           <StyledRowFixed width="14%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHALO)} LPOP</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="8%" justify="flex-end">
             {account && (
@@ -823,7 +823,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
+                <Text className="balance">{formatNumber(unclaimedHALO)} LPOP</Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
