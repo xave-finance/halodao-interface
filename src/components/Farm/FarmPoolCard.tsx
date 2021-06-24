@@ -52,11 +52,28 @@ import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
+  padding: 1rem;
+  margin: 0 -1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  width: auto;
+  transition: border 100ms ease-in;
+
+  &.inactive:hover {
+    border-color: ${({ theme }) => theme.primary1};
+  }
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
     padding: 0 30px 20px;
+    cursor: default;
+
+    &.inactive:hover {
+      border-color: transparent;
+    }
   `};
 `
 
@@ -140,6 +157,22 @@ const ManageCloseButton = styled(ButtonOutlined)`
     background: ${({ theme }) => theme.text4};
     color: white;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: ${({ theme }) => theme.text4};
+    color: white;
+    width: 100%;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 900;
+  `};
+`
+
+const ManageCloseButtonAlt = styled(ButtonText)`
+  padding: 4px 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: ${({ theme }) => theme.primary1};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     background: ${({ theme }) => theme.text4};
@@ -611,8 +644,15 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
       <AutoColumn>
         {/* Pool Row default */}
-        <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="17%">
+        <StyledFixedHeightRowCustom
+          className={showMore ? 'active' : 'inactive'}
+          onClick={() => {
+            if (!showMore) {
+              setShowMore(true)
+            }
+          }}
+        >
+          <StyledRowFixed width="18%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -621,15 +661,15 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="13%">
             <LabelText className="first">{t('apy')}:</LabelText>
             <StyledTextForValue>{poolAPY}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="19%">
+          <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
             <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="12%">
+          <StyledRowFixed width="13%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>
               {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
@@ -639,11 +679,11 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="10%">
+          <StyledRowFixed width="14%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="10%">
+          <StyledRowFixed width="8%" justify="flex-end">
             {account && (
               <>
                 {showMore ? (
@@ -651,7 +691,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
                     <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('closeTxt')}</ManageCloseButton>
                   </HideSmallFullWidth>
                 ) : (
-                  <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('manage')}</ManageCloseButton>
+                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>{t('add')}</ManageCloseButtonAlt>
                 )}
               </>
             )}
