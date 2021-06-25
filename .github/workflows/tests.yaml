@@ -4,12 +4,10 @@ on:
     branches:
       - master
       - develop
-      - beta
   pull_request:
     branches:
       - master
       - develop
-      - beta
 
 jobs:
   integration-tests:
