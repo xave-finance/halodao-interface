@@ -109,7 +109,11 @@
     "eject": "react-scripts eject",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
     "build-serve": "yarn build && serve build -l 3000",
-    "cy": "$(npm bin)/cypress open"
+    "cy": "$(npm bin)/cypress open",
+    "deploy:dev": "firebase use dev && firebase deploy --only hosting:dev",
+    "deploy:dev-beta": "firebase use dev && firebase deploy --only hosting:dev-beta",
+    "deploy:prod": "firebase use prod && firebase deploy --only hosting:prod",
+    "deploy:beta": "firebase use prod && firebase deploy --only hosting:beta"
   },
   "eslintConfig": {
     "extends": "react-app",
