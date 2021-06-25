@@ -309,10 +309,7 @@ export default function Header() {
           <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
-          <StyledExternalLink
-            id={`swap-nav-link`}
-            href={'https://pools.balancer.exchange/#/pool/0x9011f62a83c8a43a55e52b555fd3bd93313f4372/'}
-          >
+          <StyledExternalLink id={`swap-nav-link`} href={'https://app.balancer.fi/#/trade'}>
             {t('swap')}
           </StyledExternalLink>
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
