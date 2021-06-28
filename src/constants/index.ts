@@ -32,67 +32,62 @@ export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LEN
 export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
-// SUSHI
-// export const SUSHI: ChainTokenMap = {
-//   [ChainId.MAINNET]: new Token(
-//     ChainId.MAINNET,
-//     '0x6B3595068778DD592e39A122f4f5a5cF09C90fE2',
-//     18,
-//     'SUSHI',
-//     'SushiToken'
-//   ),
-//   [ChainId.ROPSTEN]: new Token(
-//     ChainId.ROPSTEN,
-//     '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-//     18,
-//     'SUSHI',
-//     'SushiToken'
-//   ),
-//   [ChainId.RINKEBY]: new Token(
-//     ChainId.RINKEBY,
-//     '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F',
-//     18,
-//     'SUSHI',
-//     'SushiToken'
-//   ),
-//   [ChainId.GÖRLI]: new Token(ChainId.GÖRLI, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
-//   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x0769fd68dFb93167989C6f7254cd0D766Fb2841F', 18, 'SUSHI', 'SushiToken'),
-//   [ChainId.FANTOM]: new Token(ChainId.KOVAN, '0xae75A438b2E0cB8Bb01Ec1E1e376De11D44477CC', 18, 'SUSHI', 'SushiToken')
-// }
-
 // HALO Token Instance
 export const HALO: ChainTokenMap = {
+  // Mainnets
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'RNBW',
+    'RNBWToken'
+  ),
+  [ChainId.BSC]: new Token(
+    ChainId.BSC,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+    18,
+    'RNBW',
+    'RNBWToken'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'RNBW',
+    'RNBWToken'
+  ),
+  // Testnets
   [ChainId.KOVAN]: new Token(
     ChainId.KOVAN,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
   ),
   [ChainId.RINKEBY]: new Token(
     ChainId.RINKEBY,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
   ),
   [ChainId.GÖRLI]: new Token(
     ChainId.GÖRLI,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
   ),
   [ChainId.BSC_TESTNET]: new Token(
     ChainId.BSC_TESTNET,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || '',
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
   ),
   [ChainId.MATIC_TESTNET]: new Token(
     ChainId.MATIC_TESTNET,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || '',
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
@@ -101,29 +96,44 @@ export const HALO: ChainTokenMap = {
 
 // HALO Token Addresses
 export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
-  [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || '',
-  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || '',
-  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || '',
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ''
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
 }
 
 // HALO Rewards Addresses
 export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
-  [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || '',
-  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_RINKEBY || '',
-  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || '',
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_MUMBAI || ''
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
 }
 
 // HALOHALO Addressess
 export const HALOHALO_ADDRESS: ChainAddressMap = {
-  [ChainId.KOVAN]: process.env.REACT_APP_HALOHALO_ADDRESS_KOVAN || '',
-  [ChainId.RINKEBY]: process.env.REACT_APP_HALOHALO_ADDRESS_RINKEBY || '',
-  [ChainId.GÖRLI]: process.env.REACT_APP_HALOHALO_ADDRESS_GOERLI || '',
-  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || '',
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_MUMBAI || ''
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_HALOHALO_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALOHALO_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_HALOHALO_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
 }
 
 // Balancer URLs
@@ -135,6 +145,11 @@ export const BALANCER_SUBGRAPH_URL =
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
 export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
+  // Mainnets
+  [ChainId.MAINNET]: {},
+  [ChainId.BSC]: {},
+  [ChainId.MATIC]: {},
+  // Testnets
   [ChainId.KOVAN]: {
     weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
     dai: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
@@ -146,14 +161,15 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     havven: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
     aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
     '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
-    halo: HALO_TOKEN_ADDRESS[ChainId.KOVAN] ?? ''
+    halo: HALO_TOKEN_ADDRESS[ChainId.KOVAN] ?? ZERO_ADDRESS
   },
   [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},
   [ChainId.BSC_TESTNET]: {
     busd: '0x4fabb145d64652a948d72533023f6e7a623c7c53',
     xsgd: '0x70e8de73ce538da2beed35d14187f6959a8eca96'
-  }
+  },
+  [ChainId.MATIC_TESTNET]: {}
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
