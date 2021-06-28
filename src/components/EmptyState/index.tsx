@@ -121,30 +121,6 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
         }
       })
   }
-  const Web2Status = () => {
-    // function Web2Status() {
-    const { account, error } = useWeb3React()
-
-    if (!account && !error) {
-      return (
-        <MainRow>
-          <TitleRow>
-            <TitleText>{header}</TitleText>
-          </TitleRow>
-          <SubTitleRow>
-            <SubTitleText>{subHeader}</SubTitleText>
-          </SubTitleRow>
-          <WalletRow>{getOptions()}</WalletRow>
-          <Blurb style={{ lineHeight: '130%' }}>
-            <span>New to Ethereum? &nbsp;</span>{' '}
-            <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
-          </Blurb>
-        </MainRow>
-      )
-    } else {
-      return <></>
-    }
-  }
   // get wallets user can switch too, depending on device/browser\
   const getOptions = () => {
     // function getOptions() {
@@ -215,6 +191,29 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
         )
       )
     })
+  }
+  const Web2Status = () => {
+    const { account, error } = useWeb3React()
+
+    if (!account && !error) {
+      return (
+        <MainRow>
+          <TitleRow>
+            <TitleText>{header}</TitleText>
+          </TitleRow>
+          <SubTitleRow>
+            <SubTitleText>{subHeader}</SubTitleText>
+          </SubTitleRow>
+          <WalletRow>{getOptions()}</WalletRow>
+          <Blurb style={{ lineHeight: '130%' }}>
+            <span>New to Ethereum? &nbsp;</span>{' '}
+            <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
+          </Blurb>
+        </MainRow>
+      )
+    } else {
+      return <></>
+    }
   }
 
   return <Web2Status />
