@@ -121,7 +121,7 @@ const Demo = () => {
 
       <h2>Component: Misc</h2>
       <RowFixed marginBottom={10}>
-        <Toggle id="toggle-expert-mode-button" isActive={false} toggle={() => {}} />
+        <Toggle id="toggle-expert-mode-button" isActive={false} toggle={handleButtonClick} />
       </RowFixed>
       <RowFixed>
         <SwapPoolTabs active={'swap'} />
