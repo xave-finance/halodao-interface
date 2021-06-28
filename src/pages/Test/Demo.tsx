@@ -12,6 +12,8 @@ import {
   ButtonPrimaryNormal,
   ButtonSecondary
 } from 'components/Button'
+import Toggle from 'components/Toggle'
+import { SwapPoolTabs } from 'components/NavigationTabs'
 
 const themeColor = colors(false)
 
@@ -115,6 +117,14 @@ const Demo = () => {
         <ButtonHalo onClick={handleButtonClick}>ButtonHalo</ButtonHalo>
         <ButtonHaloOutlined onClick={handleButtonClick}>ButtonHaloOutlined</ButtonHaloOutlined>
         <ButtonHaloWhite onClick={handleButtonClick}>ButtonHaloWhite</ButtonHaloWhite>
+      </RowFixed>
+
+      <h2>Component: Misc</h2>
+      <RowFixed marginBottom={10}>
+        <Toggle id="toggle-expert-mode-button" isActive={false} toggle={() => {}} />
+      </RowFixed>
+      <RowFixed>
+        <SwapPoolTabs active={'swap'} />
       </RowFixed>
     </StyledWrapper>
   )
