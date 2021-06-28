@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -258,7 +258,7 @@ export default function HaloHaloWithdrawPanel({
             >
               {buttonState === ButtonHaloStates.Disabled && <>{t('claimHalo')}</>}
               {buttonState === ButtonHaloStates.Approved && (
-                <>{t('claimXHalo', { amount: formatNumber(haloToClaim) })}</>
+                <>{t('claimXHalo', { amount: formatNumber(haloToClaim, NumberFormat.long) })}</>
               )}
               {buttonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
               {buttonState === ButtonHaloStates.Approving && (

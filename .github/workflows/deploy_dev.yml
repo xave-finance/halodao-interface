@@ -40,5 +40,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_HALO_DEV_EB31C }}'
           projectId: halo-dev-eb31c
-          target: app
+          target: dev-beta
           channelId: live
