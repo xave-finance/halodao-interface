@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { TYPE, ExternalLink, LinkIcon, HideLarge, HideSmall } from '../../theme'
-import Row, { RowBetween, RowFixed } from '../../components/Row'
+import { TYPE, ExternalLink, LinkIcon, HideLarge } from '../../theme'
+import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
-import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import FarmSummary from 'components/Farm/FarmSummary'
-import Card from 'components/Card'
+import EmptyState from 'components/EmptyState'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
-import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
+
+import FarmPoolTable from 'components/Farm/FarmPoolTable'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -65,7 +65,6 @@ const Farm = () => {
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
-  const tokenPrice = useTokenPrice(tokenAddresses)
   const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
@@ -75,6 +74,7 @@ const Farm = () => {
     })
   }, [fetchPoolInfo])
 
+  console.log(tokenAddresses)
   // Changes the copy depending on the network
   const stakeToEarnMessage = {
     [ChainId.BSC]: t('stakeToEarnSushi'),
@@ -121,48 +121,8 @@ const Farm = () => {
             <FarmSummary poolsInfo={poolsInfo} />
           </Row>
         </FarmSummaryRow>
-
-        <AutoColumn
-          gap="sm"
-          style={{
-            width: '100%'
-          }}
-        >
-          <HideSmall>
-            <Card
-              style={{
-                padding: '2rem 0 0.5rem'
-              }}
-            >
-              <AutoColumn>
-                <RowBetween>
-                  <RowFixed width="18%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="13%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apy')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="18%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="13%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="16%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="14%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
-                  </RowFixed>
-                  <RowFixed width="8%"></RowFixed>
-                </RowBetween>
-              </AutoColumn>
-            </Card>
-          </HideSmall>
-          {poolsInfo.map((poolInfo, index) => {
-            return <FarmPoolCard key={poolInfo.address} poolId={index} poolInfo={poolInfo} tokenPrice={tokenPrice} />
-          })}
-        </AutoColumn>
+        <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
+        <FarmPoolTable />
       </PageWrapper>
     </>
   )
