@@ -11,7 +11,7 @@ import HaloDepositPanel from './HaloDepositPanel'
 import HaloHaloWithdrawPanel from './HaloHaloWithdrawPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
-import { RowBetween } from '../../components/Row'
+import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
@@ -24,6 +24,7 @@ import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
+import BetaLabel from 'components/Labels/BetaLabel'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -58,7 +59,7 @@ const VestingRow = styled.div`
 `
 
 const DessertPoolRow = styled.div`
-  ${RowBetween} {
+  ${Row} {
     font-family: Fredoka One;
     font-style: normal;
     font-weight: normal;
@@ -214,7 +215,10 @@ export default function HaloHalo() {
                       <RowBetween>VESTING</RowBetween>
                     </VestingRow>
                     <DessertPoolRow>
-                      <RowBetween>Lollipop Pool</RowBetween>
+                      <Row>
+                        Lollipop Pool
+                        <BetaLabel />
+                      </Row>
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
