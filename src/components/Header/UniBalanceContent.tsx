@@ -57,7 +57,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         setRnbwPrice(tokenPrice[address])
       }
     })
-  }, [account, chainId])
+  }, [])
 
   return (
     <ContentWrapper gap="lg">
