@@ -61,36 +61,36 @@ export const HALO: ChainTokenMap = {
     ChainId.KOVAN,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_KOVAN || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.RINKEBY]: new Token(
     ChainId.RINKEBY,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.GÖRLI]: new Token(
     ChainId.GÖRLI,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.BSC_TESTNET]: new Token(
     ChainId.BSC_TESTNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.MATIC_TESTNET]: new Token(
     ChainId.MATIC_TESTNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   )
 }
 

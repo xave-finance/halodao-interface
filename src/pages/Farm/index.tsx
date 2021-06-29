@@ -12,6 +12,7 @@ import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
+import BetaLabel from 'components/Labels/BetaLabel'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -38,7 +39,7 @@ const HeaderRow = styled(RowBetween)`
   padding-right: 0.5rem;
 `
 
-const TitleRow = styled(RowBetween)`
+const TitleRow = styled(Row)`
   font-family: 'Fredoka One', cursive;
   color: #471bb2;
 `
@@ -100,6 +101,7 @@ const Farm = () => {
           <HeaderRow>
             <TitleRow>
               <TYPE.largeHeader style={{ justifySelf: 'flex-start' }}>Farm</TYPE.largeHeader>
+              <BetaLabel />
             </TitleRow>
             <Row>
               <TYPE.darkGray

@@ -11,19 +11,20 @@ import HaloDepositPanel from './HaloDepositPanel'
 import HaloHaloWithdrawPanel from './HaloHaloWithdrawPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
-import { RowBetween } from '../../components/Row'
+import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import xRnbwTokenIcon from '../../assets/svg/xrnbw-token.svg'
-import RnbwTokenIcon from '../../assets/svg/rnbw-token.svg'
+import xRnbwTokenIcon from '../../assets/svg/xlpop-token.svg'
+import RnbwTokenIcon from '../../assets/svg/lpop-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
+import BetaLabel from 'components/Labels/BetaLabel'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -58,7 +59,7 @@ const VestingRow = styled.div`
 `
 
 const DessertPoolRow = styled.div`
-  ${RowBetween} {
+  ${Row} {
     font-family: Fredoka One;
     font-style: normal;
     font-weight: normal;
@@ -214,12 +215,15 @@ export default function HaloHalo() {
                       <RowBetween>VESTING</RowBetween>
                     </VestingRow>
                     <DessertPoolRow>
-                      <RowBetween>Rainbow Pool</RowBetween>
+                      <Row>
+                        Lollipop Pool
+                        <BetaLabel />
+                      </Row>
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight
-                        to the Rainbow Pool to earn daily.
+                        This is where your Lollipop Token (LPOP) rewards go. We saved you some gas and sent it straight
+                        to the Lollipop Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -238,7 +242,7 @@ export default function HaloHalo() {
                   disableCurrencySelect={true}
                   customBalanceText={'Available to deposit: '}
                   id="stake-liquidity-token"
-                  buttonText="Claim RNBW"
+                  buttonText="Claim LPOP"
                   cornerRadiusBottomNone={true}
                 />
                 <HaloHaloWithdrawPanel
@@ -252,10 +256,10 @@ export default function HaloHalo() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="LPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">xLPOP : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="LPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">LPOP = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -269,8 +273,8 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but
-              lose out on daily RNBW vesting multiples.
+              The longer you keep xLPOP, the more LPOP you can claim later on ({haloHaloAPY} APY). Claim anytime but
+              lose out on daily LPOP vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

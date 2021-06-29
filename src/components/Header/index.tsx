@@ -4,7 +4,7 @@ import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import Logo from '../../assets/svg/logo.svg'
+import Logo from '../../assets/svg/logo-beta.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
@@ -309,7 +309,12 @@ export default function Header() {
           <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
-          <StyledExternalLink id={`swap-nav-link`} href={'https://balancer.exchange/#/swap'}>
+          <StyledExternalLink
+            id={`swap-nav-link`}
+            href={
+              'https://app.balancer.fi/#/trade/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/0x0000852600CEB001E08e00bC008be620d60031F2'
+            }
+          >
             {t('swap')}
           </StyledExternalLink>
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
@@ -344,7 +349,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                RNBW
+                LPOP
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>

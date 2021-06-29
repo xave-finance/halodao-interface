@@ -133,7 +133,7 @@ export const useDepositWithdrawHarvestCallback = () => {
     async (poolId: number) => {
       const tx = await rewardsContract?.harvest(poolId, account)
       addTransaction(tx, {
-        summary: `Harvest rewards (RNBW)`
+        summary: `Harvest rewards (LPOP)`
       })
       return tx
     },
