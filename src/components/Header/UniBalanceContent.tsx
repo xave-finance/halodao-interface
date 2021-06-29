@@ -119,7 +119,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
               <TYPE.white color="white" opacity={0.7}>
                 RNBW price:
               </TYPE.white>
-              <TYPE.white color="white">{formatNumber(rnbwPrice, NumberFormat.usd)}</TYPE.white>
+              <TYPE.white color="white">{rnbwPrice > 0 ? formatNumber(rnbwPrice, NumberFormat.usd) : '$ -'}</TYPE.white>
             </RowBetween>
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
