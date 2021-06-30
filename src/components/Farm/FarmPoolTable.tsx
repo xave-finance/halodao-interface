@@ -31,30 +31,30 @@ const FarmPoolTable = ({ poolsInfo, tokenAddresses }: FarmPoolTableProps) => {
           <HideSmall>
             <Card
               style={{
-                padding: '20px 0 0'
+                padding: '2rem 0 0.5rem'
               }}
             >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="17%">
+                  <RowFixed width="18%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apy')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="19%">
+                  <RowFixed width="18%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="12%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="10%">
+                  <RowFixed width="14%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="10%"></RowFixed>
+                  <RowFixed width="8%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>
