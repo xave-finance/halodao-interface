@@ -66,6 +66,7 @@ const Farm = () => {
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
+      setTokenAddresses(result.tokenAddresses)
     })
   }, [poolAddresses]) // eslint-disable-line
 
