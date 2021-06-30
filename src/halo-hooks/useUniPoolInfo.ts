@@ -48,13 +48,13 @@ export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
         tokens: [
           {
             address: token1Address,
-            balance: 0,
+            balance: +formatEther(totalReserves[0]),
             weightPercentage: 0.5,
             asToken: new Token(chainId, token1Address, 18, token1Symbol, token1Symbol)
           },
           {
             address: token2Address,
-            balance: 0,
+            balance: +formatEther(totalReserves[1]),
             weightPercentage: 0.5,
             asToken: new Token(chainId, token2Address, 18, token2Symbol, token2Symbol)
           }
@@ -63,6 +63,9 @@ export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
         allocPoint: 0,
         provider: PoolProvider.Uni
       })
+
+      tokenAddresses.push(token1Address)
+      tokenAddresses.push(token2Address)
     }
 
     return { poolsInfo, tokenAddresses }

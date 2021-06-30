@@ -30,7 +30,7 @@ import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
-import { getPoolLiquidity } from 'utils/balancer'
+import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
@@ -470,7 +470,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const rawAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**

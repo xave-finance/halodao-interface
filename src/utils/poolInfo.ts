@@ -1,4 +1,6 @@
 import { BALANCER_POOLS_ADDRESSES, SUSHI_POOLS_ADDRESSES, UNI_POOLS_ADDRESSES } from 'constants/pools'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 export type PoolIdAddressMap = {
   id: number
@@ -49,4 +51,28 @@ export const tokenSymbolForPool = (address: string) => {
   }
 
   return 'LPT'
+}
+
+export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {
+  let sumWeight = 0
+  let sumValue = 0
+  // console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
+  // console.log('PoolInfo: ', poolInfo)
+  for (const tokenInfo of poolInfo.tokens) {
+    const price = tokenPrice[tokenInfo.address]
+    if (!price) {
+      continue
+    }
+    sumWeight += tokenInfo.weightPercentage / 100
+    sumValue += price * tokenInfo.balance
+    // console.log('SUM weight, value: ', sumWeight, sumValue)
+  }
+  // console.log('FINAL SUM weight, value: ', sumWeight, sumValue)
+  if (sumWeight > 0) {
+    // console.log('Returned calculated value: ', sumValue / sumWeight)
+    return sumValue / sumWeight
+  } else {
+    // console.log('Returned balancer data: ', poolInfo.liquidity)
+    return poolInfo.liquidity
+  }
 }
