@@ -68,6 +68,7 @@ const Farm = () => {
       setPoolsInfo(result.poolsInfo)
     })
   }, [poolAddresses]) // eslint-disable-line
+
   return (
     <>
       <PageWrapper id={`farm-page`}>
