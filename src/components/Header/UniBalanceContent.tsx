@@ -1,18 +1,19 @@
 import { ChainId, TokenAmount } from '@sushiswap/sdk'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { X } from 'react-feather'
 import styled from 'styled-components'
-// import tokenLogo from '../../assets/images/token-logo.png'
-import tokenLogo from '../../assets/svg/token-logo-new.svg'
-import { HALO } from '../../constants'
+import tokenLogo from '../../assets/svg/lpop-coin.svg'
+import { HALO, HALO_TOKEN_ADDRESS, ZERO_ADDRESS } from '../../constants'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useActiveWeb3React } from '../../hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE, UniTokenAnimated } from '../../theme'
-import useUSDCPrice from '../../utils/useUSDCPrice'
+import { TYPE, UniTokenAnimated } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 import { Break, CardSection, DataCard } from '../earn/styled'
+import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { getAddress } from 'ethers/lib/utils'
 
 const ContentWrapper = styled(AutoColumn)`
   width: 100%;
@@ -22,7 +23,7 @@ const ModalUpper = styled(DataCard)`
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   background: ${({ theme }) => theme.haloGradient};
   padding: 0.5rem;
-  border-radius: 10px;
+  border-radius: 4px;
 `
 
 const StyledClose = styled(X)`
@@ -45,7 +46,18 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
   const uniBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, uni)
 
   const totalSupply: TokenAmount | undefined = useTotalSupply(uni)
-  const uniPrice = useUSDCPrice(uni)
+
+  const [rnbwPrice, setRnbwPrice] = useState<number>(0)
+
+  // Refresh RNBW price on every component load
+  useEffect(() => {
+    const address = getAddress(HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? ZERO_ADDRESS)
+    getTokensUSDPrice(GetPriceBy.address, [address]).then(tokenPrice => {
+      if (tokenPrice[address]) {
+        setRnbwPrice(tokenPrice[address])
+      }
+    })
+  }, [])
 
   return (
     <ContentWrapper gap="lg">
@@ -53,7 +65,7 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
         <CardSection gap="md">
           <RowBetween>
             <TYPE.white color="white" fontWeight="bold">
-              Your HALO Breakdown
+              Your LPOP Breakdown
             </TYPE.white>
             <StyledClose stroke="white" onClick={() => setShowUniBalanceModal(false)} />
           </RowBetween>
@@ -105,21 +117,21 @@ export default function UniBalanceContent({ setShowUniBalanceModal }: { setShowU
           <AutoColumn gap="md">
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                HALO price:
+                LPOP price:
               </TYPE.white>
-              <TYPE.white color="white">${uniPrice?.toFixed(2) ?? '-'}</TYPE.white>
+              <TYPE.white color="white">{rnbwPrice > 0 ? formatNumber(rnbwPrice, NumberFormat.usd) : '$ -'}</TYPE.white>
             </RowBetween>
             <RowBetween>
               <TYPE.white color="white" opacity={0.7}>
-                HALO supply:
+                LPOP supply:
               </TYPE.white>
               <TYPE.white color="white">{totalSupply?.toFixed(0, { groupSeparator: ',' })}</TYPE.white>
             </RowBetween>
-            {uni && uni.chainId === ChainId.MAINNET ? (
+            {/* {uni && uni.chainId === ChainId.MAINNET ? (
               <ExternalLink href={`https://analytics.sushi.com/tokens/${uni.address}`}>
-                View HALO Analytics
+                View LPOP Analytics
               </ExternalLink>
-            ) : null}
+            ) : null} */}
           </AutoColumn>
         </CardSection>
       </ModalUpper>

@@ -1,12 +1,26 @@
 {
   "projects": {
-    "default": "halo-dev-eb31c"
+    "default": "halo-dev-eb31c",
+    "prod": "halo-prod-f792f"
   },
   "targets": {
     "halo-dev-eb31c": {
       "hosting": {
-        "app": [
+        "dev": [
           "dev-app-halodao"
+        ],
+        "dev-beta": [
+          "dev-beta-app-halodao"
+        ]
+      }
+    },
+    "halo-prod-f792f": {
+      "hosting": {
+        "prod": [
+          "app-halodao"
+        ],
+        "beta": [
+          "beta-app-halodao"
         ]
       }
     }

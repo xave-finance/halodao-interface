@@ -1,33 +1,23 @@
-import { ChainId, TokenAmount, Currency } from '@sushiswap/sdk'
+import { TokenAmount, Currency } from '@sushiswap/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-
 import styled from 'styled-components'
-
-import Logo from '../../assets/svg/logo.svg'
-
+import Logo from '../../assets/svg/logo-beta.svg'
 import { useActiveWeb3React } from '../../hooks'
-import { useETHBalances, useAggregateUniBalance } from '../../state/wallet/hooks'
+import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
 import { ExternalLink, TYPE } from '../../theme'
-
-import { YellowCard } from '../Card'
 import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
-import ClaimModal from '../claim/ClaimModal'
-
-import { useToggleSelfClaimModal, useShowClaimPopup } from '../../state/application/hooks'
-import { useUserHasAvailableClaim } from '../../state/claim/hooks'
-import { useUserHasSubmittedClaim } from '../../state/transactions/hooks'
-import { Dots } from '../swap/styleds'
 import Modal from '../Modal'
 import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
 import Web3Network from 'components/Web3Network'
+import { HALO } from '../../constants'
 
 const HeaderFrame = styled.div`
   background: #ffffff;
@@ -163,25 +153,6 @@ const HideSmall = styled.span`
   `};
 `
 
-const NetworkCard = styled(YellowCard)`
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: 8px 12px;
-  white-space: nowrap;
-  cursor: pointer;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0;
-    margin-right: 0.5rem;
-    width: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-shrink: 1;
-  `};
-
-  :hover {
-    opacity: 0.8;
-  }
-`
-
 const BalanceText = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     display: none;
@@ -306,44 +277,18 @@ export const StyledMenuButton = styled.button`
   `};
 `
 
-const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
-  [ChainId.RINKEBY]: 'Rinkeby',
-  [ChainId.ROPSTEN]: 'Ropsten',
-  [ChainId.GÖRLI]: 'Görli',
-  [ChainId.KOVAN]: 'Kovan',
-  [ChainId.FANTOM]: 'Fantom',
-  [ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
-  [ChainId.MATIC]: 'Matic',
-  [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  [ChainId.XDAI]: 'xDai',
-  [ChainId.BSC]: 'BSC',
-  [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
-}
-
 export default function Header() {
   const { account, chainId, library } = useActiveWeb3React()
   const { t } = useTranslation()
-
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
-
-  const toggleClaimModal = useToggleSelfClaimModal()
-
-  const availableClaim: boolean = useUserHasAvailableClaim(account)
-
-  const { claimTxn } = useUserHasSubmittedClaim(account ?? undefined)
-
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
-
+  const halo = chainId ? HALO[chainId] : undefined
+  const haloBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, halo)
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
-  const showClaimPopup = useShowClaimPopup()
-
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  const countUpValue = haloBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
-      <ClaimModal />
       <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
         <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
       </Modal>
@@ -364,7 +309,12 @@ export default function Header() {
           <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
             {t('vesting')}
           </StyledNavLink>
-          <StyledExternalLink id={`swap-nav-link`} href={'https://balancer.exchange/#/swap'}>
+          <StyledExternalLink
+            id={`swap-nav-link`}
+            href={
+              'https://app.balancer.fi/#/trade/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/0x0000852600CEB001E08e00bC008be620d60031F2'
+            }
+          >
             {t('swap')}
           </StyledExternalLink>
           <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
@@ -374,29 +324,13 @@ export default function Header() {
       </HeaderRow>
       <HeaderControls>
         <HeaderElement>
-          <HideSmall>
-            {chainId && (
-              <NetworkCard title={NETWORK_LABELS[chainId]}>
-                <Web3Network />
-              </NetworkCard>
-            )}
-          </HideSmall>
-          {availableClaim && !showClaimPopup && (
-            <UNIWrapper onClick={toggleClaimModal}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
-                <TYPE.white padding="0 2px">
-                  {claimTxn && !claimTxn?.receipt ? <Dots>Claiming UNI</Dots> : 'Claim UNI'}
-                </TYPE.white>
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
+          <HideSmall>{chainId && <Web3Network />}</HideSmall>
           {library && library.provider.isMetaMask && (
             <AccountElement active={true} style={{ pointerEvents: 'auto' }}></AccountElement>
           )}
-          {!availableClaim && aggregateBalance && chainId && [1, 3, 4, 5, 42].includes(chainId) && (
+          {chainId && [1, 3, 4, 5, 42].includes(chainId) && (
             <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-              <UNIAmount active={!!account && !availableClaim} style={{ pointerEvents: 'auto' }}>
+              <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
                 {account && (
                   <HideSmall>
                     <TYPE.white
@@ -415,7 +349,7 @@ export default function Header() {
                     </TYPE.white>
                   </HideSmall>
                 )}
-                HALO
+                LPOP
               </UNIAmount>
               <CardNoise />
             </UNIWrapper>
@@ -430,9 +364,6 @@ export default function Header() {
           </AccountElement>
         </HeaderElement>
         <HeaderElementWrap>
-          {/* <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton> */}
           <Menu />
         </HeaderElementWrap>
       </HeaderControls>

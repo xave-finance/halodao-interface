@@ -6,7 +6,7 @@ import { formatNumber } from 'utils/formatNumber'
 import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVestingModalToggle } from 'state/application/hooks'
 import { ReactComponent as CloseIcon } from '../../assets/images/x.svg'
-import BunnyWithSweets from '../../assets/svg/bunny-with-sweets.svg'
+import BunnyWithSweets from '../../assets/svg/bunny-with-lpop.svg'
 import { ButtonHaloWhite } from 'components/Button'
 import { PoolVestingInfo } from 'state/user/actions'
 
@@ -48,11 +48,11 @@ const StyledContent = styled.div`
     font-size: 16px;
     font-weight: 700;
     line-height: 20.8px;
-    margin-bottom: 27px;
   }
 
-  img {
-    margin-bottom: 15px;
+  .bunny {
+    height: 120px;
+    margin: 1rem 0;
   }
 
   button {
@@ -88,10 +88,10 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
         </StyledCloseIconWrapper>
         <StyledContent>
           <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
-          <div className="bal-rewards">{formatNumber(earningRewards)} RNBW</div>
-          <div className="bal-halo">({formatNumber(earningHALO)} HALO)</div>
-          <img src={BunnyWithSweets} alt="Bunny Mascot" />
-          <TYPE.body color="white">As RNBW, you&apos;re earning right now!</TYPE.body>
+          <div className="bal-rewards">{formatNumber(earningRewards)} xLPOP</div>
+          <div className="bal-halo">({formatNumber(earningHALO)} LPOP)</div>
+          <img className="bunny" src={BunnyWithSweets} alt="Bunny Mascot" />
+          <TYPE.body color="white">As xLPOP, you&apos;re earning right now!</TYPE.body>
           <ButtonHaloWhite padding="8px" onClick={toggleModal}>
             Let&apos;s Vest!
           </ButtonHaloWhite>

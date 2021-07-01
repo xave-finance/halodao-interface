@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
@@ -11,19 +12,21 @@ import HaloDepositPanel from './HaloDepositPanel'
 import HaloHaloWithdrawPanel from './HaloHaloWithdrawPanel'
 
 import { CardSection, DataCard } from '../../components/earn/styled'
-import { RowBetween } from '../../components/Row'
+import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import RainbowTokenIcon from '../../assets/svg/rainbow-token-icon.svg'
-import HaloTokenIcon from '../../assets/svg/halo-token-icon.svg'
+import xRnbwTokenIcon from '../../assets/svg/xlpop-token.svg'
+import RnbwTokenIcon from '../../assets/svg/lpop-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
+import BetaLabel from 'components/Labels/BetaLabel'
+import EmptyState from 'components/EmptyState'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -58,7 +61,7 @@ const VestingRow = styled.div`
 `
 
 const DessertPoolRow = styled.div`
-  ${RowBetween} {
+  ${Row} {
     font-family: Fredoka One;
     font-style: normal;
     font-weight: normal;
@@ -125,6 +128,8 @@ const RowBetweenHaloPair = styled.div`
 const HaloIngredients = styled.img`
   float: left;
   margin-left: 5px;
+  width: 1.1rem;
+  height: 1.1rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
@@ -182,12 +187,13 @@ const RowBetweenCard = styled.div`
   }
 `
 
-export default function Saave() {
+export default function HaloHalo() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
   const toggleVestingModal = useVestingModalToggle()
   const dispatch = useDispatch<AppDispatch>()
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
+  const { t } = useTranslation()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -212,12 +218,15 @@ export default function Saave() {
                       <RowBetween>VESTING</RowBetween>
                     </VestingRow>
                     <DessertPoolRow>
-                      <RowBetween>Rainbow Pool</RowBetween>
+                      <Row>
+                        Lollipop Pool
+                        <BetaLabel />
+                      </Row>
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the
-                        Rainbow Pool to earn daily.
+                        This is where your Lollipop Token (LPOP) rewards go. We saved you some gas and sent it straight
+                        to the Lollipop Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -236,7 +245,7 @@ export default function Saave() {
                   disableCurrencySelect={true}
                   customBalanceText={'Available to deposit: '}
                   id="stake-liquidity-token"
-                  buttonText="Claim HALO"
+                  buttonText="Claim LPOP"
                   cornerRadiusBottomNone={true}
                 />
                 <HaloHaloWithdrawPanel
@@ -250,10 +259,10 @@ export default function Saave() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
-                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="LPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">xLPOP : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="LPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">LPOP = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -267,11 +276,12 @@ export default function Saave() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep RNBW, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
-              out on daily HALO vesting multiples.
+              The longer you keep xLPOP, the more LPOP you can claim later on ({haloHaloAPY} APY). Claim anytime but
+              lose out on daily LPOP vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
+        <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </PageWrapper>
     </>
   )

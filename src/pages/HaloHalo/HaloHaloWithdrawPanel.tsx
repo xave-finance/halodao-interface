@@ -15,11 +15,12 @@ import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALOHALO_ADDRESS } from '../../constants'
-import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -56,30 +57,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   background-color: ${({ theme }) => theme.bg1};
 `
 
-const StyledBalanceMax = styled.button`
-  height: 28px;
-  padding-right: 8px;
-  padding-left: 8px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
-  }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
-`
-
 interface HaloHaloWithdrawPanelProps {
   label?: string
   lpTokenAddress?: string
@@ -105,7 +82,7 @@ export default function HaloHaloWithdrawPanel({
   const { account, chainId } = useActiveWeb3React()
   const theme = useTheme()
   const { t } = useTranslation()
-  const { allowance, approve, leave } = useHaloHalo()
+  const { allowance, approve, leave, haloHaloPrice } = useHaloHalo()
   const xHaloHaloBalanceBigInt = useTokenBalance(chainId ? HALOHALO_ADDRESS[chainId] : ' ')
   const xHaloHaloBalance = formatFromBalance(xHaloHaloBalanceBigInt?.value, xHaloHaloBalanceBigInt?.decimals)
   const decimals = xHaloHaloBalanceBigInt?.decimals
@@ -115,6 +92,7 @@ export default function HaloHaloWithdrawPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+  const [haloToClaim, setHaloToClaim] = useState(0)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -150,10 +128,14 @@ export default function HaloHaloWithdrawPanel({
   }, [approve, setRequestedApproval])
 
   // track and parse user input for Deposit Input
-  const onUserWithdrawInput = useCallback((withdrawValue: string, max = false) => {
-    setMaxSelected(max)
-    setWithdrawValue(withdrawValue)
-  }, [])
+  const onUserWithdrawInput = useCallback(
+    (withdrawValue: string, max = false) => {
+      setMaxSelected(max)
+      setWithdrawValue(withdrawValue)
+      setHaloToClaim(parseFloat(withdrawValue) * parseFloat(haloHaloPrice))
+    },
+    [haloHaloPrice]
+  )
 
   // used for max input button
   const handleMaxWithdraw = useCallback(() => {
@@ -171,9 +153,12 @@ export default function HaloHaloWithdrawPanel({
     } else {
       amount = formatToBalance(withdrawValue, decimals)
     }
-    const tx = await leave(amount)
-    await tx.wait()
-
+    try {
+      const tx = await leave(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
+    }
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setWithdrawValue('')
@@ -214,7 +199,7 @@ export default function HaloHaloWithdrawPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloHaloBalance} RNBW
+                    BALANCE: {xHaloHaloBalance} xLPOP
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -242,25 +227,7 @@ export default function HaloHaloWithdrawPanel({
                     onUserWithdrawInput(val)
                   }}
                 />
-                {account && label !== 'To' && (
-                  <StyledBalanceMax
-                    style={{
-                      border: '1px solid #471BB2',
-                      borderRadius: '22px',
-                      background: '#FFFFFF',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 'bold',
-                      lineHeight: '130%',
-                      width: '77px',
-                      height: '33px',
-                      margin: 0
-                    }}
-                    onClick={handleMaxWithdraw}
-                  >
-                    MAX
-                  </StyledBalanceMax>
-                )}
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
               </>
             )}
           </InputRow>
@@ -289,8 +256,9 @@ export default function HaloHaloWithdrawPanel({
                 }
               }}
             >
-              {(buttonState === ButtonHaloStates.Disabled || buttonState === ButtonHaloStates.Approved) && (
-                <>{t('claimHalo')}</>
+              {buttonState === ButtonHaloStates.Disabled && <>{t('claimHalo')}</>}
+              {buttonState === ButtonHaloStates.Approved && (
+                <>{t('claimXHalo', { amount: formatNumber(haloToClaim, NumberFormat.long) })}</>
               )}
               {buttonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
               {buttonState === ButtonHaloStates.Approving && (
