@@ -62,7 +62,7 @@ describe('Percentage Yield', () => {
 
   it('annual percentage yield', () => {
     const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
-    const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.MAINNET]!]: 1 }
+    const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']: 1 }
 
     const poolAPY = apy(expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
 

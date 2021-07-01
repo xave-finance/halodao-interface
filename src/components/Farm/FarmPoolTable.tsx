@@ -59,7 +59,7 @@ const FarmPoolTable = ({ poolsInfo, tokenAddresses }: FarmPoolTableProps) => {
               </AutoColumn>
             </Card>
           </HideSmall>
-          {poolsInfo.map((poolInfo, index) => {
+          {poolsInfo.map(poolInfo => {
             return <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
           })}
         </AutoColumn>
