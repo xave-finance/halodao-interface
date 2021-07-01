@@ -39,22 +39,22 @@ export const HALO: ChainTokenMap = {
     ChainId.MAINNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.BSC]: new Token(
     ChainId.BSC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   // Testnets
   [ChainId.KOVAN]: new Token(
@@ -161,7 +161,7 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     havven: '0x86436BcE20258a6DcfE48C9512d4d49A30C4d8c4',
     aragon: '0x37f03a12241E9FD3658ad6777d289c3fb8512Bc9',
     '0x': '0xccb0F4Cf5D3F97f4a55bb5f5cA321C3ED033f244',
-    halo: HALO_TOKEN_ADDRESS[ChainId.KOVAN] ?? ZERO_ADDRESS
+    halo: '0xaA652e6aa1BC67A88e0e37a94fE856Be2e72e8cA'
   },
   [ChainId.RINKEBY]: {},
   [ChainId.GÖRLI]: {},

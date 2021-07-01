@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
-
 import {
   ButtonHalo,
   ButtonHaloOutlined,
@@ -31,12 +30,12 @@ import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
-import { getPoolLiquidity } from 'utils/balancer'
+import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { ChainId, JSBI, TokenAmount } from '@sushiswap/sdk'
+import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
@@ -50,6 +49,7 @@ import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import { tokenSymbolForPool } from 'utils/poolInfo'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -413,12 +413,11 @@ const ClaimButton = styled(ButtonOutlined)`
 `
 
 interface FarmPoolCardProps {
-  poolId: number
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
 }
 
-export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolCardProps) {
+export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
@@ -438,8 +437,8 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
-  const stakedBPTs = useStakedBPTPerPool([poolId])
-  const bptStaked = stakedBPTs[poolId] ?? 0
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid])
+  const bptStaked = stakedBPTs[poolInfo.pid] ?? 0
 
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
@@ -451,8 +450,8 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   // Get user earned HALO
-  const unclaimedRewards = useUnclaimedRewardsPerPool([poolId])
-  const unclaimedPoolRewards = unclaimedRewards[poolId] ?? 0
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
+  const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
@@ -460,43 +459,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
-  // Changes the copy depending on the network
-  const tokenSymbol = {
-    [ChainId.BSC]: 'SLP',
-    [ChainId.BSC_TESTNET]: 'SLP',
-    [ChainId.MAINNET]: 'BPT',
-    [ChainId.ROPSTEN]: 'BPT',
-    [ChainId.KOVAN]: 'BPT',
-    [ChainId.RINKEBY]: 'BPT',
-    [ChainId.GÖRLI]: 'BPT',
-    [ChainId.MATIC]: 'SLP',
-    [ChainId.MATIC_TESTNET]: 'SLP',
-    [ChainId.FANTOM]: '',
-    [ChainId.FANTOM_TESTNET]: '',
-    [ChainId.XDAI]: '',
-    [ChainId.ARBITRUM]: '',
-    [ChainId.MOONBASE]: ''
-  }
-
-  // Changes the copy depending on the network
-  const getTokensCopy = {
-    [ChainId.BSC]: t('getSLPTokens'),
-    [ChainId.BSC_TESTNET]: t('getSLPTokens'),
-    [ChainId.MAINNET]: t('getBPTTokens'),
-    [ChainId.ROPSTEN]: t('getBPTTokens'),
-    [ChainId.KOVAN]: t('getBPTTokens'),
-    [ChainId.RINKEBY]: t('getBPTTokens'),
-    [ChainId.GÖRLI]: t('getBPTTokens'),
-    [ChainId.MATIC]: t('getSLPTokens'),
-    [ChainId.MATIC_TESTNET]: t('getSLPTokens'),
-    [ChainId.FANTOM]: '',
-    [ChainId.FANTOM_TESTNET]: '',
-    [ChainId.XDAI]: '',
-    [ChainId.ARBITRUM]: '',
-    [ChainId.MOONBASE]: ''
-  }
-
-  // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
+  // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
   // Pool Liquidity
@@ -507,7 +470,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const rawAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**
@@ -577,7 +540,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     setStakeButtonState(ButtonHaloStates.TxInProgress)
 
     try {
-      const tx = await deposit(poolId, parseFloat(stakeAmount) ?? 0)
+      const tx = await deposit(poolInfo.pid, parseFloat(stakeAmount) ?? 0)
       await tx.wait()
     } catch (e) {
       console.error('Stake error: ', e)
@@ -596,7 +559,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
     setUnstakeButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     try {
-      const tx = await withdraw(poolId, parseFloat(unstakeAmount) ?? 0)
+      const tx = await withdraw(poolInfo.pid, parseFloat(unstakeAmount) ?? 0)
       await tx.wait()
     } catch (e) {
       console.error('Unstake error: ', e)
@@ -616,7 +579,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
 
     // Claim/withdraw rewards
     try {
-      const tx = await harvest(poolId)
+      const tx = await harvest(poolInfo.pid)
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
@@ -672,7 +635,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
           <StyledRowFixed width="13%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>
-              {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
+              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
@@ -707,12 +670,12 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {chainId && tokenSymbol[chainId]}
+                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
                   <GetBPTButton href={poolInfo.addLiquidityUrl}>
-                    {chainId && getTokensCopy[chainId]}
+                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address))}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>
                 </RowFlat>
@@ -767,7 +730,7 @@ export default function FarmPoolCard({ poolId, poolInfo, tokenPrice }: FarmPoolC
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    STAKED: {formatNumber(bptStaked)} {chainId && tokenSymbol[chainId]}
+                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <HideSmallFullWidth>

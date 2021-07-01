@@ -8,10 +8,7 @@ import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
 import { usePoolAddresses } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
-import { ChainId } from '@sushiswap/sdk'
-import { useActiveWeb3React } from 'hooks'
 import BetaLabel from 'components/Labels/BetaLabel'
-
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 
 const PageWrapper = styled(AutoColumn)`
@@ -66,33 +63,13 @@ const Farm = () => {
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
-  const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
       setTokenAddresses(result.tokenAddresses)
     })
-  }, [fetchPoolInfo])
-
-  console.log(tokenAddresses)
-  // Changes the copy depending on the network
-  const stakeToEarnMessage = {
-    [ChainId.BSC]: t('stakeToEarnSushi'),
-    [ChainId.BSC_TESTNET]: t('stakeToEarnSushi'),
-    [ChainId.MAINNET]: t('stakeToEarn'),
-    [ChainId.ROPSTEN]: t('stakeToEarn'),
-    [ChainId.KOVAN]: t('stakeToEarn'),
-    [ChainId.RINKEBY]: t('stakeToEarn'),
-    [ChainId.GÖRLI]: t('stakeToEarn'),
-    [ChainId.MATIC]: t('stakeToEarnSushi'),
-    [ChainId.MATIC_TESTNET]: t('stakeToEarnSushi'),
-    [ChainId.FANTOM]: '',
-    [ChainId.FANTOM_TESTNET]: '',
-    [ChainId.XDAI]: '',
-    [ChainId.ARBITRUM]: '',
-    [ChainId.MOONBASE]: ''
-  }
+  }, [poolAddresses]) // eslint-disable-line
 
   return (
     <>
@@ -107,7 +84,7 @@ const Farm = () => {
               <TYPE.darkGray
                 style={{ fontSize: '16px', margin: '2px 0', lineHeight: '130%', justifySelf: 'flex-start' }}
               >
-                {chainId && stakeToEarnMessage[chainId]}
+                {t('stakeToEarn')}
               </TYPE.darkGray>
             </Row>
             <Row>
@@ -124,7 +101,7 @@ const Farm = () => {
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
-        <FarmPoolTable />
+        <FarmPoolTable poolsInfo={poolsInfo} tokenAddresses={tokenAddresses} />
       </PageWrapper>
     </>
   )
