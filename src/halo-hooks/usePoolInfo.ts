@@ -1,10 +1,19 @@
-import { ChainId, Token } from '@sushiswap/sdk'
-import { useActiveWeb3React } from 'hooks'
-import { useMemo } from 'react'
+import { Token } from '@sushiswap/sdk'
+import { useCallback } from 'react'
+import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
+import { useAllocPoints } from './useRewards'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
+import { useUniPoolInfo } from './useUniPoolInfo'
+
+export enum PoolProvider {
+  Balancer,
+  Uni,
+  Sushi
+}
 
 export type PoolInfo = {
+  pid: number
   pair: string
   address: string
   addLiquidityUrl: string
@@ -12,6 +21,7 @@ export type PoolInfo = {
   tokens: PoolTokenInfo[]
   asToken: Token
   allocPoint: number
+  provider: PoolProvider
 }
 
 export type PoolTokenInfo = {
@@ -22,20 +32,38 @@ export type PoolTokenInfo = {
 }
 
 export const usePoolInfo = (poolAddresses: string[]) => {
-  const { chainId } = useActiveWeb3React()
+  const { balancer, uni, sushi } = groupByPoolProvider(poolAddresses)
+  const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
+  const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
+  const fetchUniPoolInfo = useUniPoolInfo(uni)
+  const allocPoints = useAllocPoints(poolAddresses)
 
-  const fetchBalancerPoolInfo = useBalancerPoolInfo(
-    chainId === ChainId.KOVAN || chainId === ChainId.MAINNET ? poolAddresses : []
-  )
-  const fetchSushiPoolInfo = useSushiPoolInfo(
-    chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC || chainId === ChainId.MATIC_TESTNET ? poolAddresses : []
-  )
+  return useCallback(async () => {
+    let poolsInfo: PoolInfo[] = []
+    let tokenAddresses: string[] = []
 
-  return useMemo(() => {
-    if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC || chainId === ChainId.MATIC_TESTNET) {
-      return fetchSushiPoolInfo
-    } else {
-      return fetchBalancerPoolInfo
+    if (balancer.length) {
+      const balancerResult = await fetchBalancerPoolInfo()
+      poolsInfo = [...poolsInfo, ...balancerResult.poolsInfo]
+      tokenAddresses = [...tokenAddresses, ...balancerResult.tokenAddresses]
     }
-  }, [chainId, fetchBalancerPoolInfo, fetchSushiPoolInfo])
+
+    if (sushi.length) {
+      const sushiResult = await fetchSushiPoolInfo()
+      poolsInfo = [...poolsInfo, ...sushiResult.poolsInfo]
+      tokenAddresses = [...tokenAddresses, ...sushiResult.tokenAddresses]
+    }
+
+    if (uni.length) {
+      const uniResult = await fetchUniPoolInfo()
+      poolsInfo = [...poolsInfo, ...uniResult.poolsInfo]
+      tokenAddresses = [...tokenAddresses, ...uniResult.tokenAddresses]
+    }
+
+    poolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = allocPoints[poolInfo.pid]
+    })
+
+    return { poolsInfo, tokenAddresses }
+  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, allocPoints])
 }

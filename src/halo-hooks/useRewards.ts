@@ -166,7 +166,7 @@ export const useAllocPoints = (poolAddresses: string[]) => {
   const args = useMemo(() => poolAddresses.map((_, i) => [i]), [poolAddresses])
   const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
 
-  return useMemo(() => {
+  return useMemo<number[]>(() => {
     return results.map(v => (v.result ? v.result['allocPoint'].toNumber() : 0))
   }, [results])
 }

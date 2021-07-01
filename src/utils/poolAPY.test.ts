@@ -16,7 +16,6 @@ describe('Percentage Yield', () => {
    *
    * So APY should be 12000
    */
-  const chainId = ChainId.KOVAN
   const rewardTokenPerSecond = 0.00038580246913580245 // 1k rewards/mo
   const USDPrice = 1
   const totalAllocPoint = 100
@@ -63,9 +62,9 @@ describe('Percentage Yield', () => {
 
   it('annual percentage yield', () => {
     const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
-    const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.KOVAN]]: 1 }
+    const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']: 1 }
 
-    const poolAPY = apy(chainId, expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
+    const poolAPY = apy(expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
 
     expect(poolAPY).toEqual(expectedApy)
   })
