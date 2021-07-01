@@ -39,22 +39,22 @@ export const HALO: ChainTokenMap = {
     ChainId.MAINNET,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.BSC]: new Token(
     ChainId.BSC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'RNBW',
-    'RNBWToken'
+    'LPOP',
+    'LPOPToken'
   ),
   // Testnets
   [ChainId.KOVAN]: new Token(

@@ -91,7 +91,7 @@ const useHaloHalo = () => {
       if (amount?.value) {
         try {
           const tx = await halohaloContract?.enter(amount?.value)
-          addTransaction(tx, { summary: 'Deposit RNBW' })
+          addTransaction(tx, { summary: 'Deposit LPOP' })
           return tx
         } catch (e) {
           return e
@@ -107,7 +107,7 @@ const useHaloHalo = () => {
       if (amount?.value) {
         try {
           const tx = await halohaloContract?.leave(amount?.value)
-          addTransaction(tx, { summary: 'Claim RNBW' })
+          addTransaction(tx, { summary: 'Claim LPOP' })
           return tx
         } catch (e) {
           return e
