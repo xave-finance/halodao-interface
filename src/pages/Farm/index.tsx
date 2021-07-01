@@ -64,17 +64,14 @@ const Farm = () => {
   const fetchPoolInfo = usePoolInfo(poolAddresses)
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
-  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
   const { chainId } = useActiveWeb3React()
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
-      setTokenAddresses(result.tokenAddresses)
     })
   }, [fetchPoolInfo])
 
-  console.log(tokenAddresses)
   // Changes the copy depending on the network
   const stakeToEarnMessage = {
     [ChainId.BSC]: t('stakeToEarnSushi'),
