@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { COINGECKO_KNOWN_TOKENS } from '../constants'
+import { COINGECKO_KNOWN_TOKENS, HALO_TOKEN_ADDRESS } from '../constants'
 import { getTokensUSDPrice, GetPriceBy } from 'utils/coingecko'
+import { ChainId } from '@sushiswap/sdk'
 
 export type TokenPrice = {
   [address: string]: number
@@ -13,17 +14,22 @@ export const useTokenPrice = (tokenAddresses: string[]) => {
 
   /**
    * Gets the price of some known tokens (e.g. weth, dai, usdc, etc)
-   * This is a workaround so we can test with testnet addresses
    */
   useEffect(() => {
     if (!chainId) return
 
-    const knownTokens = COINGECKO_KNOWN_TOKENS[chainId]
+    // Get Mainnet RNBW price
+    getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']).then(price => {
+      setTokenPrice(previousPrice => {
+        return { ...previousPrice, ...price }
+      })
+    })
 
+    // Get other known token prices
+    const knownTokens = COINGECKO_KNOWN_TOKENS[chainId]
     if (!knownTokens) return
 
     const tokenIds = Object.keys(knownTokens)
-
     if (!tokenIds.length) return
 
     getTokensUSDPrice(GetPriceBy.id, tokenIds).then(price => {
@@ -32,7 +38,9 @@ export const useTokenPrice = (tokenAddresses: string[]) => {
         newPrice[knownTokens[key]] = price[key]
       }
 
-      setTokenPrice(newPrice)
+      setTokenPrice(previousPrice => {
+        return { ...previousPrice, ...newPrice }
+      })
     })
   }, [chainId])
 

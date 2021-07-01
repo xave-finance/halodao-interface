@@ -14,7 +14,7 @@ import Logo from '../Logo'
 import { useActiveWeb3React } from '../../hooks'
 
 const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+  `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/ethereum/assets/${address}/logo.png`
 
 const StyledNativeCurrencyLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
