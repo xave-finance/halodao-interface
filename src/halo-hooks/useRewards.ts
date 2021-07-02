@@ -5,6 +5,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { tokenSymbolForPool } from 'utils/poolInfo'
+import { ZERO_ADDRESS } from '../constants'
 
 /**
  * Internal Methods
@@ -58,9 +59,8 @@ export const useLPTokenAddresses = () => {
 export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
-  const zeroAddress = '0x0000000000000000000000000000000000000000'
 
-  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? zeroAddress]), [poolIds, account])
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'pendingRewardToken', args)
 
   return useMemo(
@@ -83,9 +83,8 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
 export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
-  const zeroAddress = '0x0000000000000000000000000000000000000000'
 
-  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? zeroAddress]), [poolIds, account])
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'userInfo', args)
 
   return useMemo(
