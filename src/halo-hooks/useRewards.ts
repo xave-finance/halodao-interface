@@ -4,6 +4,7 @@ import { useSingleCallResult, useSingleContractMultipleData } from 'state/multic
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { tokenSymbolForPool } from 'utils/poolInfo'
 
 /**
  * Internal Methods
@@ -108,10 +109,10 @@ export const useDepositWithdrawHarvestCallback = () => {
   const addTransaction = useTransactionAdder()
 
   const deposit = useCallback(
-    async (poolId: number, amount: number) => {
+    async (poolId: number, amount: number, poolAddress: string) => {
       const tx = await rewardsContract?.deposit(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
-        summary: `Stake ${amount} BPT`
+        summary: `Stake ${amount} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },
@@ -119,10 +120,10 @@ export const useDepositWithdrawHarvestCallback = () => {
   )
 
   const withdraw = useCallback(
-    async (poolId: number, amount: number) => {
+    async (poolId: number, amount: number, poolAddress: string) => {
       const tx = await rewardsContract?.withdraw(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
-        summary: `Unstake ${amount} BPT`
+        summary: `Unstake ${amount} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },
