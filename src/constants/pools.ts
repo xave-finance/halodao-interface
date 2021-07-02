@@ -40,12 +40,14 @@ export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
  */
 
 const rawLpTokenPoolMap = process.env.REACT_APP_BALANCER_LPTOKEN_POOL_MAP || ''
-const rawLpTokenPoolMapList = rawLpTokenPoolMap.split(',')
+const rawLpTokenPoolMapList = rawLpTokenPoolMap === '' ? [] : rawLpTokenPoolMap.split(',')
 const lpTokenPoolMap: { [key: string]: string } = {}
 
 rawLpTokenPoolMapList.forEach(rawLpTokenPool => {
   const elems = rawLpTokenPool.split(':')
-  lpTokenPoolMap[elems[0].toLowerCase()] = elems[1].toLowerCase()
+  if (elems.length > 1) {
+    lpTokenPoolMap[elems[0].toLowerCase()] = elems[1].toLowerCase()
+  }
 })
 
 export const BALANCER_LPTOKEN_POOL_MAP = lpTokenPoolMap
