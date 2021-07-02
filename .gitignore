@@ -19,6 +19,7 @@
 
 .env-localhost
 .env-beta.app.halodao.com
+.env-dev.beta.app.halodao.com
 .env-dev.app.halodao.com
 .env-alpha.app.halodao.com
 .env-test.app.halodao.com
