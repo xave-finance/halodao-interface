@@ -41,7 +41,7 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         pid: map.pid,
         pair: `${token1Symbol}/${token2Symbol}`,
         address: getAddress(map.lpToken),
-        addLiquidityUrl: `https://app.uniswap.org/#/swap?inputCurrency=${token1Address}&outputCurrency=${token2Address}`,
+        addLiquidityUrl: `https://app.uniswap.org/#/add/${token1Address}/${token2Address}`,
         liquidity:
           +formatEther(totalReserves[0]) * tokenPrice[token1Address] +
           +formatEther(totalReserves[1]) * tokenPrice[token2Address],
