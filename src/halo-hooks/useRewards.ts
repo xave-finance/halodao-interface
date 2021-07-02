@@ -47,7 +47,7 @@ const useLpToken = (poolLength: number): string[] => {
  * Public Methods
  */
 
-export const usePoolAddresses = () => {
+export const useLPTokenAddresses = () => {
   const length = usePoolLength()
   const addresses = useLpToken(length)
 

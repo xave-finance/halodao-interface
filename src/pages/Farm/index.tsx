@@ -6,7 +6,7 @@ import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
-import { usePoolAddresses } from 'halo-hooks/useRewards'
+import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 
@@ -57,8 +57,8 @@ const StyledExternalLink = styled(ExternalLink)`
 `
 
 const Farm = () => {
-  const poolAddresses = usePoolAddresses()
-  const fetchPoolInfo = usePoolInfo(poolAddresses)
+  const lpTokenAddresses = useLPTokenAddresses()
+  const fetchPoolInfo = usePoolInfo(lpTokenAddresses)
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
@@ -68,7 +68,7 @@ const Farm = () => {
       setPoolsInfo(result.poolsInfo)
       setTokenAddresses(result.tokenAddresses)
     })
-  }, [poolAddresses]) // eslint-disable-line
+  }, [lpTokenAddresses]) // eslint-disable-line
 
   return (
     <>

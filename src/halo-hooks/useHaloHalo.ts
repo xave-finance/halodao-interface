@@ -9,7 +9,7 @@ import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
 import { formatEther } from 'ethers/lib/utils'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { formatNumber } from 'utils/formatNumber'
 import { useBlockNumber } from 'state/application/hooks'
 import { useTimestampFromBlock } from 'hooks/useTimestampFromBlock'
 
@@ -23,7 +23,7 @@ const useHaloHalo = () => {
   const halohaloContract = useContract(chainId ? HALOHALO_ADDRESS[chainId] : undefined || '', HALOHALO_ABI) // withSigner
 
   const [allowance, setAllowance] = useState('0')
-  const [haloHaloAPY, setHaloHaloAPY] = useState('0')
+  const [haloHaloAPY, setHaloHaloAPY] = useState(0)
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')
 
   const currentBlockNumber = useBlockNumber()
@@ -44,7 +44,7 @@ const useHaloHalo = () => {
 
     const APY = timePriceChangedRatio * priceChange
 
-    setHaloHaloAPY(formatNumber(APY, NumberFormat.percent))
+    setHaloHaloAPY(APY)
   }, [halohaloContract, currentTimestamp])
 
   const getHaloHaloPrice = useCallback(async () => {

@@ -7,10 +7,10 @@ import UNI_V2_ABI from '../constants/haloAbis/UniV2.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { formatEther } from '@ethersproject/units'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
-import { PoolIdAddressMap } from 'utils/poolInfo'
+import { PoolIdLpTokenMap } from 'utils/poolInfo'
 import { getContract } from 'utils'
 
-export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
+export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { chainId, library, account } = useActiveWeb3React()
 
   const fetchPoolInfo = useCallback(async () => {
@@ -21,8 +21,8 @@ export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
       return { poolsInfo, tokenAddresses }
     }
 
-    for (const poolMap of poolsMap) {
-      const poolAddress = getAddress(poolMap.address)
+    for (const map of pidLpTokenMap) {
+      const poolAddress = getAddress(map.lpToken)
 
       const PoolContract = getContract(poolAddress, UNI_V2_ABI, library, account ?? undefined)
       const token1Address = getAddress(await PoolContract?.token0())
@@ -38,9 +38,9 @@ export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
       const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, [token1Address, token2Address])
 
       poolsInfo.push({
-        pid: poolMap.id,
+        pid: map.pid,
         pair: `${token1Symbol}/${token2Symbol}`,
-        address: getAddress(poolMap.address),
+        address: getAddress(map.lpToken),
         addLiquidityUrl: `https://app.uniswap.org/#/swap?inputCurrency=${token1Address}&outputCurrency=${token2Address}`,
         liquidity:
           +formatEther(totalReserves[0]) * tokenPrice[token1Address] +
@@ -69,7 +69,7 @@ export const useUniPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [poolsMap, chainId, library, account])
+  }, [pidLpTokenMap, chainId, library, account])
 
   return fetchPoolInfo
 }
