@@ -540,7 +540,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     setStakeButtonState(ButtonHaloStates.TxInProgress)
 
     try {
-      const tx = await deposit(poolInfo.pid, parseFloat(stakeAmount) ?? 0)
+      const tx = await deposit(poolInfo.pid, parseFloat(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
       console.error('Stake error: ', e)
@@ -559,7 +559,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     setUnstakeButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     try {
-      const tx = await withdraw(poolInfo.pid, parseFloat(unstakeAmount) ?? 0)
+      const tx = await withdraw(poolInfo.pid, parseFloat(unstakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
       console.error('Unstake error: ', e)
