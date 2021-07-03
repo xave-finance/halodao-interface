@@ -26,6 +26,7 @@ import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
 import EmptyState from 'components/EmptyState'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -272,8 +273,9 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep xRNBW, the more RNBW you can claim later on ({haloHaloAPY} APY). Claim anytime but
-              lose out on daily RNBW vesting multiples.
+              The longer you keep xRNBW, the more RNBW you can claim later on (
+              {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
+              anytime but lose out on daily RNBW vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

@@ -4,6 +4,8 @@ import { useSingleCallResult, useSingleContractMultipleData } from 'state/multic
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { tokenSymbolForPool } from 'utils/poolInfo'
+import { ZERO_ADDRESS } from '../constants'
 
 /**
  * Internal Methods
@@ -47,7 +49,7 @@ const useLpToken = (poolLength: number): string[] => {
  * Public Methods
  */
 
-export const usePoolAddresses = () => {
+export const useLPTokenAddresses = () => {
   const length = usePoolLength()
   const addresses = useLpToken(length)
 
@@ -58,7 +60,7 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? '']), [poolIds, account])
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'pendingRewardToken', args)
 
   return useMemo(
@@ -82,7 +84,7 @@ export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: numb
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? '']), [poolIds, account])
+  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'userInfo', args)
 
   return useMemo(
@@ -108,10 +110,10 @@ export const useDepositWithdrawHarvestCallback = () => {
   const addTransaction = useTransactionAdder()
 
   const deposit = useCallback(
-    async (poolId: number, amount: number) => {
+    async (poolId: number, amount: number, poolAddress: string) => {
       const tx = await rewardsContract?.deposit(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
-        summary: `Stake ${amount} BPT`
+        summary: `Stake ${amount} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },
@@ -119,10 +121,10 @@ export const useDepositWithdrawHarvestCallback = () => {
   )
 
   const withdraw = useCallback(
-    async (poolId: number, amount: number) => {
+    async (poolId: number, amount: number, poolAddress: string) => {
       const tx = await rewardsContract?.withdraw(poolId, parseEther(`${amount}`).toString(), account)
       addTransaction(tx, {
-        summary: `Unstake ${amount} BPT`
+        summary: `Unstake ${amount} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },

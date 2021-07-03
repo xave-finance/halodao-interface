@@ -31,12 +31,12 @@ export type PoolTokenInfo = {
   asToken: Token
 }
 
-export const usePoolInfo = (poolAddresses: string[]) => {
-  const { balancer, uni, sushi } = groupByPoolProvider(poolAddresses)
+export const usePoolInfo = (lpTokenAddresses: string[]) => {
+  const { balancer, uni, sushi } = groupByPoolProvider(lpTokenAddresses)
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
-  const allocPoints = useAllocPoints(poolAddresses)
+  const allocPoints = useAllocPoints(lpTokenAddresses)
 
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
