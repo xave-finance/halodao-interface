@@ -1,10 +1,11 @@
 import { BALANCER_POOLS_ADDRESSES, SUSHI_POOLS_ADDRESSES, UNI_POOLS_ADDRESSES } from 'constants/pools'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import { getAddress } from 'ethers/lib/utils'
 
-export type PoolIdAddressMap = {
-  id: number
-  address: string
+export type PoolIdLpTokenMap = {
+  pid: number
+  lpToken: string
 }
 
 const isBalancerPool = (address: string) => {
@@ -20,17 +21,17 @@ const isSushiPool = (address: string) => {
 }
 
 export const groupByPoolProvider = (addresses: string[]) => {
-  const balancerPools: PoolIdAddressMap[] = []
-  const uniPools: PoolIdAddressMap[] = []
-  const sushiPools: PoolIdAddressMap[] = []
+  const balancerPools: PoolIdLpTokenMap[] = []
+  const uniPools: PoolIdLpTokenMap[] = []
+  const sushiPools: PoolIdLpTokenMap[] = []
 
   addresses.forEach((address, id) => {
     if (isBalancerPool(address)) {
-      balancerPools.push({ id, address })
+      balancerPools.push({ pid: id, lpToken: getAddress(address) })
     } else if (isUniPool(address)) {
-      uniPools.push({ id, address })
+      uniPools.push({ pid: id, lpToken: getAddress(address) })
     } else if (isSushiPool(address)) {
-      sushiPools.push({ id, address })
+      sushiPools.push({ pid: id, lpToken: getAddress(address) })
     }
   })
 
