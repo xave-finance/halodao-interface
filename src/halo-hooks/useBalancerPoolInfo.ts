@@ -1,13 +1,13 @@
 import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL } from '../constants'
 import { useCallback } from 'react'
-import { subgraphRequest } from 'utils/balancer'
+import { getBalancerLPTokenAddress, getBalancerPoolAddress, subgraphRequest } from 'utils/balancer'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider, PoolTokenInfo } from './usePoolInfo'
-import { PoolIdAddressMap } from 'utils/poolInfo'
+import { PoolIdLpTokenMap } from 'utils/poolInfo'
 
-export const useBalancerPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
+export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { chainId } = useActiveWeb3React()
 
   /**
@@ -20,13 +20,13 @@ export const useBalancerPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
     if (!chainId) return { poolsInfo, tokenAddresses }
 
     // Convert addresses to lowercase (cause subgraph api is case-sensitive)
-    const poolIds = poolsMap.map(p => p.address.toLowerCase())
+    const balancerPoolIds = pidLpTokenMap.map(p => getBalancerPoolAddress(p.lpToken).toLowerCase())
 
     const query = {
       pools: {
         __args: {
           where: {
-            id_in: poolIds // eslint-disable-line
+            id_in: balancerPoolIds // eslint-disable-line
           }
         },
         id: true,
@@ -65,24 +65,24 @@ export const useBalancerPoolInfo = (poolsMap: PoolIdAddressMap[]) => {
 
       // Process pool info
       const pair = tokenSymbols.join('/')
-      const poolAddress = getAddress(pool.id)
-      const poolAsToken = new Token(chainId, poolAddress, 18, 'BPT', `BPT: ${pool.pair}`)
+      const lpTokenAddress = getAddress(getBalancerLPTokenAddress(pool.id))
+      const LPToken = new Token(chainId, lpTokenAddress, 18, 'BPT', `BPT: ${pool.pair}`)
 
       poolsInfo.push({
-        pid: poolsMap.filter(p => p.address === poolAddress)[0].id,
+        pid: pidLpTokenMap.filter(p => p.lpToken === lpTokenAddress)[0].pid,
         pair,
-        address: poolAddress,
+        address: lpTokenAddress,
         addLiquidityUrl: `${BALANCER_POOL_URL}${pool.id}`,
         liquidity: parseFloat(pool.liquidity),
         tokens: poolTokensInfo,
-        asToken: poolAsToken,
+        asToken: LPToken,
         allocPoint: 0,
         provider: PoolProvider.Balancer
       })
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [poolsMap, chainId])
+  }, [pidLpTokenMap, chainId])
 
   return fetchPoolInfo
 }

@@ -317,7 +317,7 @@ export default function Header() {
           >
             {t('swap')}
           </StyledExternalLink>
-          <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+          <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/lollidao.eth'}>
             {t('vote')}
           </StyledExternalLink>
         </HeaderLinks>

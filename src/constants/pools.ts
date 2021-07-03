@@ -31,3 +31,23 @@ const sushiPoolsAddresses = sushiPools.split(',').map(a => a.toLowerCase())
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const UNI_POOLS_ADDRESSES = uniPoolsAddresses
 export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
+
+/**
+ * Balancer lpToken -> poolAddress mapping
+ *
+ * REACT_APP_BALANCER_LPTOKEN_POOL_MAP format:
+ * <lpToken0>:<poolAddress0>,<lpToken1>:<poolAddress1>...
+ */
+
+const rawLpTokenPoolMap = process.env.REACT_APP_BALANCER_LPTOKEN_POOL_MAP || ''
+const rawLpTokenPoolMapList = rawLpTokenPoolMap === '' ? [] : rawLpTokenPoolMap.split(',')
+const lpTokenPoolMap: { [key: string]: string } = {}
+
+rawLpTokenPoolMapList.forEach(rawLpTokenPool => {
+  const elems = rawLpTokenPool.split(':')
+  if (elems.length > 1) {
+    lpTokenPoolMap[elems[0].toLowerCase()] = elems[1].toLowerCase()
+  }
+})
+
+export const BALANCER_LPTOKEN_POOL_MAP = lpTokenPoolMap
