@@ -2,8 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
-
-import { ButtonHalo, ButtonHaloOutlined, ButtonOutlined, ButtonHaloStates, ButtonHaloSimpleStates } from '../Button'
+import {
+  ButtonHalo,
+  ButtonHaloOutlined,
+  ButtonOutlined,
+  ButtonHaloStates,
+  ButtonHaloSimpleStates,
+  ButtonMax
+} from '../Button'
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
@@ -22,18 +28,20 @@ import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
-import { getPoolLiquidity } from 'utils/balancer'
+import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import {
-  useClaimedRewardsPerPool,
-  useDepositWithdrawPoolTokensCallback,
+  useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
-  useClaimRewardsCallback
+  useRewardTokenPerSecond,
+  useTotalAllocPoint
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -41,13 +49,31 @@ import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import { tokenSymbolForPool } from 'utils/poolInfo'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
+  padding: 1rem;
+  margin: 0 -1rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  width: auto;
+  transition: border 100ms ease-in;
+
+  &.inactive:hover {
+    border-color: ${({ theme }) => theme.primary1};
+  }
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
     padding: 0 30px 20px;
+    cursor: default;
+
+    &.inactive:hover {
+      border-color: transparent;
+    }
   `};
 `
 
@@ -128,12 +154,28 @@ const ManageCloseButton = styled(ButtonOutlined)`
   font-size: 16px;
 
   :hover {
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.text4};
     color: white;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.text4};
+    color: white;
+    width: 100%;
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-weight: 900;
+  `};
+`
+
+const ManageCloseButtonAlt = styled(ButtonText)`
+  padding: 4px 8px;
+  font-weight: 700;
+  font-size: 16px;
+  color: ${({ theme }) => theme.primary1};
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    background: ${({ theme }) => theme.text4};
     color: white;
     width: 100%;
     border-radius: 4px;
@@ -236,6 +278,11 @@ const StakeUnstakeChild = styled.div`
     width: 100%;
     margin-bottom: 20px;
   `};
+
+  #stake-button,
+  #unstake-button {
+    margin-top: 6px;
+  }
 `
 
 const HideSmallFullWidth = styled(HideSmall)`
@@ -390,8 +437,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
-  const stakedBPTs = useStakedBPTPerPool([poolInfo.address])
-  const bptStaked = stakedBPTs[poolInfo.address] ?? 0
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid])
+  const bptStaked = stakedBPTs[poolInfo.pid] ?? 0
 
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
@@ -403,22 +450,28 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   // Get user earned HALO
-  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.address])
-  const unclaimedPoolRewards = unclaimedRewards[poolInfo.address] ?? 0
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
+  const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
-  const claimedRewards = useClaimedRewardsPerPool([poolInfo.address])
-  const claimedPoolRewards = claimedRewards[poolInfo.address] ?? 0
-  const totalEarnedHALO = (unclaimedPoolRewards + claimedPoolRewards) * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
-  // Makse use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
-  const [depositPoolTokens, withdrawPoolTokens] = useDepositWithdrawPoolTokensCallback()
+  // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
+  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
 
-  const [claimRewards] = useClaimRewardsCallback()
+  // Pool Liquidity
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+
+  // APY
+  const rewardTokenPerSecond = useRewardTokenPerSecond()
+  const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
+  const totalAllocPoint = useTotalAllocPoint()
+  const allocPoint = poolInfo.allocPoint
+  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+  const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**
    * Updating the state of stake button
@@ -487,7 +540,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     setStakeButtonState(ButtonHaloStates.TxInProgress)
 
     try {
-      const tx = await depositPoolTokens(poolInfo.address, parseFloat(stakeAmount) ?? 0)
+      const tx = await deposit(poolInfo.pid, parseEther(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
       console.error('Stake error: ', e)
@@ -506,7 +559,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     setUnstakeButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     try {
-      const tx = await withdrawPoolTokens(poolInfo.address, parseFloat(unstakeAmount) ?? 0)
+      const tx = await withdraw(poolInfo.pid, parseEther(unstakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
       console.error('Unstake error: ', e)
@@ -526,7 +579,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
     // Claim/withdraw rewards
     try {
-      const tx = await claimRewards(poolInfo.address)
+      const tx = await harvest(poolInfo.pid)
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
@@ -554,8 +607,15 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
     <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
       <AutoColumn>
         {/* Pool Row default */}
-        <StyledFixedHeightRowCustom>
-          <StyledRowFixed width="22%">
+        <StyledFixedHeightRowCustom
+          className={showMore ? 'active' : 'inactive'}
+          onClick={() => {
+            if (!showMore) {
+              setShowMore(true)
+            }
+          }}
+        >
+          <StyledRowFixed width="18%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -564,25 +624,29 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="19%">
-            <LabelText className="first">{t('totalPoolValue')}:</LabelText>
-            <StyledTextForValue>
-              {formatNumber(getPoolLiquidity(poolInfo, tokenPrice), NumberFormat.usd)}
-            </StyledTextForValue>
+          <StyledRowFixed width="13%">
+            <LabelText className="first">{t('apy')}:</LabelText>
+            <StyledTextForValue>{poolAPY}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="18%">
+            <LabelText className="first">{t('totalPoolValue')}:</LabelText>
+            <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed width="13%">
             <LabelText>{t('stakeable')}:</LabelText>
-            <StyledTextForValue>{formatNumber(bptBalance)} BPT</StyledTextForValue>
+            <StyledTextForValue>
+              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="15%">
+          <StyledRowFixed width="14%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(totalEarnedHALO)} HALO</StyledTextForValue>
+            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="10%">
+          <StyledRowFixed width="8%" justify="flex-end">
             {account && (
               <>
                 {showMore ? (
@@ -590,7 +654,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('closeTxt')}</ManageCloseButton>
                   </HideSmallFullWidth>
                 ) : (
-                  <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('manage')}</ManageCloseButton>
+                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>{t('add')}</ManageCloseButtonAlt>
                 )}
               </>
             )}
@@ -605,11 +669,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
             <StakeUnstakeContainer>
               <StakeUnstakeChild>
                 <FixedHeightRow>
-                  <TYPE.label>BALANCE: {formatNumber(bptBalance)} BPT</TYPE.label>
+                  <TYPE.label>
+                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+                  </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
-                  <GetBPTButton href={poolInfo.balancerUrl}>
-                    {t('getBPTTokens')}
+                  <GetBPTButton href={poolInfo.addLiquidityUrl}>
+                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address))}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>
                 </RowFlat>
@@ -622,6 +688,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
+                  <ButtonMax onClick={() => setStakeAmount(`${bptBalance}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHalo
@@ -662,7 +729,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               </StakeUnstakeChild>
               <StakeUnstakeChild>
                 <FixedHeightRow>
-                  <TYPE.label>STAKED: {formatNumber(bptStaked)} BPT</TYPE.label>
+                  <TYPE.label>
+                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address)}
+                  </TYPE.label>
                 </FixedHeightRow>
                 <HideSmallFullWidth>
                   <Row height={23}>&nbsp;</Row>
@@ -676,6 +745,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
+                  <ButtonMax onClick={() => setUnstakeAmount(`${bptStaked}`)}>{t('max')}</ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHaloOutlined
@@ -716,7 +786,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} HALO</Text>
+                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton

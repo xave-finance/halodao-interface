@@ -2,82 +2,13 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_rewardsTokenAddress",
+        "internalType": "contract IERC20",
+        "name": "rewardToken_",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_ammLpRewardsRatio",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_genesisBlock",
-        "type": "uint256"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "poolAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "allocPoint",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Rewards.Pool[]",
-        "name": "_minterLpPools",
-        "type": "tuple[]"
-      },
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "poolAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "allocPoint",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Rewards.Pool[]",
-        "name": "_ammLpPools",
-        "type": "tuple[]"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "lpAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "accHaloPerShare",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "lastRewardBlock",
-        "type": "uint256"
-      }
-    ],
-    "name": "AmmLPRewardUpdatedEvent",
-    "type": "event"
   },
   {
     "anonymous": false,
@@ -90,18 +21,24 @@
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
       }
     ],
-    "name": "DepositAMMLPTokensEvent",
+    "name": "Deposit",
     "type": "event"
   },
   {
@@ -134,18 +71,24 @@
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "collateralAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
       }
     ],
-    "name": "DepositMinterCollateralByAddress",
+    "name": "EmergencyWithdraw",
     "type": "event"
   },
   {
@@ -154,23 +97,129 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "collateralAddress",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "Harvest",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "allocPoint",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IERC20",
+        "name": "lpToken",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IRewarder",
+        "name": "rewarder",
+        "type": "address"
+      }
+    ],
+    "name": "LogPoolAddition",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "rewardTokenPerSecond",
+        "type": "uint256"
+      }
+    ],
+    "name": "LogRewardTokenPerSecond",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "allocPoint",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "contract IRewarder",
+        "name": "rewarder",
         "type": "address"
       },
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "overwrite",
+        "type": "bool"
+      }
+    ],
+    "name": "LogSetPool",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "uint256",
-        "name": "accHaloPerShare",
+        "name": "pid",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "lastRewardBlock",
+        "name": "lastRewardTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "lpSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "accRewardTokenPerShare",
         "type": "uint256"
       }
     ],
-    "name": "MinterRewardPoolRatioUpdatedEvent",
+    "name": "LogUpdatePool",
     "type": "event"
   },
   {
@@ -204,7 +253,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "rewardsManagerAddress",
+        "name": "rewardsManager",
         "type": "address"
       }
     ],
@@ -215,25 +264,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "VestedRewardsReleasedEvent",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "user",
@@ -241,66 +271,34 @@
       },
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
-      }
-    ],
-    "name": "WithdrawAMMLPTokensEvent",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "collateralAddress",
+        "name": "to",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
       }
     ],
-    "name": "WithdrawMinterCollateralByAddress",
+    "name": "Withdraw",
     "type": "event"
   },
   {
     "inputs": [],
-    "name": "BASIS_POINTS",
+    "name": "REWARD_TOKEN",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "contract IERC20",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "DECIMALS",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -308,159 +306,55 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_allocPoint",
-        "type": "uint256"
-      }
-    ],
-    "name": "addAmmLp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_allocPoint",
-        "type": "uint256"
-      }
-    ],
-    "name": "addMinterCollateralType",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "ammLpPools",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "whitelisted",
-        "type": "bool"
-      },
       {
         "internalType": "uint256",
         "name": "allocPoint",
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "lastRewardBlock",
-        "type": "uint256"
+        "internalType": "contract IERC20",
+        "name": "_lpToken",
+        "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "accHaloPerShare",
-        "type": "uint256"
+        "internalType": "contract IRewarder",
+        "name": "_rewarder",
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "ammLpRewardsRatio",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "add",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "ammLpUserInfo",
-    "outputs": [
       {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "rewardDebt",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_from",
-        "type": "uint256"
-      }
-    ],
-    "name": "calcReward",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
-        "name": "",
+        "name": "to",
         "type": "address"
       }
     ],
-    "name": "claimedRewardsToken",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "deposit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_epochRewardAmount",
+        "name": "epochRewardAmount_",
         "type": "uint256"
       }
     ],
@@ -472,22 +366,17 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "pid",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
       }
     ],
-    "name": "depositMinter",
+    "name": "emergencyWithdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -495,155 +384,33 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
       }
     ],
-    "name": "depositPoolTokens",
+    "name": "harvest",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "epochRewardAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "genesisBlock",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      }
-    ],
-    "name": "getAmmLpPoolInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bool",
-            "name": "whitelisted",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "allocPoint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lastRewardBlock",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "accHaloPerShare",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Rewards.PoolInfo",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getClaimedAndUnclaimedPoolRewardsByUserByPool",
-    "outputs": [
-      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getDepositedPoolTokenBalanceByUser",
+    "name": "lpToken",
     "outputs": [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getEpochRewardAmount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMinterContractAddress",
-    "outputs": [
-      {
-        "internalType": "address",
+        "internalType": "contract IERC20",
         "name": "",
         "type": "address"
       }
@@ -654,314 +421,14 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
+        "internalType": "uint256[]",
+        "name": "pids",
+        "type": "uint256[]"
       }
     ],
-    "name": "getMinterLpPoolInfo",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bool",
-            "name": "whitelisted",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "allocPoint",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "lastRewardBlock",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "accHaloPerShare",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Rewards.PoolInfo",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getMinterLpRewardsRatio",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getRewardsManagerAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTotalMinterLpAllocationPoints",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTotalPoolAllocationPoints",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getTotalRewardsClaimedByUser",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getUnclaimedMinterLpRewardsByUser",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
-      }
-    ],
-    "name": "getUnclaimedPoolRewardsByUserByPool",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getWhitelistedAMMPoolAddresses",
-    "outputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      }
-    ],
-    "name": "isValidAmmLp",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      }
-    ],
-    "name": "isValidMinterLp",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "lastHaloVestRewardBlock",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "minterContract",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "minterLpPools",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "whitelisted",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "allocPoint",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "lastRewardBlock",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "accHaloPerShare",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "minterLpRewardsRatio",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "minterLpUserInfo",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardDebt",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "massUpdatePools",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -980,27 +447,67 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "_pid",
+        "type": "uint256"
+      },
+      {
         "internalType": "address",
-        "name": "_lpAddress",
+        "name": "_user",
         "type": "address"
       }
     ],
-    "name": "removeAmmLp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "pendingRewardToken",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "pending",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
-    "name": "removeMinterCollateralType",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "poolInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "accRewardTokenPerShare",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "lastRewardTime",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "allocPoint",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "pools",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1012,7 +519,7 @@
   },
   {
     "inputs": [],
-    "name": "rewardPerBlock",
+    "name": "rewardTokenPerSecond",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1024,11 +531,17 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "rewardsManagerAddress",
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "rewarder",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IRewarder",
         "name": "",
         "type": "address"
       }
@@ -1038,7 +551,7 @@
   },
   {
     "inputs": [],
-    "name": "rewardsTokenAddress",
+    "name": "rewardsManager",
     "outputs": [
       {
         "internalType": "address",
@@ -1052,74 +565,27 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "_pid",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "_allocPoint",
         "type": "uint256"
-      }
-    ],
-    "name": "setAmmLpAllocationPoints",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+      },
       {
-        "internalType": "uint256",
-        "name": "_genesisBlock",
-        "type": "uint256"
-      }
-    ],
-    "name": "setGenesisBlock",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_minter",
-        "type": "address"
-      }
-    ],
-    "name": "setMinterContractAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
+        "internalType": "contract IRewarder",
+        "name": "_rewarder",
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "_allocPoint",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "overwrite",
+        "type": "bool"
       }
     ],
-    "name": "setMinterLpAllocationPoints",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_minterLpRewardsRatio",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMinterLpRewardsRatio",
+    "name": "set",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1128,31 +594,18 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_rewardsManager",
+        "name": "rewardsManager_",
         "type": "address"
       }
     ],
-    "name": "setRewardsManagerAddress",
+    "name": "setRewardsManager",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "totalAmmLpAllocs",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalMinterLpAllocs",
+    "name": "totalAllocPoint",
     "outputs": [
       {
         "internalType": "uint256",
@@ -1179,37 +632,63 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       }
     ],
-    "name": "updateAmmRewardPool",
-    "outputs": [],
+    "name": "updatePool",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "accRewardTokenPerShare",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "lastRewardTime",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "allocPoint",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct AmmRewards.PoolInfo",
+        "name": "pool",
+        "type": "tuple"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      }
-    ],
-    "name": "updateMinterRewardPool",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "vestingRewardsDebt",
-    "outputs": [
-      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userInfo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "int256",
+        "name": "rewardDebt",
+        "type": "int256"
       }
     ],
     "stateMutability": "view",
@@ -1218,22 +697,22 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_account",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
       }
     ],
-    "name": "withdrawMinter",
+    "name": "withdraw",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1241,48 +720,22 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "pid",
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_amount",
+        "name": "amount",
         "type": "uint256"
-      }
-    ],
-    "name": "withdrawPoolTokens",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_collateralAddress",
-        "type": "address"
       },
       {
         "internalType": "address",
-        "name": "_account",
+        "name": "to",
         "type": "address"
       }
     ],
-    "name": "withdrawUnclaimedMinterLpRewards",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_lpAddress",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawUnclaimedPoolRewards",
+    "name": "withdrawAndHarvest",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

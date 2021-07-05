@@ -17,6 +17,14 @@
 .env.test.local
 .env.production.local
 
+.env-localhost
+.env-beta.app.halodao.com
+.env-dev.beta.app.halodao.com
+.env-dev.app.halodao.com
+.env-alpha.app.halodao.com
+.env-test.app.halodao.com
+.env-app.halodao.com
+
 /.netlify
 
 npm-debug.log*

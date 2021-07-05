@@ -17,7 +17,8 @@ import {
   updateUserSingleHopOnly,
   PoolVestingInfo,
   updatePoolToHarvest,
-  removePoolToHarvest
+  removePoolToHarvest,
+  toggleIsDisclaimerVisible
 } from './actions'
 
 const currentTimestamp = () => new Date().getTime()
@@ -56,6 +57,11 @@ export interface UserState {
   URLWarningVisible: boolean
 
   poolToHarvest?: PoolVestingInfo
+
+  // wether disclaimer alert should be visible on the UI or not
+  isDisclaimerVisible: boolean
+  // timestamp when disclaimer alert is dismissed
+  disclaimerDismissed?: number
 }
 
 function pairKey(token0Address: string, token1Address: string) {
@@ -72,7 +78,8 @@ export const initialState: UserState = {
   tokens: {},
   pairs: {},
   timestamp: currentTimestamp(),
-  URLWarningVisible: true
+  URLWarningVisible: true,
+  isDisclaimerVisible: true
 }
 
 export default createReducer(initialState, builder =>
@@ -154,5 +161,12 @@ export default createReducer(initialState, builder =>
     .addCase(removePoolToHarvest, state => {
       state.poolToHarvest = undefined
       state.timestamp = currentTimestamp()
+    })
+    .addCase(toggleIsDisclaimerVisible, state => {
+      state.isDisclaimerVisible = !state.isDisclaimerVisible
+
+      if (!state.isDisclaimerVisible) {
+        state.disclaimerDismissed = currentTimestamp()
+      }
     })
 )

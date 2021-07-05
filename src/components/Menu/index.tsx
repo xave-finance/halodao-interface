@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { Code, Info, MessageCircle } from 'react-feather'
+import { /*Code,*/ Info, MessageCircle } from 'react-feather'
 import styled from 'styled-components'
 import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
 import { useOnClickOutside } from '../../hooks/useOnClickOutside'
@@ -87,7 +87,7 @@ const MenuItem = styled(ExternalLink)`
   }
 `
 
-const CODE_LINK = 'https://github.com/HaloDAO/halodao-interface'
+// const CODE_LINK = 'https://github.com/HaloDAO/halodao-interface'
 
 export default function Menu() {
   const node = useRef<HTMLDivElement>()
@@ -112,10 +112,10 @@ export default function Menu() {
             <BookOpen size={14} />
             Docs
           </MenuItem> */}
-          <MenuItem id="link" href={CODE_LINK}>
+          {/* <MenuItem id="link" href={CODE_LINK}>
             <Code size={14} />
             Code
-          </MenuItem>
+          </MenuItem> */}
           <MenuItem id="link" href="https://discord.gg/gqKxuGdX">
             <MessageCircle size={14} />
             Discord

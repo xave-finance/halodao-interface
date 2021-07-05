@@ -48,11 +48,6 @@ const StyledContent = styled.div`
     font-size: 16px;
     font-weight: 700;
     line-height: 20.8px;
-    margin-bottom: 27px;
-  }
-
-  img {
-    margin-bottom: 15px;
   }
 
   button {
@@ -88,10 +83,10 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
         </StyledCloseIconWrapper>
         <StyledContent>
           <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
-          <div className="bal-rewards">{formatNumber(earningRewards)} RNBW</div>
-          <div className="bal-halo">({formatNumber(earningHALO)} HALO)</div>
+          <div className="bal-rewards">{formatNumber(earningRewards)} xRNBW</div>
+          <div className="bal-halo">({formatNumber(earningHALO)} RNBW)</div>
           <img src={BunnyWithSweets} alt="Bunny Mascot" />
-          <TYPE.body color="white">As RNBW, you&apos;re earning right now!</TYPE.body>
+          <TYPE.body color="white">As xRNBW, you&apos;re earning right now!</TYPE.body>
           <ButtonHaloWhite padding="8px" onClick={toggleModal}>
             Let&apos;s Vest!
           </ButtonHaloWhite>

@@ -134,5 +134,6 @@ export function useSocksController(): Contract | null {
 
 export function useHALORewardsContract(): Contract | null {
   const { chainId } = useActiveWeb3React()
+
   return useContract(chainId && HALO_REWARDS_ADDRESS[chainId], HALO_REWARDS_ABI, true)
 }

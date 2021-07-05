@@ -30,6 +30,20 @@ yarn start
 Note that the interface only works on **Kovan**.
 The interface will not work on other networks.
 
+## Deployment
+
+```bash
+yarn build
+yarn deploy:<target>
+```
+
+`<target>` can either be:
+
+- `dev` (dev.app.halodao.com)
+- `dev-beta` (dev.beta.app.halodao.com)
+- `prod` (app.halodao.com)
+- `beta` (beta.app.halodao.com)
+
 ## Contributions
 
 **Please open all pull requests against the `master` branch.**

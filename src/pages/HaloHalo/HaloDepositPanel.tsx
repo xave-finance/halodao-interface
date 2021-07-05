@@ -15,7 +15,7 @@ import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
-import { ButtonHalo, ButtonHaloStates } from 'components/Button'
+import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
@@ -57,30 +57,6 @@ const Container = styled.div<{ hideInput: boolean; cornerRadiusTopNone?: boolean
   border-radius: ${({ cornerRadiusTopNone }) => cornerRadiusTopNone && '0 0 12px 12px'};
   border-radius: ${({ cornerRadiusBottomNone }) => cornerRadiusBottomNone && '12px 12px 0 0'};
   background-color: ${({ theme }) => theme.bg1};
-`
-
-const StyledBalanceMax = styled.button`
-  height: 28px;
-  padding-right: 8px;
-  padding-left: 8px;
-  background-color: ${({ theme }) => theme.primary5};
-  border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  color: ${({ theme }) => theme.primaryText1};
-  :hover {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-    outline: none;
-  }
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    margin-right: 0.5rem;
-  `};
 `
 
 interface CurrencyInputPanelProps {
@@ -174,9 +150,12 @@ export default function CurrencyInputPanel({
     } else {
       amount = formatToBalance(depositValue, decimals)
     }
-    const tx = await enter(amount)
-    await tx.wait()
-
+    try {
+      const tx = await enter(amount)
+      await tx.wait()
+    } catch (e) {
+      console.log(e)
+    }
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
@@ -218,7 +197,7 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {haloBalance} HALO
+                    BALANCE: {haloBalance} RNBW
                   </TYPE.body>
                 )}
               </RowBetween>
@@ -246,25 +225,7 @@ export default function CurrencyInputPanel({
                     onUserDepositInput(val)
                   }}
                 />
-                {account && label !== 'To' && (
-                  <StyledBalanceMax
-                    style={{
-                      border: '1px solid #471BB2',
-                      borderRadius: '22px',
-                      background: '#FFFFFF',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 'bold',
-                      lineHeight: '130%',
-                      width: '77px',
-                      height: '33px',
-                      margin: 0
-                    }}
-                    onClick={handleMaxDeposit}
-                  >
-                    MAX
-                  </StyledBalanceMax>
-                )}
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
               </>
             )}
           </InputRow>

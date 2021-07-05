@@ -1,5 +1,5 @@
+import { BALANCER_LPTOKEN_POOL_MAP } from 'constants/pools'
 import { jsonToGraphQLQuery } from 'json-to-graphql-query'
-import { PoolInfo, TokenPrice } from 'halo-hooks/useBalancer'
 
 export async function subgraphRequest(url: string, query: {}) {
   const res = await fetch(url, {
@@ -14,26 +14,25 @@ export async function subgraphRequest(url: string, query: {}) {
   return data || {}
 }
 
-export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {
-  let sumWeight = 0
-  let sumValue = 0
-  // console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
-  // console.log('PoolInfo: ', poolInfo)
-  for (const tokenInfo of poolInfo.tokens) {
-    const price = tokenPrice[tokenInfo.address]
-    if (!price) {
-      continue
-    }
-    sumWeight += tokenInfo.weightPercentage / 100
-    sumValue += price * tokenInfo.balance
-    // console.log('SUM weight, value: ', sumWeight, sumValue)
-  }
-  // console.log('FINAL SUM weight, value: ', sumWeight, sumValue)
-  if (sumWeight > 0) {
-    // console.log('Returned calculated value: ', sumValue / sumWeight)
-    return sumValue / sumWeight
+export const getBalancerPoolAddress = (lpTokenAddress: string) => {
+  const matchingKeys = Object.keys(BALANCER_LPTOKEN_POOL_MAP).filter(a => a === lpTokenAddress.toLowerCase())
+  if (matchingKeys.length) {
+    return BALANCER_LPTOKEN_POOL_MAP[matchingKeys[0]]
   } else {
-    // console.log('Returned balancer data: ', poolInfo.liquidity)
-    return poolInfo.liquidity
+    // if balancer pool address is not found, return lpTokenAddress
+    return lpTokenAddress
   }
+}
+
+export const getBalancerLPTokenAddress = (poolAddress: string) => {
+  let lpTokenAddress: string | undefined = undefined
+  const lpTokens = Object.keys(BALANCER_LPTOKEN_POOL_MAP)
+  for (const lpToken of lpTokens) {
+    if (BALANCER_LPTOKEN_POOL_MAP[lpToken] === poolAddress.toLowerCase()) {
+      lpTokenAddress = lpToken
+      break
+    }
+  }
+  // if lpTokenAddress is not found, return poolAddress
+  return lpTokenAddress ?? poolAddress
 }

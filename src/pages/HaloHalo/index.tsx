@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 //import { WrapperNoPadding } from '../../components/swap/styleds'
 //import { useDarkModeManager } from '../../state/user/hooks'
@@ -16,14 +17,16 @@ import { AutoColumn } from '../../components/Column'
 // import { TYPE } from '../../theme'
 import { transparentize } from 'polished'
 
-import RainbowTokenIcon from '../../assets/svg/rainbow-token-icon.svg'
-import HaloTokenIcon from '../../assets/svg/halo-token-icon.svg'
+import xRnbwTokenIcon from '../../assets/svg/xrnbw-token.svg'
+import RnbwTokenIcon from '../../assets/svg/rnbw-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
+import EmptyState from 'components/EmptyState'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -125,6 +128,8 @@ const RowBetweenHaloPair = styled.div`
 const HaloIngredients = styled.img`
   float: left;
   margin-left: 5px;
+  width: 1.1rem;
+  height: 1.1rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: none;
   `};
@@ -182,12 +187,13 @@ const RowBetweenCard = styled.div`
   }
 `
 
-export default function Saave() {
+export default function HaloHalo() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
   const toggleVestingModal = useVestingModalToggle()
   const dispatch = useDispatch<AppDispatch>()
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
+  const { t } = useTranslation()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -216,8 +222,8 @@ export default function Saave() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your HALO token rewards go. We saved you some gas and sent it straight to the
-                        Rainbow Pool to earn daily.
+                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight
+                        to the Rainbow Pool to earn daily.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -236,7 +242,7 @@ export default function Saave() {
                   disableCurrencySelect={true}
                   customBalanceText={'Available to deposit: '}
                   id="stake-liquidity-token"
-                  buttonText="Claim HALO"
+                  buttonText="Claim RNBW"
                   cornerRadiusBottomNone={true}
                 />
                 <HaloHaloWithdrawPanel
@@ -250,10 +256,10 @@ export default function Saave() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={RainbowTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW : </HaloHaloPairText>
-                      <HaloIngredients src={HaloTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">HALO = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -267,11 +273,13 @@ export default function Saave() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep RNBW, the more HALO you can claim later on ({haloHaloAPY} APY). Claim anytime but lose
-              out on daily HALO vesting multiples.
+              The longer you keep xRNBW, the more RNBW you can claim later on (
+              {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
+              anytime but lose out on monthly RNBW vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
+        <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </PageWrapper>
     </>
   )
