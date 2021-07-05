@@ -312,7 +312,7 @@ export default function Header() {
           <StyledExternalLink
             id={`swap-nav-link`}
             href={
-              'https://app.balancer.fi/#/trade/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/0x0000852600CEB001E08e00bC008be620d60031F2'
+              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
             }
           >
             {t('swap')}
