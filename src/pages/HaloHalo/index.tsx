@@ -279,7 +279,7 @@ export default function HaloHalo() {
             <RowBetween id="haloHaloAPY">
               The longer you keep xLPOP, the more LPOP you can claim later on (
               {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
-              anytime but lose out on daily LPOP vesting multiples.
+              anytime but lose out on monthly LPOP vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
