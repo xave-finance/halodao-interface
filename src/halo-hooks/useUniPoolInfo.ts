@@ -84,7 +84,7 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [pidLpTokenMap, chainId, library, account])
+  }, [pidLpTokenMap, chainId, library, account, UNI_WETH_ADDRESS])
 
   return fetchPoolInfo
 }
