@@ -17,8 +17,8 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
   // Get totalSupply of each pool
   const totalSupplies = useTokenTotalSuppliesWithLoadingIndicator(poolsAsTokens)[0]
 
-  // Get user total claimed HALO (claimeed + unclaimed on all pools)
-  const poolIds = poolsInfo.map((_, index) => index)
+  // Get user total claimed HALO (claimed + unclaimed on all pools)
+  const poolIds = poolsInfo.map(pool => pool.pid)
   const unclaimedRewards = useUnclaimedRewardsPerPool(poolIds)
 
   // Get user staked BPT per pool
@@ -43,9 +43,9 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
     let totalStakedValue = 0
     let totalHALOEarned = 0
 
-    for (const [index, poolInfo] of poolsInfo.entries()) {
+    for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const unclaimedPoolRewards = unclaimedRewards[index] ?? 0
+      const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
       totalHALOEarned += unclaimedPoolRewards * rewardsToHALOPrice
 
       // Calculate BPT price per pool
@@ -63,7 +63,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
 
       // Add staked value for this pool to totalStakedValue
       // FORMULA: Staked value = BPT price * BPT staked
-      const stakedValue = stakedBPTs[index]
+      const stakedValue = stakedBPTs[poolInfo.pid]
       if (stakedValue) {
         totalStakedValue += stakedValue * bptPrice
       }
