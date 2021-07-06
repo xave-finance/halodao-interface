@@ -52,7 +52,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       // FORMULA: BPT price = liquidity / totalSupply
       const totalSupplyAmount = totalSupplies[poolInfo.address]
       const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-      const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
+      const bptPrice = totalSupply > 0 && poolInfo.liquidity > 0 ? poolInfo.liquidity / totalSupply : 0
 
       // Add steakeable value for this pool to totalStakeableValue
       // FORMULA: Stakeable value = BPT price * BPT balance
