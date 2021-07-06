@@ -63,7 +63,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
         <TYPE.body>Last Revised: July 6, 2021</TYPE.body>
         <TYPE.body>
           Welcome to HaloDAO! The following Terms of Service (“Terms of Service” or “Terms”) apply to all users of
-          https://app.halodao.com/ and its associated websites, subdomains, mobile versions, any associated applications
+          https://www.halodao.com/ and its associated websites, subdomains, mobile versions, any associated applications
           and services (collectively, the “Site”), which are operated by Open Ocean Sites PTE. LTD. (“<b>HaloDAO</b>,” “
           <b>we</b>” or “<b>us</b>”).
         </TYPE.body>
@@ -99,8 +99,12 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
             </li>
             <li>
               <b>Privacy Notice</b>. Your privacy is important to HaloDAO. HaloDAO’s Privacy Policy is incorporated into
-              these Terms by reference and may be accessed here [Privacy Policy]. Please read the Privacy Policy
-              carefully for information relating to HaloDAO’s collection, use and disclosure of information.
+              these Terms by reference and may be accessed here [
+              <a href="https://www.halodao.com/privacy-policy" target="_blank">
+                https://www.halodao.com/privacy-policy
+              </a>
+              ]. Please read the Privacy Policy carefully for information relating to HaloDAO’s collection, use and
+              disclosure of information.
             </li>
             <li>
               <b>Modification of the Terms</b>. HaloDAO reserves the right, at our discretion, to change, modify, add or
@@ -165,8 +169,10 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <br />
               <br />
               ‍“Trading Platform” means the trading platform on{' '}
-              <a href="https://app.halodao.com">https://app.halodao.com</a> and subdomains, mobile applications, APIs
-              and other media relating to the trading platform.
+              <a href="https://app.halodao.com" target="_blank">
+                https://app.halodao.com
+              </a>{' '}
+              and subdomains, mobile applications, APIs and other media relating to the trading platform.
             </li>
             <li>
               <b>Ownership; Proprietary Rights.</b>
@@ -464,7 +470,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
                 <li>
                   Notice. HaloDAO may provide you with notices, including those regarding changes to these Terms, by
                   postings on the Site. You may provide HaloDAO with notices only by email at{' '}
-                  <a href="mailto:all@halodao.com">all@halodao.com</a>.
+                  <a href="mailto:info@halodao.com">info@halodao.com</a>.
                 </li>
                 <li>
                   Governing Law. These Terms shall be governed by and construed in accordance with the laws of Singapore
@@ -472,7 +478,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
                 </li>
                 <li>
                   Jurisdiction. For any dispute you have with us, you agree to first contact us through email{' '}
-                  <a href="mailto:all@halodao.com">all@halodao.com</a> and attempt to resolve the dispute with us
+                  <a href="mailto:info@halodao.com">info@halodao.com</a> and attempt to resolve the dispute with us
                   informally. If we have not been able to resolve the dispute with you informally, we each agree that
                   any action at law or in equity arising out of or relating to these Terms or the Site shall be filed
                   only in the courts of Singapore and you hereby consent and submit to the personal and exclusive
