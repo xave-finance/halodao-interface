@@ -77,7 +77,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, unclaimedRewards, stakedBPTs, rewardsToHALOPrice])
+  }, [poolsInfo, balances, totalSupplies, unclaimedRewards, stakedBPTs, rewardsToHALOPrice, tokenPrice])
 }
 
 export default useFarmSummary
