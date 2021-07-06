@@ -133,7 +133,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               You represent and warrant you are not: (i) in violation of any laws relating to economic sanctions,
               anti-money laundering, or anti-corruption; (ii) restricted or prohibited in dealings by a global sanctions
               authority (including but not limited to the Security Council of the United Nations, the European Union, or
-              the U.S. Office of Foreign Assets and Control) (a "Sanctions Authority"), (iii) a citizen of or domiciled
+              the U.S. Office of Foreign Assets and Control) (a “Sanctions Authority”), (iii) a citizen of or domiciled
               in a jurisdiction where it would be illegal according to Applicable Law for you to access or use the
               HaloDAO Services or HaloDAO Trading Platform; (iv) a citizen of or domiciled in (at any time) a country
               sanctioned by a Sanctions Authority including, but not limited to, Cuba, Iran, Syria, North Korea, and the
