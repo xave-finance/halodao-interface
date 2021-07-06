@@ -41,7 +41,7 @@ export function formatNumber(number: number, key?: NumberFormat) {
 
 export function toFixed(num: number, fixed: number) {
   if (num > 0.00001) {
-    var re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
+    const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
     return num.toString().match(re)![0]
   } else {
     return '0.0'
