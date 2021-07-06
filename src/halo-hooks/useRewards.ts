@@ -114,7 +114,7 @@ export const useDepositWithdrawHarvestCallback = () => {
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.deposit(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Stake ${amount} ` + tokenSymbolForPool(poolAddress)
+        summary: `Stake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },
@@ -125,7 +125,7 @@ export const useDepositWithdrawHarvestCallback = () => {
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.withdraw(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Unstake ${amount} ` + tokenSymbolForPool(poolAddress)
+        summary: `Unstake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
       })
       return tx
     },
