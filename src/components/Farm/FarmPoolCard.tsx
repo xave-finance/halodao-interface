@@ -32,7 +32,7 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@sushiswap/sdk'
@@ -688,7 +688,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
                   />
-                  <ButtonMax onClick={() => setStakeAmount(`${bptBalance.toFixed(5)}`)}>{t('max')}</ButtonMax>
+                  <ButtonMax
+                    onClick={() => {
+                      setStakeAmount(`${toFixed(bptBalance, 8)}`)
+                    }}
+                  >
+                    {t('max')}
+                  </ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHalo
@@ -745,7 +751,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     onUserInput={amount => setUnstakeAmount(amount)}
                     id="unstake-input"
                   />
-                  <ButtonMax onClick={() => setUnstakeAmount(`${bptStaked.toFixed(5)}`)}>{t('max')}</ButtonMax>
+                  <ButtonMax
+                    onClick={() => {
+                      setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
+                    }}
+                  >
+                    {t('max')}
+                  </ButtonMax>
                 </RowFlat>
                 <Column>
                   <ButtonHaloOutlined
