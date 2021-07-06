@@ -7,16 +7,15 @@ import { AutoColumn } from '../Column'
 import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import Card from 'components/Card'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
-import { useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 interface FarmPoolTableProps {
   poolsInfo: PoolInfo[]
-  tokenAddresses: string[]
+  tokenPrice: TokenPrice
 }
 
-const FarmPoolTable = ({ poolsInfo, tokenAddresses }: FarmPoolTableProps) => {
+const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
   const { t } = useTranslation()
-  const tokenPrice = useTokenPrice(tokenAddresses)
 
   const { account } = useWeb3React()
   if (account) {

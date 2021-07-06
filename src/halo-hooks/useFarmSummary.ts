@@ -6,8 +6,10 @@ import { PoolInfo } from './usePoolInfo'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
 import useHaloHalo from './useHaloHalo'
+import { getPoolLiquidity } from 'utils/poolInfo'
+import { TokenPrice } from './useTokenPrice'
 
-const useFarmSummary = (poolsInfo: PoolInfo[]) => {
+const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
   // Get user balance for each pool
   const { account } = useActiveWeb3React()
   const { haloHaloPrice } = useHaloHalo()
@@ -48,24 +50,25 @@ const useFarmSummary = (poolsInfo: PoolInfo[]) => {
       const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
       totalHALOEarned += unclaimedPoolRewards * rewardsToHALOPrice
 
-      // Calculate BPT price per pool
-      // FORMULA: BPT price = liquidity / totalSupply
+      // Calculate LPToken price per pool
+      // FORMULA: LPToken price = liquidity / totalSupply
       const totalSupplyAmount = totalSupplies[poolInfo.address]
       const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-      const bptPrice = totalSupply > 0 && poolInfo.liquidity > 0 ? poolInfo.liquidity / totalSupply : 0
+      const liquidity = getPoolLiquidity(poolInfo, tokenPrice)
+      const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
 
       // Add steakeable value for this pool to totalStakeableValue
-      // FORMULA: Stakeable value = BPT price * BPT balance
+      // FORMULA: Stakeable value = LPToken price * LPToken balance
       const poolBalanceAmount = balances[poolInfo.address]
       const poolBalance = poolBalanceAmount ? parseFloat(formatEther(`${poolBalanceAmount.raw}`)) : 0
-      const stakeableValue = poolBalance * bptPrice
+      const stakeableValue = poolBalance * lpTokenPrice
       totalStakeableValue += stakeableValue
 
       // Add staked value for this pool to totalStakedValue
-      // FORMULA: Staked value = BPT price * BPT staked
+      // FORMULA: Staked value = LPToken price * LPToken staked
       const stakedValue = stakedBPTs[poolInfo.pid]
       if (stakedValue) {
-        totalStakedValue += stakedValue * bptPrice
+        totalStakedValue += stakedValue * lpTokenPrice
       }
     }
 

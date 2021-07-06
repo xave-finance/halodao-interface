@@ -443,8 +443,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-  const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
-  const bptStakedValue = bptStaked * bptPrice
+  const liquidity = getPoolLiquidity(poolInfo, tokenPrice)
+  const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
+  const bptStakedValue = bptStaked * lpTokenPrice
 
   // Denotes how many rewards token in 1 HALO
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)

@@ -9,6 +9,7 @@ import EmptyState from 'components/EmptyState'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
+import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -62,6 +63,7 @@ const Farm = () => {
   const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(tokenAddresses)
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
@@ -95,11 +97,11 @@ const Farm = () => {
             </Row>
           </HeaderRow>
           <Row>
-            <FarmSummary poolsInfo={poolsInfo} />
+            <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
-        <FarmPoolTable poolsInfo={poolsInfo} tokenAddresses={tokenAddresses} />
+        <FarmPoolTable poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
       </PageWrapper>
     </>
   )
