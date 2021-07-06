@@ -38,3 +38,13 @@ export function formatNumber(number: number, key?: NumberFormat) {
     .format(format)
     .toUpperCase()
 }
+
+export function toFixed(num: number, fixed: number) {
+  if (num > 0.00001) {
+    const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
+    const matches = num.toString().match(re)
+    return matches ? matches[0] : num.toString()
+  } else {
+    return '0.0'
+  }
+}
