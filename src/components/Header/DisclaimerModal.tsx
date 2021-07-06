@@ -100,7 +100,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
             <li>
               <b>Privacy Notice</b>. Your privacy is important to HaloDAO. HaloDAO’s Privacy Policy is incorporated into
               these Terms by reference and may be accessed here [
-              <a href="https://www.halodao.com/privacy-policy" target="_blank">
+              <a href="https://www.halodao.com/privacy-policy" target="_blank" rel="noopener noreferrer">
                 https://www.halodao.com/privacy-policy
               </a>
               ]. Please read the Privacy Policy carefully for information relating to HaloDAO’s collection, use and
@@ -169,7 +169,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <br />
               <br />
               ‍“Trading Platform” means the trading platform on{' '}
-              <a href="https://app.halodao.com" target="_blank">
+              <a href="https://app.halodao.com" target="_blank" rel="noopener noreferrer">
                 https://app.halodao.com
               </a>{' '}
               and subdomains, mobile applications, APIs and other media relating to the trading platform.
