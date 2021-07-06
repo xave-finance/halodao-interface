@@ -16,8 +16,8 @@ export const rewardMonthUSDValue = (
   return (allocPoint / totalAllocPoint) * (monthlyReward * +USDPrice)
 }
 
-export const monthlyInterest = (rewardMonthUSDValue: number, poolLiquidity: number) => {
-  return poolLiquidity ? rewardMonthUSDValue / poolLiquidity : 0
+export const monthlyInterest = (rewardMonthUSDValue: number, stakedLiquidity: number) => {
+  return stakedLiquidity ? rewardMonthUSDValue / stakedLiquidity : 0
 }
 
 export const monthlyAPY = (monthlyInterest: number) => {
