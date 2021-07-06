@@ -443,8 +443,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-  const bptPrice = totalSupply > 0 ? poolInfo.liquidity / totalSupply : 0
-  const bptStakedValue = bptStaked * bptPrice
+  const liquidity = getPoolLiquidity(poolInfo, tokenPrice)
+  const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
+  const bptStakedValue = bptStaked * lpTokenPrice
 
   // Denotes how many rewards token in 1 HALO
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
@@ -465,12 +466,21 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   // Pool Liquidity
   const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
 
-  // APY
+  /**
+   * APY computation
+   */
   const rewardTokenPerSecond = useRewardTokenPerSecond()
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
+
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+
+  // stakedLiquidity = LPToken.balanceOf(AmmRewards) * lpTokenUSDValue
+  const totalStakedAmount = useTokenBalance(poolInfo.address, rewardsContractAddress)
+  const totalStaked = parseFloat(formatEther(totalStakedAmount.value.toString()))
+  const stakedLiquidity = totalStaked * lpTokenPrice
+
+  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**

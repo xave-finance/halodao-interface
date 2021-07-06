@@ -20,7 +20,7 @@ describe('Percentage Yield', () => {
   const USDPrice = 1
   const totalAllocPoint = 100
   const allocPoint = 100
-  const poolLiquidity = 100
+  const stakedLiquidity = 100
   const expectedMonthlyReward = 1000
   const monthlyRewardUSD = 1000
   const expectedMonthlyInterest = 10
@@ -45,7 +45,7 @@ describe('Percentage Yield', () => {
       USDPrice
     )
 
-    expect(monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)).toEqual(expectedMonthlyInterest)
+    expect(monthlyInterest(expectedRewardMonthUSDValue, stakedLiquidity)).toEqual(expectedMonthlyInterest)
   })
 
   it('monthly percentage yield', () => {
@@ -55,7 +55,7 @@ describe('Percentage Yield', () => {
       monthlyReward(rewardTokenPerSecond),
       USDPrice
     )
-    const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)
+    const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, stakedLiquidity)
 
     expect(monthlyAPY(expectedMonthlyInterest)).toEqual(expectedMonthlyAPY)
   })
@@ -64,7 +64,7 @@ describe('Percentage Yield', () => {
     const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
     const USDPrice = { [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']: 1 }
 
-    const poolAPY = apy(expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, poolLiquidity)
+    const poolAPY = apy(expectedMonthlyReward, totalAllocPoint, USDPrice, allocPoint, stakedLiquidity)
 
     expect(poolAPY).toEqual(expectedApy)
   })
