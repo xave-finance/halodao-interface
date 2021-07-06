@@ -466,12 +466,21 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
   // Pool Liquidity
   const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
 
-  // APY
+  /**
+   * APY computation
+   */
   const rewardTokenPerSecond = useRewardTokenPerSecond()
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
+
   const totalAllocPoint = useTotalAllocPoint()
   const allocPoint = poolInfo.allocPoint
-  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, poolLiquidity)
+
+  // stakedLiquidity = LPToken.balanceOf(AmmRewards) * lpTokenUSDValue
+  const totalStakedAmount = useTokenBalance(poolInfo.address, rewardsContractAddress)
+  const totalStaked = parseFloat(formatEther(totalStakedAmount.value.toString()))
+  const stakedLiquidity = totalStaked * lpTokenPrice
+
+  const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
   /**
