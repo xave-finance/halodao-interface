@@ -16,8 +16,8 @@ export const rewardMonthUSDValue = (
   return (allocPoint / totalAllocPoint) * (monthlyReward * +USDPrice)
 }
 
-export const monthlyInterest = (rewardMonthUSDValue: number, poolLiquidity: number) => {
-  return poolLiquidity ? rewardMonthUSDValue / poolLiquidity : 0
+export const monthlyInterest = (rewardMonthUSDValue: number, stakedLiquidity: number) => {
+  return stakedLiquidity ? rewardMonthUSDValue / stakedLiquidity : 0
 }
 
 export const monthlyAPY = (monthlyInterest: number) => {
@@ -29,7 +29,7 @@ export const apy = (
   totalAllocPoint: number,
   tokenPrice: TokenPrice,
   allocPoint: number,
-  poolLiquidity: number
+  stakedLiquidity: number
 ) => {
   const tokenAddr = HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? ''
 
@@ -37,7 +37,7 @@ export const apy = (
   const USDPrice = tokenPrice[tokenAddr] ?? 0
   const expectedRewardMonthUSDValue = rewardMonthUSDValue(allocPoint, totalAllocPoint, monthlyReward, USDPrice)
   // Note that this is not a monthlyAPY
-  const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, poolLiquidity)
+  const expectedMonthlyInterest = monthlyInterest(expectedRewardMonthUSDValue, stakedLiquidity)
 
   // APY
   return monthlyAPY(expectedMonthlyInterest) * 12

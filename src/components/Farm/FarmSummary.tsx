@@ -11,6 +11,7 @@ import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
 import HaloHalo from '../../assets/svg/lpop-token.svg'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
@@ -52,10 +53,11 @@ const EarnCard = styled(IndigoCard)`
 
 interface FarmSummaryProps {
   poolsInfo: PoolInfo[]
+  tokenPrice: TokenPrice
 }
 
-const FarmSummary = ({ poolsInfo }: FarmSummaryProps) => {
-  const summary = useFarmSummary(poolsInfo)
+const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
+  const summary = useFarmSummary(poolsInfo, tokenPrice)
   const { t } = useTranslation()
 
   return (
