@@ -50,6 +50,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import { tokenSymbolForPool } from 'utils/poolInfo'
+import { PENDING_REWARD_FAILED } from 'constants/pools'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -452,7 +453,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
   // Get user earned HALO
   const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
-  const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+  let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+  const hasPendingRewardTokenError = unclaimedPoolRewards === PENDING_REWARD_FAILED
+  unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
@@ -654,7 +657,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="14%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
+            <StyledTextForValue>
+              {hasPendingRewardTokenError ? (
+                <u>{formatNumber(unclaimedHALO)} RNBW</u>
+              ) : (
+                <>{formatNumber(unclaimedHALO)} RNBW</>
+              )}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="8%" justify="flex-end">
             {account && (
