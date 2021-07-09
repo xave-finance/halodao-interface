@@ -457,7 +457,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
-  const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(stakeAmount === '' ? '0' : stakeAmount)))
+  const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
