@@ -660,9 +660,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO)} RNBW</u>
+                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</u>
               ) : (
-                <>{formatNumber(unclaimedHALO)} RNBW</>
+                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</>
               )}
             </StyledTextForValue>
           </StyledRowFixed>
@@ -828,7 +828,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
+                <Text className="balance">
+                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW
+                </Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
