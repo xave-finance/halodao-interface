@@ -8,6 +8,16 @@ import FarmPoolCard from 'components/Farm/FarmPoolCard'
 import Card from 'components/Card'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import { groupPoolsInfo } from 'utils/poolInfo'
+import styled from 'styled-components'
+
+const InactivePools = styled.div`
+  margin-top: 1rem;
+
+  .tbHeader {
+    margin-bottom: 0.5rem;
+  }
+`
 
 interface FarmPoolTableProps {
   poolsInfo: PoolInfo[]
@@ -16,8 +26,9 @@ interface FarmPoolTableProps {
 
 const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
   const { t } = useTranslation()
-
   const { account } = useWeb3React()
+  const { inactivePools, activePools } = groupPoolsInfo(poolsInfo)
+
   if (account) {
     return (
       <>
@@ -58,9 +69,28 @@ const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
               </AutoColumn>
             </Card>
           </HideSmall>
-          {poolsInfo.map(poolInfo => {
-            return <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} />
+
+          {activePools.map(poolInfo => {
+            return (
+              <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} isActivePool={true} />
+            )
           })}
+
+          {inactivePools.length > 0 && (
+            <InactivePools>
+              <TYPE.thHeader className="tbHeader">{t('inactive pools')}</TYPE.thHeader>
+              {inactivePools.map(poolInfo => {
+                return (
+                  <FarmPoolCard
+                    key={poolInfo.address}
+                    poolInfo={poolInfo}
+                    tokenPrice={tokenPrice}
+                    isActivePool={false}
+                  />
+                )
+              })}
+            </InactivePools>
+          )}
         </AutoColumn>
       </>
     )
