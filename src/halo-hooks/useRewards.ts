@@ -1,5 +1,5 @@
 import { useHALORewardsContract } from 'hooks/useContract'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
@@ -7,6 +7,7 @@ import { useActiveWeb3React } from 'hooks'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
+import { PENDING_REWARD_FAILED } from 'constants/pools'
 
 /**
  * Internal Methods
@@ -61,24 +62,34 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract()
 
-  const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
-  const results = useSingleContractMultipleData(rewardsContract, 'pendingRewardToken', args)
+  const [unclaimedRewards, setUnclaimedRewards] = useState(() => {
+    const rewards: { [poolId: number]: number } = {}
+    for (const pid of poolIds) {
+      rewards[pid] = 0
+    }
+    return rewards
+  })
 
-  return useMemo(
-    () =>
-      poolIds.length > 0
-        ? poolIds.reduce<{ [poolId: number]: number }>((memo, poolId, i) => {
-            if (!results[i]) return memo
+  const fetchPendingRewards = useCallback(async () => {
+    const newUnclaimedRewards = unclaimedRewards
+    for (const pid of poolIds) {
+      try {
+        const result = await rewardsContract?.pendingRewardToken(`${pid}`, account)
+        newUnclaimedRewards[pid] = parseFloat(formatEther(result.toString()))
+      } catch (err) {
+        console.error(`Error fetching pending rewards for pid[${pid}]: `, err)
+        newUnclaimedRewards[pid] = PENDING_REWARD_FAILED
+      }
+    }
+    setUnclaimedRewards(newUnclaimedRewards)
+  }, [poolIds, account, rewardsContract, unclaimedRewards])
 
-            const reward = results[i].result
-            if (reward) {
-              memo[poolId] = parseFloat(formatEther(reward.toString()))
-            }
-            return memo
-          }, {})
-        : {},
-    [poolIds, results]
-  )
+  useEffect(() => {
+    if (!account) return
+    fetchPendingRewards()
+  }, [poolIds, account, fetchPendingRewards])
+
+  return unclaimedRewards
 }
 
 export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: number } => {

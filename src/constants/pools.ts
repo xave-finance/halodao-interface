@@ -53,6 +53,11 @@ rawLpTokenPoolMapList.forEach(rawLpTokenPool => {
 export const BALANCER_LPTOKEN_POOL_MAP = lpTokenPoolMap
 
 /**
+ * Misc
+ */
+export const PENDING_REWARD_FAILED = -99999
+
+/**
  * Inactive pools
  */
 

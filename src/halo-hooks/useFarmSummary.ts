@@ -8,6 +8,7 @@ import { useUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
 import useHaloHalo from './useHaloHalo'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { TokenPrice } from './useTokenPrice'
+import { PENDING_REWARD_FAILED } from 'constants/pools'
 
 const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
   // Get user balance for each pool
@@ -47,7 +48,8 @@ const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
 
     for (const poolInfo of poolsInfo) {
       // Add unclaimed HALO per pool to totalHALOEarned
-      const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+      let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+      unclaimedPoolRewards = unclaimedPoolRewards === PENDING_REWARD_FAILED ? 0 : unclaimedPoolRewards
       totalHALOEarned += unclaimedPoolRewards * rewardsToHALOPrice
 
       // Calculate LPToken price per pool
