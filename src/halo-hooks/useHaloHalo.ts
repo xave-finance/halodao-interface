@@ -37,7 +37,6 @@ const useHaloHalo = () => {
 
     // one year in seconds / 31536000
     const timePriceChangedRatio = 31536000 / (currentTimestamp - genesisTimestamp)
-    console.log(`Genesis timestamp is ${genesisTimestamp}, current block timestamp is ${currentTimestamp}`)
 
     // 1 comes from the 1:1 ratio before adding rewards
     const priceChange = Number(formatEther(currentHaloHaloPrice)) - 1

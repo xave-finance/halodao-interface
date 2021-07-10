@@ -50,6 +50,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
 import { tokenSymbolForPool } from 'utils/poolInfo'
+import { PENDING_REWARD_FAILED } from 'constants/pools'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -415,9 +416,10 @@ const ClaimButton = styled(ButtonOutlined)`
 interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
+  isActivePool: boolean
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
+export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
@@ -452,7 +454,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
 
   // Get user earned HALO
   const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
-  const unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+  let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
+  const hasPendingRewardTokenError = unclaimedPoolRewards === PENDING_REWARD_FAILED
+  unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
@@ -636,7 +640,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="13%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{poolAPY}</StyledTextForValue>
+            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -654,7 +658,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="14%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>{formatNumber(unclaimedHALO)} RNBW</StyledTextForValue>
+            <StyledTextForValue>
+              {hasPendingRewardTokenError ? (
+                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</u>
+              ) : (
+                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</>
+              )}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="8%" justify="flex-end">
             {account && (
@@ -664,7 +674,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('closeTxt')}</ManageCloseButton>
                   </HideSmallFullWidth>
                 ) : (
-                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>{t('add')}</ManageCloseButtonAlt>
+                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>
+                    {isActivePool ? t('add') : t('manage')}
+                  </ManageCloseButtonAlt>
                 )}
               </>
             )}
@@ -697,11 +709,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     value={stakeAmount}
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
+                    disabled={!isActivePool}
                   />
                   <ButtonMax
                     onClick={() => {
                       setStakeAmount(`${toFixed(bptBalance, 8)}`)
                     }}
+                    disabled={!isActivePool}
                   >
                     {t('max')}
                   </ButtonMax>
@@ -709,11 +723,11 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Column>
                   <ButtonHalo
                     id="stake-button"
-                    disabled={[
-                      ButtonHaloStates.Disabled,
-                      ButtonHaloStates.Approving,
-                      ButtonHaloStates.TxInProgress
-                    ].includes(stakeButtonState)}
+                    disabled={
+                      [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                        stakeButtonState
+                      ) || !isActivePool
+                    }
                     onClick={() => {
                       if (stakeButtonState === ButtonHaloStates.Approved) {
                         stakeLpToken()
@@ -722,19 +736,25 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                       }
                     }}
                   >
-                    {(stakeButtonState === ButtonHaloStates.Disabled ||
-                      stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
-                    {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
-                    {stakeButtonState === ButtonHaloStates.Approving && (
+                    {!isActivePool ? (
+                      <>{t('staking disabled')}</>
+                    ) : (
                       <>
-                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                        <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                    {stakeButtonState === ButtonHaloStates.TxInProgress && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                        <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                        {(stakeButtonState === ButtonHaloStates.Disabled ||
+                          stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                        {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                        {stakeButtonState === ButtonHaloStates.Approving && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                        {stakeButtonState === ButtonHaloStates.TxInProgress && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
                       </>
                     )}
                   </ButtonHalo>
@@ -808,7 +828,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
               </RewardsChild>
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">{formatNumber(unclaimedHALO)} RNBW</Text>
+                <Text className="balance">
+                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW
+                </Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton

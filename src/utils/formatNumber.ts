@@ -5,7 +5,8 @@ export enum NumberFormat {
   usd,
   usdLong,
   percent,
-  percentShort
+  percentShort,
+  short
 }
 
 export function formatNumber(number: number, key?: NumberFormat) {
@@ -18,6 +19,11 @@ export function formatNumber(number: number, key?: NumberFormat) {
   if (key === NumberFormat.long) {
     format = '0,000.[00]'
     if (number < 1) format = '0.[0000]'
+  }
+
+  if (key === NumberFormat.short) {
+    format = '0.[00]'
+    if (number > 1000) format = '0.[0]a'
   }
 
   if (key === NumberFormat.usd) {
