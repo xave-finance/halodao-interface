@@ -122,5 +122,6 @@
   "emptyStateSubTitleInVest": "You’re one step away from earning. Connect your wallet to start to vest.",
   "add": "Add",
   "staking disabled": "Staking Disabled",
-  "inactive pools": "Inactive Pools"
+  "inactive pools": "Inactive Pools",
+  "inactive": "Inactive"
 }

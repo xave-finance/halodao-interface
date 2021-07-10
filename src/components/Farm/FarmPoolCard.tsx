@@ -637,7 +637,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
           </StyledRowFixed>
           <StyledRowFixed width="13%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{poolAPY}</StyledTextForValue>
+            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
