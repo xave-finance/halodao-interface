@@ -1,4 +1,4 @@
-import { BALANCER_POOLS_ADDRESSES, SUSHI_POOLS_ADDRESSES, UNI_POOLS_ADDRESSES } from 'constants/pools'
+import { BALANCER_POOLS_ADDRESSES, INACTIVE_POOLS, SUSHI_POOLS_ADDRESSES, UNI_POOLS_ADDRESSES } from 'constants/pools'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
@@ -18,6 +18,10 @@ const isUniPool = (address: string) => {
 
 const isSushiPool = (address: string) => {
   return SUSHI_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
+}
+
+const isInactivePool = (address: string) => {
+  return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
 }
 
 export const groupByPoolProvider = (addresses: string[]) => {
@@ -75,5 +79,23 @@ export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => 
   } else {
     // console.log('Returned balancer data: ', poolInfo.liquidity)
     return poolInfo.liquidity
+  }
+}
+
+export const groupPoolsInfo = (poolInfos: PoolInfo[]) => {
+  const activePools: PoolInfo[] = []
+  const inactivePools: PoolInfo[] = []
+
+  for (const poolInfo of poolInfos) {
+    if (isInactivePool(poolInfo.asToken.address)) {
+      inactivePools.push(poolInfo)
+    } else {
+      activePools.push(poolInfo)
+    }
+  }
+
+  return {
+    activePools,
+    inactivePools
   }
 }
