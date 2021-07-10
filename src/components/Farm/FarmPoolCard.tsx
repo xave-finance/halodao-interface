@@ -415,9 +415,10 @@ const ClaimButton = styled(ButtonOutlined)`
 interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
+  isActivePool: boolean
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps) {
+export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
@@ -636,7 +637,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
           </StyledRowFixed>
           <StyledRowFixed width="13%">
             <LabelText className="first">{t('apy')}:</LabelText>
-            <StyledTextForValue>{poolAPY}</StyledTextForValue>
+            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -664,7 +665,9 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     <ManageCloseButton onClick={() => setShowMore(!showMore)}>{t('closeTxt')}</ManageCloseButton>
                   </HideSmallFullWidth>
                 ) : (
-                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>{t('add')}</ManageCloseButtonAlt>
+                  <ManageCloseButtonAlt onClick={() => setShowMore(!showMore)}>
+                    {isActivePool ? t('add') : t('manage')}
+                  </ManageCloseButtonAlt>
                 )}
               </>
             )}
@@ -697,11 +700,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                     value={stakeAmount}
                     onUserInput={amount => setStakeAmount(amount)}
                     id="stake-input"
+                    disabled={!isActivePool}
                   />
                   <ButtonMax
                     onClick={() => {
                       setStakeAmount(`${toFixed(bptBalance, 8)}`)
                     }}
+                    disabled={!isActivePool}
                   >
                     {t('max')}
                   </ButtonMax>
@@ -709,11 +714,11 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                 <Column>
                   <ButtonHalo
                     id="stake-button"
-                    disabled={[
-                      ButtonHaloStates.Disabled,
-                      ButtonHaloStates.Approving,
-                      ButtonHaloStates.TxInProgress
-                    ].includes(stakeButtonState)}
+                    disabled={
+                      [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                        stakeButtonState
+                      ) || !isActivePool
+                    }
                     onClick={() => {
                       if (stakeButtonState === ButtonHaloStates.Approved) {
                         stakeLpToken()
@@ -722,19 +727,25 @@ export default function FarmPoolCard({ poolInfo, tokenPrice }: FarmPoolCardProps
                       }
                     }}
                   >
-                    {(stakeButtonState === ButtonHaloStates.Disabled ||
-                      stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
-                    {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
-                    {stakeButtonState === ButtonHaloStates.Approving && (
+                    {!isActivePool ? (
+                      <>{t('staking disabled')}</>
+                    ) : (
                       <>
-                        {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                        <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                    {stakeButtonState === ButtonHaloStates.TxInProgress && (
-                      <>
-                        {HALO_REWARDS_MESSAGE.staking}&nbsp;
-                        <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                        {(stakeButtonState === ButtonHaloStates.Disabled ||
+                          stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                        {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                        {stakeButtonState === ButtonHaloStates.Approving && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                        {stakeButtonState === ButtonHaloStates.TxInProgress && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
                       </>
                     )}
                   </ButtonHalo>

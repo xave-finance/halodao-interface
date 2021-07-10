@@ -51,3 +51,10 @@ rawLpTokenPoolMapList.forEach(rawLpTokenPool => {
 })
 
 export const BALANCER_LPTOKEN_POOL_MAP = lpTokenPoolMap
+
+/**
+ * Inactive pools
+ */
+
+const inactivePoolsRaw = process.env.REACT_APP_INACTIVE_POOLS || ''
+export const INACTIVE_POOLS = inactivePoolsRaw.split(',').map(a => a.toLowerCase())
