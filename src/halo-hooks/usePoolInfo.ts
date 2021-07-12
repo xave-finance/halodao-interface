@@ -2,7 +2,6 @@ import { Token } from '@sushiswap/sdk'
 import { useCallback } from 'react'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
-import { useAllocPoints } from './useRewards'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
 import { useUniPoolInfo } from './useUniPoolInfo'
 
@@ -36,7 +35,6 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
-  const allocPoints = useAllocPoints(lpTokenAddresses)
 
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
@@ -60,10 +58,6 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
       tokenAddresses = [...tokenAddresses, ...uniResult.tokenAddresses]
     }
 
-    poolsInfo.forEach(poolInfo => {
-      poolInfo.allocPoint = allocPoints[poolInfo.pid]
-    })
-
     return { poolsInfo, tokenAddresses }
-  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, allocPoints])
+  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo])
 }
