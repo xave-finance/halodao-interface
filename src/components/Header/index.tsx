@@ -31,7 +31,7 @@ const HeaderFrame = styled.div`
   top: 0;
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 1rem;
+  padding: 0 1rem;
   z-index: 2;
   ${({ theme }) => theme.mediaWidth.upToMedium`
     grid-template-columns: 1fr;
@@ -106,7 +106,6 @@ const HeaderRow = styled(RowFixed)`
 const HeaderLinks = styled(Row)`
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem 0 1rem 1rem;
     justify-content: flex-end;
 `};
 `
@@ -164,7 +163,7 @@ const Title = styled.a`
   align-items: center;
   pointer-events: auto;
   justify-self: flex-start;
-  margin-right: 15px;
+  margin-right: 1.5rem;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     justify-self: center;
   `};
@@ -186,24 +185,24 @@ const StyledNavLink = styled(NavLink).attrs({
 })`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: left;
-  border-radius: 3rem;
   outline: none;
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
   font-size: 1.5rem;
   width: fit-content;
-  margin: 0 15px;
+  margin: 4px 15px 0;
+  padding: 1.25rem 0;
   font-weight: 400;
   font-family: 'Fredoka One', cursive;
+  border-bottom: 4px solid transparent;
 
   &.${activeClassName} {
-    border-radius: ${({ theme }) => theme.borderRadius};
-    font-weight: 200;
+    color: ${({ theme }) => theme.primaryText1};
+    border-color: ${({ theme }) => theme.primaryText1};
   }
 
-  :hover,
-  :focus {
+  :hover {
     color: ${({ theme }) => theme.primaryText1};
   }
 
@@ -224,18 +223,22 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   color: ${({ theme }) => theme.text2};
   font-size: 1.5rem;
   width: fit-content;
-  margin: 0 15px;
+  margin: 4px 15px 0;
   font-weight: 400;
   font-family: 'Fredoka One', cursive;
+  border-bottom: 4px solid transparent;
 
   &.${activeClassName} {
     border-radius: ${({ theme }) => theme.borderRadius};
     font-weight: 600;
   }
 
-  :hover,
-  :focus {
+  :hover {
     color: ${({ theme }) => theme.primaryText1};
+    text-decoration: none;
+  }
+
+  :focus {
     text-decoration: none;
   }
 
