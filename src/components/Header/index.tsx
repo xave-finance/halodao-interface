@@ -5,11 +5,12 @@ import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Logo from '../../assets/svg/logo.svg'
+import Hamburger from '../../assets/svg/hamburger-menu.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
 import { CountUp } from 'use-count-up'
-import { ExternalLink, TYPE } from '../../theme'
+import { ExternalLink, HideMedium, TYPE } from '../../theme'
 import Menu from '../Menu'
 import Row, { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
@@ -21,8 +22,7 @@ import { HALO } from '../../constants'
 
 const HeaderFrame = styled.div`
   background: #ffffff;
-  display: grid;
-  grid-template-columns: 1fr 120px;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   align-items: center;
@@ -32,17 +32,11 @@ const HeaderFrame = styled.div`
   position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0 1rem;
-  z-index: 2;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    padding: 0 1rem;
-    width: calc(100%);
-    position: relative;
-  `};
+  z-index: 3;
 
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-        padding: 0.5rem 1rem;
-  `}
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    padding: 0.75rem 1rem;
+  `};
 `
 
 const HeaderControls = styled.div`
@@ -52,25 +46,8 @@ const HeaderControls = styled.div`
   justify-self: flex-end;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    flex-direction: row;
-    justify-content: space-between;
-    justify-self: center;
-    width: 100%;
-    max-width: 960px;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 99;
-    height: 72px;
-    border-radius: 12px 12px 0 0;
-    background-color: ${({ theme }) => theme.bg1};
+    display: none;
   `};
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 5px;
-  `}
 `
 
 const HeaderElement = styled.div`
@@ -99,15 +76,16 @@ const HeaderElementWrap = styled.div`
 
 const HeaderRow = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToMedium`
-   width: 100%;
+    width: 100%;
   `};
 `
 
 const HeaderLinks = styled(Row)`
   justify-content: center;
+
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    justify-content: flex-end;
-`};
+    display: none;
+  `};
 `
 
 const AccountElement = styled.div<{ active: boolean }>`
@@ -164,12 +142,23 @@ const Title = styled.a`
   pointer-events: auto;
   justify-self: flex-start;
   margin-right: 1.5rem;
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    justify-self: center;
-  `};
+  text-decoration: none;
+
   :hover {
     cursor: pointer;
   }
+
+  .site-logo {
+    width: 40px;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    justify-self: center;
+
+    .site-logo {
+      width: 26px;
+    }
+  `};
 `
 
 const HoverIcon = styled.div`
@@ -280,96 +269,291 @@ export const StyledMenuButton = styled.button`
   `};
 `
 
+export const MobileTitle = styled.div`
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: block;
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 400;
+    font-family: 'Fredoka One';
+    color: ${({ theme }) => theme.primaryText1};
+  `};
+`
+
+export const HamburgerMenu = styled.img`
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: block;
+    margin-right: 1rem;
+    width: 18px;
+    cursor: pointer;
+  `};
+`
+
+export const DrawerFrame = styled.div`
+  display: none;
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    display: block;
+    margin-left: -100vw;
+    position: absolute;
+    width: 100vw;
+    height: 100%;
+    z-index: 2;
+
+    &.active {
+      margin-left: 0;
+    }
+  `};
+`
+
+export const DrawerContent = styled.div`
+  width: 80%;
+  height: 100%;
+  max-width: 400px;
+  background-color: white;
+  position: absolute;
+  top: 0;
+`
+
+export const DrawerBackdrop = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #333333;
+  opacity: 0.3;
+`
+
+export const DrawerMenu = styled.div`
+  padding: 1rem;
+  margin-top: 65px;
+  display: flex;
+  flex-direction: column;
+
+  a {
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: 'Fredoka One';
+    text-decoration: none;
+    color: ${({ theme }) => theme.text1};
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+  }
+
+  a.active {
+    color: white;
+    background-color: ${({ theme }) => theme.primary1};
+  }
+`
+
+export const MenuItem = styled.div`
+  padding: 1rem;
+`
+
+export const DrawerFooter = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+  .more-menu {
+  }
+`
+
 export default function Header() {
-  const { account, chainId, library } = useActiveWeb3React()
   const { t } = useTranslation()
+  const { account, chainId, library } = useActiveWeb3React()
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
+  const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false)
+
+  const toggleDrawer = () => {
+    setIsDrawerVisible(!isDrawerVisible)
+  }
+
+  return (
+    <>
+      <HeaderFrame>
+        <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
+          <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
+        </Modal>
+        <HeaderRow>
+          {/* [Mobile] Hamburger button */}
+          <HamburgerMenu src={Hamburger} alt="mobile menu icon" onClick={toggleDrawer} />
+
+          {/* Site title & logo */}
+          <Title href=".">
+            <HoverIcon>
+              <img className="site-logo" src={Logo} alt="logo" />
+            </HoverIcon>
+            <MobileTitle>HaloDAO</MobileTitle>
+          </Title>
+
+          {/* Main menu */}
+          <HeaderLinks>
+            <StyledNavLink
+              id={`farm-nav-link`}
+              to={'/farm'}
+              isActive={(match, { pathname }) => Boolean(match) || pathname === '/farm'}
+            >
+              {t('farm')}
+            </StyledNavLink>
+            <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
+              {t('vesting')}
+            </StyledNavLink>
+            <StyledExternalLink
+              id={`swap-nav-link`}
+              href={
+                'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+              }
+            >
+              {t('swap')}
+            </StyledExternalLink>
+            <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+              {t('vote')}
+            </StyledExternalLink>
+          </HeaderLinks>
+        </HeaderRow>
+
+        {/* [Mobile] ETH balance / Connect button */}
+        <HideMedium>
+          <Web3Status shorten={true} />
+        </HideMedium>
+
+        {/* [Desktop] Right-side of navbar */}
+        <HeaderControls>
+          <HeaderElement>
+            {/* Chain Network */}
+            <HideSmall>{chainId && <Web3Network />}</HideSmall>
+            {library && library.provider.isMetaMask && (
+              <AccountElement active={true} style={{ pointerEvents: 'auto' }}></AccountElement>
+            )}
+
+            {/* RNBW Balance */}
+            <RNBWBalance onClickHandler={() => setShowUniBalanceModal(true)} />
+
+            {/* ETH balance + wallet address  */}
+            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+              {account && chainId && userEthBalance ? (
+                <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
+                  {userEthBalance?.toSignificant(4)} {Currency.getNativeCurrencySymbol(chainId)}
+                </BalanceText>
+              ) : null}
+              <Web3Status />
+            </AccountElement>
+          </HeaderElement>
+
+          {/* More menu */}
+          <HeaderElementWrap>
+            <Menu />
+          </HeaderElementWrap>
+        </HeaderControls>
+      </HeaderFrame>
+
+      {/* [Mobile] App Drawer */}
+      <DrawerFrame className={isDrawerVisible ? 'active' : 'inactive'}>
+        <DrawerBackdrop onClick={toggleDrawer} />
+        <DrawerContent>
+          <DrawerMenu>
+            <MainMenu onClick={toggleDrawer} />
+          </DrawerMenu>
+          <DrawerFooter>
+            <RNBWBalance onClickHandler={() => setShowUniBalanceModal(true)} />
+            <div className="more-menu">
+              <Menu />
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </DrawerFrame>
+    </>
+  )
+}
+
+interface MainMenuProps {
+  onClick: () => void
+}
+
+export const MainMenu = ({ onClick }: MainMenuProps) => {
+  const { t } = useTranslation()
+
+  return (
+    <div onClick={onClick}>
+      <MenuItem>
+        <NavLink
+          id={`farm-nav-link`}
+          to={'/farm'}
+          isActive={(match, { pathname }) => Boolean(match) || pathname === '/farm'}
+        >
+          {t('farm')}
+        </NavLink>
+      </MenuItem>
+      <MenuItem>
+        <NavLink id={`vesting-nav-link`} to={'/vesting'}>
+          {t('vesting')}
+        </NavLink>
+      </MenuItem>
+      <MenuItem>
+        <ExternalLink
+          id={`swap-nav-link`}
+          href={
+            'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+          }
+        >
+          {t('swap')}
+        </ExternalLink>
+      </MenuItem>
+      <MenuItem>
+        <ExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+          {t('vote')}
+        </ExternalLink>
+      </MenuItem>
+    </div>
+  )
+}
+
+interface RNBWBalanceProps {
+  onClickHandler: () => void
+}
+
+export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
+  const { account, chainId } = useActiveWeb3React()
   const halo = chainId ? HALO[chainId] : undefined
   const haloBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, halo)
-  const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const countUpValue = haloBalance?.toFixed(0) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
-    <HeaderFrame>
-      <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
-        <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
-      </Modal>
-      <HeaderRow>
-        <Title href=".">
-          <HoverIcon>
-            <img width={'40px'} src={Logo} alt="logo" />
-          </HoverIcon>
-        </Title>
-        <HeaderLinks>
-          <StyledNavLink
-            id={`farm-nav-link`}
-            to={'/farm'}
-            isActive={(match, { pathname }) => Boolean(match) || pathname === '/farm'}
-          >
-            {t('farm')}
-          </StyledNavLink>
-          <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
-            {t('vesting')}
-          </StyledNavLink>
-          <StyledExternalLink
-            id={`swap-nav-link`}
-            href={
-              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-            }
-          >
-            {t('swap')}
-          </StyledExternalLink>
-          <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
-            {t('vote')}
-          </StyledExternalLink>
-        </HeaderLinks>
-      </HeaderRow>
-      <HeaderControls>
-        <HeaderElement>
-          <HideSmall>{chainId && <Web3Network />}</HideSmall>
-          {library && library.provider.isMetaMask && (
-            <AccountElement active={true} style={{ pointerEvents: 'auto' }}></AccountElement>
-          )}
-          {chainId && [1, 3, 4, 5, 42].includes(chainId) && (
-            <UNIWrapper onClick={() => setShowUniBalanceModal(true)}>
-              <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
-                {account && (
-                  <HideSmall>
-                    <TYPE.white
-                      style={{
-                        paddingRight: '.4rem'
-                      }}
-                    >
-                      <CountUp
-                        key={countUpValue}
-                        isCounting
-                        start={parseFloat(countUpValuePrevious)}
-                        end={parseFloat(countUpValue)}
-                        thousandsSeparator={','}
-                        duration={1}
-                      />
-                    </TYPE.white>
-                  </HideSmall>
-                )}
-                RNBW
-              </UNIAmount>
-              <CardNoise />
-            </UNIWrapper>
-          )}
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-            {account && chainId && userEthBalance ? (
-              <BalanceText style={{ flexShrink: 0 }} pl="0.75rem" pr="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} {Currency.getNativeCurrencySymbol(chainId)}
-              </BalanceText>
-            ) : null}
-            <Web3Status />
-          </AccountElement>
-        </HeaderElement>
-        <HeaderElementWrap>
-          <Menu />
-        </HeaderElementWrap>
-      </HeaderControls>
-    </HeaderFrame>
+    <>
+      {chainId && [1, 3, 4, 5, 42].includes(chainId) && (
+        <UNIWrapper onClick={onClickHandler}>
+          <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
+            {account && (
+              <TYPE.white
+                style={{
+                  paddingRight: '.4rem'
+                }}
+              >
+                <CountUp
+                  key={countUpValue}
+                  isCounting
+                  start={parseFloat(countUpValuePrevious)}
+                  end={parseFloat(countUpValue)}
+                  thousandsSeparator={','}
+                  duration={1}
+                />
+              </TYPE.white>
+            )}
+            RNBW
+          </UNIAmount>
+          <CardNoise />
+        </UNIWrapper>
+      )}
+    </>
   )
 }
