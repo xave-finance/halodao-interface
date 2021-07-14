@@ -15,7 +15,7 @@ const StyledModal = styled.div`
 const StyledWrapper = styled.div`
   width: 1080px;
   max-width: 80%;
-  margin: 50px auto;
+  margin: calc(78px + 2rem) auto 1rem;
   color: ${({ theme }) => theme.text4};
 
   div {
@@ -30,6 +30,10 @@ const StyledWrapper = styled.div`
   .subhead {
     margin-top: 40px;
   }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: calc(65px + 1rem) auto 1rem;
+  `};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 90%;
