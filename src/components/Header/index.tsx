@@ -380,9 +380,11 @@ export default function Header() {
   return (
     <>
       <HeaderFrame>
+        {/* RNBW balance modal */}
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
           <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
         </Modal>
+
         <HeaderRow>
           {/* [Mobile] Hamburger button */}
           <HamburgerMenu src={Hamburger} alt="mobile menu icon" onClick={toggleDrawer} />
@@ -483,37 +485,42 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
   const { t } = useTranslation()
 
   return (
-    <div onClick={onClick}>
+    <>
       <MenuItem>
         <NavLink
           id={`farm-nav-link`}
           to={'/farm'}
           isActive={(match, { pathname }) => Boolean(match) || pathname === '/farm'}
+          onClick={onClick}
         >
           {t('farm')}
         </NavLink>
       </MenuItem>
       <MenuItem>
-        <NavLink id={`vesting-nav-link`} to={'/vesting'}>
+        <NavLink id={`vesting-nav-link`} to={'/vesting'} onClick={onClick}>
           {t('vesting')}
         </NavLink>
       </MenuItem>
       <MenuItem>
-        <ExternalLink
-          id={`swap-nav-link`}
-          href={
-            'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-          }
-        >
-          {t('swap')}
-        </ExternalLink>
+        <span onClick={onClick}>
+          <ExternalLink
+            id={`swap-nav-link`}
+            href={
+              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+            }
+          >
+            {t('swap')}
+          </ExternalLink>
+        </span>
       </MenuItem>
       <MenuItem>
-        <ExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
-          {t('vote')}
-        </ExternalLink>
+        <span onClick={onClick}>
+          <ExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
+            {t('vote')}
+          </ExternalLink>
+        </span>
       </MenuItem>
-    </div>
+    </>
   )
 }
 
