@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Logo from '../../assets/svg/logo.svg'
 import Hamburger from '../../assets/svg/hamburger-menu.svg'
+import Close from '../../assets/images/x.svg'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
@@ -280,16 +281,25 @@ export const MobileTitle = styled.div`
     font-family: 'Fredoka One';
     color: ${({ theme }) => theme.primaryText1};
   `};
+
+  ${({ theme }) => theme.mediaWidth.upToExtra2Small`
+    display: none;
+  `};
 `
 
-export const HamburgerMenu = styled.img`
+export const HamburgerButton = styled.button`
   display: none;
+
+  img {
+    width: 18px;
+  }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
     margin-right: 1rem;
-    width: 18px;
-    cursor: pointer;
+    padding: 0.25rem;
+    background-color: transparent;
+    border: 0;
   `};
 `
 
@@ -299,6 +309,7 @@ export const DrawerFrame = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
     margin-left: -100vw;
+    transition: margin 0.25s;
     position: absolute;
     width: 100vw;
     height: 100%;
@@ -320,10 +331,19 @@ export const DrawerContent = styled.div`
 `
 
 export const DrawerBackdrop = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: #333333;
   opacity: 0.3;
+  display: none;
+  z-index: 2;
+
+  &.active {
+    display: block;
+  }
 `
 
 export const DrawerMenu = styled.div`
@@ -387,7 +407,9 @@ export default function Header() {
 
         <HeaderRow>
           {/* [Mobile] Hamburger button */}
-          <HamburgerMenu src={Hamburger} alt="mobile menu icon" onClick={toggleDrawer} />
+          <HamburgerButton>
+            <img src={isDrawerVisible ? Close : Hamburger} alt="hamburger icon" onClick={toggleDrawer} />
+          </HamburgerButton>
 
           {/* Site title & logo */}
           <Title href=".">
@@ -459,8 +481,8 @@ export default function Header() {
       </HeaderFrame>
 
       {/* [Mobile] App Drawer */}
+      <DrawerBackdrop className={isDrawerVisible ? 'active' : 'inactive'} onClick={toggleDrawer} />
       <DrawerFrame className={isDrawerVisible ? 'active' : 'inactive'}>
-        <DrawerBackdrop onClick={toggleDrawer} />
         <DrawerContent>
           <DrawerMenu>
             <MainMenu onClick={toggleDrawer} />
