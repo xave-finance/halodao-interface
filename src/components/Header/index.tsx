@@ -5,8 +5,8 @@ import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import Logo from '../../assets/svg/logo.svg'
-import Hamburger from '../../assets/svg/hamburger-menu.svg'
-import Close from '../../assets/images/x.svg'
+import Hamburger from '../../assets/images/hamburger-icon.png'
+import Close from '../../assets/images/close-icon.png'
 import { useActiveWeb3React } from '../../hooks'
 import { useETHBalances, useTokenBalance } from '../../state/wallet/hooks'
 import { CardNoise } from '../earn/styled'
@@ -23,6 +23,24 @@ import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
 
 const Wrapper = styled.div`
+  .hamburger-enter {
+    opacity: 0.01;
+  }
+
+  .hamburger-enter.hamburger-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+  }
+
+  .hamburger-leave {
+    opacity: 1;
+  }
+
+  .hamburger-leave.hamburger-leave-active {
+    opacity: 0.01;
+    transition: opacity 200ms ease-out;
+  }
+
   .backdrop-enter {
     opacity: 0.01;
   }
@@ -331,11 +349,14 @@ export const HamburgerButton = styled.button`
 
   img {
     width: 18px;
+    position: absolute;
+    margin-top: -7px;
+    margin-left: -4px;
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
-    margin-right: 1rem;
+    margin-right: 1.5rem;
     padding: 0.25rem;
     background-color: transparent;
     border: 0;
@@ -435,7 +456,10 @@ export default function Header() {
         <HeaderRow>
           {/* [Mobile] Hamburger button */}
           <HamburgerButton>
-            <img src={isDrawerVisible ? Close : Hamburger} alt="hamburger icon" onClick={toggleDrawer} />
+            <CSSTransitionGroup transitionName="hamburger" transitionEnterTimeout={200} transitionLeaveTimeout={200}>
+              {isDrawerVisible && <img src={Close} alt="close icon" onClick={toggleDrawer} />}
+              {!isDrawerVisible && <img src={Hamburger} alt="hamburger icon" onClick={toggleDrawer} />}
+            </CSSTransitionGroup>
           </HamburgerButton>
 
           {/* Site title & logo */}
