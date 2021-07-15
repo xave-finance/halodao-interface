@@ -20,6 +20,45 @@ import UniBalanceContent from './UniBalanceContent'
 import usePrevious from '../../hooks/usePrevious'
 import Web3Network from 'components/Web3Network'
 import { HALO } from '../../constants'
+import { CSSTransitionGroup } from 'react-transition-group'
+
+const Wrapper = styled.div`
+  .backdrop-enter {
+    opacity: 0.01;
+  }
+
+  .backdrop-enter.backdrop-enter-active {
+    opacity: 0.3;
+    transition: opacity 300ms ease-in;
+  }
+
+  .backdrop-leave {
+    opacity: 0.3;
+  }
+
+  .backdrop-leave.backdrop-leave-active {
+    opacity: 0.01;
+    transition: opacity 300ms ease-out;
+  }
+
+  .drawer-enter {
+    margin-left: -100vw;
+  }
+
+  .drawer-enter.drawer-enter-active {
+    margin-left: 0;
+    transition: margin 300ms ease-in;
+  }
+
+  .drawer-leave {
+    margin-left: 0;
+  }
+
+  .drawer-leave.drawer-leave-active {
+    margin-left: -100vw;
+    transition: margin 300ms ease-out;
+  }
+`
 
 const HeaderFrame = styled.div`
   background: #ffffff;
@@ -308,26 +347,19 @@ export const DrawerFrame = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
-    margin-left: -100vw;
-    transition: margin 0.25s;
     position: absolute;
-    width: 100vw;
+    top: 0;
+    width: 80%;
     height: 100%;
+    max-width: 400px;
     z-index: 2;
-
-    &.active {
-      margin-left: 0;
-    }
   `};
 `
 
 export const DrawerContent = styled.div`
-  width: 80%;
+  width: 100%;
   height: 100%;
-  max-width: 400px;
   background-color: white;
-  position: absolute;
-  top: 0;
 `
 
 export const DrawerBackdrop = styled.div`
@@ -337,13 +369,8 @@ export const DrawerBackdrop = styled.div`
   width: 100%;
   height: 100%;
   background-color: #333333;
-  opacity: 0.3;
-  display: none;
   z-index: 2;
-
-  &.active {
-    display: block;
-  }
+  opacity: 0.3;
 `
 
 export const DrawerMenu = styled.div`
@@ -398,7 +425,7 @@ export default function Header() {
   }
 
   return (
-    <>
+    <Wrapper>
       <HeaderFrame>
         {/* RNBW balance modal */}
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
@@ -481,21 +508,27 @@ export default function Header() {
       </HeaderFrame>
 
       {/* [Mobile] App Drawer */}
-      <DrawerBackdrop className={isDrawerVisible ? 'active' : 'inactive'} onClick={toggleDrawer} />
-      <DrawerFrame className={isDrawerVisible ? 'active' : 'inactive'}>
-        <DrawerContent>
-          <DrawerMenu>
-            <MainMenu onClick={toggleDrawer} />
-          </DrawerMenu>
-          <DrawerFooter>
-            <RNBWBalance onClickHandler={() => setShowUniBalanceModal(true)} />
-            <div className="more-menu">
-              <Menu />
-            </div>
-          </DrawerFooter>
-        </DrawerContent>
-      </DrawerFrame>
-    </>
+      <CSSTransitionGroup transitionName="backdrop" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+        {isDrawerVisible && <DrawerBackdrop onClick={toggleDrawer} />}
+      </CSSTransitionGroup>
+      <CSSTransitionGroup transitionName="drawer" transitionEnterTimeout={300} transitionLeaveTimeout={300}>
+        {isDrawerVisible && (
+          <DrawerFrame>
+            <DrawerContent>
+              <DrawerMenu>
+                <MainMenu onClick={toggleDrawer} />
+              </DrawerMenu>
+              <DrawerFooter>
+                <RNBWBalance onClickHandler={() => setShowUniBalanceModal(true)} />
+                <div className="more-menu">
+                  <Menu />
+                </div>
+              </DrawerFooter>
+            </DrawerContent>
+          </DrawerFrame>
+        )}
+      </CSSTransitionGroup>
+    </Wrapper>
   )
 }
 
