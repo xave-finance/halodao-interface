@@ -20,7 +20,7 @@ const StyledAlert = styled.div<{ isVisible: any }>`
   box-shadow: 0px 4px 6px rgba(122, 122, 122, 0.3);
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
-    bottom: 80px;
+    bottom: 10px;
   `};
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
