@@ -94,24 +94,26 @@ const DisclaimerAlert = () => {
     <>
       {isModalOpen && <DisclaimerModal onDismiss={() => setIsModalOpen(false)} />}
 
-      <StyledAlert isVisible={isVisible}>
-        <img src={warningLogo} alt="Warning logo" />
-        <StyledText>
-          This app is in beta, the contracts are currently undergoing last stage of audit. Supply liquidity at your own
-          risk and do your own research.
-        </StyledText>
-        <StyledButton onClick={() => setIsModalOpen(true)}>Read our disclaimer</StyledButton>
-        <StyledCloseWrapper>
-          <ExtraSmallOnly>
-            <ButtonText className="close-button" onClick={toggleVisibility}>
-              Close
-            </ButtonText>
-          </ExtraSmallOnly>
-          <HideSmall>
-            <CloseIcon className="close-icon" onClick={toggleVisibility} color="white" />
-          </HideSmall>
-        </StyledCloseWrapper>
-      </StyledAlert>
+      {isVisible && (
+        <StyledAlert isVisible={isVisible}>
+          <img src={warningLogo} alt="Warning logo" />
+          <StyledText>
+            This app is in beta, the contracts are currently undergoing last stage of audit. Supply liquidity at your
+            own risk and do your own research.
+          </StyledText>
+          <StyledButton onClick={() => setIsModalOpen(true)}>Read our disclaimer</StyledButton>
+          <StyledCloseWrapper>
+            <ExtraSmallOnly>
+              <ButtonText className="close-button" onClick={toggleVisibility}>
+                Close
+              </ButtonText>
+            </ExtraSmallOnly>
+            <HideSmall>
+              <CloseIcon className="close-icon" onClick={toggleVisibility} color="white" />
+            </HideSmall>
+          </StyledCloseWrapper>
+        </StyledAlert>
+      )}
     </>
   )
 }

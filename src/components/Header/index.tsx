@@ -23,6 +23,8 @@ import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
 
 const Wrapper = styled.div`
+  width: 100%;
+
   .hamburger-enter {
     opacity: 0.01;
   }
