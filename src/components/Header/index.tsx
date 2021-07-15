@@ -21,6 +21,7 @@ import usePrevious from '../../hooks/usePrevious'
 import Web3Network from 'components/Web3Network'
 import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
+import { useURLWarningVisible } from 'state/user/hooks'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -402,6 +403,10 @@ export const DrawerMenu = styled.div`
   display: flex;
   flex-direction: column;
 
+  &.url-warn-visible {
+    margin-top: 92px;
+  }
+
   a {
     font-size: 1.25rem;
     font-weight: 400;
@@ -442,6 +447,7 @@ export default function Header() {
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const [isDrawerVisible, setIsDrawerVisible] = useState(false)
+  const isURLWarningVisible = useURLWarningVisible()
 
   const toggleDrawer = () => {
     setIsDrawerVisible(!isDrawerVisible)
@@ -541,7 +547,7 @@ export default function Header() {
         {isDrawerVisible && (
           <DrawerFrame>
             <DrawerContent>
-              <DrawerMenu>
+              <DrawerMenu className={isURLWarningVisible ? 'url-warn-visible' : ''}>
                 <MainMenu onClick={toggleDrawer} />
               </DrawerMenu>
               <DrawerFooter>

@@ -14,6 +14,7 @@ const PhishAlert = styled.div<{ isActive: any }>`
   justify-content: space-between;
   align-items: center;
   display: ${({ isActive }) => (isActive ? 'flex' : 'none')};
+  z-index: 3;
 `
 
 export const StyledClose = styled(X)`
