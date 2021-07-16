@@ -22,6 +22,7 @@ import Web3Network from 'components/Web3Network'
 import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { useURLWarningVisible } from 'state/user/hooks'
+import { isMobile } from 'react-device-detect'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -447,7 +448,9 @@ export default function Header() {
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const [isDrawerVisible, setIsDrawerVisible] = useState(false)
-  const isURLWarningVisible = useURLWarningVisible()
+  const urlWarningVisible = useURLWarningVisible()
+
+  const isURLWarningVisible = (isMobile || window.location.hostname === 'app.halodao.com') && urlWarningVisible
 
   const toggleDrawer = () => {
     setIsDrawerVisible(!isDrawerVisible)
