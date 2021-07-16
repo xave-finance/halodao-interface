@@ -29,15 +29,17 @@ export const groupByPoolProvider = (addresses: string[]) => {
   const uniPools: PoolIdLpTokenMap[] = []
   const sushiPools: PoolIdLpTokenMap[] = []
 
-  addresses.forEach((address, id) => {
-    if (isBalancerPool(address)) {
-      balancerPools.push({ pid: id, lpToken: getAddress(address) })
-    } else if (isUniPool(address)) {
-      uniPools.push({ pid: id, lpToken: getAddress(address) })
-    } else if (isSushiPool(address)) {
-      sushiPools.push({ pid: id, lpToken: getAddress(address) })
+  for (const [pid, address] of addresses.entries()) {
+    if (address) {
+      if (isBalancerPool(address)) {
+        balancerPools.push({ pid, lpToken: getAddress(address) })
+      } else if (isUniPool(address)) {
+        uniPools.push({ pid, lpToken: getAddress(address) })
+      } else if (isSushiPool(address)) {
+        sushiPools.push({ pid, lpToken: getAddress(address) })
+      }
     }
-  })
+  }
 
   return {
     balancer: balancerPools,
