@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { TYPE, ExternalLink, LinkIcon, HideLarge } from '../../theme'
+import { TYPE, ExternalLink, LinkIcon } from '../../theme'
 import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
@@ -33,7 +33,7 @@ const HeaderRow = styled(RowBetween)`
   `};
   flex-direction: column;
   width: 60%;
-  padding-right: 0.5rem;
+  padding-right: 2rem;
 `
 
 const TitleRow = styled(RowBetween)`
@@ -42,7 +42,15 @@ const TitleRow = styled(RowBetween)`
 `
 
 const StyledExternalLink = styled(ExternalLink)`
-  ${({ theme }) => theme.mediaWidth.upToSmall` 
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
+
+  .link-icon {
+    display: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     border: 1px solid #518CFF;
     box-sizing: border-box;
     border-radius: 20px; 
@@ -51,10 +59,14 @@ const StyledExternalLink = styled(ExternalLink)`
     margin-bottom: 0.5rem;
     text-align: center;
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .link-icon {
+      display: inline;
+    }
   `};
-  color: #518cff;
-  text-decoration-line: underline;
-  line-height: 130%;
 `
 
 const Farm = () => {
@@ -99,9 +111,7 @@ const Farm = () => {
             <Row>
               <StyledExternalLink href="https://docs.halodao.com/v0-guide/how-to-farm" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
-                <HideLarge>
-                  <LinkIcon></LinkIcon>
-                </HideLarge>
+                <LinkIcon className="link-icon"></LinkIcon>
               </StyledExternalLink>
             </Row>
           </HeaderRow>

@@ -14,6 +14,7 @@ const StyledWrapper = styled(YellowCard)`
   padding: 8px 12px;
   white-space: nowrap;
   cursor: pointer;
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     margin: 0;
     margin-right: 0.5rem;
@@ -66,12 +67,8 @@ function Web3Network(): JSX.Element | null {
   if (!isConnectedToMetamask()) return null
 
   return (
-    <StyledWrapper
-      title={NETWORK_LABELS[chainId]}
-      className="flex items-center rounded bg-dark-900 hover:bg-dark-800 p-0.5 whitespace-nowrap text-sm font-bold cursor-pointer select-none pointer-events-auto"
-      onClick={toggleNetworkModal}
-    >
-      <div className="grid grid-flow-col auto-cols-max items-center rounded-lg bg-dark-1000 text-sm text-secondary py-2 px-3 pointer-events-auto">
+    <StyledWrapper title={NETWORK_LABELS[chainId]} onClick={toggleNetworkModal}>
+      <div>
         <div className="text-primary">{NETWORK_LABEL[chainId]}</div>
       </div>
       <NetworkModal />
