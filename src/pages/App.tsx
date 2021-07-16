@@ -67,8 +67,10 @@ export default function App() {
             <Switch>
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
-              {process.env.NODE_ENV === 'development' && <Route exact strict path="/demo" component={Demo} />}
-              {process.env.NODE_ENV === 'development' && (
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                <Route exact strict path="/demo" component={Demo} />
+              )}
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
                 <Route exact strict path="/tw-demo" component={TailwindDemo} />
               )}
               <Route component={RedirectPathToFarmOnly} />
