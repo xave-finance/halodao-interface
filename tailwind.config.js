@@ -9,16 +9,24 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: '#471bb2',
-          light: '#e8e4f5'
+          light: '#e8e4f5',
+          hover: '#15006d',
+          disabled: '#9182c6'
         },
         link: {
           DEFAULT: '#518cff'
+        },
+        haloGray: {
+          DEFAULT: '#f1f1f1'
         }
       }
     }
   },
   variants: {
-    extend: {}
+    extend: {
+      ringWidth: ['active'],
+      ringColor: ['active']
+    }
   },
   plugins: []
 }
