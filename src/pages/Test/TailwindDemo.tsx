@@ -6,12 +6,34 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import RNBWToken from '../../assets/images/rnbw-token.png'
 import { ChainId } from '@sushiswap/sdk'
 import ExpandablePoolRow from 'components/Tailwind/Common/ExpandablePoolRow'
+import PageHeaderLeft from 'components/Tailwind/Common/PageHeaderLeft'
 
 const TailwindDemo = () => {
   const pools = [
-    { name: 'RNBW/USDT', apy: 1.2, earned: 75 },
-    { name: 'XSGD/USDT', apy: 0.85, earned: 0 },
-    { name: 'XSGD/USDC', apy: 0.8, earned: 1100 }
+    {
+      name: 'RNBW/USDT',
+      tokenA: { bal: 1800, symbol: 'RNBW' },
+      tokenB: { bal: 650, symbol: 'USDT' },
+      held: 0,
+      staked: 2000,
+      earned: 0
+    },
+    {
+      name: 'XSGD/USDT',
+      tokenA: { bal: 3000, symbol: 'XSGD' },
+      tokenB: { bal: 100, symbol: 'USDT' },
+      held: 100,
+      staked: 0,
+      earned: 10
+    },
+    {
+      name: 'XSGD/USDC',
+      tokenA: { bal: 100, symbol: 'XSGD' },
+      tokenB: { bal: 100, symbol: 'USDC' },
+      held: 0,
+      staked: 100,
+      earned: 0
+    }
   ]
 
   return (
@@ -51,15 +73,12 @@ const TailwindDemo = () => {
         <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-8 md:items-center">
           {/* Left side */}
           <div className="md:w-5/12">
-            <div className="text-sm font-extrabold tracking-widest">ADD LIQUIDITY</div>
-            <div className="text-4xl font-fredoka text-primary mb-4">Pools</div>
-            <div className="mb-1 md:pr-16">
-              Zcash rejoins the public key for some fork. Ravencoin halving the orphan in lots of ERC20 token standard!
-              ICO thought!
-            </div>
-            <div className="text-link">
-              <a href="https://docs.halodao.com">Learn more about Add Liquidity</a>
-            </div>
+            <PageHeaderLeft
+              subtitle="Add/Remove Liquidity"
+              title="Pools"
+              caption="ERC721 token standard returns a immutable raiden network! VeChain should be a ERC20 token standard!"
+              link={{ text: 'Learn about pool liquidity', url: 'https://docs.halodao.com' }}
+            />
           </div>
           {/* Right side */}
           <div className="flex-auto flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
@@ -89,11 +108,14 @@ const TailwindDemo = () => {
       {/* ====================== */}
       <div className="container mx-auto mb-8">
         <div className="text-xl font-bold">Pool table</div>
-        <div className="hidden md:flex flex-row space-x-4 md:mb-4">
-          <div className="w-5/12 font-fredoka text-gray-500">Pool</div>
-          <div className="w-3/12 font-fredoka text-gray-500">APY</div>
-          <div className="w-3/12 font-fredoka text-gray-500">Earned</div>
-          <div className="w-1/12">&nbsp;</div>
+        <div className="hidden md:flex flex-row justify-between md:mb-4">
+          <div className="font-fredoka text-gray-500">Pair Name</div>
+          <div className="font-fredoka text-gray-500">Pooled (A) Tokens</div>
+          <div className="font-fredoka text-gray-500">Pooled (B) Tokens</div>
+          <div className="font-fredoka text-gray-500">Held LPT</div>
+          <div className="font-fredoka text-gray-500">Staked LPT</div>
+          <div className="font-fredoka text-gray-500">Fees Earned</div>
+          <div>&nbsp;</div>
         </div>
         {pools.map(pool => (
           <ExpandablePoolRow key={pool.name} pool={pool} />
