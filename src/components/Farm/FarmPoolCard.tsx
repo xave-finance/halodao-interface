@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactGA from 'react-ga'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -563,6 +564,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setStakeAmount('')
     setStakeButtonState(ButtonHaloStates.Disabled)
     setIsTxInProgress(false)
+    /** log stake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Stake LP token',
+      label: poolInfo.pair
+    })
   }
 
   /**
@@ -582,6 +590,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setUnstakeAmount('')
     setUnstakeButtonState(ButtonHaloSimpleStates.Disabled)
     setIsTxInProgress(false)
+    /** log unstake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Unstake LP token',
+      label: poolInfo.pair
+    })
   }
 
   /**
@@ -601,6 +616,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Harvest',
+      label: poolInfo.pair
+    })
 
     // Redirect to vesting page
     const vestingInfo = {

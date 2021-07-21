@@ -2,7 +2,7 @@
 ## Description of Changes
 <!-- Enter description of changes here. -->
 
-[Link to Jira Ticket](https://halodao.atlassian.net/browse/HDF-)
+[Link to Jira Ticket](https://halodao.atlassian.net/browse/HDEV-)
 
 
 ### Developer Checklist:
