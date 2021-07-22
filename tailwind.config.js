@@ -19,6 +19,12 @@ module.exports = {
         haloGray: {
           DEFAULT: '#f1f1f1'
         }
+      },
+      maxWidth: {
+        container: '1040px'
+      },
+      borderRadius: {
+        card: '10px'
       }
     }
   },

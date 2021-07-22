@@ -17,12 +17,12 @@ const PoolExpandButton = ({ title, expandedTitle, isExpanded, onClick }: PoolExp
           w-full p-2
           bg-primary hover:bg-primary-hover
           active:ring active:ring-purple-300
-          rounded
+          rounded-card
           transition-colors
           md:w-auto 
           md:text-primary
           md:bg-transparent
-          ${isExpanded ? 'md:py-1 md:px-4' : 'md:p-0'}
+          ${isExpanded ? 'md:p-1 md:px-2' : 'md:p-0'}
           ${isExpanded ? 'md:hover:text-white' : 'md:hover:text-primary-hover'}
           ${isExpanded ? 'md:hover:bg-primary-hover' : 'md:hover:bg-transparent'}
           ${isExpanded && 'md:border md:border-primary'}

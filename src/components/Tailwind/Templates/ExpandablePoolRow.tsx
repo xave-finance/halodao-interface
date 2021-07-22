@@ -4,6 +4,37 @@ import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { HALO, USDC } from '../../../constants'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../Buttons/PoolExpandButton'
+import styled from 'styled-components'
+
+const PoolRow = styled.div`
+  .col-1 {
+    width: 19%;
+  }
+  .col-2 {
+    width: 18%;
+  }
+  .col-3 {
+    width: 18%;
+  }
+  .col-4 {
+    width: 11%;
+  }
+  .col-5 {
+    width: 13%;
+  }
+  .col-6 {
+    width: 13%;
+  }
+  .col-7 {
+    width: 8%;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7 {
+      width: 100%;
+    }
+  `};
+`
 
 interface ExpandablePoolRowProps {
   pool: {
@@ -38,48 +69,47 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
         ${isExpanded ? 'md:border-primary-hover' : 'md:border-transparent'}
       `}
     >
-      <div
+      <PoolRow
         className={`
-          md:flex md:flex-row md:justify-between md:cursor-pointer
+          md:flex md:flex-row md:justify-between md:cursor-pointer md:items-start
         `}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div
           className={`
+            col-1
             flex flex-row space-x-2 items-center justify-center
             font-semibold
             mb-4
-            md:mb-0 md:w-5/12
+            md:mb-0
             md:justify-start
             md:font-normal 
           `}
         >
-          <div className="">
-            <DoubleCurrencyLogo currency0={HALO[ChainId.MAINNET]} currency1={USDC} size={16} />
-          </div>
-          <div className="">{pool.name}</div>
+          <DoubleCurrencyLogo currency0={HALO[ChainId.MAINNET]} currency1={USDC} size={16} />
+          <span>{pool.name}</span>
         </div>
-        <div className="mb-4 md:mb-0">
+        <div className="col-2 mb-4 md:mb-0">
           <div className="text-sm tracking-widest md:hidden">Pooled (A) Tokens:</div>
-          <div className="">{formatNumber(pool.tokenA.bal, NumberFormat.percent)}</div>
+          <div className="">{formatNumber(pool.tokenA.bal)}</div>
         </div>
-        <div className="mb-4 md:mb-0">
+        <div className="col-3 mb-4 md:mb-0">
           <div className="text-sm tracking-widest md:hidden">Pooled (B) Tokens:</div>
-          <div className="">{formatNumber(pool.tokenA.bal, NumberFormat.percent)}</div>
+          <div className="">{formatNumber(pool.tokenA.bal)}</div>
         </div>
-        <div className="mb-4 md:mb-0">
+        <div className="col-4 mb-4 md:mb-0">
           <div className="text-sm tracking-widest md:hidden">Held LPT:</div>
-          <div className="">{formatNumber(pool.held, NumberFormat.percent)}</div>
+          <div className="">{formatNumber(pool.held)}</div>
         </div>
-        <div className="mb-4 md:mb-0">
+        <div className="col-5 mb-4 md:mb-0">
           <div className="text-sm tracking-widest md:hidden">Staked LPT:</div>
-          <div className="">{formatNumber(pool.staked, NumberFormat.percent)}</div>
+          <div className="">{formatNumber(pool.staked)}</div>
         </div>
-        <div className="mb-4 md:mb-0">
+        <div className="col-6 mb-4 md:mb-0">
           <div className="text-sm tracking-widest md:hidden">Fees Earned:</div>
           <div className="">{formatNumber(pool.earned)} RNBW</div>
         </div>
-        <div className="md:text-right">
+        <div className="col-7 md:text-right">
           <PoolExpandButton
             title="Manage"
             expandedTitle="Close"
@@ -87,9 +117,11 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
             onClick={() => setIsExpanded(!isExpanded)}
           />
         </div>
-      </div>
+      </PoolRow>
+
+      {/* Expanded content */}
       {isExpanded && (
-        <div className="mt-4">
+        <div className="mt-2">
           <div className="p-4 bg-yellow-50">Expandable content</div>
           <div className="mt-4 text-right md:hidden">
             <button onClick={() => setIsExpanded(!isExpanded)}>Close</button>
