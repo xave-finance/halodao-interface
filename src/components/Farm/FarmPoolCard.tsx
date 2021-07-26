@@ -570,7 +570,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       category: 'Farm',
       action: 'Stake LP token',
       label: poolInfo.pair,
-      value: parseFloat(parseEther(stakeAmount).toString())
+      value: parseFloat(formatEther(parseEther(stakeAmount).toString()))
     })
   }
 
@@ -597,7 +597,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       category: 'Farm',
       action: 'Unstake LP token',
       label: poolInfo.pair,
-      value: parseFloat(parseEther(unstakeAmount).toString())
+      value: parseFloat(formatEther(parseEther(unstakeAmount).toString()))
     })
   }
 
@@ -623,7 +623,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     ReactGA.event({
       category: 'Farm',
       action: 'Harvest',
-      label: poolInfo.pair
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
     })
 
     // Redirect to vesting page

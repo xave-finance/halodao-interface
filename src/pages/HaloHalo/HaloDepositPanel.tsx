@@ -13,7 +13,7 @@ import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
-import { parseEther } from 'ethers/lib/utils'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
@@ -167,7 +167,7 @@ export default function CurrencyInputPanel({
       category: 'Vest',
       action: 'Deposit',
       label: account ? account : '',
-      value: parseFloat(parseEther(amount.value.toString()).toString())
+      value: parseFloat(formatEther(parseEther(amount.value.toString()).toString()))
     })
   }
 
