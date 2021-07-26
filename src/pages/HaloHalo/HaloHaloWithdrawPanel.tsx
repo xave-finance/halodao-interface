@@ -13,7 +13,7 @@ import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import { formatEther } from 'ethers/lib/utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALOHALO_ADDRESS } from '../../constants'
@@ -169,8 +169,8 @@ export default function HaloHaloWithdrawPanel({
     ReactGA.event({
       category: 'Vest',
       action: 'Withdraw',
-      label: account ? account : '',
-      value: parseFloat(formatEther(parseEther(amount.value.toString()).toString()))
+      label: account ? 'User Address: ' + account : '',
+      value: parseFloat(formatEther(amount.value.toString()))
     })
   }
 
