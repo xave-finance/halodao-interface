@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Column, { AutoColumn } from 'components/Column'
 import { Button, ButtonText, CloseIcon, colors, TYPE } from 'theme'
@@ -12,6 +12,7 @@ import {
   ButtonPrimaryNormal,
   ButtonSecondary
 } from 'components/Button'
+import Toggle from 'components/Toggle'
 
 const themeColor = colors(false)
 
@@ -22,6 +23,8 @@ const StyledWrapper = styled(AutoColumn)`
 `
 
 const Demo = () => {
+  const [isToggled, setIsToggled] = useState(false)
+
   const handleButtonClick = () => {
     console.log('button clicked!')
   }
@@ -115,6 +118,11 @@ const Demo = () => {
         <ButtonHalo onClick={handleButtonClick}>ButtonHalo</ButtonHalo>
         <ButtonHaloOutlined onClick={handleButtonClick}>ButtonHaloOutlined</ButtonHaloOutlined>
         <ButtonHaloWhite onClick={handleButtonClick}>ButtonHaloWhite</ButtonHaloWhite>
+      </RowFixed>
+
+      <h2>UI Controls</h2>
+      <RowFixed>
+        <Toggle id="test-toggle" isActive={isToggled} toggle={() => setIsToggled(!isToggled)} />
       </RowFixed>
     </StyledWrapper>
   )

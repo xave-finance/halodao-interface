@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { HALO, USDC } from '../../../constants'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
@@ -100,7 +100,7 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
         </div>
         <div className="col-6 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Fees Earned:</div>
-          <div className="">{formatNumber(pool.earned)} RNBW</div>
+          <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton

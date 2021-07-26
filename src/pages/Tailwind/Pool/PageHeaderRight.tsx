@@ -17,7 +17,7 @@ const PageHeaderRight = () => {
       <div className="flex-auto bg-primary-light py-4 px-6 rounded-card flex flex-col">
         <div className="flex-1"></div>
         <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Total Fees Earned</div>
-        <div className="text-2xl font-semibold">{formatNumber(10.123)} RNBW</div>
+        <div className="text-2xl font-semibold">{formatNumber(10.123, NumberFormat.usd)}</div>
       </div>
     </div>
   )

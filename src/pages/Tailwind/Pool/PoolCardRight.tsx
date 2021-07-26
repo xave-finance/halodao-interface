@@ -1,5 +1,6 @@
 import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
 import React from 'react'
+import Chart from 'react-google-charts'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { PoolData } from './models/PoolData'
 
@@ -12,8 +13,24 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
     <div className="p-4 text-white bg-primary-hover rounded-tr-card rounded-tl-card md:rounded-br-card md:rounded-bl-card">
       <div className="text-xs font-extrabold tracking-widest text-white opacity-60 uppercase">Pool Overview</div>
       <div className="text-2xl font-semibold">{formatNumber(547400.945, NumberFormat.usdLong)}</div>
-      <div className="py-4 text-center border-b border-white">
-        <div className="mt-4 font-bold">
+      <div className="pb-4 text-center border-b border-white">
+        <Chart
+          width={'100%'}
+          height={'150px'}
+          chartType="PieChart"
+          data={[
+            ['Token', 'Distribution'],
+            [pool.tokenA.symbol, 399602.6935],
+            [pool.tokenB.symbol, 147798.2565]
+          ]}
+          options={{
+            legend: 'none',
+            backgroundColor: 'transparent',
+            colors: ['#C4C4C4', '#FBFAFF'],
+            pieSliceText: 'none'
+          }}
+        />
+        <div className="font-bold">
           {formatNumber(0.73, NumberFormat.percentShort)} XSGD • {formatNumber(0.26, NumberFormat.percentShort)} USDT
         </div>
         <div className="mt-4 font-bold">

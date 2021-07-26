@@ -94,6 +94,13 @@ const TailwindDemo = () => {
           <ExpandablePoolRow key={pool.name} pool={pool} />
         ))}
       </PageWrapper>
+
+      {/* ============================ */}
+      {/* ===== Control Elements ===== */}
+      {/* ============================ */}
+      <PageWrapper className="mb-8">
+        <div className="text-xl font-bold">UI Controls</div>
+      </PageWrapper>
     </>
   )
 }
