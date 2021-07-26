@@ -569,7 +569,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     ReactGA.event({
       category: 'Farm',
       action: 'Stake LP token',
-      label: poolInfo.pair
+      label: poolInfo.pair,
+      value: parseEther(stakeAmount).toNumber()
     })
   }
 
@@ -595,7 +596,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     ReactGA.event({
       category: 'Farm',
       action: 'Unstake LP token',
-      label: poolInfo.pair
+      label: poolInfo.pair,
+      value: parseEther(unstakeAmount).toNumber()
     })
   }
 

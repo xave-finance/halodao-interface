@@ -13,6 +13,7 @@ import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
+import { parseEther } from 'ethers/lib/utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
@@ -160,12 +161,15 @@ export default function CurrencyInputPanel({
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
+    console.log(parseEther(amount.value.toString()).toNumber())
+    console.log(account)
     /** log deposit in GA
      */
     ReactGA.event({
       category: 'Vest',
       action: 'Deposit',
-      label: amount.value.toString()
+      label: account ? account : '',
+      value: parseEther(amount.value.toString()).toNumber()
     })
   }
 
