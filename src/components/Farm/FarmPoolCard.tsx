@@ -570,7 +570,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       category: 'Farm',
       action: 'Stake LP token',
       label: poolInfo.pair,
-      value: parseEther(stakeAmount).toNumber()
+      value: parseFloat(parseEther(stakeAmount).toString())
     })
   }
 
@@ -597,7 +597,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       category: 'Farm',
       action: 'Unstake LP token',
       label: poolInfo.pair,
-      value: parseEther(unstakeAmount).toNumber()
+      value: parseFloat(parseEther(unstakeAmount).toString())
     })
   }
 

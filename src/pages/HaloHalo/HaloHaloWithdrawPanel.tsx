@@ -164,15 +164,13 @@ export default function HaloHaloWithdrawPanel({
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setWithdrawValue('')
-    console.log(parseEther(amount.value.toString()).toNumber())
-    console.log(account)
     /** log deposit in GA
      */
     ReactGA.event({
       category: 'Vest',
       action: 'Withdraw',
       label: account ? account : '',
-      value: parseEther(amount.value.toString()).toNumber()
+      value: parseFloat(parseEther(amount.value.toString()).toString())
     })
   }
 
