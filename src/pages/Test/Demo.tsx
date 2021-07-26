@@ -13,6 +13,8 @@ import {
   ButtonSecondary
 } from 'components/Button'
 import Toggle from 'components/Toggle'
+import { Currency } from '@sushiswap/sdk'
+import CurrencyInputPanel from 'components/CurrencyInputPanel'
 
 const themeColor = colors(false)
 
@@ -24,6 +26,7 @@ const StyledWrapper = styled(AutoColumn)`
 
 const Demo = () => {
   const [isToggled, setIsToggled] = useState(false)
+  const [selectedCurrency, setSelectedCurrency] = useState<Currency | undefined>(undefined)
 
   const handleButtonClick = () => {
     console.log('button clicked!')
@@ -123,6 +126,24 @@ const Demo = () => {
       <h2>UI Controls</h2>
       <RowFixed>
         <Toggle id="test-toggle" isActive={isToggled} toggle={() => setIsToggled(!isToggled)} />
+      </RowFixed>
+
+      <h2>Currency Input</h2>
+      <RowFixed>
+        <CurrencyInputPanel
+          value={'0'}
+          onUserInput={(val: string) => {
+            console.log('typed: ', val)
+          }}
+          label={'To'}
+          showMaxButton={true}
+          currency={selectedCurrency}
+          onCurrencySelect={(curr: Currency) => {
+            console.log('selected currency: ', curr)
+            setSelectedCurrency(curr)
+          }}
+          id="demo-currency-output"
+        />
       </RowFixed>
     </StyledWrapper>
   )

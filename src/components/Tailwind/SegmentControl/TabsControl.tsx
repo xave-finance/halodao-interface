@@ -11,6 +11,7 @@ const TabsControl = ({ tabs, activeTab, didChangeTab }: TabsControlProps) => {
     <div className="p-2 flex rounded-card bg-primary-light">
       {tabs.map((tab, i) => (
         <div
+          key={i}
           className={`
             py-5 flex-auto
             text-center font-semibold

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { HALO, USDC } from '../../../constants'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { formatNumber } from 'utils/formatNumber'
 import PoolExpandButton from '../Buttons/PoolExpandButton'
 import styled from 'styled-components'
 

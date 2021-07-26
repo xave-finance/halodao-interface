@@ -9,6 +9,8 @@ interface PoolCardRightProps {
 }
 
 const PoolCardRight = ({ pool }: PoolCardRightProps) => {
+  const stake = () => {}
+
   return (
     <div className="p-4 text-white bg-primary-hover rounded-tr-card rounded-tl-card md:rounded-br-card md:rounded-bl-card">
       <div className="text-xs font-extrabold tracking-widest text-white opacity-60 uppercase">Pool Overview</div>
@@ -43,7 +45,7 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
           <div className="font-fredoka text-4xl">{formatNumber(pool.staked)} LPT</div>
         </div>
         <div className="flex items-end">
-          <PoolBigButton title="Stake it" isEnabled={pool.staked > 0} onClick={() => {}} />
+          <PoolBigButton title="Stake it" isEnabled={pool.staked > 0} onClick={stake} />
         </div>
       </div>
     </div>

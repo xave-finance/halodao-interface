@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ExpandablePoolRow from 'components/Tailwind/Templates/ExpandablePoolRow'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PoolColumns from 'components/Tailwind/Templates/PoolColumns'
 import PageHeaderRight from 'components/Tailwind/Templates/PageHeaderRight'
+import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
+import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
+import TabsControl from 'components/Tailwind/SegmentControl/TabsControl'
 
 const TailwindDemo = () => {
   const pools = [
@@ -32,6 +35,9 @@ const TailwindDemo = () => {
       earned: 0
     }
   ]
+
+  const [isExpanded, setIsExpanded] = useState(false)
+  const [activeTab, setActiveTab] = useState(0)
 
   return (
     <>
@@ -95,11 +101,46 @@ const TailwindDemo = () => {
         ))}
       </PageWrapper>
 
+      {/* =========================== */}
+      {/* ===== Button Elements ===== */}
+      {/* =========================== */}
+      <PageWrapper className="mb-8">
+        <div className="text-xl font-bold">Buttons</div>
+        <div className="flex mb-4">
+          <div className="w-1/2">Pool expand/close button</div>
+          <div className="w-1/2">
+            <PoolExpandButton
+              title="Manage"
+              expandedTitle="Close"
+              isExpanded={isExpanded}
+              onClick={() => setIsExpanded(!isExpanded)}
+            />
+          </div>
+        </div>
+        <div className="flex">
+          <div className="w-1/3">Pool big button</div>
+          <div className="w-1/3">
+            <p>Enabled</p>
+            <PoolBigButton title="Stake" isEnabled={true} onClick={() => console.log('clicked')} />
+          </div>
+          <div className="w-1/3">
+            <p>Disabled</p>
+            <PoolBigButton title="Harvest" isEnabled={false} onClick={() => console.log('clicked')} />
+          </div>
+        </div>
+      </PageWrapper>
+
       {/* ============================ */}
       {/* ===== Control Elements ===== */}
       {/* ============================ */}
       <PageWrapper className="mb-8">
         <div className="text-xl font-bold">UI Controls</div>
+        <div className="flex">
+          <div className="w-1/2">Tabs/Segment Control</div>
+          <div className="w-1/2">
+            <TabsControl tabs={['Tab 1', 'Tab 2', 'Tab 3']} activeTab={activeTab} didChangeTab={i => setActiveTab(i)} />
+          </div>
+        </div>
       </PageWrapper>
     </>
   )
