@@ -30,6 +30,12 @@ const WalletCard = styled(Card)`
     box-shadow: 0px 4px 6px rgba(122, 122, 122, 0.3);
     border-radius: 3px;
   }
+
+  img {
+    height: 44px;
+    width: auto;
+    marginbottom: 0.5rem;
+  }
 `
 const InfoTitleRow = styled(RowBetween)`
   color: #333333;
@@ -67,7 +73,7 @@ const Option = ({
   const content = (
     <WalletCard id={id} onClick={onClick}>
       <Row>
-        <img style={{ marginBottom: '0.5rem' }} height={'44px'} src={icon} alt="logo" />
+        <img src={icon} alt={`${header} logo`} />
       </Row>
       <InfoTitleRow>
         <TitleText>{header}</TitleText>
