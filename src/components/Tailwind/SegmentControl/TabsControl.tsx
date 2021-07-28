@@ -8,7 +8,7 @@ interface TabsControlProps {
 
 const TabsControl = ({ tabs, activeTab, didChangeTab }: TabsControlProps) => {
   return (
-    <div className="p-2 flex rounded-card bg-primary-light">
+    <div className="p-2 flex rounded-card bg-primary-lightest">
       {tabs.map((tab, i) => (
         <div
           key={i}

@@ -84,11 +84,11 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
         </div>
         <div className="col-2 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (A) Tokens:</div>
-          <div className="">{formatNumber(pool.tokenA.bal)}</div>
+          <div className="">{formatNumber(pool.pooled.token0)}</div>
         </div>
         <div className="col-3 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (B) Tokens:</div>
-          <div className="">{formatNumber(pool.tokenA.bal)}</div>
+          <div className="">{formatNumber(pool.pooled.token1)}</div>
         </div>
         <div className="col-4 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Held LPT:</div>
@@ -117,7 +117,7 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
         <div className="mt-2">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="mb-4 md:w-1/2 md:mb-0">
-              <PoolCardLeft />
+              <PoolCardLeft token0={pool.token0} token1={pool.token1} />
             </div>
             <div className="md:w-1/2">
               <PoolCardRight pool={pool} />

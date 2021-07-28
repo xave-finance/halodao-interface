@@ -483,6 +483,9 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
+            <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
+              {t('pool')}
+            </StyledNavLink>
             <StyledNavLink
               id={`farm-nav-link`}
               to={'/farm'}
@@ -576,6 +579,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
 
   return (
     <>
+      <MenuItem>
+        <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
+          {t('pool')}
+        </NavLink>
+      </MenuItem>
       <MenuItem>
         <NavLink
           id={`farm-nav-link`}

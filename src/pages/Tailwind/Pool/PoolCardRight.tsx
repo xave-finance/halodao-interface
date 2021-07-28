@@ -22,8 +22,8 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
           chartType="PieChart"
           data={[
             ['Token', 'Distribution'],
-            [pool.tokenA.symbol, 399602.6935],
-            [pool.tokenB.symbol, 147798.2565]
+            [pool.token0.symbol, 399602.6935],
+            [pool.token1.symbol, 147798.2565]
           ]}
           options={{
             legend: 'none',
@@ -33,10 +33,11 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
           }}
         />
         <div className="font-bold">
-          {formatNumber(0.73, NumberFormat.percentShort)} XSGD • {formatNumber(0.26, NumberFormat.percentShort)} USDT
+          {formatNumber(0.73, NumberFormat.percentShort)} {pool.token0.symbol} •{' '}
+          {formatNumber(0.26, NumberFormat.percentShort)} {pool.token1.symbol}
         </div>
         <div className="mt-4 font-bold">
-          1LP = {formatNumber(0.73892)} XSGT + {formatNumber(0.26123)} USDT
+          1LP = {formatNumber(0.73892)} {pool.token0.symbol} + {formatNumber(0.26123)} {pool.token1.symbol}
         </div>
       </div>
       <div className="pt-4 flex flex-col md:flex-row">
