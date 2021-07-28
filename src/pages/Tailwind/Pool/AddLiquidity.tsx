@@ -3,7 +3,7 @@ import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { Token } from '@sushiswap/sdk'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
-import PrimaryActionButton, { PrimaryActionButtonState } from 'components/Tailwind/Buttons/PrimaryActionButton'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 
 interface AddLiquidityProps {
@@ -53,9 +53,10 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         </div>
       </div>
       <div className="mt-2">
-        <PrimaryActionButton
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
           title="Enter an amount"
-          state={PrimaryActionButtonState.Disabled}
+          state={PrimaryButtonState.Disabled}
           onClick={() => console.log('clicked')}
         />
       </div>
@@ -86,9 +87,10 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
           />
         </div>
         <div className="md:w-1/2">
-          <PrimaryActionButton
+          <PrimaryButton
+            type={PrimaryButtonType.Gradient}
             title="Enter an amount"
-            state={PrimaryActionButtonState.Disabled}
+            state={PrimaryButtonState.Disabled}
             onClick={() => console.log('clicked')}
           />
         </div>

@@ -13,8 +13,9 @@ import MaxButton from 'components/Tailwind/Buttons/MaxButton'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../constants'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
-import PrimaryActionButton, { PrimaryActionButtonState } from 'components/Tailwind/Buttons/PrimaryActionButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
+import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 
 const TailwindDemo = () => {
   const pools = [
@@ -48,6 +49,7 @@ const TailwindDemo = () => {
   const [activeTab, setActiveTab] = useState(0)
   const [activeSegment, setActiveSegment] = useState(0)
   const [inputValue, setInputValue] = useState('')
+  const [amount, setAmount] = useState(100)
 
   return (
     <>
@@ -160,8 +162,8 @@ const TailwindDemo = () => {
           </div>
         </div>
         <div className="flex mb-4 space-x-8">
-          <div className="w-1/6">Approve button</div>
-          <div className="flex-auto">
+          <div className="w-1/4">Approve button</div>
+          <div className="w-1/4">
             <p>Not Approved</p>
             <ApproveButton
               title="Approve"
@@ -169,7 +171,7 @@ const TailwindDemo = () => {
               onClick={() => console.log('clicked')}
             />
           </div>
-          <div className="flex-auto">
+          <div className="w-1/4">
             <p>Approving</p>
             <ApproveButton
               title="Approving"
@@ -177,7 +179,7 @@ const TailwindDemo = () => {
               onClick={() => console.log('clicked')}
             />
           </div>
-          <div className="flex-auto">
+          <div className="w-1/4">
             <p>Approved</p>
             <ApproveButton
               title="Approved"
@@ -186,36 +188,67 @@ const TailwindDemo = () => {
             />
           </div>
         </div>
-        <div className="flex space-x-8">
-          <div className="w-1/4">Primary action button</div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/4">Primary button (Default)</div>
           <div className="w-1/4">
             <p>Enabled</p>
-            <PrimaryActionButton
+            <PrimaryButton
+              title="Remove Supply"
+              state={PrimaryButtonState.Enabled}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Disabled</p>
+            <PrimaryButton
+              title="Remove Supply"
+              state={PrimaryButtonState.Disabled}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Loading</p>
+            <PrimaryButton
+              title="Removing"
+              state={PrimaryButtonState.InProgress}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/4">Primary button (Gradient)</div>
+          <div className="w-1/4">
+            <p>Enabled</p>
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
               title="Supply"
-              state={PrimaryActionButtonState.Enabled}
+              state={PrimaryButtonState.Enabled}
               onClick={() => console.log('clicked')}
             />
           </div>
           <div className="w-1/4">
             <p>Disabled / Error</p>
-            <PrimaryActionButton
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
               title="Enter an amount"
-              state={PrimaryActionButtonState.Disabled}
+              state={PrimaryButtonState.Disabled}
               onClick={() => console.log('clicked')}
             />
             <div className="mt-2">
-              <PrimaryActionButton
+              <PrimaryButton
+                type={PrimaryButtonType.Gradient}
                 title="Insufficient Balance"
-                state={PrimaryActionButtonState.Disabled}
+                state={PrimaryButtonState.Disabled}
                 onClick={() => console.log('clicked')}
               />
             </div>
           </div>
           <div className="w-1/4">
             <p>Loading</p>
-            <PrimaryActionButton
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
               title="Confirming"
-              state={PrimaryActionButtonState.InProgress}
+              state={PrimaryButtonState.InProgress}
               onClick={() => console.log('clicked')}
             />
           </div>
@@ -277,6 +310,12 @@ const TailwindDemo = () => {
           <div className="w-1/2">Slippage tollerance</div>
           <div className="w-1/2">
             <SlippageTolerance />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/2">Amount Slider</div>
+          <div className="w-1/2">
+            <AmountSlider amount={amount} didChangeAmount={amt => setAmount(amt)} />
           </div>
         </div>
       </PageWrapper>
