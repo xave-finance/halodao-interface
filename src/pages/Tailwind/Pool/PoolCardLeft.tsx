@@ -22,7 +22,7 @@ const PoolCardLeft = ({ token0, token1 }: PoolCardLeftProps) => {
 
       <div className="mt-2">
         {activeTab === 0 && <AddLiquidity token0={token0} token1={token1} />}
-        {activeTab === 1 && <RemoveLiquidity />}
+        {activeTab === 1 && <RemoveLiquidity token0={token0} token1={token1} />}
       </div>
     </div>
   )
