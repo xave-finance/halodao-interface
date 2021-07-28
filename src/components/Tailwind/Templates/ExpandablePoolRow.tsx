@@ -60,7 +60,7 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
     <div
       className={`
         mb-4 p-4
-        bg-haloGray
+        bg-white
         rounded
         md:mb-2 md:px-4 md:py-2 md:-ml-4 md:-mr-4
         md:bg-transparent

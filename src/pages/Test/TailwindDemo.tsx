@@ -7,6 +7,15 @@ import PageHeaderRight from 'components/Tailwind/Templates/PageHeaderRight'
 import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
 import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
 import TabsControl from 'components/Tailwind/SegmentControl/TabsControl'
+import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
+import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
+import MaxButton from 'components/Tailwind/Buttons/MaxButton'
+import { ChainId } from '@sushiswap/sdk'
+import { HALO } from '../../constants'
+import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
+import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
+import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 
 const TailwindDemo = () => {
   const pools = [
@@ -38,6 +47,9 @@ const TailwindDemo = () => {
 
   const [isExpanded, setIsExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState(0)
+  const [activeSegment, setActiveSegment] = useState(0)
+  const [inputValue, setInputValue] = useState('')
+  const [amount, setAmount] = useState(100)
 
   return (
     <>
@@ -107,8 +119,9 @@ const TailwindDemo = () => {
       <PageWrapper className="mb-8">
         <div className="text-xl font-bold">Buttons</div>
         <div className="flex mb-4">
-          <div className="w-1/2">Pool expand/close button</div>
-          <div className="w-1/2">
+          <div className="w-1/3">Pool expand/close button</div>
+          <div className="w-1/3">
+            <p>Collapsed</p>
             <PoolExpandButton
               title="Manage"
               expandedTitle="Close"
@@ -116,8 +129,17 @@ const TailwindDemo = () => {
               onClick={() => setIsExpanded(!isExpanded)}
             />
           </div>
+          <div className="w-1/3">
+            <p>Expanded</p>
+            <PoolExpandButton
+              title="Manage"
+              expandedTitle="Close"
+              isExpanded={!isExpanded}
+              onClick={() => setIsExpanded(!isExpanded)}
+            />
+          </div>
         </div>
-        <div className="flex">
+        <div className="flex mb-4">
           <div className="w-1/3">Pool big button</div>
           <div className="w-1/3">
             <p>Enabled</p>
@@ -128,6 +150,109 @@ const TailwindDemo = () => {
             <PoolBigButton title="Harvest" isEnabled={false} onClick={() => console.log('clicked')} />
           </div>
         </div>
+        <div className="flex mb-4">
+          <div className="w-1/3">Max button</div>
+          <div className="w-1/3">
+            <p>Enabled</p>
+            <MaxButton title="Max" isEnabled={true} onClick={() => console.log('clicked')} />
+          </div>
+          <div className="w-1/3">
+            <p>Disabled</p>
+            <MaxButton title="Max" isEnabled={false} onClick={() => console.log('clicked')} />
+          </div>
+        </div>
+        <div className="flex mb-4 space-x-8">
+          <div className="w-1/4">Approve button</div>
+          <div className="w-1/4">
+            <p>Not Approved</p>
+            <ApproveButton
+              title="Approve"
+              state={ApproveButtonState.NotApproved}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Approving</p>
+            <ApproveButton
+              title="Approving"
+              state={ApproveButtonState.Approving}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Approved</p>
+            <ApproveButton
+              title="Approved"
+              state={ApproveButtonState.Approved}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/4">Primary button (Default)</div>
+          <div className="w-1/4">
+            <p>Enabled</p>
+            <PrimaryButton
+              title="Remove Supply"
+              state={PrimaryButtonState.Enabled}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Disabled</p>
+            <PrimaryButton
+              title="Remove Supply"
+              state={PrimaryButtonState.Disabled}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Loading</p>
+            <PrimaryButton
+              title="Removing"
+              state={PrimaryButtonState.InProgress}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/4">Primary button (Gradient)</div>
+          <div className="w-1/4">
+            <p>Enabled</p>
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
+              title="Supply"
+              state={PrimaryButtonState.Enabled}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+          <div className="w-1/4">
+            <p>Disabled / Error</p>
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
+              title="Enter an amount"
+              state={PrimaryButtonState.Disabled}
+              onClick={() => console.log('clicked')}
+            />
+            <div className="mt-2">
+              <PrimaryButton
+                type={PrimaryButtonType.Gradient}
+                title="Insufficient Balance"
+                state={PrimaryButtonState.Disabled}
+                onClick={() => console.log('clicked')}
+              />
+            </div>
+          </div>
+          <div className="w-1/4">
+            <p>Loading</p>
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
+              title="Confirming"
+              state={PrimaryButtonState.InProgress}
+              onClick={() => console.log('clicked')}
+            />
+          </div>
+        </div>
       </PageWrapper>
 
       {/* ============================ */}
@@ -135,10 +260,62 @@ const TailwindDemo = () => {
       {/* ============================ */}
       <PageWrapper className="mb-8">
         <div className="text-xl font-bold">UI Controls</div>
-        <div className="flex">
-          <div className="w-1/2">Tabs/Segment Control</div>
+        <div className="flex mb-4">
+          <div className="w-1/2">Tabs Control</div>
           <div className="w-1/2">
             <TabsControl tabs={['Tab 1', 'Tab 2', 'Tab 3']} activeTab={activeTab} didChangeTab={i => setActiveTab(i)} />
+          </div>
+        </div>
+        <div className="flex">
+          <div className="w-1/2">Segment Control</div>
+          <div className="w-1/2">
+            <SegmentControl
+              segments={['Segment 1', 'Segment 2']}
+              activeSegment={activeSegment}
+              didChangeSegment={i => setActiveSegment(i)}
+            />
+          </div>
+        </div>
+      </PageWrapper>
+
+      {/* ======================== */}
+      {/* ===== Input Fields ===== */}
+      {/* ======================== */}
+      <PageWrapper className="mb-8">
+        <div className="text-xl font-bold">Input Fields</div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/6">Token input</div>
+          <div className="flex-1">
+            <p>Default</p>
+            <CurrencyInput
+              currency={HALO[ChainId.MAINNET]!}
+              value={inputValue}
+              didChangeValue={val => setInputValue(val)}
+              showBalance={true}
+              showMax={true}
+            />
+          </div>
+          <div className="flex-1">
+            <p>Hide balance & max</p>
+            <CurrencyInput
+              currency={HALO[ChainId.MAINNET]!}
+              value={inputValue}
+              didChangeValue={val => setInputValue(val)}
+              showBalance={false}
+              showMax={false}
+            />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/2">Slippage tollerance</div>
+          <div className="w-1/2">
+            <SlippageTolerance />
+          </div>
+        </div>
+        <div className="flex space-x-8 mb-4">
+          <div className="w-1/2">Amount Slider</div>
+          <div className="w-1/2">
+            <AmountSlider amount={amount} didChangeAmount={amt => setAmount(amt)} />
           </div>
         </div>
       </PageWrapper>
