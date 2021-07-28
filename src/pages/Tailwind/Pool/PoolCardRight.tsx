@@ -9,7 +9,9 @@ interface PoolCardRightProps {
 }
 
 const PoolCardRight = ({ pool }: PoolCardRightProps) => {
-  const stake = () => {}
+  const stake = () => {
+    console.log('stake')
+  }
 
   return (
     <div className="p-4 text-white bg-primary-hover rounded-tr-card rounded-tl-card md:rounded-br-card md:rounded-bl-card">
