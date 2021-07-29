@@ -2,14 +2,14 @@
 ## Description of Changes
 <!-- Enter description of changes here. -->
 
-[Link to Jira Ticket](https://halodao.atlassian.net/browse/HDF-)
+[Link to Jira Ticket](https://halodao.atlassian.net/browse/HDEV-)
 
 
 ### Developer Checklist:
 
 * [ ] I have followed the guidelines in our Contributing document
 * [ ] This PR has a corresponding JIRA ticket
-* [ ] My branch conforms with our naming convention i.e. `feature/HDF-XXX-description`
+* [ ] My branch conforms with our naming convention i.e. `feature/HDEV-XXX-description`
 * [ ] All files have appropriate file headers and documentation
 * [ ] I have written new tests for your core changes, as applicable
 * [ ] I have successfully ran tests locally

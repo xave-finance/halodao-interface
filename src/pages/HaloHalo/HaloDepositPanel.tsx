@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import ReactGA from 'react-ga'
 import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -12,6 +13,7 @@ import useTheme from '../../hooks/useTheme'
 
 import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useTokenBalance'
 import { formatFromBalance, formatToBalance } from '../../utils'
+import { formatEther } from 'ethers/lib/utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
 import { HALO_TOKEN_ADDRESS } from '../../constants'
@@ -159,6 +161,14 @@ export default function CurrencyInputPanel({
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setDepositValue('')
+    /** log deposit in GA
+     */
+    ReactGA.event({
+      category: 'Vest',
+      action: 'Deposit',
+      label: account ? 'User Address: ' + account : '',
+      value: parseFloat(formatEther(amount.value.toString()))
+    })
   }
 
   return (
