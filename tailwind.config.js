@@ -13,7 +13,6 @@ module.exports = {
           lightest: '#F3F2F8',
           hover: '#15006d',
           disabled: '#9182c6',
-          gradientFrom: '#15006D',
           gradientVia: '#5521B6',
           gradientTo: '#2DB7C4'
         },

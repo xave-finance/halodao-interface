@@ -25,7 +25,7 @@ const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick
   const isLoading = state === PrimaryButtonState.InProgress
 
   return (
-    <div className={isEnabled ? 'hover:shadow-lg' : ''}>
+    <div className={isEnabled && !isDefaultType ? 'hover:shadow-lg' : ''}>
       <button
         disabled={!isEnabled}
         onClick={onClick}
@@ -37,13 +37,13 @@ const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick
         ${
           isDefaultType
             ? 'bg-primary'
-            : 'bg-gradient-to-tr from-primary-gradientFrom via-primary-gradientVia to-primary-gradientTo'
+            : 'bg-gradient-to-tr from-primary-hover via-primary-gradientVia to-primary-gradientTo'
         }
         ${isDefaultType ? 'border-primary' : ''}
         ${isEnabled ? 'cursor-pointer' : 'cursor-not-allowed'}
         ${isEnabled ? 'opacity-100' : 'opacity-50'}
         ${isEnabled ? 'active:ring active:ring-purple-300' : ''}
-        
+        ${isEnabled && isDefaultType ? 'hover:bg-primary-hover' : ''}
       `}
       >
         {title}

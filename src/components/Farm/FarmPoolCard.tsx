@@ -255,6 +255,8 @@ const GetBPTButton = styled(ExternalLink)`
   `};
 
   & img {
+    display: inline;
+    vertical-align: baseline;
     margin-left: 6px;
     height: 14px;
     margin-bottom: -2px;

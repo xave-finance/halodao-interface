@@ -16,6 +16,7 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
+import BaseModal from 'components/Tailwind/Modals/BaseModal'
 
 const TailwindDemo = () => {
   const pools = [
@@ -50,6 +51,7 @@ const TailwindDemo = () => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [inputValue, setInputValue] = useState('')
   const [amount, setAmount] = useState(100)
+  const [showModal, setShowModal] = useState(false)
 
   return (
     <>
@@ -318,6 +320,20 @@ const TailwindDemo = () => {
             <AmountSlider amount={amount} didChangeAmount={amt => setAmount(amt)} />
           </div>
         </div>
+      </PageWrapper>
+
+      {/* ================== */}
+      {/* ===== Modals ===== */}
+      {/* ================== */}
+      <PageWrapper className="mb-8">
+        <div className="text-xl font-bold">Modals</div>
+        <BaseModal isVisible={showModal} canBlur={true} onDismiss={() => setShowModal(false)}>
+          <div className="p-4">
+            <div className="mb-2">Hello!</div>
+            <div>This is a base modal meant to be extended as a new component.</div>
+          </div>
+        </BaseModal>
+        <button onClick={() => setShowModal(true)}>Show modal</button>
       </PageWrapper>
     </>
   )
