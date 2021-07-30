@@ -1,7 +1,6 @@
 import React from 'react'
 import { Currency } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
-import { formatNumber } from 'utils/formatNumber'
 import MaxButton from '../Buttons/MaxButton'
 import NumericalInput from 'components/NumericalInput'
 import { useCurrencyBalance } from 'state/wallet/hooks'

@@ -4,7 +4,7 @@ import { formatNumber } from 'utils/formatNumber'
 import { Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
-import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
+import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 
 interface RemoveLiquidityProps {
   token0: Token
