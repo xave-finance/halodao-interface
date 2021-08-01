@@ -14,6 +14,7 @@ import DisclaimerAlert from 'components/Header/DisclaimerAlert'
 import Demo from './Test/Demo'
 import TailwindDemo from './Test/TailwindDemo'
 import Pool from './Tailwind/Pool'
+import Bridge from './Tailwind/Bridge'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -69,6 +70,7 @@ export default function App() {
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
               <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/bridge" component={Bridge} />
               {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
                 <Route exact strict path="/demo" component={Demo} />
               )}
