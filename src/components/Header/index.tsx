@@ -91,7 +91,6 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0 1rem;
   z-index: 3;
@@ -372,10 +371,10 @@ export const DrawerFrame = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 63px;
     width: 80%;
-    height: 100%;
+    height: calc(100% - 63px);
     max-width: 400px;
     z-index: 2;
   `};
@@ -388,8 +387,8 @@ export const DrawerContent = styled.div`
 `
 
 export const DrawerBackdrop = styled.div`
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 63px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -400,7 +399,6 @@ export const DrawerBackdrop = styled.div`
 
 export const DrawerMenu = styled.div`
   padding: 1rem;
-  margin-top: 65px;
   display: flex;
   flex-direction: column;
 
@@ -458,7 +456,7 @@ export default function Header() {
 
   return (
     <Wrapper>
-      <HeaderFrame>
+      <HeaderFrame className={isDrawerVisible ? 'fixed' : 'inherit'}>
         {/* RNBW balance modal */}
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
           <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />

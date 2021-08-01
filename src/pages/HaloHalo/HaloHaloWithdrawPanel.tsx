@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import ReactGA from 'react-ga'
 import { Pair } from '@sushiswap/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
@@ -162,6 +163,14 @@ export default function HaloHaloWithdrawPanel({
     setPendingTx(false)
     setButtonState(ButtonHaloStates.Disabled)
     setWithdrawValue('')
+    /** log deposit in GA
+     */
+    ReactGA.event({
+      category: 'Vest',
+      action: 'Withdraw',
+      label: account ? 'User Address: ' + account : '',
+      value: parseFloat(haloToClaim.toString())
+    })
   }
 
   return (

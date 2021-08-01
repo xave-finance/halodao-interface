@@ -5,6 +5,7 @@ import { Token } from '@sushiswap/sdk'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
+import AddLiquityModal from './modals/AddLiquityModal'
 
 interface AddLiquidityProps {
   token0: Token
@@ -15,6 +16,7 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [input0Value, setInput0Value] = useState('')
   const [input1Value, setInput1Value] = useState('')
+  const [showModal, setShowModal] = useState(false)
 
   const TwoSided = () => (
     <>
@@ -53,11 +55,17 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         </div>
       </div>
       <div className="mt-2">
-        <PrimaryButton
+        {/* <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title="Enter an amount"
           state={PrimaryButtonState.Disabled}
           onClick={() => console.log('clicked')}
+        /> */}
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Supply"
+          state={PrimaryButtonState.Enabled}
+          onClick={() => setShowModal(true)}
         />
       </div>
     </>
@@ -87,11 +95,17 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
           />
         </div>
         <div className="md:w-1/2">
-          <PrimaryButton
+          {/* <PrimaryButton
             type={PrimaryButtonType.Gradient}
             title="Enter an amount"
             state={PrimaryButtonState.Disabled}
             onClick={() => console.log('clicked')}
+          /> */}
+          <PrimaryButton
+            type={PrimaryButtonType.Gradient}
+            title="Supply"
+            state={PrimaryButtonState.Enabled}
+            onClick={() => setShowModal(true)}
           />
         </div>
       </div>
@@ -110,7 +124,10 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
           didChangeSegment={i => setActiveSegment(i)}
         />
       </div>
+
       {activeSegment === 0 ? <TwoSided /> : <SingleSided />}
+
+      <AddLiquityModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
     </div>
   )
 }
