@@ -20,6 +20,7 @@ import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import SwitchButton from 'components/Tailwind/Buttons/SwitchButton'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
+import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 
 const TailwindDemo = () => {
@@ -117,14 +118,23 @@ const TailwindDemo = () => {
                 </div>
                 <SelectedNetworkPanel />
               </div>
-              <p className="font-semibold text-secondary">Amount</p>
+              <p className="mt-2 font-semibold text-secondary">Amount</p>
               <div className="mt-2">
                 <CurrencyInput
                   currency={HALO[ChainId.MAINNET]!}
                   value={inputValue}
+                  canSelectToken={true}
                   didChangeValue={val => setInputValue(val)}
                   showBalance={true}
                   showMax={true}
+                />
+              </div>
+              <p className="mt-2 font-semibold text-secondary">Destination Address</p>
+              <div className="mt-2">
+                <input
+                  readOnly
+                  className="rounded-md p-2 w-full bg-primary-lightest"
+                  value="0x3ADAb6e3EF2d9650DeA2bEA1cD556F6d3d97885F"
                 />
               </div>
               <div className="mt-4 flex space-x-4">
@@ -143,7 +153,7 @@ const TailwindDemo = () => {
                   />
                 </div>
               </div>
-              <div className="mt-2 mr-4 ml-4">
+              <div className="mt-2">
                 <PrimaryButton
                   title="Connect to Wallet"
                   state={PrimaryButtonState.Enabled}
@@ -152,6 +162,9 @@ const TailwindDemo = () => {
               </div>
               <div className="mt-2">
                 <RetryButton title="Retry" isEnabled={true} onClick={() => console.log('clicked')} />
+              </div>
+              <div className="mt-2">
+                <WarningAlert message="Don’t use exchange address for cross-chain transfers" />
               </div>
             </div>
           </div>
@@ -374,6 +387,7 @@ const TailwindDemo = () => {
             <CurrencyInput
               currency={HALO[ChainId.MAINNET]!}
               value={inputValue}
+              canSelectToken={false}
               didChangeValue={val => setInputValue(val)}
               showBalance={true}
               showMax={true}
@@ -384,6 +398,7 @@ const TailwindDemo = () => {
             <CurrencyInput
               currency={HALO[ChainId.MAINNET]!}
               value={inputValue}
+              canSelectToken={false}
               didChangeValue={val => setInputValue(val)}
               showBalance={false}
               showMax={false}

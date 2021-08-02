@@ -1,4 +1,6 @@
 import React from 'react'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_ICON, NETWORK_LABEL } from '../../../constants/networks'
 
 const SelectedNetworkPanel = () => {
   return (
@@ -8,8 +10,10 @@ const SelectedNetworkPanel = () => {
           Change
         </a>
       </div>
-      <div>tracy</div>
-      <div>Ethereum</div>
+      <div>
+        <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7" />
+      </div>
+      <div>{NETWORK_LABEL[ChainId.MAINNET]}</div>
     </div>
   )
 }
