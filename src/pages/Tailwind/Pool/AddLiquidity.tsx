@@ -24,6 +24,7 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         <CurrencyInput
           currency={token0}
           value={input0Value}
+          canSelectToken={false}
           didChangeValue={val => setInput0Value(val)}
           showBalance={true}
           showMax={true}
@@ -33,6 +34,7 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         <CurrencyInput
           currency={token1}
           value={input1Value}
+          canSelectToken={false}
           didChangeValue={val => setInput1Value(val)}
           showBalance={true}
           showMax={true}
@@ -78,6 +80,7 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         <CurrencyInput
           currency={token0}
           value={input0Value}
+          canSelectToken={false}
           didChangeValue={val => setInput0Value(val)}
           showBalance={true}
           showMax={true}
