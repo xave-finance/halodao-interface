@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import React, { useEffect, useState } from 'react'
+import { ChainId, Token } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { HALO, USDC } from '../../../constants'
+import { HALO, USDC, USDT } from '../../../constants'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
-import { PoolData } from './models/PoolData'
+import { usePoolLiquidity } from 'halo-hooks/amm/usePoolLiquidity'
+import { formatEther } from 'ethers/lib/utils'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -40,11 +41,61 @@ const PoolRow = styled.div`
 `
 
 interface ExpandablePoolRowProps {
-  pool: PoolData
+  poolAddress: string
 }
 
-const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
+
+  const [pool, setPool] = useState({
+    name: 'RNBW/USDT',
+    token0: HALO[ChainId.MAINNET]!,
+    token1: USDT,
+    pooled: {
+      token0: 1800,
+      token1: 650
+    },
+    held: 0,
+    staked: 2000,
+    earned: 0
+  })
+
+  const { getTokens, getLiquidity, getBalance } = usePoolLiquidity(poolAddress)
+
+  useEffect(() => {
+    getTokens().then(t => {
+      if (!t.length) return
+      setPool(currPool => {
+        return {
+          ...currPool,
+          name: `${t[0].symbol}/${t[1].symbol}`,
+          token0: t[0],
+          token1: t[1]
+        }
+      })
+    })
+
+    getLiquidity().then(l => {
+      setPool(currPool => {
+        return {
+          ...currPool,
+          pooled: {
+            token0: parseFloat(formatEther(l.tokens[0])),
+            token1: parseFloat(formatEther(l.tokens[1]))
+          }
+        }
+      })
+    })
+
+    getBalance().then(b => {
+      setPool(currPool => {
+        return {
+          ...currPool,
+          held: parseFloat(formatEther(b))
+        }
+      })
+    })
+  }, [])
 
   return (
     <div
@@ -79,16 +130,20 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
             md:font-normal 
           `}
         >
-          <DoubleCurrencyLogo currency0={HALO[ChainId.MAINNET]} currency1={USDC} size={16} />
+          <DoubleCurrencyLogo currency0={pool.token0} currency1={pool.token1} size={16} />
           <span>{pool.name}</span>
         </div>
         <div className="col-2 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (A) Tokens:</div>
-          <div className="">{formatNumber(pool.pooled.token0)}</div>
+          <div className="">
+            {formatNumber(pool.pooled.token0)} {pool.token0.symbol}
+          </div>
         </div>
         <div className="col-3 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (B) Tokens:</div>
-          <div className="">{formatNumber(pool.pooled.token1)}</div>
+          <div className="">
+            {formatNumber(pool.pooled.token1)} {pool.token1.symbol}
+          </div>
         </div>
         <div className="col-4 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Held LPT:</div>

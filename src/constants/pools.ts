@@ -28,9 +28,13 @@ const uniPoolsAddresses = uniPools.split(',').map(a => a.toLowerCase())
 const sushiPools = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
 const sushiPoolsAddresses = sushiPools.split(',').map(a => a.toLowerCase())
 
+const haloPools = process.env.REACT_APP_HALO_POOL_ADDRESSES || ''
+const haloPoolsAddresses = haloPools.split(',').map(a => a.toLowerCase())
+
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const UNI_POOLS_ADDRESSES = uniPoolsAddresses
 export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
+export const HALO_POOLS_ADDRESSES = haloPoolsAddresses
 
 /**
  * Balancer lpToken -> poolAddress mapping
