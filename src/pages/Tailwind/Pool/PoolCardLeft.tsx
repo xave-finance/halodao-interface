@@ -5,11 +5,12 @@ import AddLiquidity from './AddLiquidity'
 import RemoveLiquidity from './RemoveLiquidity'
 
 interface PoolCardLeftProps {
+  poolAddress: string
   token0: Token
   token1: Token
 }
 
-const PoolCardLeft = ({ token0, token1 }: PoolCardLeftProps) => {
+const PoolCardLeft = ({ poolAddress, token0, token1 }: PoolCardLeftProps) => {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
@@ -21,7 +22,7 @@ const PoolCardLeft = ({ token0, token1 }: PoolCardLeftProps) => {
       />
 
       <div className="mt-2">
-        {activeTab === 0 && <AddLiquidity token0={token0} token1={token1} />}
+        {activeTab === 0 && <AddLiquidity poolAddress={poolAddress} token0={token0} token1={token1} />}
         {activeTab === 1 && <RemoveLiquidity token0={token0} token1={token1} />}
       </div>
     </div>

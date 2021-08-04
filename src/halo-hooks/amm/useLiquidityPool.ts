@@ -3,20 +3,29 @@ import { useActiveWeb3React } from 'hooks'
 import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
+import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
 import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
+import { Pool } from 'state/pool/reducer'
+import { useSelector } from 'react-redux'
+import { AppState } from 'state'
+import { HALO_REWARDS_ADDRESS } from '../../constants'
+import { BigNumber } from 'ethers'
 
-export const usePoolLiquidity = (address: string) => {
+export const useLiquidityPool = (address: string) => {
   const { account, library, chainId } = useActiveWeb3React()
-
   const CurveContract = useContract(address, CURVE_ABI, true)
+  const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
+
+  const poolsMap = useSelector<AppState, Pool[]>(state => state.pool.pools)
+  const targetPoolMap = poolsMap.filter(p => p.lpTokenAddress === address)
+  const pid = targetPoolMap.length ? targetPoolMap[0].pid : undefined
+  console.log('pid: ', pid)
 
   const getTokens = useCallback(async () => {
-    if (!library || !chainId) {
-      return []
-    }
+    if (!chainId || !library) return []
 
     const token0Address = await CurveContract?.derivatives(0)
     const token1Address = await CurveContract?.derivatives(1)
@@ -37,12 +46,10 @@ export const usePoolLiquidity = (address: string) => {
       new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol),
       new Token(chainId, token1Address, token1Decimals, token1Symbol, token1Symbol)
     ]
-  }, [CurveContract, chainId])
+  }, [CurveContract, chainId, library])
 
   const getLiquidity = useCallback(async () => {
-    if (!library) {
-      return { total: 0, tokens: [0, 0] }
-    }
+    if (!library) return { total: 0, tokens: [0, 0] }
 
     const res = await CurveContract?.liquidity()
     console.log(`Curve.liquidity(): `, res)
@@ -83,5 +90,13 @@ export const usePoolLiquidity = (address: string) => {
     return res
   }, [CurveContract, account])
 
-  return { getTokens, getLiquidity, getBalance }
+  const getStakedLPToken = useCallback(async () => {
+    if (!pid) return BigNumber.from(0)
+
+    const res = await RewardsContract?.userInfo(pid, account)
+    console.log(`Rewards.userInfo(${account}): `, res)
+    return res.amount
+  }, [RewardsContract, account, pid])
+
+  return { getTokens, getLiquidity, getBalance, getStakedLPToken }
 }

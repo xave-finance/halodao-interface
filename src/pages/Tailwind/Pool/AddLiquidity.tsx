@@ -6,17 +6,23 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import AddLiquityModal from './modals/AddLiquityModal'
+import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
+import { formatEther, parseEther } from 'ethers/lib/utils'
+import { BigNumber } from 'ethers'
 
 interface AddLiquidityProps {
+  poolAddress: string
   token0: Token
   token1: Token
 }
 
-const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
+const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [input0Value, setInput0Value] = useState('')
   const [input1Value, setInput1Value] = useState('')
   const [showModal, setShowModal] = useState(false)
+
+  const { viewDeposit } = useAddRemoveLiquidity(poolAddress)
 
   const TwoSided = () => (
     <>
@@ -34,8 +40,10 @@ const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         <CurrencyInput
           currency={token1}
           value={input1Value}
-          canSelectToken={false}
-          didChangeValue={val => setInput1Value(val)}
+          didChangeValue={val => {
+            setInput1Value(val)
+            viewDeposit(parseEther(val))
+          }}
           showBalance={true}
           showMax={true}
         />

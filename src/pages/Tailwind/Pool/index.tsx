@@ -46,6 +46,8 @@ const Pool = () => {
   //   }
   // ]
 
+  console.log(`HALO_POOLS_ADDRESSES: `, HALO_POOLS_ADDRESSES)
+
   return (
     <PageWrapper>
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-16 md:items-center">

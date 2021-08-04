@@ -20,16 +20,16 @@ export const SUSHI_XSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
  */
 
 const balancerPools = process.env.REACT_APP_BALANCER_POOLS_ADDRESSES || ''
-const balancerPoolsAddresses = balancerPools.split(',').map(a => a.toLowerCase())
+const balancerPoolsAddresses = balancerPools !== '' ? balancerPools.split(',').map(a => a.toLowerCase()) : []
 
 const uniPools = process.env.REACT_APP_UNI_POOLS_ADDRESSES || ''
-const uniPoolsAddresses = uniPools.split(',').map(a => a.toLowerCase())
+const uniPoolsAddresses = uniPools !== '' ? uniPools.split(',').map(a => a.toLowerCase()) : []
 
 const sushiPools = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
-const sushiPoolsAddresses = sushiPools.split(',').map(a => a.toLowerCase())
+const sushiPoolsAddresses = sushiPools !== '' ? sushiPools.split(',').map(a => a.toLowerCase()) : []
 
 const haloPools = process.env.REACT_APP_HALO_POOL_ADDRESSES || ''
-const haloPoolsAddresses = haloPools.split(',').map(a => a.toLowerCase())
+const haloPoolsAddresses = haloPools !== '' ? haloPools.split(',').map(a => a.toLowerCase()) : []
 
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const UNI_POOLS_ADDRESSES = uniPoolsAddresses

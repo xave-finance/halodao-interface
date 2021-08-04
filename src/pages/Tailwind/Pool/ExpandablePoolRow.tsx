@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { ChainId, Token } from '@sushiswap/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { HALO, USDC, USDT } from '../../../constants'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
-import { usePoolLiquidity } from 'halo-hooks/amm/usePoolLiquidity'
+import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
 import { formatEther } from 'ethers/lib/utils'
+import { XSGD, USDT } from '../../../constants'
+import { useActiveWeb3React } from 'hooks'
+import { BigNumber } from 'ethers'
+import { Token } from '@sushiswap/sdk'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -45,57 +47,62 @@ interface ExpandablePoolRowProps {
 }
 
 const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
+  const { chainId } = useActiveWeb3React()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const [pool, setPool] = useState({
-    name: 'RNBW/USDT',
-    token0: HALO[ChainId.MAINNET]!,
+    name: '',
+    token0: XSGD,
     token1: USDT,
     pooled: {
-      token0: 1800,
-      token1: 650
+      token0: 0,
+      token1: 0
     },
     held: 0,
-    staked: 2000,
+    staked: 0,
     earned: 0
   })
 
-  const { getTokens, getLiquidity, getBalance } = usePoolLiquidity(poolAddress)
+  const { getTokens, getLiquidity, getBalance, getStakedLPToken } = useLiquidityPool(poolAddress)
 
+  /**
+   * Main logic: fetching pool info
+   *
+   * Triggers every:
+   * - network changed
+   **/
   useEffect(() => {
-    getTokens().then(t => {
-      if (!t.length) return
-      setPool(currPool => {
-        return {
-          ...currPool,
-          name: `${t[0].symbol}/${t[1].symbol}`,
-          token0: t[0],
-          token1: t[1]
-        }
-      })
-    })
+    const promises = [getTokens(), getLiquidity(), getBalance(), getStakedLPToken()]
 
-    getLiquidity().then(l => {
-      setPool(currPool => {
-        return {
-          ...currPool,
+    Promise.all(promises)
+      .then(results => {
+        const tokens: Token[] = results[0]
+        const liquidity: { total: BigNumber; tokens: BigNumber[] } = results[1]
+        const balance: BigNumber = results[2]
+        const staked: BigNumber = results[3]
+
+        setPool({
+          name: `${tokens[0].symbol}/${tokens[1].symbol}`,
+          token0: tokens[0],
+          token1: tokens[1],
           pooled: {
-            token0: parseFloat(formatEther(l.tokens[0])),
-            token1: parseFloat(formatEther(l.tokens[1]))
-          }
-        }
+            token0: parseFloat(formatEther(liquidity.tokens[0])),
+            token1: parseFloat(formatEther(liquidity.tokens[1]))
+          },
+          held: parseFloat(formatEther(balance)),
+          staked: parseFloat(formatEther(staked)),
+          earned: 0
+        })
       })
-    })
+      .catch(e => {
+        console.error(e)
+      })
+  }, [chainId])
 
-    getBalance().then(b => {
-      setPool(currPool => {
-        return {
-          ...currPool,
-          held: parseFloat(formatEther(b))
-        }
-      })
-    })
-  }, [])
+  // Return an empty component if failed to fetch pool info
+  if (pool.name === '') {
+    return <></>
+  }
 
   return (
     <div
@@ -172,7 +179,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
         <div className="mt-2">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="mb-4 md:w-1/2 md:mb-0">
-              <PoolCardLeft token0={pool.token0} token1={pool.token1} />
+              <PoolCardLeft poolAddress={poolAddress} token0={pool.token0} token1={pool.token1} />
             </div>
             <div className="md:w-1/2">
               <PoolCardRight pool={pool} />

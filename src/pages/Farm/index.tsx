@@ -10,6 +10,10 @@ import { useLPTokenAddresses, useAllocPoints } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { updatePools } from 'state/pool/actions'
+import { Pool } from 'state/pool/reducer'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -77,11 +81,21 @@ const Farm = () => {
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
   const tokenPrice = useTokenPrice(tokenAddresses)
   const allocPoints = useAllocPoints(lpTokenAddresses)
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
       setTokenAddresses(result.tokenAddresses)
+
+      const pools: Pool[] = []
+      for (const poolInfo of result.poolsInfo) {
+        pools.push({
+          pid: poolInfo.pid,
+          lpTokenAddress: poolInfo.address
+        })
+      }
+      dispatch(updatePools(pools))
     })
   }, [lpTokenAddresses]) //eslint-disable-line
 
