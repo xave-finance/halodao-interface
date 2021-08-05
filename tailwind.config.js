@@ -9,7 +9,10 @@ module.exports = {
         fredoka: ['Fredoka One', 'ui-serif']
       },
       textColor: {
-        primary: '#471BB2',
+        primary: {
+          DEFAULT: '#471BB2',
+          dark: '#15006d'
+        },
         secondary: '#5E5E5E',
         warning: '#FA6F44'
       },
@@ -22,6 +25,7 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: '#471bb2',
+          dark: '#15006d',
           light: '#e8e4f5',
           lighter: '#D7CDF0',
           lightest: '#F3F2F8',
