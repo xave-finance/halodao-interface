@@ -1,16 +1,39 @@
 import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
+import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
-import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
-import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
-import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import SwitchButton from 'components/Tailwind/Buttons/SwitchButton'
+import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
+import ButtonGroup from './ButtonGroup'
+import { useWalletModalToggle } from '../../../state/application/hooks'
+import { shortenAddress } from '../../../utils'
+
+const WalletStatus = () => {
+  const { account, error } = useWeb3React()
+  const toggleWalletModal = useWalletModalToggle()
+  if (!account && !error) {
+    return (
+      <div className="mt-2">
+        <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
+      </div>
+    )
+  } else {
+    return (
+      <>
+        <div className="mt-2">
+          <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account)}</p>
+        </div>
+        <ButtonGroup />
+      </>
+    )
+  }
+}
 
 const Bridge = () => {
   const [inputValue, setInputValue] = useState('')
@@ -56,47 +79,7 @@ const Bridge = () => {
               />
             </div>
             <p className="mt-2 font-semibold text-secondary">Destination Address</p>
-            <div className="mt-2">
-              <input
-                readOnly
-                className="rounded-md p-2 w-full bg-primary-lightest"
-                value="0x3ADAb6e3EF2d9650DeA2bEA1cD556F6d3d97885F"
-              />
-            </div>
-            <div className="mt-4 flex space-x-4">
-              <div className="w-1/2">
-                <ApproveButton
-                  title="Approve"
-                  state={ApproveButtonState.NotApproved}
-                  onClick={() => console.log('clicked')}
-                />
-              </div>
-              <div className="w-1/2">
-                <PrimaryButton
-                  title="Next"
-                  state={PrimaryButtonState.Disabled}
-                  onClick={() => console.log('clicked')}
-                />
-              </div>
-            </div>
-            <div className="mt-2">
-              <PrimaryButton
-                title="Connect to Wallet"
-                state={PrimaryButtonState.Enabled}
-                onClick={() => console.log('clicked')}
-              />
-            </div>
-            <div className="mt-2">
-              <PrimaryButton
-                type={PrimaryButtonType.Gradient}
-                title="Next"
-                state={PrimaryButtonState.Enabled}
-                onClick={() => console.log('clicked')}
-              />
-            </div>
-            <div className="mt-2">
-              <RetryButton title="Retry" isEnabled={true} onClick={() => console.log('clicked')} />
-            </div>
+            <WalletStatus />
             <div className="mt-2">
               <WarningAlert message="Don’t use exchange address for cross-chain transfers" />
             </div>

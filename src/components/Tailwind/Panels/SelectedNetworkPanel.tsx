@@ -11,7 +11,7 @@ const SelectedNetworkPanel = () => {
         </a>
       </div>
       <div>
-        <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7" />
+        <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7 rounded-2xl" />
       </div>
       <div>{NETWORK_LABEL[ChainId.MAINNET]}</div>
     </div>
