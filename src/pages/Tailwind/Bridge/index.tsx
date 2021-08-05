@@ -12,11 +12,18 @@ import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPane
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import ButtonGroup from './ButtonGroup'
 import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useCurrencyBalance } from 'state/wallet/hooks'
 import { shortenAddress } from '../../../utils'
 
-const WalletStatus = () => {
+interface WalletStatusProp {
+  amount: string
+}
+
+const WalletStatus = ({ amount }: WalletStatusProp) => {
   const { account, error } = useWeb3React()
   const toggleWalletModal = useWalletModalToggle()
+  const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
+
   if (!account && !error) {
     return (
       <div className="mt-2">
@@ -29,7 +36,7 @@ const WalletStatus = () => {
         <div className="mt-2">
           <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account)}</p>
         </div>
-        <ButtonGroup />
+        <ButtonGroup amount={amount} balance={balance} />
       </>
     )
   }
@@ -79,7 +86,7 @@ const Bridge = () => {
               />
             </div>
             <p className="mt-2 font-semibold text-secondary">Destination Address</p>
-            <WalletStatus />
+            <WalletStatus amount={inputValue} />
             <div className="mt-2">
               <WarningAlert message="Don’t use exchange address for cross-chain transfers" />
             </div>
