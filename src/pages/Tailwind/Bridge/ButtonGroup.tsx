@@ -4,19 +4,19 @@ import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 
 interface ButtonGroupProps {
-  isVisible: boolean
-  onDismiss: () => void
+  amount: string
+  balance: any
 }
 
 export enum ButtonGroupState {
   Default,
   Next,
-  Retry,
   Confirming,
-  InsufficientBalance
+  EnterAmount,
+  Retry
 }
 
-const ButtonGroup = () => {
+const ButtonGroup = ({ amount, balance }: ButtonGroupProps) => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [state, setState] = useState(ButtonGroupState.Default)
 
@@ -28,13 +28,17 @@ const ButtonGroup = () => {
             title="Approve"
             state={ApproveButtonState.NotApproved}
             onClick={() => {
-              setApproveState(ApproveButtonState.Approving)
-              setTimeout(() => {
-                setApproveState(ApproveButtonState.Approved)
-              }, 2000)
-              setTimeout(() => {
-                setState(ButtonGroupState.Next)
-              }, 2000)
+              if (amount) {
+                setApproveState(ApproveButtonState.Approving)
+                setTimeout(() => {
+                  setApproveState(ApproveButtonState.Approved)
+                }, 2000)
+                setTimeout(() => {
+                  setState(ButtonGroupState.Next)
+                }, 2000)
+              } else {
+                setState(ButtonGroupState.EnterAmount)
+              }
             }}
           />
         </div>
@@ -91,6 +95,9 @@ const ButtonGroup = () => {
           title="Next"
           state={PrimaryButtonState.Enabled}
           onClick={() => {
+            if (amount) {
+              console.log(amount)
+            }
             setState(ButtonGroupState.Confirming)
           }}
         />
@@ -105,6 +112,32 @@ const ButtonGroup = () => {
           type={PrimaryButtonType.Gradient}
           title="Confirming"
           state={PrimaryButtonState.InProgress}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const EnterAmountContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Enter an amount"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const InsufficientBalanceContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Insufficient Balance"
+          state={PrimaryButtonState.Disabled}
           onClick={() => console.log('clicked')}
         />
       </div>
@@ -134,6 +167,9 @@ const ButtonGroup = () => {
     }
     if (approveState === ApproveButtonState.Approved && state === ButtonGroupState.Confirming) {
       content = <ConfirmingContent />
+    }
+    if (approveState === ApproveButtonState.NotApproved && state === ButtonGroupState.EnterAmount) {
+      content = <EnterAmountContent />
     }
     if (approveState === ApproveButtonState.Approved && state === ButtonGroupState.Retry) {
       content = <RetryContent />
