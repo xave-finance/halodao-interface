@@ -8,7 +8,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
-import { Pool } from 'state/pool/reducer'
+import { CachedPool } from 'state/pool/reducer'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { HALO_REWARDS_ADDRESS } from '../../constants'
@@ -19,9 +19,9 @@ export const useLiquidityPool = (address: string) => {
   const CurveContract = useContract(address, CURVE_ABI, true)
   const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
 
-  const poolsMap = useSelector<AppState, Pool[]>(state => state.pool.pools)
-  const targetPoolMap = poolsMap.filter(p => p.lpTokenAddress === address)
-  const pid = targetPoolMap.length ? targetPoolMap[0].pid : undefined
+  const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
+  const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === address.toLowerCase())
+  const pid = filtered.length ? filtered[0].pid : undefined
   console.log('pid: ', pid)
 
   const getTokens = useCallback(async () => {
@@ -94,9 +94,17 @@ export const useLiquidityPool = (address: string) => {
     if (!pid) return BigNumber.from(0)
 
     const res = await RewardsContract?.userInfo(pid, account)
-    console.log(`Rewards.userInfo(${account}): `, res)
+    console.log(`RewardsContract.userInfo(${account}): `, res)
     return res.amount
   }, [RewardsContract, account, pid])
 
-  return { getTokens, getLiquidity, getBalance, getStakedLPToken }
+  const getPendingRewards = useCallback(async () => {
+    if (!pid) return BigNumber.from(0)
+
+    const res = await RewardsContract?.pendingRewardToken(pid, account)
+    console.log(`RewardsContract.pendingRewardToken(${account}): `, res)
+    return res
+  }, [RewardsContract, account, pid])
+
+  return { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards }
 }

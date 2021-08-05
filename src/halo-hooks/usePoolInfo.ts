@@ -1,5 +1,9 @@
 import { Token } from '@sushiswap/sdk'
 import { useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
+import { updatePools } from 'state/pool/actions'
+import { CachedPool } from 'state/pool/reducer'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
@@ -36,6 +40,8 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
 
+  const dispatch = useDispatch<AppDispatch>()
+
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
     let tokenAddresses: string[] = []
@@ -57,6 +63,16 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
       poolsInfo = [...poolsInfo, ...uniResult.poolsInfo]
       tokenAddresses = [...tokenAddresses, ...uniResult.tokenAddresses]
     }
+
+    // Store pools info to app cache
+    const pools: CachedPool[] = []
+    for (const poolInfo of poolsInfo) {
+      pools.push({
+        pid: poolInfo.pid,
+        lpTokenAddress: poolInfo.address
+      })
+    }
+    dispatch(updatePools(pools))
 
     return { poolsInfo, tokenAddresses }
   }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo])

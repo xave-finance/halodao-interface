@@ -63,7 +63,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
     earned: 0
   })
 
-  const { getTokens, getLiquidity, getBalance, getStakedLPToken } = useLiquidityPool(poolAddress)
+  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
 
   /**
    * Main logic: fetching pool info
@@ -72,7 +72,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
    * - network changed
    **/
   useEffect(() => {
-    const promises = [getTokens(), getLiquidity(), getBalance(), getStakedLPToken()]
+    const promises = [getTokens(), getLiquidity(), getBalance(), getStakedLPToken(), getPendingRewards()]
 
     Promise.all(promises)
       .then(results => {
@@ -80,6 +80,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
         const liquidity: { total: BigNumber; tokens: BigNumber[] } = results[1]
         const balance: BigNumber = results[2]
         const staked: BigNumber = results[3]
+        const rewards: BigNumber = results[4]
 
         setPool({
           name: `${tokens[0].symbol}/${tokens[1].symbol}`,
@@ -91,7 +92,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
           },
           held: parseFloat(formatEther(balance)),
           staked: parseFloat(formatEther(staked)),
-          earned: 0
+          earned: parseFloat(formatEther(rewards))
         })
       })
       .catch(e => {
@@ -161,7 +162,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
           <div className="">{formatNumber(pool.staked)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
-          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Fees Earned:</div>
+          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">HALO Earned:</div>
           <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 md:text-right">

@@ -1,4 +1,5 @@
 import { createAction } from '@reduxjs/toolkit'
-import { Pool } from './reducer'
+import { CachedPool } from './reducer'
 
-export const updatePools = createAction<Pool[]>('pool/update')
+export const updatePools = createAction<CachedPool[]>('pool/update')
+export const addOrUpdatePool = createAction<CachedPool>('pool/addOrUpdatePool')
