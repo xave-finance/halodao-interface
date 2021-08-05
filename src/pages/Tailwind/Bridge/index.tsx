@@ -10,40 +10,208 @@ import SwitchButton from 'components/Tailwind/Buttons/SwitchButton'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
-import ButtonGroup from './ButtonGroup'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { shortenAddress } from '../../../utils'
 
-interface WalletStatusProp {
-  amount: string
-}
+import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
+import RetryButton from 'components/Tailwind/Buttons/RetryButton'
+import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
-const WalletStatus = ({ amount }: WalletStatusProp) => {
-  const { account, error } = useWeb3React()
-  const toggleWalletModal = useWalletModalToggle()
-  const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
-
-  if (!account && !error) {
-    return (
-      <div className="mt-2">
-        <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
-      </div>
-    )
-  } else {
-    return (
-      <>
-        <div className="mt-2">
-          <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account)}</p>
-        </div>
-        <ButtonGroup amount={amount} balance={balance} />
-      </>
-    )
-  }
+export enum ButtonState {
+  Default,
+  Next,
+  Confirming,
+  EnterAmount,
+  Retry
 }
 
 const Bridge = () => {
+  const { account, error } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
+  const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
+  const [buttonState, setButtonState] = useState(ButtonState.Default)
+  const [showModal, setShowModal] = useState(false)
+
+  const NotApproveContent = () => {
+    return (
+      <div className="mt-4 flex space-x-4">
+        <div className="w-1/2">
+          <ApproveButton
+            title="Approve"
+            state={ApproveButtonState.NotApproved}
+            onClick={() => {
+              if (inputValue) {
+                setApproveState(ApproveButtonState.Approving)
+                setTimeout(() => {
+                  setApproveState(ApproveButtonState.Approved)
+                }, 2000)
+                setTimeout(() => {
+                  setButtonState(ButtonState.Next)
+                }, 2000)
+              } else {
+                setButtonState(ButtonState.EnterAmount)
+              }
+            }}
+          />
+        </div>
+        <div className="w-1/2">
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+        </div>
+      </div>
+    )
+  }
+
+  const ApprovingContent = () => {
+    return (
+      <div className="mt-4 flex space-x-4">
+        <div className="w-1/2">
+          <ApproveButton
+            title="Approve"
+            state={ApproveButtonState.Approving}
+            onClick={() => {
+              console.log('clicked')
+            }}
+          />
+        </div>
+        <div className="w-1/2">
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+        </div>
+      </div>
+    )
+  }
+
+  const ApprovedContent = () => {
+    return (
+      <div className="mt-4 flex space-x-4">
+        <div className="w-1/2">
+          <ApproveButton
+            title="Approve"
+            state={ApproveButtonState.Approved}
+            onClick={() => {
+              console.log('clicked')
+            }}
+          />
+        </div>
+        <div className="w-1/2">
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+        </div>
+      </div>
+    )
+  }
+
+  const NextContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Next"
+          state={PrimaryButtonState.Enabled}
+          onClick={() => {
+            if (inputValue) {
+              setButtonState(ButtonState.Confirming)
+              setShowModal(true)
+            }
+          }}
+        />
+      </div>
+    )
+  }
+
+  const ConfirmingContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Confirming"
+          state={PrimaryButtonState.InProgress}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const EnterAmountContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Enter an amount"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const InsufficientBalanceContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Insufficient Balance"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+  const RetryContent = () => {
+    return (
+      <div className="mt-4">
+        <RetryButton title="Retry" isEnabled={true} onClick={() => console.log('clicked')} />
+      </div>
+    )
+  }
+
+  const CurrentButtonContent = () => {
+    let content = <></>
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.Default) {
+      content = <NotApproveContent />
+    }
+    if (approveState === ApproveButtonState.Approving && buttonState === ButtonState.Default) {
+      content = <ApprovingContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
+      content = <ApprovedContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
+      content = <NextContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
+      content = <ConfirmingContent />
+    }
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
+      content = <EnterAmountContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
+      content = <RetryContent />
+    }
+    return <>{content}</>
+  }
+
+  const MainContent = () => {
+    const toggleWalletModal = useWalletModalToggle()
+    const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
+
+    if (!account && !error) {
+      return (
+        <div className="mt-2">
+          <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
+        </div>
+      )
+    } else {
+      return (
+        <>
+          <div className="mt-2">
+            <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account)}</p>
+          </div>
+          <CurrentButtonContent />
+        </>
+      )
+    }
+  }
 
   return (
     <PageWrapper className="mb-8">
@@ -86,7 +254,7 @@ const Bridge = () => {
               />
             </div>
             <p className="mt-2 font-semibold text-secondary">Destination Address</p>
-            <WalletStatus amount={inputValue} />
+            <MainContent />
             <div className="mt-2">
               <WarningAlert message="Don’t use exchange address for cross-chain transfers" />
             </div>
@@ -99,6 +267,13 @@ const Bridge = () => {
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient id vitae morbi ipsum est maecenas tellus at. Consequat in justo"
         />
       </div>
+      <BridgeTransactionModal
+        isVisible={showModal}
+        currency={HALO[ChainId.MAINNET]!}
+        amount={inputValue}
+        account={account}
+        onDismiss={() => setShowModal(false)}
+      />
     </PageWrapper>
   )
 }
