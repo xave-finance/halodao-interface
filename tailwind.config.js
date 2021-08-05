@@ -1,4 +1,4 @@
-const { borderColor } = require("polished");
+const { borderColor } = require('polished')
 
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
