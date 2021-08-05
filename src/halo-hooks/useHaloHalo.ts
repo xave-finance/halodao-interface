@@ -7,11 +7,8 @@ import Fraction from '../constants/Fraction'
 import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
 import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
-import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS } from '../constants'
-import { formatEther } from 'ethers/lib/utils'
+import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS, HALO_REWARDS_MANAGER_ADDRESS } from '../constants'
 import { formatNumber } from 'utils/formatNumber'
-import { useBlockNumber } from 'state/application/hooks'
-import { useTimestampFromBlock } from 'hooks/useTimestampFromBlock'
 
 const { BigNumber } = ethers
 
@@ -19,39 +16,36 @@ const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
+  const haloHaloAddress = chainId ? HALOHALO_ADDRESS[chainId] : undefined
+  const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[chainId] : undefined
+
   const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[chainId] : undefined || '') // withSigner
-  const halohaloContract = useContract(chainId ? HALOHALO_ADDRESS[chainId] : undefined || '', HALOHALO_ABI) // withSigner
+  const halohaloContract = useContract(haloHaloAddress || '', HALOHALO_ABI) // withSigner
 
   const [allowance, setAllowance] = useState('0')
   const [haloHaloAPY, setHaloHaloAPY] = useState(0)
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')
 
-  const currentBlockNumber = useBlockNumber()
-  const currentTimestamp = useTimestampFromBlock(currentBlockNumber) ?? 0
-
   // gets the current APY from the haloHalo contract
   const getAPY = useCallback(async () => {
-    // getting it directly so it will not get affected by state changes ensuring accurate apy calculation
-    const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
-    const genesisTimestamp = Number(await halohaloContract?.genesisTimestamp())
+    if (!rewardsManagerAddress || !haloContract || !halohaloContract) return
 
-    // one year in seconds / 31536000
-    const timePriceChangedRatio = 31536000 / (currentTimestamp - genesisTimestamp)
+    const bal = await haloContract?.balanceOf(rewardsManagerAddress)
+    const supply = await halohaloContract?.totalSupply()
+    const apy = Number(Fraction.from(bal, supply).toString()) * 12
 
-    // 1 comes from the 1:1 ratio before adding rewards
-    const priceChange = Number(formatEther(currentHaloHaloPrice)) - 1
-
-    const APY = timePriceChangedRatio * priceChange
-
-    setHaloHaloAPY(APY)
-  }, [halohaloContract, currentTimestamp])
+    setHaloHaloAPY(apy)
+  }, [haloContract, halohaloContract, rewardsManagerAddress])
 
   const getHaloHaloPrice = useCallback(async () => {
-    const currentHaloHaloPrice = await halohaloContract?.getCurrentHaloHaloPrice()
-    const convertedHaloHaloPrice = formatNumber(Number(formatEther(currentHaloHaloPrice)))
+    if (!haloHaloAddress || !haloContract || !halohaloContract) return
 
-    setHaloHaloPrice(convertedHaloHaloPrice)
-  }, [halohaloContract])
+    const bal = await haloContract?.balanceOf(haloHaloAddress)
+    const supply = await halohaloContract?.totalSupply()
+    const price = Fraction.from(bal, supply)
+
+    setHaloHaloPrice(formatNumber(Number(price.toString())))
+  }, [haloContract, halohaloContract, haloHaloAddress])
 
   const fetchAllowance = useCallback(async () => {
     if (account) {
