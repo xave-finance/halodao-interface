@@ -1,3 +1,5 @@
+const { borderColor } = require("polished");
+
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
@@ -7,7 +9,9 @@ module.exports = {
         fredoka: ['Fredoka One', 'ui-serif']
       },
       textColor: {
-        secondary: '#5E5E5E'
+        primary: '#471BB2',
+        secondary: '#5E5E5E',
+        warning: '#FA6F44'
       },
       borderColor: {
         primary: {
@@ -52,7 +56,9 @@ module.exports = {
   variants: {
     extend: {
       ringWidth: ['active'],
-      ringColor: ['active']
+      ringColor: ['active'],
+      borderColor: ['focus'],
+      backgroundColor: ['focus']
     }
   },
   plugins: []
