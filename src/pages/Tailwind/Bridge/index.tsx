@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import ethers from 'ethers'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
@@ -13,12 +15,16 @@ import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import { useWalletModalToggle } from '../../../state/application/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { shortenAddress } from '../../../utils'
+import { AppState, AppDispatch } from '../../../state'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
+
+import { useFetchBridgeCallback } from '../../../state/bridge/hooks'
+import { useAppoveBridgeDepositCallback } from '../../../halo-hooks/useBridgeActions'
 
 export enum ButtonState {
   Default,
@@ -36,6 +42,52 @@ const Bridge = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
+  const dispatch = useDispatch<AppDispatch>()
+  const tokenAddress = useSelector<AppState, AppState['bridge']['tokenAddress']>(state => state.bridge.tokenAddress)
+  const chainId = useSelector<AppState, AppState['bridge']['destinationChainId']>(state => state.bridge.destinationChainId)
+  // const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(state => state.bridge.bridgeContract)
+
+  const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(state => state.bridge.bridgeContract)
+  console.log('ButtonGroup #bridgeContract', bridgeContract)
+  console.log('bridgeContract.parentBridgeContractAddress:', bridgeContract.parentBridgeContractAddress)
+
+  const { giveBridgeAllowance, depositToPrimaryBridge } = useAppoveBridgeDepositCallback(tokenAddress, bridgeContract.parentBridgeContractAddress, chainId, 100)
+
+  const approveAllowance = async (amount: ethers.BigNumber) => {
+    setApproveState(ApproveButtonState.Approving)
+
+    try {
+      const tx = await giveBridgeAllowance(amount)
+      await tx.wait()
+      setApproveState(ApproveButtonState.Approved)
+      setButtonState(ButtonState.Next)
+    } catch (e) {
+      console.error(e)
+    }
+
+    /** @todo Add logging to google analytics */
+  }
+
+  const deposit = async (amount: ethers.BigNumber, chainId: number) => {
+    setButtonState(ButtonState.Confirming)
+
+    try {
+      const tx = await depositToPrimaryBridge(amount, chainId)
+      await tx.wait()
+      setApproveState(ApproveButtonState.NotApproved)
+      setButtonState(ButtonState.Default)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const fetchBridge = useFetchBridgeCallback()
+
+  useEffect(() => {
+    console.log('tokenAddress:', tokenAddress)
+    fetchBridge(tokenAddress, chainId)
+  }, [tokenAddress, chainId])
+
   const NotApproveContent = () => {
     return (
       <div className="mt-4 flex space-x-4">
@@ -44,15 +96,7 @@ const Bridge = () => {
             title="Approve"
             state={ApproveButtonState.NotApproved}
             onClick={() => {
-              if (inputValue) {
-                setApproveState(ApproveButtonState.Approving)
-                setTimeout(() => {
-                  setApproveState(ApproveButtonState.Approved)
-                }, 2000)
-                setTimeout(() => {
-                  setButtonState(ButtonState.Next)
-                }, 2000)
-              }
+                approveAllowance(ethers.utils.parseEther(`${1}`))
             }}
           />
         </div>
@@ -168,25 +212,32 @@ const Bridge = () => {
 
   const CurrentButtonContent = () => {
     let content = <></>
-    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
-      content = <EnterAmountContent />
-    }
-    if (approveState === ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) {
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.Default) {
+      console.log('a')
       content = <NotApproveContent />
     }
-    if (approveState === ApproveButtonState.Approving) {
+    if (approveState === ApproveButtonState.Approving && buttonState === ButtonState.Default) {
+      console.log('b')
       content = <ApprovingContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
+      console.log('c')
       content = <ApprovedContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
+      console.log('d')
       content = <NextContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
+      console.log('e')
       content = <ConfirmingContent />
     }
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
+      console.log('f')
+      content = <EnterAmountContent />
+    }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
+      console.log('g')
       content = <RetryContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
