@@ -36,28 +36,41 @@ export enum ButtonState {
 }
 
 const Bridge = () => {
-  const { account, error } = useWeb3React()
+  const { account, error, chainId } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
-  const dispatch = useDispatch<AppDispatch>()
   const tokenAddress = useSelector<AppState, AppState['bridge']['tokenAddress']>(state => state.bridge.tokenAddress)
-  const chainId = useSelector<AppState, AppState['bridge']['destinationChainId']>(state => state.bridge.destinationChainId)
-  // const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(state => state.bridge.bridgeContract)
+  const destinationChainId = useSelector<AppState, AppState['bridge']['destinationChainId']>(
+    state => state.bridge.destinationChainId
+  )
+  const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(
+    state => state.bridge.bridgeContract
+  )
 
-  const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(state => state.bridge.bridgeContract)
-  console.log('ButtonGroup #bridgeContract', bridgeContract)
-  console.log('bridgeContract.parentBridgeContractAddress:', bridgeContract.parentBridgeContractAddress)
-
-  const { giveBridgeAllowance, depositToPrimaryBridge } = useAppoveBridgeDepositCallback(tokenAddress, bridgeContract.parentBridgeContractAddress, chainId, 100)
+  const {
+    giveBridgeAllowance,
+    depositToPrimaryBridge,
+    giveSecondaryBridgeAllowance,
+    burnWrappedTokens
+  } = useAppoveBridgeDepositCallback(
+    tokenAddress,
+    bridgeContract.parentBridgeContractAddress,
+    bridgeContract.wrappedTokenContractAddress,
+    bridgeContract.bridgeContractAddress
+  )
 
   const approveAllowance = async (amount: ethers.BigNumber) => {
     setApproveState(ApproveButtonState.Approving)
-
     try {
-      const tx = await giveBridgeAllowance(amount)
+      let tx
+      if (chainId === destinationChainId) {
+        tx = await giveSecondaryBridgeAllowance(amount)
+      } else {
+        tx = await giveBridgeAllowance(amount)
+      }
       await tx.wait()
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Next)
@@ -70,9 +83,13 @@ const Bridge = () => {
 
   const deposit = async (amount: ethers.BigNumber, chainId: number) => {
     setButtonState(ButtonState.Confirming)
-
     try {
-      const tx = await depositToPrimaryBridge(amount, chainId)
+      let tx
+      if (chainId === destinationChainId) {
+        tx = await burnWrappedTokens(amount)
+      } else {
+        tx = await depositToPrimaryBridge(amount, chainId)
+      }
       await tx.wait()
       setApproveState(ApproveButtonState.NotApproved)
       setButtonState(ButtonState.Default)
@@ -84,9 +101,8 @@ const Bridge = () => {
   const fetchBridge = useFetchBridgeCallback()
 
   useEffect(() => {
-    console.log('tokenAddress:', tokenAddress)
-    fetchBridge(tokenAddress, chainId)
-  }, [tokenAddress, chainId])
+    fetchBridge(tokenAddress, destinationChainId)
+  }, [tokenAddress, chainId, destinationChainId])
 
   const NotApproveContent = () => {
     return (
