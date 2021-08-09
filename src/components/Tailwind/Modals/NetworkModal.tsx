@@ -45,9 +45,9 @@ const showConnected = (mode: NetworkModalMode) => {
 const pickClass = (mode: NetworkModalMode) => {
   switch (mode) {
     case NetworkModalMode.Bridge:
-      return 'flex flex-row items-center pt-2 pb-2 hover:bg-secondary'
+      return 'flex flex-row items-center pt-2 pb-2 cursor-pointer hover:bg-secondary'
     default:
-      return 'flex flex-row items-center mb-4 pt-4 pb-4 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
+      return 'flex flex-row items-center mb-4 pt-4 cursor-pointer pb-4 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
   }
 }
 
@@ -105,6 +105,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                 onClick={() => {
                   onDismiss()
                   if (mode === NetworkModalMode.Default) {
+                    console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
                     library?.send('wallet_addEthereumChain', [params, account])
                   }
