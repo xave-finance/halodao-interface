@@ -47,7 +47,7 @@ const pickClass = (mode: NetworkModalMode) => {
     case NetworkModalMode.Bridge:
       return 'flex flex-row items-center pt-2 pb-2 hover:bg-secondary'
     default:
-      return 'flex flex-row items-center pt-2 pb-2 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
+      return 'flex flex-row items-center mb-4 pt-4 pb-4 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
   }
 }
 

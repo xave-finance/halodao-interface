@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { useNetworkModalToggle } from '../../state/application/hooks'
 import { NETWORK_LABEL } from '../../constants/networks'
-import NetworkModal from '../NetworkModal'
+import NetworkModal, { NetworkModalMode } from '../Tailwind/Modals/NetworkModal'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
 import styled from 'styled-components'
@@ -47,6 +47,7 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 function Web3Network(): JSX.Element | null {
   const { chainId, connector } = useActiveWeb3React()
   const toggleNetworkModal = useNetworkModalToggle()
+  const [showModal, setShowModal] = useState(false)
 
   // Hide if wallet is not connected
   if (!chainId) return null
@@ -67,12 +68,14 @@ function Web3Network(): JSX.Element | null {
   if (!isConnectedToMetamask()) return null
 
   return (
-    <StyledWrapper title={NETWORK_LABELS[chainId]} onClick={toggleNetworkModal}>
-      <div>
-        <div className="text-primary">{NETWORK_LABEL[chainId]}</div>
-      </div>
-      <NetworkModal />
-    </StyledWrapper>
+    <>
+      <StyledWrapper title={NETWORK_LABELS[chainId]} onClick={() => setShowModal(true)}>
+        <div>
+          <div className="text-primary">{NETWORK_LABEL[chainId]}</div>
+        </div>
+      </StyledWrapper>
+      <NetworkModal isVisible={showModal} mode={NetworkModalMode.Default} onDismiss={() => setShowModal(false)} />
+    </>
   )
 }
 
