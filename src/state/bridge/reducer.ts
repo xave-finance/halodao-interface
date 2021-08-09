@@ -1,22 +1,35 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { selectToken, selectOriginChain, selectDestinationChain, fetchBridgeContract } from './actions'
+import {
+  selectToken,
+  setTokenAddress,
+  setWrappedTokenAddress,
+  setDestinationChain,
+  setPrimaryBridgeContract,
+  setSecondaryBridgeContract,
+  fetchBridgeContract
+} from './actions'
+import { BridgeToken, MOCK_TOKEN } from 'constants/bridge'
 
 export interface BridgeState {
   readonly isLoading: boolean
+  readonly bridgeToken: BridgeToken
   readonly tokenAddress: string
-  readonly tokenName: string
+  readonly wrappedTokenAddress: string
   readonly originChainId: number
   readonly destinationChainId: number
-  readonly bridgeContract: any
+  readonly primaryBridgeContract: any
+  readonly secondaryBridgeContract: any
 }
 
 const initialState: BridgeState = {
   isLoading: false,
   tokenAddress: '0x727A401fdDb5cd6074FaF5Fa7cbd2BA7b3ae7aFd',
-  tokenName: '',
+  wrappedTokenAddress: '',
+  bridgeToken: MOCK_TOKEN,
   originChainId: 137,
   destinationChainId: 100,
-  bridgeContract: ''
+  primaryBridgeContract: '',
+  secondaryBridgeContract: ''
 }
 
 export default createReducer<BridgeState>(initialState, builder =>
@@ -24,20 +37,37 @@ export default createReducer<BridgeState>(initialState, builder =>
     .addCase(selectToken, (state, action) => {
       return {
         ...state,
-        tokenAddress: action.payload.tokenAddress,
-        tokenName: action.payload.tokenName
+        bridgeToken: action.payload
       }
     })
-    .addCase(selectOriginChain, (state, action) => {
+    .addCase(setTokenAddress, (state, action) => {
       return {
         ...state,
-        originChainId: action.payload.chainId
+        tokenAddress: action.payload.tokenAddress
       }
     })
-    .addCase(selectDestinationChain, (state, action) => {
+    .addCase(setWrappedTokenAddress, (state, action) => {
+      return {
+        ...state,
+        tokenAddress: action.payload.tokenAddress
+      }
+    })
+    .addCase(setDestinationChain, (state, action) => {
       return {
         ...state,
         destinationChainId: action.payload.chainId
+      }
+    })
+    .addCase(setPrimaryBridgeContract, (state, action) => {
+      return {
+        ...state,
+        primaryBridgeContract: action.payload.contractAddress
+      }
+    })
+    .addCase(setSecondaryBridgeContract, (state, action) => {
+      return {
+        ...state,
+        secondaryBridgeContract: action.payload.contractAddress
       }
     })
     .addCase(fetchBridgeContract.pending, state => {

@@ -1,10 +1,13 @@
 import { createAction, ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { retrieveBridgeContract } from './BridgeAPI'
+import { BridgeToken } from 'constants/bridge'
 
-export const selectToken = createAction<{ tokenName: string; tokenAddress: string }>('bridge/selectToken')
-export const selectOriginChain = createAction<{ chainId: number }>('bridge/selectOriginChain')
-export const selectDestinationChain = createAction<{ chainId: number }>('bridge/selectDestinationChain')
+export const selectToken = createAction<BridgeToken>('bridge/selectToken')
+export const setTokenAddress = createAction<{ tokenAddress: string }>('bridge/setTokenAddress')
+export const setDestinationChain = createAction<{ chainId: number }>('bridge/selectDestinationChain')
+export const setWrappedTokenAddress = createAction<{ tokenAddress: string }>('bridge/setWrappedTokenAddress')
 export const setPrimaryBridgeContract = createAction<{ contractAddress: string }>('bridge/setPrimaryBridgeContract')
+export const setSecondaryBridgeContract = createAction<{ contractAddress: string }>('bridge/setSecondaryBridgeContract')
 
 export const fetchBridgeContract: Readonly<{
   pending: ActionCreatorWithPayload<{ tokenAddress: string; requestId: string }>

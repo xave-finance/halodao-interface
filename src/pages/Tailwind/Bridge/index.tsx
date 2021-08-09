@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import ethers from 'ethers'
 import { ChainId, Currency } from '@sushiswap/sdk'
@@ -23,9 +23,14 @@ import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
-import { useFetchBridgeCallback } from '../../../state/bridge/hooks'
-import { useAppoveBridgeDepositCallback } from '../../../halo-hooks/useBridgeActions'
-import { selectDestinationChain } from '../../../state/bridge/actions'
+import { BridgeToken, MOCK_TOKEN } from 'constants/bridge'
+
+import { getContract } from 'utils'
+import PRIMARY_BRIDGE_ABI from 'constants/bridgeAbis/PrimaryBridge.json'
+import SECONDARY_BRIDGE_ABI from 'constants/bridgeAbis/SecondaryBridge.json'
+import TOKEN_ABI from 'constants/abis/erc20.json'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { useActiveWeb3React } from 'hooks'
 
 export enum ButtonState {
   Default,
@@ -38,37 +43,120 @@ export enum ButtonState {
 
 const Bridge = () => {
   const dispatch = useDispatch()
-  const { account, error, chainId } = useWeb3React()
+  const addTransaction = useTransactionAdder()
+  const { account, error, chainId, library } = useWeb3React()
+  // const { library, account, chainId } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
-  const tokenAddress = useSelector<AppState, AppState['bridge']['tokenAddress']>(state => state.bridge.tokenAddress)
-  const destinationChainId = useSelector<AppState, AppState['bridge']['destinationChainId']>(
-    state => state.bridge.destinationChainId
-  )
-  const bridgeContract = useSelector<AppState, AppState['bridge']['bridgeContract']>(
-    state => state.bridge.bridgeContract
+  const [bridgeToken, setBridgeToken] = useState<BridgeToken>(MOCK_TOKEN)
+  const [tokenContract, setTokenContract] = useState<any>(null)
+  const [destinationChainId, setDestinationChainId] = useState(100)
+  const [wrappedTokenContract, setWrappedTokenContract] = useState<any>(null)
+  const [primaryBridgeContract, setPrimaryBridgeContract] = useState<any>(null)
+  const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
+
+  useEffect(() => {
+    setTokenContract(getContract(bridgeToken.tokenAddress, TOKEN_ABI, library, account as string))
+    setPrimaryBridgeContract(
+      getContract(bridgeToken.primaryBridgeContract, PRIMARY_BRIDGE_ABI, library, account as string)
+    )
+  }, [bridgeToken])
+
+  useEffect(() => {
+    setPrimaryBridgeContract(
+      getContract(bridgeToken.primaryBridgeContract, PRIMARY_BRIDGE_ABI, library, account as string)
+    )
+    if (bridgeToken.chainId !== chainId) {
+      setSecondaryBridgeContract(
+        getContract(
+          bridgeToken.secondaryBridgeContracts[destinationChainId as number],
+          SECONDARY_BRIDGE_ABI,
+          library,
+          account as string
+        )
+      )
+    }
+  }, [chainId])
+
+  useEffect(() => {
+    console.log('bridgeToken.secondaryBridgeContracts:', bridgeToken.secondaryBridgeContracts)
+    // setSecondaryBridgeContract(
+    //   getContract(
+    //     bridgeToken.secondaryBridgeContracts[destinationChainId as number],
+    //     SECONDARY_BRIDGE_ABI,
+    //     library,
+    //     account as string
+    //   )
+    // )
+    if (bridgeToken.chainId !== destinationChainId) {
+      setWrappedTokenContract(
+        getContract(bridgeToken.wrappedTokens[destinationChainId as number], TOKEN_ABI, library, account as string)
+      )
+    }
+  }, [destinationChainId])
+
+  const giveBridgeAllowance = useCallback(
+    async (amount: ethers.BigNumber) => {
+      try {
+        const tx = await tokenContract?.approve(primaryBridgeContract?.address, amount)
+        addTransaction(tx, { summary: 'Give primary bridge allowance' })
+        return tx
+      } catch (e) {
+        throw new Error(e)
+      }
+    },
+    [addTransaction, tokenContract, primaryBridgeContract]
   )
 
-  const {
-    giveBridgeAllowance,
-    depositToPrimaryBridge,
-    giveSecondaryBridgeAllowance,
-    burnWrappedTokens
-  } = useAppoveBridgeDepositCallback(
-    tokenAddress,
-    bridgeContract.parentBridgeContractAddress,
-    bridgeContract.wrappedTokenContractAddress,
-    bridgeContract.bridgeContractAddress
+  const depositToPrimaryBridge = useCallback(
+    async (amount: ethers.BigNumber, chainIdDestination: number) => {
+      try {
+        const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
+        addTransaction(tx, { summary: 'Deposit on bridge' })
+        return tx
+      } catch (e) {
+        throw new Error(e)
+      }
+    },
+    [addTransaction, primaryBridgeContract]
+  )
+
+  const giveSecondaryBridgeAllowance = useCallback(
+    async (amount: ethers.BigNumber) => {
+      try {
+        const tx = await wrappedTokenContract?.approve(secondaryBridgeContract?.address, amount)
+        addTransaction(tx, { summary: 'Give bridge allowance' })
+        return tx
+      } catch (e) {
+        throw new Error(e)
+      }
+    },
+    [addTransaction, wrappedTokenContract, secondaryBridgeContract]
+  )
+
+  const burnWrappedTokens = useCallback(
+    async (amount: ethers.BigNumber) => {
+      try {
+        const tx = await secondaryBridgeContract?.burn(amount)
+        addTransaction(tx, { summary: 'Burn wrapped tokens' })
+        return tx
+      } catch (e) {
+        throw new Error(e)
+      }
+    },
+    [addTransaction, secondaryBridgeContract]
   )
 
   const approveAllowance = async (amount: ethers.BigNumber) => {
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (chainId === destinationChainId) {
+      console.log('chainId:', bridgeToken.chainId, ' chainId:', chainId)
+      console.log('chainId === destinationChainId:', bridgeToken.chainId === chainId)
+      if (bridgeToken.chainId !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -106,12 +194,6 @@ const Bridge = () => {
       console.error(e)
     }
   }
-
-  const fetchBridge = useFetchBridgeCallback()
-
-  useEffect(() => {
-    fetchBridge(tokenAddress, destinationChainId)
-  }, [tokenAddress, chainId, destinationChainId])
 
   const NotApproveContent = () => {
     return (
@@ -318,7 +400,7 @@ const Bridge = () => {
               <SelectedNetworkPanel
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
-                onChangeNetwork={(chainId: number) => dispatch(selectDestinationChain({ chainId }))}
+                onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
                 destinationChainId={destinationChainId}
               />
             </div>
@@ -353,14 +435,14 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={{ symbol: bridgeContract.tokenSymbol, decimals: 18 } as Currency}
+        currency={{ symbol: bridgeToken.tokenSymbol, decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (chainId === destinationChainId) {
+          if (bridgeToken.chainId !== chainId) {
             await burn(ethers.utils.parseEther(`${inputValue}`))
           } else {
-            await deposit(ethers.utils.parseEther(`${inputValue}`), bridgeContract.chainId)
+            await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)
           }
         }}
         onDismiss={() => setShowModal(false)}
