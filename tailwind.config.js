@@ -11,7 +11,9 @@ module.exports = {
       textColor: {
         primary: {
           DEFAULT: '#471BB2',
-          dark: '#15006d'
+          dark: '#15006d',
+          gradientVia: '#5521B6',
+          gradientTo: '#2DB7C4'
         },
         secondary: '#5E5E5E',
         warning: '#FA6F44'
@@ -33,6 +35,9 @@ module.exports = {
           disabled: '#9182c6',
           gradientVia: '#5521B6',
           gradientTo: '#2DB7C4'
+        },
+        secondary: {
+          DEFAULT: '#A38DD8'
         },
         warning: {
           DEFAULT: '#FA6F44'
