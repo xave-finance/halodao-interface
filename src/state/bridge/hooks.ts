@@ -14,6 +14,8 @@ export function useFetchBridgeCallback(): (tokenAddress: string, chainId: number
       dispatch(fetchBridgeContract.pending({ requestId, tokenAddress }))
       return retrieveBridgeContract(tokenAddress, chainId)
         .then(bridgeContract => {
+          console.log('useFetchBridgeCallback #chainId', chainId)
+          console.log('bridgeContract.data:', bridgeContract.data)
           dispatch(fetchBridgeContract.fulfilled({ requestId, tokenAddress, bridgeContract: bridgeContract.data }))
         })
         .catch(e => {

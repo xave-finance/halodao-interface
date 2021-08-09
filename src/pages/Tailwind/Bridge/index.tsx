@@ -25,6 +25,7 @@ import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
 import { useFetchBridgeCallback } from '../../../state/bridge/hooks'
 import { useAppoveBridgeDepositCallback } from '../../../halo-hooks/useBridgeActions'
+import { selectDestinationChain } from '../../../state/bridge/actions'
 
 export enum ButtonState {
   Default,
@@ -36,6 +37,7 @@ export enum ButtonState {
 }
 
 const Bridge = () => {
+  const dispatch = useDispatch()
   const { account, error, chainId } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
@@ -84,12 +86,19 @@ const Bridge = () => {
   const deposit = async (amount: ethers.BigNumber, chainId: number) => {
     setButtonState(ButtonState.Confirming)
     try {
-      let tx
-      if (chainId === destinationChainId) {
-        tx = await burnWrappedTokens(amount)
-      } else {
-        tx = await depositToPrimaryBridge(amount, chainId)
-      }
+      const tx = await depositToPrimaryBridge(amount, chainId)
+      await tx.wait()
+      setApproveState(ApproveButtonState.NotApproved)
+      setButtonState(ButtonState.Default)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const burn = async (amount: ethers.BigNumber) => {
+    setButtonState(ButtonState.Confirming)
+    try {
+      const tx = await burnWrappedTokens(amount)
       await tx.wait()
       setApproveState(ApproveButtonState.NotApproved)
       setButtonState(ButtonState.Default)
@@ -227,31 +236,24 @@ const Bridge = () => {
   const CurrentButtonContent = () => {
     let content = <></>
     if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.Default) {
-      console.log('a')
       content = <NotApproveContent />
     }
     if (approveState === ApproveButtonState.Approving && buttonState === ButtonState.Default) {
-      console.log('b')
       content = <ApprovingContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
-      console.log('c')
       content = <ApprovedContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
-      console.log('d')
       content = <NextContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
-      console.log('e')
       content = <ConfirmingContent />
     }
     if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
-      console.log('f')
       content = <EnterAmountContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
-      console.log('g')
       content = <RetryContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
@@ -304,13 +306,21 @@ const Bridge = () => {
                 <p className="text-secondary font-semibold">To</p>
               </div>
             </div>
-
-            <div className="w-full flex md:space-x-4">
-              <SelectedNetworkPanel mode={NetworkModalMode.PrimaryBridge} />
+            <div className="flex space-x-4">
+              <SelectedNetworkPanel
+                mode={NetworkModalMode.PrimaryBridge}
+                chainId={chainId as ChainId}
+                onChangeNetwork={() => console.log('hello')}
+              />
               <div className="mb-2 w-1/5 flex items-center justify-center">
                 <SwitchButton onClick={() => console.log('clicked')} />
               </div>
-              <SelectedNetworkPanel mode={NetworkModalMode.SecondaryBridge} />
+              <SelectedNetworkPanel
+                mode={NetworkModalMode.SecondaryBridge}
+                chainId={destinationChainId}
+                onChangeNetwork={(chainId: number) => dispatch(selectDestinationChain({ chainId }))}
+                destinationChainId={destinationChainId}
+              />
             </div>
 
             <p className="mt-2 font-semibold text-secondary">Amount</p>
@@ -346,7 +356,13 @@ const Bridge = () => {
         currency={{ symbol: bridgeContract.tokenSymbol, decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
-        confirmLogic={async () => await deposit(ethers.utils.parseEther(`${inputValue}`), bridgeContract.chainId)}
+        confirmLogic={async () => {
+          if (chainId === destinationChainId) {
+            await burn(ethers.utils.parseEther(`${inputValue}`))
+          } else {
+            await deposit(ethers.utils.parseEther(`${inputValue}`), bridgeContract.chainId)
+          }
+        }}
         onDismiss={() => setShowModal(false)}
       />
     </PageWrapper>

@@ -18,9 +18,6 @@ export const useAppoveBridgeDepositCallback = (
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  console.log('wrappedTokenAddress:', wrappedTokenAddress)
-  console.log('secondaryBridgeContractAddress:', secondaryBridgeContractAddress)
-
   const tokenContract = useTokenContract(tokenAddress)
   const primaryBridgeContract = useContract(primaryBridgeContractAddress, PRIMARY_BRIDGE_ABI)
   const wrappedTokenContract = useTokenContract(wrappedTokenAddress)

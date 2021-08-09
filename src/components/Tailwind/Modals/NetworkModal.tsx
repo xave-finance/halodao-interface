@@ -17,6 +17,8 @@ interface NetworkModalProps {
   isVisible: boolean
   mode: NetworkModalMode
   onDismiss: () => void
+  onChangeNetwork?: (chainId: number) => void
+  destinationChainId?: number
 }
 
 const showDescription = (chainId: ChainId, mode: NetworkModalMode) => {
@@ -54,7 +56,7 @@ const pickClass = (mode: NetworkModalMode) => {
   }
 }
 
-const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
+const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, destinationChainId }: NetworkModalProps) => {
   const { chainId, library, account } = useActiveWeb3React()
 
   if (!chainId) return null
@@ -73,15 +75,15 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
             ChainId.MAINNET,
             //ChainId.FANTOM,
             ChainId.BSC,
-            ChainId.MATIC
+            ChainId.MATIC,
             //ChainId.HECO,
-            //ChainId.XDAI,
+            ChainId.XDAI
             //ChainId.HARMONY,
             //ChainId.AVALANCHE,
             //ChainId.OKEX
             //ChainId.MOONBASE
           ].map((key: ChainId, i: number) => {
-            if (chainId === key) {
+            if (chainId === key && mode !== NetworkModalMode.Bridge) {
               return (
                 <div
                   key={i}
@@ -102,6 +104,19 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                 </div>
               )
             }
+            if (mode === NetworkModalMode.Bridge && (destinationChainId === key || chainId === key)) {
+              return (
+                <div key={i} className="mt-2" onClick={() => onDismiss()}>
+                  <div className={pickClass(mode)}>
+                    <div>
+                      <img src={NETWORK_ICON[key]} alt="Switch Network" className="logo h-7 rounded-2xl mr-4" />
+                    </div>
+                    <div>{NETWORK_LABEL[key]}</div>
+                    {showConnected(mode)}
+                  </div>
+                </div>
+              )
+            }
             return (
               <div
                 key={i}
@@ -111,6 +126,8 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                     console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
                     library?.send('wallet_addEthereumChain', [params, account])
+                  } else if (mode === NetworkModalMode.Bridge) {
+                    if (onChangeNetwork) onChangeNetwork(key)
                   }
                 }}
               >

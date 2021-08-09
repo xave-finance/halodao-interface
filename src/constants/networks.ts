@@ -51,7 +51,7 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   //[ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
   [ChainId.MATIC]: 'Polygon (Matic)',
   [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  //[ChainId.XDAI]: 'xDai',
+  [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
   [ChainId.MOONBASE]: 'Moonbase'
@@ -124,18 +124,17 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://rpc-mainnet.maticvigil.com'], //['https://matic-mainnet.chainstacklabs.com/'],
     blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
   },
-  /*
-  [ChainId.HECO]: {
-    chainId: '0x80',
-    chainName: 'Heco',
-    nativeCurrency: {
-      name: 'Heco Token',
-      symbol: 'HT',
-      decimals: 18
-    },
-    rpcUrls: ['https://http-mainnet.hecochain.com'],
-    blockExplorerUrls: ['https://hecoinfo.com']
-  },
+  // [ChainId.HECO]: {
+  //   chainId: '0x80',
+  //   chainName: 'Heco',
+  //   nativeCurrency: {
+  //     name: 'Heco Token',
+  //     symbol: 'HT',
+  //     decimals: 18
+  //   },
+  //   rpcUrls: ['https://http-mainnet.hecochain.com'],
+  //   blockExplorerUrls: ['https://hecoinfo.com']
+  // },
   [ChainId.XDAI]: {
     chainId: '0x64',
     chainName: 'xDai',
@@ -147,7 +146,6 @@ export const NETWORK_PARAMS: {
     rpcUrls: ['https://rpc.xdaichain.com'],
     blockExplorerUrls: ['https://blockscout.com/poa/xdai']
   },
-    */
   [ChainId.MOONBASE]: {
     chainId: '0x507',
     chainName: 'Moonbase Alpha',
