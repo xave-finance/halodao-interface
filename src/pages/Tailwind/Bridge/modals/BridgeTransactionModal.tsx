@@ -13,6 +13,7 @@ interface ConfirmTransactionModalProps {
   currency: Currency
   amount: string
   account: string | null | undefined
+  confirmLogic: () => void
   onDismiss: () => void
 }
 
@@ -22,7 +23,14 @@ enum ConfirmTransactionModalState {
   Successful
 }
 
-const ConfirmTransactionModal = ({ isVisible, currency, amount, account, onDismiss }: ConfirmTransactionModalProps) => {
+const ConfirmTransactionModal = ({
+  isVisible,
+  currency,
+  amount,
+  account,
+  confirmLogic,
+  onDismiss
+}: ConfirmTransactionModalProps) => {
   const [state, setState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
   const ConfirmContent = () => {
@@ -97,11 +105,11 @@ const ConfirmTransactionModal = ({ isVisible, currency, amount, account, onDismi
           <PrimaryButton
             title="Confirm"
             state={PrimaryButtonState.Enabled}
-            onClick={() => {
+            onClick={async () => {
+              console.log('PrimaryButton #Confirm')
               setState(ConfirmTransactionModalState.InProgress)
-              setTimeout(() => {
-                setState(ConfirmTransactionModalState.Successful)
-              }, 2000)
+              await confirmLogic()
+              setState(ConfirmTransactionModalState.Successful)
             }}
           />
         </div>

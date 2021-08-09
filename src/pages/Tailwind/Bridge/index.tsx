@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import ethers from 'ethers'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId, Currency } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
@@ -95,9 +95,7 @@ const Bridge = () => {
           <ApproveButton
             title="Approve"
             state={ApproveButtonState.NotApproved}
-            onClick={() => {
-                approveAllowance(ethers.utils.parseEther(`${1}`))
-            }}
+            onClick={() => approveAllowance(ethers.utils.parseEther(`${inputValue}`))}
           />
         </div>
         <div className="w-1/2">
@@ -329,9 +327,10 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={HALO[ChainId.MAINNET]!}
+        currency={{ symbol: bridgeContract.tokenSymbol, decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
+        confirmLogic={async () => await deposit(ethers.utils.parseEther(`${inputValue}`), bridgeContract.chainId)}
         onDismiss={() => setShowModal(false)}
       />
     </PageWrapper>
