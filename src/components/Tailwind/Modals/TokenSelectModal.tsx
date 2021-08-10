@@ -1,6 +1,7 @@
 import React from 'react'
+import { useWeb3React } from '@web3-react/core'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
+import { HALO, MOCK } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { SearchIcon } from '@heroicons/react/solid'
@@ -8,9 +9,39 @@ import { SearchIcon } from '@heroicons/react/solid'
 interface TokenSelectModalProps {
   isVisible: boolean
   onDismiss: () => void
+  onSelect?: (token: any | undefined) => void
 }
 
-const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
+interface TokenListProps {
+  chainId: number
+  onSelect?: (token: any | undefined) => void
+}
+
+const TokenList = ({ chainId, onSelect }: TokenListProps) => {
+  const tokens = [HALO, MOCK]
+  return (
+    <div className="p-4">
+      {tokens.map(token => (
+        <div
+          key={token[chainId as ChainId]?.name}
+          className="flex flex-row items-center"
+          onClick={() => {
+            if (onSelect) onSelect(token)
+          }}
+        >
+          <CurrencyLogo currency={token[chainId as ChainId]!} />
+          <div className="flex flex-col pl-2 focus:bg-primary">
+            <div className="ml-2 font-semibold">{token[chainId as ChainId]?.symbol}</div>
+            <div className="ml-2 text-xs text-gray-500">{token[chainId as ChainId]?.name}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const TokenSelectModal = ({ isVisible, onSelect, onDismiss }: TokenSelectModalProps) => {
+  const { chainId } = useWeb3React()
   return (
     <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
       <div className="bg-primary-lightest p-4 border-b">
@@ -25,15 +56,7 @@ const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
           </div>
         </div>
       </div>
-      <div className="p-4">
-        <div className="flex flex-row items-center">
-          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} />
-          <div className="flex flex-col pl-2 focus:bg-primary">
-            <div className="ml-2 font-semibold">{HALO[ChainId.MAINNET]!.symbol}</div>
-            <div className="ml-2 text-xs text-gray-500">{HALO[ChainId.MAINNET]!.name}</div>
-          </div>
-        </div>
-      </div>
+      <TokenList chainId={chainId as number} onSelect={onSelect} />
     </BaseModal>
   )
 }

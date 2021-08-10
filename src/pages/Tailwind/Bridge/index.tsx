@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
-import { ChainId, Currency, Token } from '@sushiswap/sdk'
+import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
@@ -20,9 +20,7 @@ import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components
 import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
-
 import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
-
 import PRIMARY_BRIDGE_ABI from 'constants/bridgeAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/bridgeAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
@@ -341,7 +339,7 @@ const Bridge = () => {
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
     const balance = useCurrencyBalance(account ?? undefined, MOCK[chainId as ChainId])
-    console.log('useCurrencyBalance #balance:', balance)
+    // console.log('useCurrencyBalance #balance:', balance)
 
     if (!account && !error) {
       return (
@@ -410,6 +408,7 @@ const Bridge = () => {
                 didChangeValue={val => setInputValue(val)}
                 showBalance={true}
                 showMax={true}
+                onSelectToken={setToken}
               />
             </div>
 

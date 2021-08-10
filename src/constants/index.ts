@@ -33,25 +33,32 @@ export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
 export const MOCK: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'W-MK',
+    'Wrapped Mocked Token'
+  ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'MOCK',
+    'MK',
     'Mock Token'
   ),
   [ChainId.XDAI]: new Token(
     ChainId.XDAI,
     process.env.REACT_APP_MOCK_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
     18,
-    'W-MOCK',
+    'W-MK',
     'Wrapped Mock Token'
   ),
   [ChainId.BSC]: new Token(
     ChainId.BSC,
     process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
     18,
-    'W-MOCK',
+    'W-MK',
     'Wrapped Mock Token'
   )
 }

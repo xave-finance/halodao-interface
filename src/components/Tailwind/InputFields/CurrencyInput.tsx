@@ -15,12 +15,22 @@ interface TokenInputProps {
   didChangeValue: (newValue: string) => void
   showBalance: boolean
   showMax: boolean
+  onSelectToken?: (token: any | undefined) => void
 }
 
-const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalance, showMax }: TokenInputProps) => {
+const TokenInput = ({
+  currency,
+  value,
+  canSelectToken,
+  didChangeValue,
+  showBalance,
+  showMax,
+  onSelectToken
+}: TokenInputProps) => {
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
   const [showModal, setShowModal] = useState(false)
+  // console.log('Token Input:', balance)
 
   const onMax = () => {
     if (balance) {
@@ -66,7 +76,7 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
           <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
       </div>
-      <TokenSelectModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
+      <TokenSelectModal isVisible={showModal} onDismiss={() => setShowModal(false)} onSelect={onSelectToken} />
     </>
   )
 }
