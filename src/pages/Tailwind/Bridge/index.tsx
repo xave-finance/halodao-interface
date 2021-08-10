@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import ethers from 'ethers'
-import { ChainId, Currency } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
+import { ChainId, Currency, Token } from '@sushiswap/sdk'
+import { MOCK } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
@@ -12,10 +11,9 @@ import SwitchButton from 'components/Tailwind/Buttons/SwitchButton'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
-import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { shortenAddress } from '../../../utils'
-import { AppState, AppDispatch } from '../../../state'
+import { getContract, shortenAddress } from 'utils'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -23,14 +21,12 @@ import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
-import { BridgeToken, MOCK_TOKEN } from 'constants/bridge'
+import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 
-import { getContract } from 'utils'
 import PRIMARY_BRIDGE_ABI from 'constants/bridgeAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/bridgeAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { useActiveWeb3React } from 'hooks'
 
 export enum ButtonState {
   Default,
@@ -42,16 +38,16 @@ export enum ButtonState {
 }
 
 const Bridge = () => {
-  const dispatch = useDispatch()
   const addTransaction = useTransactionAdder()
   const { account, error, chainId, library } = useWeb3React()
-  // const { library, account, chainId } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
-  const [bridgeToken, setBridgeToken] = useState<BridgeToken>(MOCK_TOKEN)
+  // const [token, setToken] = useState<{ [chainId in ChainId]?: Token }>(MOCK)
+  const [token, setToken] = useState<any>(MOCK)
+  // const [bridgeToken, setBridgeToken] = useState<BridgeToken>(MOCK_TOKEN)
   const [tokenContract, setTokenContract] = useState<any>(null)
   const [destinationChainId, setDestinationChainId] = useState(100)
   const [wrappedTokenContract, setWrappedTokenContract] = useState<any>(null)
@@ -59,20 +55,25 @@ const Bridge = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
 
   useEffect(() => {
-    setTokenContract(getContract(bridgeToken.tokenAddress, TOKEN_ABI, library, account as string))
+    console.log('token[address]:', token[chainId as ChainId].address)
+    console.log('token[ chain Id]:', token[chainId as ChainId].chainId)
+    console.log('REACT_APP_MOCK_TOKEN_ADDRESS_BSC:', process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC)
+    console.log('BRIDGE_CONTRACTS:', BRIDGE_CONTRACTS)
+    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    console.log('BRIDGE_CONTRACTS[token[chainId as number]]:', BRIDGE_CONTRACTS[token[chainId as ChainId].address])
     setPrimaryBridgeContract(
-      getContract(bridgeToken.primaryBridgeContract, PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-  }, [bridgeToken])
+  }, [token])
 
   useEffect(() => {
     setPrimaryBridgeContract(
-      getContract(bridgeToken.primaryBridgeContract, PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (bridgeToken.chainId !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
       setSecondaryBridgeContract(
         getContract(
-          bridgeToken.secondaryBridgeContracts[destinationChainId as number],
+          BRIDGE_CONTRACTS[token[destinationChainId as ChainId].address],
           SECONDARY_BRIDGE_ABI,
           library,
           account as string
@@ -82,27 +83,24 @@ const Bridge = () => {
   }, [chainId])
 
   useEffect(() => {
-    console.log('bridgeToken.secondaryBridgeContracts:', bridgeToken.secondaryBridgeContracts)
-    // setSecondaryBridgeContract(
-    //   getContract(
-    //     bridgeToken.secondaryBridgeContracts[destinationChainId as number],
-    //     SECONDARY_BRIDGE_ABI,
-    //     library,
-    //     account as string
-    //   )
-    // )
-    if (bridgeToken.chainId !== destinationChainId) {
-      setWrappedTokenContract(
-        getContract(bridgeToken.wrappedTokens[destinationChainId as number], TOKEN_ABI, library, account as string)
-      )
+    // if (token.chainId !== destinationChainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+      setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+      console.log('token[chainId as ChainId].address:', token[chainId as ChainId].address)
     }
   }, [destinationChainId])
+
+  // const tokenBalance = useMemo(async () => {
+  //   if (tokenContract && account)
+  //     return tokenContract?.balanceOf(account).then((res: ethers.BigNumber) => ethers.utils.formatEther(res.toString()))
+  //   return 0
+  // }, [tokenContract, bridgeToken])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
       try {
         const tx = await tokenContract?.approve(primaryBridgeContract?.address, amount)
-        addTransaction(tx, { summary: 'Give primary bridge allowance' })
+        addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
       } catch (e) {
         throw new Error(e)
@@ -127,6 +125,7 @@ const Bridge = () => {
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
       try {
+        console.log('wrappedTokenContract:', wrappedTokenContract.address)
         const tx = await wrappedTokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
@@ -154,9 +153,7 @@ const Bridge = () => {
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      console.log('chainId:', bridgeToken.chainId, ' chainId:', chainId)
-      console.log('chainId === destinationChainId:', bridgeToken.chainId === chainId)
-      if (bridgeToken.chainId !== chainId) {
+      if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -181,6 +178,8 @@ const Bridge = () => {
     } catch (e) {
       console.error(e)
     }
+
+    /** @todo Add logging to google analytics */
   }
 
   const burn = async (amount: ethers.BigNumber) => {
@@ -193,6 +192,8 @@ const Bridge = () => {
     } catch (e) {
       console.error(e)
     }
+
+    /** @todo Add logging to google analytics */
   }
 
   const NotApproveContent = () => {
@@ -346,7 +347,8 @@ const Bridge = () => {
 
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
-    const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
+    const balance = useCurrencyBalance(account ?? undefined, MOCK[chainId as ChainId])
+    console.log('useCurrencyBalance #balance:', balance)
 
     if (!account && !error) {
       return (
@@ -409,7 +411,8 @@ const Bridge = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={HALO[ChainId.MAINNET]!}
+                // currency={MOCK[ChainId.MATIC]!}
+                currency={token[chainId as ChainId]}
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -435,11 +438,11 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={{ symbol: bridgeToken.tokenSymbol, decimals: 18 } as Currency}
+        currency={{ symbol: 'ASDASD', decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (bridgeToken.chainId !== chainId) {
+          if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
             await burn(ethers.utils.parseEther(`${inputValue}`))
           } else {
             await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)
