@@ -45,9 +45,7 @@ const Bridge = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
-  // const [token, setToken] = useState<{ [chainId in ChainId]?: Token }>(MOCK)
   const [token, setToken] = useState<any>(MOCK)
-  // const [bridgeToken, setBridgeToken] = useState<BridgeToken>(MOCK_TOKEN)
   const [tokenContract, setTokenContract] = useState<any>(null)
   const [destinationChainId, setDestinationChainId] = useState(100)
   const [wrappedTokenContract, setWrappedTokenContract] = useState<any>(null)
@@ -55,12 +53,7 @@ const Bridge = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
 
   useEffect(() => {
-    console.log('token[address]:', token[chainId as ChainId].address)
-    console.log('token[ chain Id]:', token[chainId as ChainId].chainId)
-    console.log('REACT_APP_MOCK_TOKEN_ADDRESS_BSC:', process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC)
-    console.log('BRIDGE_CONTRACTS:', BRIDGE_CONTRACTS)
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-    console.log('BRIDGE_CONTRACTS[token[chainId as number]]:', BRIDGE_CONTRACTS[token[chainId as ChainId].address])
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
@@ -73,28 +66,29 @@ const Bridge = () => {
     if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
       setSecondaryBridgeContract(
         getContract(
-          BRIDGE_CONTRACTS[token[destinationChainId as ChainId].address],
+          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
           SECONDARY_BRIDGE_ABI,
           library,
           account as string
         )
       )
     }
+    setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
   }, [chainId])
 
   useEffect(() => {
-    // if (token.chainId !== destinationChainId) {
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
       setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-      console.log('token[chainId as ChainId].address:', token[chainId as ChainId].address)
+      setSecondaryBridgeContract(
+        getContract(
+          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
+          SECONDARY_BRIDGE_ABI,
+          library,
+          account as string
+        )
+      )
     }
   }, [destinationChainId])
-
-  // const tokenBalance = useMemo(async () => {
-  //   if (tokenContract && account)
-  //     return tokenContract?.balanceOf(account).then((res: ethers.BigNumber) => ethers.utils.formatEther(res.toString()))
-  //   return 0
-  // }, [tokenContract, bridgeToken])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -125,7 +119,6 @@ const Bridge = () => {
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
       try {
-        console.log('wrappedTokenContract:', wrappedTokenContract.address)
         const tx = await wrappedTokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
@@ -411,7 +404,6 @@ const Bridge = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                // currency={MOCK[ChainId.MATIC]!}
                 currency={token[chainId as ChainId]}
                 value={inputValue}
                 canSelectToken={true}
@@ -438,7 +430,7 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={{ symbol: 'ASDASD', decimals: 18 } as Currency}
+        currency={{ symbol: token[chainId as ChainId].symbol, decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
