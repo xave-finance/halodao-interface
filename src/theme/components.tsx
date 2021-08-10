@@ -306,10 +306,10 @@ export const ExtraSmallOnly = styled.span`
   `};
 `
 
-export const HideLarge = styled.span`
+export const SmallOnly = styled.span`
   display: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    display: inline;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: block;
   `};
 `
 

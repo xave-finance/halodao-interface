@@ -12,6 +12,8 @@ import Farm from './Farm'
 import HaloHalo from './HaloHalo'
 import DisclaimerAlert from 'components/Header/DisclaimerAlert'
 import Demo from './Test/Demo'
+import TailwindDemo from './Test/TailwindDemo'
+import Pool from './Tailwind/Pool'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -37,7 +39,7 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   z-index: 10;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 16px;
     padding-top: 1rem;
   `};
@@ -66,7 +68,13 @@ export default function App() {
             <Switch>
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
-              {process.env.NODE_ENV === 'development' && <Route exact strict path="/demo" component={Demo} />}
+              <Route exact strict path="/pool" component={Pool} />
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                <Route exact strict path="/demo" component={Demo} />
+              )}
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                <Route exact strict path="/tw-demo" component={TailwindDemo} />
+              )}
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>

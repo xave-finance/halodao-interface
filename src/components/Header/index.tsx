@@ -22,6 +22,7 @@ import Web3Network from 'components/Web3Network'
 import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { useURLWarningVisible } from 'state/user/hooks'
+import { isMobile } from 'react-device-detect'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -90,7 +91,6 @@ const HeaderFrame = styled.div`
   flex-direction: row;
   width: 100%;
   top: 0;
-  position: relative;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0 1rem;
   z-index: 3;
@@ -371,10 +371,10 @@ export const DrawerFrame = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     display: block;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 63px;
     width: 80%;
-    height: 100%;
+    height: calc(100% - 63px);
     max-width: 400px;
     z-index: 2;
   `};
@@ -387,8 +387,8 @@ export const DrawerContent = styled.div`
 `
 
 export const DrawerBackdrop = styled.div`
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 63px;
   left: 0;
   width: 100%;
   height: 100%;
@@ -399,7 +399,6 @@ export const DrawerBackdrop = styled.div`
 
 export const DrawerMenu = styled.div`
   padding: 1rem;
-  margin-top: 65px;
   display: flex;
   flex-direction: column;
 
@@ -447,7 +446,9 @@ export default function Header() {
   const userEthBalance = useETHBalances(account ? [account] : [])?.[account ?? '']
   const [showUniBalanceModal, setShowUniBalanceModal] = useState(false)
   const [isDrawerVisible, setIsDrawerVisible] = useState(false)
-  const isURLWarningVisible = useURLWarningVisible()
+  const urlWarningVisible = useURLWarningVisible()
+
+  const isURLWarningVisible = (isMobile || window.location.hostname === 'app.halodao.com') && urlWarningVisible
 
   const toggleDrawer = () => {
     setIsDrawerVisible(!isDrawerVisible)
@@ -455,7 +456,7 @@ export default function Header() {
 
   return (
     <Wrapper>
-      <HeaderFrame>
+      <HeaderFrame className={isDrawerVisible ? 'fixed' : 'inherit'}>
         {/* RNBW balance modal */}
         <Modal isOpen={showUniBalanceModal} onDismiss={() => setShowUniBalanceModal(false)}>
           <UniBalanceContent setShowUniBalanceModal={setShowUniBalanceModal} />
@@ -480,6 +481,9 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
+            <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
+              {t('pool')}
+            </StyledNavLink>
             <StyledNavLink
               id={`farm-nav-link`}
               to={'/farm'}
@@ -573,6 +577,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
 
   return (
     <>
+      <MenuItem>
+        <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
+          {t('pool')}
+        </NavLink>
+      </MenuItem>
       <MenuItem>
         <NavLink
           id={`farm-nav-link`}
