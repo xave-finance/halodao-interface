@@ -8,7 +8,6 @@ import PoolCardRight from './PoolCardRight'
 import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
 import { formatEther } from 'ethers/lib/utils'
 import { XSGD, USDT } from '../../../constants'
-import { useActiveWeb3React } from 'hooks'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 
@@ -47,7 +46,6 @@ interface ExpandablePoolRowProps {
 }
 
 const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
-  const { chainId } = useActiveWeb3React()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const [pool, setPool] = useState({
@@ -98,7 +96,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
       .catch(e => {
         console.error(e)
       })
-  }, [chainId])
+  }, [getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
 
   // Return an empty component if failed to fetch pool info
   if (pool.name === '') {

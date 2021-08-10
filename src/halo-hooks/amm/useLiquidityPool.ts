@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { HALO_REWARDS_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
+import Fraction from 'constants/Fraction'
 
 export const useLiquidityPool = (address: string) => {
   const { account, library, chainId } = useActiveWeb3React()
@@ -67,7 +68,7 @@ export const useLiquidityPool = (address: string) => {
     const rate1 = await Assimilator1Contract.getRate()
 
     const eurNumeraire = res.individual_[0]
-    const eurValue = eurNumeraire.mul(1e8).div(rate0)
+    const eurValue = eurNumeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
     console.log('eurNumeraire:', formatEther(eurNumeraire))
     console.log('rate0:', formatEther(rate0))
     console.log('eurValue:', formatEther(eurValue))

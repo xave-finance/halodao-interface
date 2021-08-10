@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { Token } from '@sushiswap/sdk'
@@ -7,8 +7,7 @@ import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import AddLiquityModal from './modals/AddLiquityModal'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { formatEther, parseEther } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
+import { parseEther } from 'ethers/lib/utils'
 
 interface AddLiquidityProps {
   poolAddress: string
@@ -22,106 +21,7 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
   const [input1Value, setInput1Value] = useState('')
   const [showModal, setShowModal] = useState(false)
 
-  const { viewDeposit } = useAddRemoveLiquidity(poolAddress)
-
-  const TwoSided = () => (
-    <>
-      <div className="mt-2">
-        <CurrencyInput
-          currency={token0}
-          value={input0Value}
-          canSelectToken={false}
-          didChangeValue={val => setInput0Value(val)}
-          showBalance={true}
-          showMax={true}
-        />
-      </div>
-      <div className="mt-4">
-        <CurrencyInput
-          currency={token1}
-          value={input1Value}
-          didChangeValue={val => {
-            setInput1Value(val)
-            viewDeposit(parseEther(val))
-          }}
-          showBalance={true}
-          showMax={true}
-        />
-      </div>
-      <div className="mt-4 flex space-x-4">
-        <div className="w-1/2">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.NotApproved}
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-        <div className="w-1/2">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.NotApproved}
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-      </div>
-      <div className="mt-2">
-        {/* <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Enter an amount"
-          state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
-        /> */}
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Supply"
-          state={PrimaryButtonState.Enabled}
-          onClick={() => setShowModal(true)}
-        />
-      </div>
-    </>
-  )
-
-  const SingleSided = () => (
-    <>
-      <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">Swaps will be carried out for you</div>
-      <div className="mt-4">
-        <CurrencyInput
-          currency={token0}
-          value={input0Value}
-          canSelectToken={false}
-          didChangeValue={val => setInput0Value(val)}
-          showBalance={true}
-          showMax={true}
-        />
-      </div>
-      <div className="mt-4">
-        <SlippageTolerance />
-      </div>
-      <div className="mt-4 flex flex-col md:flex-row md:space-x-4">
-        <div className="mb-2 md:w-1/2 md:mb-0">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.NotApproved}
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-        <div className="md:w-1/2">
-          {/* <PrimaryButton
-            type={PrimaryButtonType.Gradient}
-            title="Enter an amount"
-            state={PrimaryButtonState.Disabled}
-            onClick={() => console.log('clicked')}
-          /> */}
-          <PrimaryButton
-            type={PrimaryButtonType.Gradient}
-            title="Supply"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => setShowModal(true)}
-          />
-        </div>
-      </div>
-    </>
-  )
+  const { viewDeposit } = useAddRemoveLiquidity(poolAddress, token0, token1)
 
   return (
     <div>
@@ -136,7 +36,102 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
         />
       </div>
 
-      {activeSegment === 0 ? <TwoSided /> : <SingleSided />}
+      {activeSegment === 0 ? (
+        <>
+          <div className="mt-2">
+            <CurrencyInput
+              currency={token0}
+              value={input0Value}
+              didChangeValue={val => setInput0Value(val)}
+              showBalance={true}
+              showMax={true}
+            />
+          </div>
+          <div className="mt-4">
+            <CurrencyInput
+              currency={token1}
+              value={input1Value}
+              didChangeValue={val => {
+                setInput1Value(val)
+                viewDeposit(parseEther(val))
+              }}
+              showBalance={true}
+              showMax={true}
+            />
+          </div>
+          <div className="mt-4 flex space-x-4">
+            <div className="w-1/2">
+              <ApproveButton
+                title="Approve"
+                state={ApproveButtonState.NotApproved}
+                onClick={() => console.log('clicked')}
+              />
+            </div>
+            <div className="w-1/2">
+              <ApproveButton
+                title="Approve"
+                state={ApproveButtonState.NotApproved}
+                onClick={() => console.log('clicked')}
+              />
+            </div>
+          </div>
+          <div className="mt-2">
+            {/* <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Enter an amount"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        /> */}
+            <PrimaryButton
+              type={PrimaryButtonType.Gradient}
+              title="Supply"
+              state={PrimaryButtonState.Enabled}
+              onClick={() => setShowModal(true)}
+            />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">
+            Swaps will be carried out for you
+          </div>
+          <div className="mt-4">
+            <CurrencyInput
+              currency={token0}
+              value={input0Value}
+              didChangeValue={val => setInput0Value(val)}
+              showBalance={true}
+              showMax={true}
+            />
+          </div>
+          <div className="mt-4">
+            <SlippageTolerance />
+          </div>
+          <div className="mt-4 flex flex-col md:flex-row md:space-x-4">
+            <div className="mb-2 md:w-1/2 md:mb-0">
+              <ApproveButton
+                title="Approve"
+                state={ApproveButtonState.NotApproved}
+                onClick={() => console.log('clicked')}
+              />
+            </div>
+            <div className="md:w-1/2">
+              {/* <PrimaryButton
+            type={PrimaryButtonType.Gradient}
+            title="Enter an amount"
+            state={PrimaryButtonState.Disabled}
+            onClick={() => console.log('clicked')}
+          /> */}
+              <PrimaryButton
+                type={PrimaryButtonType.Gradient}
+                title="Supply"
+                state={PrimaryButtonState.Enabled}
+                onClick={() => setShowModal(true)}
+              />
+            </div>
+          </div>
+        </>
+      )}
 
       <AddLiquityModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
     </div>

@@ -48,25 +48,26 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
   }
 
   return (
-    <>
-      <div className="flex flex-col md:flex-row">
-        {showSelectedCurrency()}
-        <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
-          <div className="flex-auto">
-            {showBalance && (
-              <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
-                Balance: {balance ? balance.toSignificant(6) : '-'}
-              </div>
-            )}
-            <NumericalInput
-              className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
-              value={value}
-              onUserInput={val => {
-                console.log('did change value!')
-                didChangeValue(val)
-              }}
-            />
-          </div>
+    <div className="flex flex-col md:flex-row">
+      {showSelectedCurrency()}
+      <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
+        <CurrencyLogo currency={currency} />
+        <div className="ml-2 font-semibold">{currency.symbol}</div>
+      </div>
+      <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
+        <div className="flex-auto">
+          {showBalance && (
+            <div className="text-xs uppercase font-semibold tracking-widest">
+              Balance: {balance ? balance.toSignificant(6) : '-'}
+            </div>
+          )}
+          <NumericalInput
+            className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
+            value={value}
+            onUserInput={val => {
+              didChangeValue(val)
+            }}
+          />
           <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
       </div>
