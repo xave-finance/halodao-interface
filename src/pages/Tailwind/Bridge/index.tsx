@@ -25,6 +25,7 @@ export enum ButtonState {
   Next,
   Confirming,
   EnterAmount,
+  InsufficientBalance,
   Retry
 }
 
@@ -32,7 +33,7 @@ const Bridge = () => {
   const { account, error } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
-  const [buttonState, setButtonState] = useState(ButtonState.Default)
+  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
 
   const NotApproveContent = () => {
@@ -51,8 +52,6 @@ const Bridge = () => {
                 setTimeout(() => {
                   setButtonState(ButtonState.Next)
                 }, 2000)
-              } else {
-                setButtonState(ButtonState.EnterAmount)
               }
             }}
           />
@@ -156,7 +155,10 @@ const Bridge = () => {
 
   const CurrentButtonContent = () => {
     let content = <></>
-    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.Default) {
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
+      content = <EnterAmountContent />
+    }
+    if (approveState === ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) {
       content = <NotApproveContent />
     }
     if (approveState === ApproveButtonState.Approving && buttonState === ButtonState.Default) {
@@ -170,9 +172,6 @@ const Bridge = () => {
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
       content = <ConfirmingContent />
-    }
-    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
-      content = <EnterAmountContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
