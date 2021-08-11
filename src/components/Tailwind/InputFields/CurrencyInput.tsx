@@ -68,7 +68,6 @@ const TokenInput = ({
               className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
               value={value}
               onUserInput={val => {
-                console.log('did change value!')
                 didChangeValue(val)
               }}
             />

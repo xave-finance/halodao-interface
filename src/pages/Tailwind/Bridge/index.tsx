@@ -25,6 +25,7 @@ import PRIMARY_BRIDGE_ABI from 'constants/bridgeAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/bridgeAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { toNumber } from 'utils/formatNumber'
 
 export enum ButtonState {
   Default,
@@ -93,6 +94,19 @@ const Bridge = () => {
     }
   }, [destinationChainId])
 
+  useEffect(() => {
+    if (allowance >= parseFloat(inputValue)) {
+      setButtonState(ButtonState.Next)
+      setApproveState(ApproveButtonState.Approved)
+    } else if (Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
+      setButtonState(ButtonState.Default)
+      setApproveState(ApproveButtonState.NotApproved)
+    } else if (inputValue.trim() === '') {
+      setButtonState(ButtonState.EnterAmount)
+      setApproveState(ApproveButtonState.NotApproved)
+    }
+  }, [inputValue])
+
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
       try {
@@ -157,6 +171,7 @@ const Bridge = () => {
       await tx.wait()
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Next)
+      setAllowance(toNumber(amount))
     } catch (e) {
       console.error(e)
     }
@@ -165,19 +180,13 @@ const Bridge = () => {
 
   const fetchAllowance = useCallback(async () => {
     if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
-      setAllowance(
-        await tokenContract
-          ?.allowance(account, primaryBridgeContract.address)
-          .then((res: any) => parseFloat(ethers.utils.formatEther(res.toString())))
-      )
+      setAllowance(await tokenContract?.allowance(account, primaryBridgeContract.address).then((n: any) => toNumber(n)))
     } else {
       setAllowance(
-        await wrappedTokenContract
-          ?.allowance(account, secondaryBridgeContract.address)
-          .then((res: any) => parseFloat(ethers.utils.formatEther(res.toString())))
+        await wrappedTokenContract?.allowance(account, secondaryBridgeContract.address).then((n: any) => toNumber(n))
       )
     }
-  }, [chainId, tokenContract, wrappedTokenContract])
+  }, [tokenContract, wrappedTokenContract])
 
   useEffect(() => {
     fetchAllowance()
@@ -190,6 +199,7 @@ const Bridge = () => {
       await tx.wait()
       setApproveState(ApproveButtonState.NotApproved)
       setButtonState(ButtonState.Default)
+      setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
     }
@@ -204,6 +214,7 @@ const Bridge = () => {
       await tx.wait()
       setApproveState(ApproveButtonState.NotApproved)
       setButtonState(ButtonState.Default)
+      setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
     }

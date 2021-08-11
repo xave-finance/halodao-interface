@@ -31,12 +31,10 @@ const SelectedNetworkPanel = ({
       <div>
         <img src={NETWORK_ICON[chainId]} alt="Switch Network" className="logo h-7 rounded-2xl" />
       </div>
-      <div className="mt-1">{NETWORK_LABEL[ChainId.MAINNET]}</div>
-      <NetworkModal isVisible={showModal} mode={mode} onDismiss={() => setShowModal(false)} />
       <div>{NETWORK_LABEL[chainId as ChainId]}</div>
       <NetworkModal
         isVisible={showModal}
-        mode={destinationChainId ? NetworkModalMode.PrimaryBridge : NetworkModalMode.Default}
+        mode={mode}
         onDismiss={() => setShowModal(false)}
         onChangeNetwork={(chainId: number) => onChangeNetwork(chainId)}
         tokenAddress={tokenAddress}
