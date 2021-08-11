@@ -7,11 +7,7 @@ interface WarningAlertProps {
 
 const WarningAlert = ({ message }: WarningAlertProps) => {
   return (
-    <div
-      className={`
-        flex items-center justify-center
-      `}
-    >
+    <div className="flex items-center justify-center">
       <img src={WarningIcon} alt="warning" /> <span className="font-normal text-xs text-warning">{message}</span>
     </div>
   )
