@@ -64,8 +64,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      ringWidth: ['active'],
-      ringColor: ['active'],
+      ringWidth: ['active', 'focus'],
+      ringColor: ['active', 'focus'],
       borderColor: ['focus'],
       backgroundColor: ['focus']
     }

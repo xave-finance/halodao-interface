@@ -139,8 +139,10 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@craco/craco": "5.8.0",
+    "@heroicons/react": "^1.0.3",
     "@types/numeral": "^2.0.1",
     "@types/react-transition-group": "1.x",
+    "install": "^0.13.0",
     "json-to-graphql-query": "^2.0.0",
     "numeral": "^2.0.6",
     "react-google-charts": "^3.0.15",

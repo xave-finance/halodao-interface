@@ -3,6 +3,7 @@ import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
+import { SearchIcon } from '@heroicons/react/solid'
 
 interface TokenSelectModalProps {
   isVisible: boolean
@@ -15,9 +16,10 @@ const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
       <div className="bg-primary-lightest p-4 border-b">
         <div className="flex flex-col">
           <p className="font-bold text-lg">Select Asset</p>
-          <div className="pt-2">
+          <div className="flex flex-row items-center mt-4 bg-white border border-gray-300 rounded-lg">
+            <SearchIcon className="ml-2 h-5 w-5" />
             <input
-              className="rounded-md p-2 w-full bg-white border border-gray-200 focus:border-gray-800"
+              className="rounded-md p-2 w-full focus-within:border-gray-800"
               placeholder="Search name or select asset"
             />
           </div>
