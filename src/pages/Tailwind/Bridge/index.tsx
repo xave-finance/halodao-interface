@@ -16,6 +16,7 @@ import { shortenAddress } from '../../../utils'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
+import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
@@ -145,18 +146,6 @@ const Bridge = () => {
     )
   }
 
-  const InsufficientBalanceContent = () => {
-    return (
-      <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Insufficient Balance"
-          state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
-        />
-      </div>
-    )
-  }
   const RetryContent = () => {
     return (
       <div className="mt-4">
@@ -236,11 +225,11 @@ const Bridge = () => {
               </div>
             </div>
             <div className="flex space-x-4">
-              <SelectedNetworkPanel />
+              <SelectedNetworkPanel mode={NetworkModalMode.PrimaryBridge} />
               <div className="mb-2 w-1/5 flex items-center justify-center">
                 <SwitchButton onClick={() => console.log('clicked')} />
               </div>
-              <SelectedNetworkPanel />
+              <SelectedNetworkPanel mode={NetworkModalMode.SecondaryBridge} />
             </div>
             <p className="mt-2 font-semibold text-secondary">Amount</p>
             <div className="mt-2">

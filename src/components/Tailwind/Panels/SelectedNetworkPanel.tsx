@@ -3,7 +3,11 @@ import { ChainId } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from '../../../constants/networks'
 import NetworkModal, { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 
-const SelectedNetworkPanel = () => {
+interface SelectedNetworkPanelProps {
+  mode: NetworkModalMode
+}
+
+const SelectedNetworkPanel = ({ mode }: SelectedNetworkPanelProps) => {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -18,7 +22,7 @@ const SelectedNetworkPanel = () => {
         <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7 rounded-2xl" />
       </div>
       <div>{NETWORK_LABEL[ChainId.MAINNET]}</div>
-      <NetworkModal isVisible={showModal} mode={NetworkModalMode.Bridge} onDismiss={() => setShowModal(false)} />
+      <NetworkModal isVisible={showModal} mode={mode} onDismiss={() => setShowModal(false)} />
     </div>
   )
 }
