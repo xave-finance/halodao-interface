@@ -174,7 +174,7 @@ const Bridge = () => {
     if (approveState === ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) {
       content = <NotApproveContent />
     }
-    if (approveState === ApproveButtonState.Approving && buttonState === ButtonState.Default) {
+    if (approveState === ApproveButtonState.Approving) {
       content = <ApprovingContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
