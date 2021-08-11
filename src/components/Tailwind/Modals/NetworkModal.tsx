@@ -9,7 +9,8 @@ import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 
 export enum NetworkModalMode {
   Default,
-  Bridge
+  PrimaryBridge,
+  SecondaryBridge
 }
 
 interface NetworkModalProps {
@@ -20,7 +21,8 @@ interface NetworkModalProps {
 
 const showDescription = (chainId: ChainId, mode: NetworkModalMode) => {
   switch (mode) {
-    case NetworkModalMode.Bridge:
+    case NetworkModalMode.PrimaryBridge:
+    case NetworkModalMode.SecondaryBridge:
       return <p className="text-sm">Select a network to use for the bridge.</p>
     default:
       return (
@@ -44,7 +46,8 @@ const showConnected = (mode: NetworkModalMode) => {
 
 const pickClass = (mode: NetworkModalMode) => {
   switch (mode) {
-    case NetworkModalMode.Bridge:
+    case NetworkModalMode.PrimaryBridge:
+    case NetworkModalMode.SecondaryBridge:
       return 'flex flex-row items-center pt-2 pb-2 cursor-pointer hover:bg-secondary'
     default:
       return 'flex flex-row items-center mb-4 pt-4 cursor-pointer pb-4 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
@@ -104,7 +107,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                 key={i}
                 onClick={() => {
                   onDismiss()
-                  if (mode === NetworkModalMode.Default) {
+                  if (mode !== NetworkModalMode.SecondaryBridge) {
                     console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
                     library?.send('wallet_addEthereumChain', [params, account])
