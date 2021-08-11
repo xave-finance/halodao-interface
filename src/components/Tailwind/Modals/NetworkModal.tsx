@@ -62,7 +62,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
 
   if (!chainId) return null
 
-  if (mode === NetworkModalMode.Bridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]) {
+  if (mode === NetworkModalMode.PrimaryBridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]) {
     return (
       <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
         <div className="bg-primary-lightest p-4 border-b border-gray-700">
@@ -112,7 +112,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
             //ChainId.OKEX
             //ChainId.MOONBASE
           ].map((key: ChainId, i: number) => {
-            if (chainId === key && mode !== NetworkModalMode.Bridge) {
+            if (chainId === key && mode !== NetworkModalMode.PrimaryBridge) {
               return (
                 <div
                   key={i}
@@ -133,7 +133,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
                 </div>
               )
             }
-            if (mode === NetworkModalMode.Bridge && chainId === key) {
+            if (mode === NetworkModalMode.SecondaryBridge && chainId === key) {
               return (
                 <div key={i} className="mt-2" onClick={() => onDismiss()}>
                   <div className={pickClass(mode)}>
@@ -155,7 +155,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
                     console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
                     library?.send('wallet_addEthereumChain', [params, account])
-                  } else if (mode === NetworkModalMode.Bridge) {
+                  } else if (mode === NetworkModalMode.SecondaryBridge) {
                     if (onChangeNetwork) onChangeNetwork(key)
                   }
                 }}

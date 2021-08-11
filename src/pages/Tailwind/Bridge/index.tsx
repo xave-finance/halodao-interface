@@ -357,10 +357,9 @@ const Bridge = () => {
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
     }
-    console.log('bridgeAllowance >= parseFloat(inputValue):', allowance >= parseFloat(inputValue))
-    if (allowance >= parseFloat(inputValue)) {
-      content = <NextContent />
-    }
+    // if (allowance >= parseFloat(inputValue)) {
+    //   content = <NextContent />
+    // }
     return <>{content}</>
   }
 
