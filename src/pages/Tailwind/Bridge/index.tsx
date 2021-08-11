@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import ethers from 'ethers'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
@@ -49,6 +49,7 @@ const Bridge = () => {
   const [wrappedTokenContract, setWrappedTokenContract] = useState<any>(null)
   const [primaryBridgeContract, setPrimaryBridgeContract] = useState<any>(null)
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
+  const [allowance, setAllowance] = useState(0)
 
   useEffect(() => {
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
@@ -159,9 +160,28 @@ const Bridge = () => {
     } catch (e) {
       console.error(e)
     }
-
     /** @todo Add logging to google analytics */
   }
+
+  const fetchAllowance = useCallback(async () => {
+    if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
+      setAllowance(
+        await tokenContract
+          ?.allowance(account, primaryBridgeContract.address)
+          .then((res: any) => parseFloat(ethers.utils.formatEther(res.toString())))
+      )
+    } else {
+      setAllowance(
+        await wrappedTokenContract
+          ?.allowance(account, secondaryBridgeContract.address)
+          .then((res: any) => parseFloat(ethers.utils.formatEther(res.toString())))
+      )
+    }
+  }, [chainId, tokenContract, wrappedTokenContract])
+
+  useEffect(() => {
+    fetchAllowance()
+  }, [account, fetchAllowance])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number) => {
     setButtonState(ButtonState.Confirming)
@@ -336,6 +356,10 @@ const Bridge = () => {
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
+    }
+    console.log('bridgeAllowance >= parseFloat(inputValue):', allowance >= parseFloat(inputValue))
+    if (allowance >= parseFloat(inputValue)) {
+      content = <NextContent />
     }
     return <>{content}</>
   }
