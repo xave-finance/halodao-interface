@@ -479,6 +479,10 @@ const Bridge = () => {
           }
         }}
         onDismiss={() => setShowModal(false)}
+        originChainId={chainId as ChainId}
+        destinationChainId={destinationChainId}
+        tokenSymbol={token[chainId as ChainId].symbol}
+        wrappedTokenSymbol={token[destinationChainId].symbol}
       />
     </PageWrapper>
   )
