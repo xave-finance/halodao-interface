@@ -21,7 +21,7 @@ const SelectedNetworkPanel = ({ mode }: SelectedNetworkPanelProps) => {
       <div>
         <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7 rounded-2xl" />
       </div>
-      <div>{NETWORK_LABEL[ChainId.MAINNET]}</div>
+      <div className="mt-1">{NETWORK_LABEL[ChainId.MAINNET]}</div>
       <NetworkModal isVisible={showModal} mode={mode} onDismiss={() => setShowModal(false)} />
     </div>
   )
