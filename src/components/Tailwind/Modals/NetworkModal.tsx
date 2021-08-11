@@ -1,6 +1,7 @@
 import React from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
+import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { NETWORK_ICON, NETWORK_LABEL, NETWORK_PARAMS } from '../../../constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import ConnectedIndicator from 'components/Modal/ConnectedIndicator'
@@ -18,7 +19,7 @@ interface NetworkModalProps {
   mode: NetworkModalMode
   onDismiss: () => void
   onChangeNetwork?: (chainId: number) => void
-  destinationChainId?: number
+  tokenAddress?: string
 }
 
 const showDescription = (chainId: ChainId, mode: NetworkModalMode) => {
@@ -56,10 +57,38 @@ const pickClass = (mode: NetworkModalMode) => {
   }
 }
 
-const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, destinationChainId }: NetworkModalProps) => {
+const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddress }: NetworkModalProps) => {
   const { chainId, library, account } = useActiveWeb3React()
 
   if (!chainId) return null
+
+  if (mode === NetworkModalMode.Bridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]) {
+    return (
+      <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
+        <div className="bg-primary-lightest p-4 border-b border-gray-700">
+          <div className="flex flex-col">
+            <p className="font-bold text-lg mb-2">Select Network</p>
+            {showDescription(chainId, mode)}
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="flex flex-col">
+            <div className={pickClass(mode)} onClick={onDismiss}>
+              <div>
+                <img
+                  src={NETWORK_ICON[ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]]}
+                  alt="Switch Network"
+                  className="logo h-7 rounded-2xl mr-4"
+                />
+              </div>
+              <div>{NETWORK_LABEL[ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]]}</div>
+              {showConnected(mode)}
+            </div>
+          </div>
+        </div>
+      </BaseModal>
+    )
+  }
 
   return (
     <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
@@ -104,7 +133,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, destination
                 </div>
               )
             }
-            if (mode === NetworkModalMode.Bridge && (destinationChainId === key || chainId === key)) {
+            if (mode === NetworkModalMode.Bridge && chainId === key) {
               return (
                 <div key={i} className="mt-2" onClick={() => onDismiss()}>
                   <div className={pickClass(mode)}>

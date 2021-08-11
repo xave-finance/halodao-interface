@@ -70,6 +70,10 @@ const Bridge = () => {
           account as string
         )
       )
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
+    } else {
+      /** @dev Mock to BSC for now */
+      setDestinationChainId(ChainId.BSC)
     }
     setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
   }, [chainId])
@@ -395,6 +399,7 @@ const Bridge = () => {
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
                 destinationChainId={destinationChainId}
+                tokenAddress={token[chainId as ChainId].address}
               />
             </div>
 

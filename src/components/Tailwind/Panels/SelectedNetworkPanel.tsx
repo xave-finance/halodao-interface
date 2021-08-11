@@ -8,9 +8,16 @@ interface SelectedNetworkPanelProps {
   chainId: ChainId
   onChangeNetwork: (chainId: ChainId) => void
   destinationChainId?: any
+  tokenAddress?: string
 }
 
-const SelectedNetworkPanel = ({ mode, chainId, onChangeNetwork, destinationChainId }: SelectedNetworkPanelProps) => {
+const SelectedNetworkPanel = ({
+  mode,
+  chainId,
+  onChangeNetwork,
+  destinationChainId,
+  tokenAddress
+}: SelectedNetworkPanelProps) => {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -32,7 +39,7 @@ const SelectedNetworkPanel = ({ mode, chainId, onChangeNetwork, destinationChain
         mode={destinationChainId ? NetworkModalMode.PrimaryBridge : NetworkModalMode.Default}
         onDismiss={() => setShowModal(false)}
         onChangeNetwork={(chainId: number) => onChangeNetwork(chainId)}
-        destinationChainId={destinationChainId}
+        tokenAddress={tokenAddress}
       />
     </div>
   )
