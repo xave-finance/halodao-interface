@@ -63,6 +63,24 @@ const Bridge = () => {
     )
   }
 
+  const NextContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Next"
+          state={PrimaryButtonState.Enabled}
+          onClick={() => {
+            if (inputValue) {
+              setButtonState(ButtonState.Confirming)
+              setShowModal(true)
+            }
+          }}
+        />
+      </div>
+    )
+  }
+
   const ApprovingContent = () => {
     return (
       <div className="mt-4 flex space-x-4">
@@ -101,24 +119,6 @@ const Bridge = () => {
     )
   }
 
-  const NextContent = () => {
-    return (
-      <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Next"
-          state={PrimaryButtonState.Enabled}
-          onClick={() => {
-            if (inputValue) {
-              setButtonState(ButtonState.Confirming)
-              setShowModal(true)
-            }
-          }}
-        />
-      </div>
-    )
-  }
-
   const ConfirmingContent = () => {
     return (
       <div className="mt-4">
@@ -138,6 +138,19 @@ const Bridge = () => {
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title="Enter an amount"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const InsufficientBalanceContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Insufficient Balance"
           state={PrimaryButtonState.Disabled}
           onClick={() => console.log('clicked')}
         />
@@ -175,6 +188,9 @@ const Bridge = () => {
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
+      content = <InsufficientBalanceContent />
     }
     return <>{content}</>
   }
