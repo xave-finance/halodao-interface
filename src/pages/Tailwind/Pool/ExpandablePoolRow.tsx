@@ -10,6 +10,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { XSGD, USDT } from '../../../constants'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
+import { PoolData } from './models/PoolData'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -47,20 +48,7 @@ interface ExpandablePoolRowProps {
 
 const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
-
-  const [pool, setPool] = useState({
-    name: '',
-    token0: XSGD,
-    token1: USDT,
-    pooled: {
-      token0: 0,
-      token1: 0
-    },
-    held: 0,
-    staked: 0,
-    earned: 0
-  })
-
+  const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
 
   /**
@@ -75,18 +63,30 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
     Promise.all(promises)
       .then(results => {
         const tokens: Token[] = results[0]
-        const liquidity: { total: BigNumber; tokens: BigNumber[] } = results[1]
+        const liquidity: { total: BigNumber; tokens: BigNumber[]; weights: number[]; rates: number[] } = results[1]
         const balance: BigNumber = results[2]
         const staked: BigNumber = results[3]
         const rewards: BigNumber = results[4]
 
+        console.log('liquidity: ', liquidity)
+
         setPool({
+          address: poolAddress,
           name: `${tokens[0].symbol}/${tokens[1].symbol}`,
           token0: tokens[0],
           token1: tokens[1],
           pooled: {
+            total: parseFloat(formatEther(liquidity.total)),
             token0: parseFloat(formatEther(liquidity.tokens[0])),
             token1: parseFloat(formatEther(liquidity.tokens[1]))
+          },
+          weights: {
+            token0: liquidity.weights[0],
+            token1: liquidity.weights[1]
+          },
+          rates: {
+            token0: liquidity.rates[0],
+            token1: liquidity.rates[1]
           },
           held: parseFloat(formatEther(balance)),
           staked: parseFloat(formatEther(staked)),
@@ -99,7 +99,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   }, [getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
 
   // Return an empty component if failed to fetch pool info
-  if (pool.name === '') {
+  if (!pool) {
     return <></>
   }
 
@@ -178,7 +178,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
         <div className="mt-2">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="mb-4 md:w-1/2 md:mb-0">
-              <PoolCardLeft poolAddress={poolAddress} token0={pool.token0} token1={pool.token1} />
+              <PoolCardLeft pool={pool} />
             </div>
             <div className="md:w-1/2">
               <PoolCardRight pool={pool} />

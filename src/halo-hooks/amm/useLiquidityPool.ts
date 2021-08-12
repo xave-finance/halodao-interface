@@ -4,7 +4,7 @@ import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
-import { formatEther } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
@@ -67,21 +67,39 @@ export const useLiquidityPool = (address: string) => {
     const rate0 = await Assimilator0Contract.getRate()
     const rate1 = await Assimilator1Contract.getRate()
 
-    const eurNumeraire = res.individual_[0]
-    const eurValue = eurNumeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
-    console.log('eurNumeraire:', formatEther(eurNumeraire))
+    const token0Numeraire = res.individual_[0]
+    const token0Value = token0Numeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
+    console.log('token0Numeraire:', formatEther(token0Numeraire))
     console.log('rate0:', formatEther(rate0))
-    console.log('eurValue:', formatEther(eurValue))
+    console.log('token0Value:', formatEther(token0Value))
 
-    const usdcNumeraire = res.individual_[1]
-    const usdcValue = usdcNumeraire.mul(1e8).div(rate1)
-    console.log('usdcNumeraire:', formatEther(usdcNumeraire))
+    const token1Numeraire = res.individual_[1]
+    const token1Value = token1Numeraire.mul(1e8).div(rate1)
+    console.log('token1Numeraire:', formatEther(token1Numeraire))
     console.log('rate1:', formatEther(rate1))
-    console.log('usdcValue:', formatEther(usdcValue))
+    console.log('token1Value:', formatEther(token1Value))
+
+    const token0Weight = Fraction.from(token0Numeraire, res.total_).toString()
+    const token1Weight = Fraction.from(token1Numeraire, res.total_).toString()
+    // console.log('token0Weight: ', token0Weight)
+    // console.log('token1Weight: ', token1Weight)
+
+    // console.log('rate0.mul(1e8): ', formatEther(rate0.mul(1e8)))
+    // console.log('rate1.mul(1e8): ', formatEther(rate1.mul(1e8)))
+
+    // const token0Price = Number(token0Weight) * (1 / (Number(formatEther(rate0.mul(1e8))) * 100))
+    // const token1Price = Number(token1Weight) * (1 / (Number(formatEther(rate1.mul(1e8))) * 100))
+    // console.log('token0Price: ', token0Price)
+    // console.log('token1Price: ', token1Price)
+
+    const token0Rate = Number(formatEther(rate0.mul(1e8)))
+    const token1Rate = Number(formatEther(rate1.mul(1e8)))
 
     return {
       total: res.total_,
-      tokens: [eurValue, usdcValue]
+      tokens: [token0Value, token1Value],
+      weights: [Number(token0Weight), Number(token1Weight)],
+      rates: [token0Rate, token1Rate]
     }
   }, [CurveContract, library])
 

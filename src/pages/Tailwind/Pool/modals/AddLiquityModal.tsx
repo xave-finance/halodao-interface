@@ -41,7 +41,7 @@ const AddLiquityModal = ({ isVisible, onDismiss }: AddLiquityModalProps) => {
               <div>500 USDT</div>
             </div>
             <div className="flex justify-between mb-2">
-              <div className="font-bold">XSGD Deposited</div>
+              <div className="font-bold">Rates</div>
               <div>
                 <div>1 XSGD = 1 USDT</div>
                 <div>1 USDT = 1 XSGD</div>
