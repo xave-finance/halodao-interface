@@ -7,17 +7,10 @@ interface SelectedNetworkPanelProps {
   mode: NetworkModalMode
   chainId: ChainId
   onChangeNetwork: (chainId: ChainId) => void
-  destinationChainId?: any
   tokenAddress?: string
 }
 
-const SelectedNetworkPanel = ({
-  mode,
-  chainId,
-  onChangeNetwork,
-  destinationChainId,
-  tokenAddress
-}: SelectedNetworkPanelProps) => {
+const SelectedNetworkPanel = ({ mode, chainId, onChangeNetwork, tokenAddress }: SelectedNetworkPanelProps) => {
   const [showModal, setShowModal] = useState(false)
 
   return (

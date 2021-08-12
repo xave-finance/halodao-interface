@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO, MOCK } from '../../../constants'
+import { HALO, MOCK, RIO } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { SearchIcon } from '@heroicons/react/solid'
@@ -18,7 +18,7 @@ interface TokenListProps {
 }
 
 const TokenList = ({ chainId, onSelect }: TokenListProps) => {
-  const tokens = [HALO, MOCK]
+  const tokens = [HALO, MOCK, RIO]
   return (
     <div className="p-4">
       {tokens.map(token => (
@@ -26,6 +26,7 @@ const TokenList = ({ chainId, onSelect }: TokenListProps) => {
           key={token[chainId as ChainId]?.name}
           className="flex flex-row items-center"
           onClick={() => {
+            console.log('on select token')
             if (onSelect) onSelect(token)
           }}
         >

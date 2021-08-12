@@ -66,7 +66,46 @@ export const MOCK: ChainTokenMap = {
 export const MOCK_TOKEN_ADDRESS: ChainAddressMap = {
   [ChainId.MATIC]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
   [ChainId.XDAI]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
-  [ChainId.BSC]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS
+  [ChainId.BSC]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MAINNET]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS
+}
+
+export const RIO: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'RIO',
+    'Rio Token'
+  ),
+  [ChainId.XDAI]: new Token(
+    ChainId.XDAI,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  ),
+  [ChainId.BSC]: new Token(
+    ChainId.BSC,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  )
+}
+
+export const RIO_TOKEN_ADDRESS: ChainAddressMap = {
+  [ChainId.MATIC]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+  [ChainId.XDAI]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MAINNET]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS
 }
 
 // HALO Token Instance

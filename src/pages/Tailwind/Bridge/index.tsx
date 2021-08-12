@@ -51,14 +51,22 @@ const Bridge = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
   const [allowance, setAllowance] = useState(0)
   const [balance, setBalance] = useState(0)
-  // const balance = useCurrencyBalance(account ?? undefined, token[chainId as ChainId])
-  // console.log('useCurrencyBalance #balance:', balance)
 
   useEffect(() => {
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
+    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+      setSecondaryBridgeContract(
+        getContract(
+          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
+          SECONDARY_BRIDGE_ABI,
+          library,
+          account as string
+        )
+      )
+    }
   }, [token])
 
   useEffect(() => {
@@ -454,7 +462,6 @@ const Bridge = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                destinationChainId={destinationChainId}
                 tokenAddress={token[chainId as ChainId].address}
               />
             </div>

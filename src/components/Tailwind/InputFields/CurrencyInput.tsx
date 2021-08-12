@@ -75,7 +75,14 @@ const TokenInput = ({
           <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
       </div>
-      <TokenSelectModal isVisible={showModal} onDismiss={() => setShowModal(false)} onSelect={onSelectToken} />
+      <TokenSelectModal
+        isVisible={showModal}
+        onDismiss={() => setShowModal(false)}
+        onSelect={(token: any) => {
+          if (onSelectToken) onSelectToken(token)
+          setShowModal(false)
+        }}
+      />
     </>
   )
 }
