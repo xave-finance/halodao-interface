@@ -47,10 +47,12 @@ const Bridge = () => {
   const [token, setToken] = useState<any>(MOCK)
   const [tokenContract, setTokenContract] = useState<any>(null)
   const [destinationChainId, setDestinationChainId] = useState(100)
-  const [wrappedTokenContract, setWrappedTokenContract] = useState<any>(null)
   const [primaryBridgeContract, setPrimaryBridgeContract] = useState<any>(null)
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
   const [allowance, setAllowance] = useState(0)
+  const [balance, setBalance] = useState(0)
+  // const balance = useCurrencyBalance(account ?? undefined, token[chainId as ChainId])
+  // console.log('useCurrencyBalance #balance:', balance)
 
   useEffect(() => {
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
@@ -77,12 +79,12 @@ const Bridge = () => {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.BSC)
     }
-    setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
   }, [chainId])
 
   useEffect(() => {
     if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
-      setWrappedTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+      // setTokenContract(getContract(token[chainId as ChainId], TOKEN_ABI, library, account as string))
       setSecondaryBridgeContract(
         getContract(
           BRIDGE_CONTRACTS[token[chainId as ChainId].address],
@@ -94,17 +96,23 @@ const Bridge = () => {
     }
   }, [destinationChainId])
 
-  useEffect(() => {
+  const setButtonStates = () => {
     if (allowance >= parseFloat(inputValue)) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
-    } else if (Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
+    } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
       setApproveState(ApproveButtonState.NotApproved)
+    } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
+      setButtonState(ButtonState.InsufficientBalance)
     } else if (inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
     }
+  }
+
+  useEffect(() => {
+    setButtonStates()
   }, [inputValue])
 
   const giveBridgeAllowance = useCallback(
@@ -114,7 +122,9 @@ const Bridge = () => {
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
       } catch (e) {
-        throw new Error(e)
+        console.error(e)
+        setApproveState(ApproveButtonState.NotApproved)
+        setButtonState(ButtonState.Default)
       }
     },
     [addTransaction, tokenContract, primaryBridgeContract]
@@ -127,7 +137,9 @@ const Bridge = () => {
         addTransaction(tx, { summary: 'Deposit on bridge' })
         return tx
       } catch (e) {
-        throw new Error(e)
+        console.error(e)
+        setApproveState(ApproveButtonState.Approved)
+        setButtonState(ButtonState.Retry)
       }
     },
     [addTransaction, primaryBridgeContract]
@@ -136,14 +148,16 @@ const Bridge = () => {
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
       try {
-        const tx = await wrappedTokenContract?.approve(secondaryBridgeContract?.address, amount)
+        const tx = await tokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
       } catch (e) {
-        throw new Error(e)
+        console.error(e)
+        setApproveState(ApproveButtonState.NotApproved)
+        setButtonState(ButtonState.Default)
       }
     },
-    [addTransaction, wrappedTokenContract, secondaryBridgeContract]
+    [addTransaction, tokenContract, secondaryBridgeContract]
   )
 
   const burnWrappedTokens = useCallback(
@@ -153,7 +167,9 @@ const Bridge = () => {
         addTransaction(tx, { summary: 'Burn wrapped tokens' })
         return tx
       } catch (e) {
-        throw new Error(e)
+        console.error(e)
+        setApproveState(ApproveButtonState.Approved)
+        setButtonState(ButtonState.Retry)
       }
     },
     [addTransaction, secondaryBridgeContract]
@@ -183,13 +199,18 @@ const Bridge = () => {
       setAllowance(await tokenContract?.allowance(account, primaryBridgeContract.address).then((n: any) => toNumber(n)))
     } else {
       setAllowance(
-        await wrappedTokenContract?.allowance(account, secondaryBridgeContract.address).then((n: any) => toNumber(n))
+        await tokenContract?.allowance(account, secondaryBridgeContract.address).then((n: any) => toNumber(n))
       )
     }
-  }, [tokenContract, wrappedTokenContract])
+  }, [tokenContract])
+
+  const fetchBalance = useCallback(async () => {
+    setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
+  }, [tokenContract])
 
   useEffect(() => {
     fetchAllowance()
+    fetchBalance()
   }, [account, fetchAllowance])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number) => {
@@ -337,7 +358,13 @@ const Bridge = () => {
   const RetryContent = () => {
     return (
       <div className="mt-4">
-        <RetryButton title="Retry" isEnabled={true} onClick={() => console.log('clicked')} />
+        <RetryButton
+          title="Retry"
+          isEnabled={true}
+          onClick={() => {
+            setButtonStates()
+          }}
+        />
       </div>
     )
   }
@@ -365,19 +392,14 @@ const Bridge = () => {
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
     }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
+    if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
     }
-    // if (allowance >= parseFloat(inputValue)) {
-    //   content = <NextContent />
-    // }
     return <>{content}</>
   }
 
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
-    const balance = useCurrencyBalance(account ?? undefined, MOCK[chainId as ChainId])
-    // console.log('useCurrencyBalance #balance:', balance)
 
     if (!account && !error) {
       return (

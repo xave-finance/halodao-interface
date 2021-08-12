@@ -144,7 +144,7 @@ export const NETWORK_PARAMS: {
       decimals: 18
     },
     rpcUrls: ['https://rpc.xdaichain.com'],
-    blockExplorerUrls: ['https://blockscout.com/poa/xdai']
+    blockExplorerUrls: ['https://blockscout.com/xdai/mainnet']
   },
   [ChainId.MOONBASE]: {
     chainId: '0x507',
