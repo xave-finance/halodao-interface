@@ -6,7 +6,7 @@ import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
-import { shortenAddress } from '../../../../utils'
+import { shortenAddress, getExplorerLink } from '../../../../utils'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -163,7 +163,12 @@ const ConfirmTransactionModal = ({
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
         <div className="text-center">
-          <a className="font-semibold text-link" href="https://etherscan.io/" target="_blank" rel="noopener noreferrer">
+          <a
+            className="font-semibold text-link"
+            href={getExplorerLink(ChainId.MAINNET, '', 'transaction')}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             View on Etherscan
           </a>
         </div>

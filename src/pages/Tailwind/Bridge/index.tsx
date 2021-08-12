@@ -15,6 +15,7 @@ import { useWalletModalToggle } from 'state/application/hooks'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { getContract, shortenAddress } from 'utils'
 
+import { Contract } from '@ethersproject/contracts'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
@@ -29,9 +30,11 @@ import { toNumber } from 'utils/formatNumber'
 
 export enum ButtonState {
   Default,
+  EnterAmount,
+  Approving,
+  Approved,
   Next,
   Confirming,
-  EnterAmount,
   InsufficientBalance,
   Retry
 }
@@ -41,14 +44,14 @@ const Bridge = () => {
   const { account, error, chainId, library } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
-  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
+  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
 
   const [token, setToken] = useState<any>(MOCK)
-  const [tokenContract, setTokenContract] = useState<any>(null)
+  const [tokenContract, setTokenContract] = useState<Contract | null>(null)
   const [destinationChainId, setDestinationChainId] = useState(100)
-  const [primaryBridgeContract, setPrimaryBridgeContract] = useState<any>(null)
-  const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<any>(null)
+  const [primaryBridgeContract, setPrimaryBridgeContract] = useState<Contract | null>(null)
+  const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
   const [allowance, setAllowance] = useState(0)
   const [balance, setBalance] = useState(0)
 
@@ -204,10 +207,12 @@ const Bridge = () => {
 
   const fetchAllowance = useCallback(async () => {
     if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
-      setAllowance(await tokenContract?.allowance(account, primaryBridgeContract.address).then((n: any) => toNumber(n)))
+      setAllowance(
+        await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
+      )
     } else {
       setAllowance(
-        await tokenContract?.allowance(account, secondaryBridgeContract.address).then((n: any) => toNumber(n))
+        await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
       )
     }
   }, [tokenContract])
@@ -403,7 +408,7 @@ const Bridge = () => {
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
     }
-    return <>{content}</>
+    return content
   }
 
   const MainContent = () => {

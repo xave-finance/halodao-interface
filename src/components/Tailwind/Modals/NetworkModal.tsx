@@ -1,6 +1,5 @@
 import React from 'react'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
 import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { NETWORK_ICON, NETWORK_LABEL, NETWORK_PARAMS } from '../../../constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
