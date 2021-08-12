@@ -1,6 +1,5 @@
 import React from 'react'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
 import { NETWORK_ICON, NETWORK_LABEL, NETWORK_PARAMS } from '../../../constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import ConnectedIndicator from 'components/Modal/ConnectedIndicator'

@@ -22,9 +22,11 @@ import BridgeTransactionModal from './modals/BridgeTransactionModal'
 
 export enum ButtonState {
   Default,
+  EnterAmount,
+  Approving,
+  Approved,
   Next,
   Confirming,
-  EnterAmount,
   InsufficientBalance,
   Retry
 }
@@ -33,8 +35,8 @@ const Bridge = () => {
   const { account, error } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
-  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [showModal, setShowModal] = useState(false)
+  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
 
   const NotApproveContent = () => {
     return (
@@ -46,8 +48,10 @@ const Bridge = () => {
             onClick={() => {
               if (inputValue) {
                 setApproveState(ApproveButtonState.Approving)
+                setButtonState(ButtonState.Approving)
                 setTimeout(() => {
                   setApproveState(ApproveButtonState.Approved)
+                  setButtonState(ButtonState.Approved)
                 }, 2000)
                 setTimeout(() => {
                   setButtonState(ButtonState.Next)
@@ -167,37 +171,31 @@ const Bridge = () => {
   }
 
   const CurrentButtonContent = () => {
-    let content = <></>
-    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
-      content = <EnterAmountContent />
+    const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
+    console.log(approveState)
+    switch (buttonState) {
+      case ButtonState.EnterAmount:
+        if (balance && ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) return <NotApproveContent />
+        else if (!balance || balance?.equalTo('0')) return <InsufficientBalanceContent />
+        else if (!balance || balance.lessThan(inputValue)) return <InsufficientBalanceContent />
+        else return <EnterAmountContent />
+      case ButtonState.Approving:
+        return <ApprovingContent />
+      case ButtonState.Approved:
+        return <ApprovedContent />
+      case ButtonState.Next:
+        return <NextContent />
+      case ButtonState.Confirming:
+        return <ConfirmingContent />
+      case ButtonState.Retry:
+        return <RetryContent />
+      default:
+        return <></>
     }
-    if (approveState === ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) {
-      content = <NotApproveContent />
-    }
-    if (approveState === ApproveButtonState.Approving) {
-      content = <ApprovingContent />
-    }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
-      content = <ApprovedContent />
-    }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
-      content = <NextContent />
-    }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
-      content = <ConfirmingContent />
-    }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
-      content = <RetryContent />
-    }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
-      content = <InsufficientBalanceContent />
-    }
-    return <>{content}</>
   }
 
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
-    const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
 
     if (!account && !error) {
       return (

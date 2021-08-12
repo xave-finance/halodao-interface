@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
-import { useNetworkModalToggle } from '../../state/application/hooks'
 import { NETWORK_LABEL } from '../../constants/networks'
 import NetworkModal, { NetworkModalMode } from '../Tailwind/Modals/NetworkModal'
 import { SUPPORTED_WALLETS } from '../../constants'
@@ -46,7 +45,6 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
 
 function Web3Network(): JSX.Element | null {
   const { chainId, connector } = useActiveWeb3React()
-  const toggleNetworkModal = useNetworkModalToggle()
   const [showModal, setShowModal] = useState(false)
 
   // Hide if wallet is not connected
