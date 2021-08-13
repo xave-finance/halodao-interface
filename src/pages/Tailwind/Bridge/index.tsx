@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId, ETHER } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
@@ -257,7 +257,7 @@ const Bridge = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={HALO[chainId ? chainId : ChainId.MAINNET]!}
+                currency={ETHER}
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -281,7 +281,7 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={HALO[chainId ? chainId : ChainId.MAINNET]!}
+        currency={ETHER}
         amount={inputValue}
         account={account}
         onDismiss={() => setShowModal(false)}
