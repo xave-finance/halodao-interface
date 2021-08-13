@@ -139,7 +139,6 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@craco/craco": "5.8.0",
-    "@heroicons/react": "^1.0.3",
     "@types/numeral": "^2.0.1",
     "@types/react-transition-group": "1.x",
     "install": "^0.13.0",

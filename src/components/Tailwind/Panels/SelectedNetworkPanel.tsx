@@ -16,7 +16,7 @@ const SelectedNetworkPanel = ({ mode }: SelectedNetworkPanelProps) => {
       onClick={() => setShowModal(true)}
     >
       <div className="flex justify-end">
-        <span className="text-link-primary text-sm">Change</span>
+        <span className="text-link-alternate text-sm">Change</span>
       </div>
       <div>
         <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7 rounded-2xl" />

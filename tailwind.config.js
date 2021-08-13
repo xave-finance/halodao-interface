@@ -44,7 +44,7 @@ module.exports = {
         },
         link: {
           DEFAULT: '#518cff',
-          primary: '#471bb2'
+          alternate: '#471bb2'
         },
         success: {
           DEFAULT: '#1BB233'

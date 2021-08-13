@@ -2056,11 +2056,6 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@heroicons/react@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@heroicons/react/-/react-1.0.3.tgz#4dae106c6019e3250e36401b55b599ad41a68273"
-  integrity sha512-wdzWbDiFKzeL6xFJsgY2PqvDkx4hFmQDpEFRVj872EA71XOjr8g0DQj5rHWm0y7LwfGOFL0eQmEiMbTyGNOnTQ==
-
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
