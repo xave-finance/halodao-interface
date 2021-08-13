@@ -51,10 +51,10 @@ const ConfirmTransactionModal = ({
     return (
       <>
         <div className="bg-primary-lightest p-4">
-          <div className="font-semibold text-lg text-primary-dark">Confirm Bridge Transaction</div>
+          <div className="font-semibold text-lg text-primary-hover">Confirm Bridge Transaction</div>
           <div className="flex flex-row items-center justify-center space-x-4 mt-4">
             <div className="flex flex-col">
-              <span className="text-sm text-secondary">From</span>
+              <span className="text-sm text-secondary-alternate">From</span>
               <div className="mt-2">
                 <img src={NETWORK_ICON[originChainId]} alt="Switch Network" className="logo h-7 rounded-2xl" />
               </div>
@@ -64,7 +64,7 @@ const ConfirmTransactionModal = ({
               <img src={SwitchIcon} alt="Switch" />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-secondary">To</span>
+              <span className="text-sm text-secondary-alternate">To</span>
               <div className="mt-2">
                 <img src={NETWORK_ICON[destinationChainId]} alt="Switch Network" className="logo h-7 rounded-2xl" />
               </div>
@@ -72,21 +72,21 @@ const ConfirmTransactionModal = ({
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-sm text-secondary">Asset</span>
+            <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
               <span>{amount} </span>
               <span>{currency.symbol}</span>
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-sm text-secondary">Amount</span>
+            <span className="text-sm text-secondary-alternate">Amount</span>
             <div className="mt-1">
               <span>{amount} </span>
               <span>{currency.symbol}</span>
             </div>
           </div>
           <div className="mt-4">
-            <span className="text-sm text-secondary">Destination Address</span>
+            <span className="text-sm text-secondary-alternate">Destination Address</span>
             <div className="mt-1">
               <span>{account && shortenAddress(account)} </span>
             </div>
@@ -95,22 +95,22 @@ const ConfirmTransactionModal = ({
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary">Tax</div>
+              <div className="text-secondary-alternate">Tax</div>
               <div>0 {currency.symbol}</div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary">Gas fee (estimated)</div>
+              <div className="text-secondary-alternate">Gas fee (estimated)</div>
               <div>1 {currency.symbol}</div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary">Shuttle fee (estimated)</div>
+              <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
                 <div>1 {currency.symbol}</div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary">Amount after transaction</div>
+              <div className="text-secondary-alternate">Amount after transaction</div>
               <div>
                 <div>299 {currency.symbol}</div>
               </div>

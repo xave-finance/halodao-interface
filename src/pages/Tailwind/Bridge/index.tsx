@@ -423,6 +423,7 @@ const Bridge = () => {
     } else {
       return (
         <>
+          <p className="mt-2 font-semibold text-secondary-alternate">Destination Address</p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
           </div>
@@ -443,15 +444,15 @@ const Bridge = () => {
         />
       </div>
       <div className="md:float-right md:w-1/2">
-        <div className="flex items-start bg-white py-6 px-8 border border-primary-dark shadow-md rounded-card">
+        <div className="flex items-start bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
           <div className="w-full">
             <div className="flex md:space-x-4 mt-2">
               <div className="mb-2 w-2/5">
-                <p className="text-secondary font-semibold">From</p>
+                <p className="text-secondary-alternate font-semibold">From</p>
               </div>
               <div className="mb-2 w-1/5"></div>
               <div className="mb-2 w-2/5">
-                <p className="text-secondary font-semibold">To</p>
+                <p className="text-secondary-alternate font-semibold">To</p>
               </div>
             </div>
             <div className="flex space-x-4">
@@ -471,7 +472,7 @@ const Bridge = () => {
               />
             </div>
 
-            <p className="mt-2 font-semibold text-secondary">Amount</p>
+            <p className="mt-2 font-semibold text-secondary-alternate">Amount</p>
 
             <div className="mt-2">
               <CurrencyInput
@@ -484,8 +485,6 @@ const Bridge = () => {
                 onSelectToken={setToken}
               />
             </div>
-
-            <p className="mt-2 font-semibold text-secondary">Destination Address</p>
             <MainContent />
 
             <div className="flex justify-center mt-2">

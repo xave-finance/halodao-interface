@@ -50,9 +50,9 @@ const pickClass = (mode: NetworkModalMode) => {
   switch (mode) {
     case NetworkModalMode.PrimaryBridge:
     case NetworkModalMode.SecondaryBridge:
-      return 'flex flex-row items-center pt-2 pb-2 cursor-pointer hover:bg-secondary'
+      return 'flex flex-row items-center pt-2 pl-4 pb-2 cursor-pointer hover:bg-secondary'
     default:
-      return 'flex flex-row items-center mb-4 pt-4 cursor-pointer pb-4 border border-gray-300 p-4 rounded-lg hover:border-primary-dark'
+      return 'flex flex-row items-center mt-2 ml-4 mr-4 p-4 cursor-pointer border border-gray-300 rounded-lg hover:border-primary-hover'
   }
 }
 
@@ -97,8 +97,8 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
           {showDescription(chainId, mode)}
         </div>
       </div>
-      <div className="p-4">
-        <div className="flex flex-col">
+      <div>
+        <div className="flex flex-col mb-4">
           {[
             ChainId.MAINNET,
             //ChainId.FANTOM,
@@ -148,6 +148,7 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
             return (
               <div
                 key={i}
+                className="mt-2"
                 onClick={() => {
                   onDismiss()
                   if (mode !== NetworkModalMode.SecondaryBridge) {
