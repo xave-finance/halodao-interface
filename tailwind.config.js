@@ -8,26 +8,9 @@ module.exports = {
       fontFamily: {
         fredoka: ['Fredoka One', 'ui-serif']
       },
-      textColor: {
-        primary: {
-          DEFAULT: '#471BB2',
-          dark: '#15006d',
-          gradientVia: '#5521B6',
-          gradientTo: '#2DB7C4'
-        },
-        secondary: '#5E5E5E',
-        warning: '#FA6F44'
-      },
-      borderColor: {
-        primary: {
-          DEFAULT: '#471bb2',
-          dark: '#15006d'
-        }
-      },
       colors: {
         primary: {
           DEFAULT: '#471bb2',
-          dark: '#15006d',
           light: '#e8e4f5',
           lighter: '#D7CDF0',
           lightest: '#F3F2F8',
@@ -37,7 +20,8 @@ module.exports = {
           gradientTo: '#2DB7C4'
         },
         secondary: {
-          DEFAULT: '#A38DD8'
+          DEFAULT: '#A38DD8',
+          alternate: '#5E5E5E'
         },
         warning: {
           DEFAULT: '#FA6F44'

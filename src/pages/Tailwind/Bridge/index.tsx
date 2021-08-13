@@ -11,7 +11,6 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { useCurrencyBalance } from 'state/wallet/hooks'
 import { shortenAddress } from '../../../utils'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
@@ -171,27 +170,32 @@ const Bridge = () => {
   }
 
   const CurrentButtonContent = () => {
-    const balance = useCurrencyBalance(account ?? undefined, HALO[ChainId.MAINNET])
-    console.log(approveState)
-    switch (buttonState) {
-      case ButtonState.EnterAmount:
-        if (balance && ApproveButtonState.NotApproved && parseFloat(inputValue) > 0) return <NotApproveContent />
-        else if (!balance || balance?.equalTo('0')) return <InsufficientBalanceContent />
-        else if (!balance || balance.lessThan(inputValue)) return <InsufficientBalanceContent />
-        else return <EnterAmountContent />
-      case ButtonState.Approving:
-        return <ApprovingContent />
-      case ButtonState.Approved:
-        return <ApprovedContent />
-      case ButtonState.Next:
-        return <NextContent />
-      case ButtonState.Confirming:
-        return <ConfirmingContent />
-      case ButtonState.Retry:
-        return <RetryContent />
-      default:
-        return <></>
+    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
+      if (!inputValue || parseFloat(inputValue) === 0) {
+        return <EnterAmountContent />
+      } else if (inputValue && parseFloat(inputValue) > 0) {
+        return <NotApproveContent />
+      }
     }
+    if (approveState === ApproveButtonState.Approving) {
+      return <ApprovingContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
+      return <ApprovedContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
+      return <NextContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
+      return <ConfirmingContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
+      return <RetryContent />
+    }
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
+      return <InsufficientBalanceContent />
+    }
+    return <></>
   }
 
   const MainContent = () => {
@@ -206,7 +210,7 @@ const Bridge = () => {
     } else {
       return (
         <>
-          <p className="mt-2 font-semibold text-secondary">Destination Address</p>
+          <p className="mt-2 font-semibold text-secondary-alternate">Destination Address</p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
           </div>
@@ -227,15 +231,15 @@ const Bridge = () => {
         />
       </div>
       <div className="md:float-right md:w-1/2">
-        <div className="flex items-start bg-white py-6 px-8 border border-primary-dark shadow-md rounded-card">
+        <div className="flex items-start bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
           <div className="w-full">
             <div className="flex md:space-x-4 mt-2">
               <div className="mb-2 w-2/5">
-                <p className="text-secondary font-semibold">From</p>
+                <p className="text-secondary-alternate font-semibold">From</p>
               </div>
               <div className="mb-2 w-1/5"></div>
               <div className="mb-2 w-2/5">
-                <p className="text-secondary font-semibold">To</p>
+                <p className="text-secondary-alternate font-semibold">To</p>
               </div>
             </div>
 
@@ -247,7 +251,7 @@ const Bridge = () => {
               <SelectedNetworkPanel mode={NetworkModalMode.SecondaryBridge} />
             </div>
 
-            <p className="mt-2 font-semibold text-secondary">Amount</p>
+            <p className="mt-2 font-semibold text-secondary-alternate">Amount</p>
 
             <div className="mt-2">
               <CurrencyInput

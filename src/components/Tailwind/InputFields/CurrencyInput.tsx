@@ -54,7 +54,7 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
         <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
           <div className="flex-auto">
             {showBalance && (
-              <div className="text-xs text-secondary uppercase font-semibold tracking-widest">
+              <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
                 Balance: {balance ? balance.toSignificant(6) : '-'}
               </div>
             )}
