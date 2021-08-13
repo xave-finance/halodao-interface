@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChainId, ETHER } from '@sushiswap/sdk'
+import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
@@ -11,7 +11,6 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { useActiveWeb3React } from '../../../hooks'
 import { shortenAddress } from '../../../utils'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
@@ -33,7 +32,6 @@ export enum ButtonState {
 
 const Bridge = () => {
   const { account, error } = useWeb3React()
-  const { chainId } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
@@ -257,7 +255,7 @@ const Bridge = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={ETHER}
+                currency={HALO[ChainId.MAINNET]!}
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -281,7 +279,7 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={ETHER}
+        currency={HALO[ChainId.MAINNET]!}
         amount={inputValue}
         account={account}
         onDismiss={() => setShowModal(false)}
