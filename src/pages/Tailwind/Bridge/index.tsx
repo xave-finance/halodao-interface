@@ -206,6 +206,7 @@ const Bridge = () => {
     } else {
       return (
         <>
+          <p className="mt-2 font-semibold text-secondary">Destination Address</p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
           </div>
@@ -258,8 +259,6 @@ const Bridge = () => {
                 showMax={true}
               />
             </div>
-
-            <p className="mt-2 font-semibold text-secondary">Destination Address</p>
             <MainContent />
 
             <div className="flex justify-center mt-2">

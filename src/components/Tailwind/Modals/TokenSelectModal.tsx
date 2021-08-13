@@ -25,9 +25,16 @@ const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
           </div>
         </div>
       </div>
-      <div className="p-4">
-        <div className="flex flex-row items-center">
-          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} />
+      <div>
+        <div className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary">
+          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} size={'30px'} />
+          <div className="flex flex-col pl-2 focus:bg-primary">
+            <div className="ml-2 font-semibold">{HALO[ChainId.MAINNET]!.symbol}</div>
+            <div className="ml-2 text-xs text-gray-500">{HALO[ChainId.MAINNET]!.name}</div>
+          </div>
+        </div>
+        <div className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary">
+          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} size={'30px'} />
           <div className="flex flex-col pl-2 focus:bg-primary">
             <div className="ml-2 font-semibold">{HALO[ChainId.MAINNET]!.symbol}</div>
             <div className="ml-2 text-xs text-gray-500">{HALO[ChainId.MAINNET]!.name}</div>

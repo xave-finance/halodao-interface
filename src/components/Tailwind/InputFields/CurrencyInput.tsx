@@ -28,25 +28,29 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
     }
   }
 
-  const showSelectButton = () => {
+  const showSelectedCurrency = () => {
     if (canSelectToken) {
       return (
-        <div className="pl-2 flex items-center justify-center">
+        <div className="mb-2 md:mb-0 md:w-1/4 flex items-center cursor-pointer" onClick={() => setShowModal(true)}>
+          <CurrencyLogo currency={currency} />
+          <div className="ml-2 font-semibold pr-2">{currency.symbol}</div>
           <SelectButton onClick={() => setShowModal(true)} />
         </div>
       )
+    } else {
+      return (
+        <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
+          <CurrencyLogo currency={currency} />
+          <div className="ml-2 font-semibold">{currency.symbol}</div>
+        </div>
+      )
     }
-    return null
   }
 
   return (
     <>
       <div className="flex flex-col md:flex-row">
-        <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
-          <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold">{currency.symbol}</div>
-          {showSelectButton()}
-        </div>
+        {showSelectedCurrency()}
         <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
           <div className="flex-auto">
             {showBalance && (
