@@ -37,5 +37,31 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract]
   )
 
-  return { viewDeposit, deposit }
+  const viewWithdraw = useCallback(
+    async (amount: BigNumber) => {
+      if (!library) return ['0', '0']
+
+      const res = await CurveContract?.viewWithdraw(amount)
+      console.log(`CurveContract.viewWithdraw(${formatEther(amount)}): `, res)
+
+      const [baseView, quoteView] = res
+      console.log(`Token[0]: `, formatUnits(baseView, token0.decimals))
+      console.log(`Token[1]: `, formatUnits(quoteView, token1.decimals))
+
+      return [formatUnits(baseView, token0.decimals), formatUnits(quoteView, token1.decimals)]
+    },
+    [CurveContract, library]
+  )
+
+  const withdraw = useCallback(
+    async (amount: BigNumber, deadline: BigNumber) => {
+      console.log(`CurveContract.withdraw params: `, formatEther(amount), formatEther(deadline))
+      const res = await CurveContract?.withdraw(amount, deadline)
+      console.log(`CurveContract.withdraw(${amount.toString()}, ${deadline.toString()}): `, res)
+      return res
+    },
+    [CurveContract]
+  )
+
+  return { viewDeposit, deposit, viewWithdraw, withdraw }
 }
