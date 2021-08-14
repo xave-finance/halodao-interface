@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
 import { formatNumber } from 'utils/formatNumber'
-import { Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
+import { PoolData } from './models/PoolData'
 
 interface RemoveLiquidityProps {
-  token0: Token
-  token1: Token
+  pool: PoolData
 }
 
-const RemoveLiquidity = ({ token0, token1 }: RemoveLiquidityProps) => {
+const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const [amount, setAmount] = useState(0)
 
   return (
@@ -25,15 +24,15 @@ const RemoveLiquidity = ({ token0, token1 }: RemoveLiquidityProps) => {
         <div className="flex justify-between">
           <div>{formatNumber(12345)}</div>
           <div className="flex space-x-2">
-            <CurrencyLogo currency={token0} />
-            <span>{token0.symbol}</span>
+            <CurrencyLogo currency={pool.token0} />
+            <span>{pool.token0.symbol}</span>
           </div>
         </div>
         <div className="flex justify-between mt-2">
           <div>{formatNumber(56789)}</div>
           <div className="flex space-x-2">
-            <CurrencyLogo currency={token1} />
-            <span>{token1.symbol}</span>
+            <CurrencyLogo currency={pool.token1} />
+            <span>{pool.token1.symbol}</span>
           </div>
         </div>
       </div>

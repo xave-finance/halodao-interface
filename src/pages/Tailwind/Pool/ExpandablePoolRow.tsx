@@ -7,7 +7,6 @@ import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
 import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
 import { formatEther } from 'ethers/lib/utils'
-import { XSGD, USDT } from '../../../constants'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 import { PoolData } from './models/PoolData'
@@ -96,7 +95,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
       .catch(e => {
         console.error(e)
       })
-  }, [getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
+  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
 
   // Return an empty component if failed to fetch pool info
   if (!pool) {

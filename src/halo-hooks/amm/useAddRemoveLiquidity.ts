@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
-import { ERC20_ABI } from 'constants/abis/erc20'
 import { BigNumber } from 'ethers'
-import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
-import { OracleCurrency, useOracle } from './useOracle'
-import { getContract } from 'utils'
+import { formatEther, formatUnits } from 'ethers/lib/utils'
 import { useActiveWeb3React } from 'hooks'
 import { Token } from '@sushiswap/sdk'
 
@@ -32,9 +29,10 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: BigNumber) => {
+      console.log(`CurveContract.deposit params: `, formatEther(amount), formatEther(deadline))
       const res = await CurveContract?.deposit(amount, deadline)
       console.log(`CurveContract.deposit(${amount.toString()}, ${deadline.toString()}): `, res)
-      return res.amount
+      return res
     },
     [CurveContract]
   )

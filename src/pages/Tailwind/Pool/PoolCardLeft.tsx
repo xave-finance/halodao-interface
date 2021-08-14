@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Token } from '@sushiswap/sdk'
 import TabsControl from '../../../components/Tailwind/SegmentControl/TabsControl'
 import AddLiquidity from './AddLiquidity'
 import RemoveLiquidity from './RemoveLiquidity'
@@ -31,8 +30,8 @@ const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
       />
 
       <div className="mt-2">
-        {activeTab === 0 && <AddLiquidity poolAddress={pool.address} token0={pool.token0} token1={pool.token1} />}
-        {activeTab === 1 && <RemoveLiquidity token0={pool.token0} token1={pool.token1} />}
+        {activeTab === 0 && <AddLiquidity pool={pool} />}
+        {activeTab === 1 && <RemoveLiquidity pool={pool} />}
       </div>
     </div>
   )

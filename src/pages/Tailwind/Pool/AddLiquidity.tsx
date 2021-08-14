@@ -1,48 +1,44 @@
 import React, { useEffect, useState } from 'react'
 import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
-import { JSBI, Token, TokenAmount } from '@sushiswap/sdk'
+import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import AddLiquityModal from './modals/AddLiquityModal'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
-import { useTokenAllowance } from 'data/Allowances'
-import { useActiveWeb3React } from 'hooks'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
-import { BigNumber } from 'ethers'
+import { PoolData } from './models/PoolData'
 
 interface AddLiquidityProps {
-  poolAddress: string
-  token0: Token
-  token1: Token
+  pool: PoolData
 }
 
 enum AddLiquidityState {
   NoAmount,
   NotApproved,
   NotConfigured,
-  Ready
+  Ready,
+  Depositing
 }
 
-const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
+const AddLiquidity = ({ pool }: AddLiquidityProps) => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [input0Value, setInput0Value] = useState('')
   const [input1Value, setInput1Value] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [slippage, setSlippage] = useState('0.1')
+  const [lpAmount, setLpAmount] = useState('')
 
-  const { viewDeposit } = useAddRemoveLiquidity(poolAddress, token0, token1)
+  const { viewDeposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
-  const token0Amount = new TokenAmount(token0, JSBI.BigInt(parseEther(input0Value !== '' ? input0Value : '0')))
-  const [token0ApproveState, token0ApproveCallback] = useApproveCallback(token0Amount, poolAddress)
-  const token1Amount = new TokenAmount(token1, JSBI.BigInt(parseEther(input1Value !== '' ? input1Value : '0')))
-  const [token1ApproveState, token1ApproveCallback] = useApproveCallback(token1Amount, poolAddress)
+  const token0Amount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(input0Value !== '' ? input0Value : '0')))
+  const [token0ApproveState, token0ApproveCallback] = useApproveCallback(token0Amount, pool.address)
+  const token1Amount = new TokenAmount(pool.token1, JSBI.BigInt(parseEther(input1Value !== '' ? input1Value : '0')))
+  const [token1ApproveState, token1ApproveCallback] = useApproveCallback(token1Amount, pool.address)
 
-  console.log('token0ApproveState: ', token0ApproveState)
-  console.log('token1ApproveState: ', token1ApproveState)
   const showApproveToken0 = input0Value !== '' && token0ApproveState !== ApprovalState.APPROVED
   const showApproveToken1 = input1Value !== '' && token1ApproveState !== ApprovalState.APPROVED
 
@@ -68,18 +64,49 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
   /**
    * Updating token1 amount, upon entering token0 amount
    **/
-  useEffect(() => {
+  const updateInput0 = (val: string) => {
+    setInput0Value(val)
+
     if (activeSegment === 0) {
-      setInput1Value(input0Value)
+      if (val === '') {
+        setInput1Value('')
+        return
+      }
+
+      const input0 = Number(val)
+      const input1 = (input0 / pool.rates.token1) * pool.rates.token0 * (pool.weights.token1 / pool.weights.token0)
+      setInput1Value(`${input1}`)
+      //previewDeposit(input0, input1)
     }
-  }, [input0Value])
+  }
 
   /**
    * Updating token0 amount, upon entering token1 amount
    **/
-  useEffect(() => {
-    setInput0Value(input1Value)
-  }, [input1Value])
+  const updateInput1 = (val: string) => {
+    setInput1Value(val)
+    if (val === '') {
+      setInput0Value('')
+      return
+    }
+
+    const input1 = Number(val)
+    const input0 = (input1 / pool.rates.token0) * pool.rates.token1 * (pool.weights.token0 / pool.weights.token1)
+    console.log('updateInput1 inputs[]: ', input1, input0)
+    setInput0Value(`${input0}`)
+    //previewDeposit(input0, input1)
+  }
+
+  const previewDeposit = async (input0: number, input1: number) => {
+    console.log('poolData: ', pool)
+    const totalNumeraire =
+      input0 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1) +
+      input1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)
+    console.log('totalNumeraire:', totalNumeraire)
+
+    const amount = await viewDeposit(parseEther(`${totalNumeraire}`))
+    setLpAmount(amount.toString())
+  }
 
   return (
     <div>
@@ -98,20 +125,19 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
         <>
           <div className="mt-2">
             <CurrencyInput
-              currency={token0}
+              currency={pool.token0}
               value={input0Value}
-              didChangeValue={val => setInput0Value(val)}
+              didChangeValue={val => updateInput0(val)}
               showBalance={true}
               showMax={true}
             />
           </div>
           <div className="mt-4">
             <CurrencyInput
-              currency={token1}
+              currency={pool.token1}
               value={input1Value}
               didChangeValue={val => {
-                setInput1Value(val)
-                // viewDeposit(parseEther(val))
+                updateInput1(val)
               }}
               showBalance={true}
               showMax={true}
@@ -125,8 +151,8 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
                   <ApproveButton
                     title={
                       token0ApproveState === ApprovalState.PENDING
-                        ? `Approving ${token0.symbol}`
-                        : `Approve ${token0.symbol}`
+                        ? `Approving ${pool.token0.symbol}`
+                        : `Approve ${pool.token0.symbol}`
                     }
                     state={
                       token0ApproveState === ApprovalState.PENDING
@@ -142,8 +168,8 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
                   <ApproveButton
                     title={
                       token1ApproveState === ApprovalState.PENDING
-                        ? `Approving ${token1.symbol}`
-                        : `Approve ${token1.symbol}`
+                        ? `Approving ${pool.token1.symbol}`
+                        : `Approve ${pool.token1.symbol}`
                     }
                     state={
                       token1ApproveState === ApprovalState.PENDING
@@ -161,7 +187,13 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
             <PrimaryButton
               type={PrimaryButtonType.Gradient}
               title={mainState === AddLiquidityState.NoAmount ? 'Enter an amount' : 'Supply'}
-              state={mainState === AddLiquidityState.Ready ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
+              state={
+                mainState === AddLiquidityState.Ready
+                  ? PrimaryButtonState.Enabled
+                  : mainState === AddLiquidityState.Depositing
+                  ? PrimaryButtonState.InProgress
+                  : PrimaryButtonState.Disabled
+              }
               onClick={() => setShowModal(true)}
             />
           </div>
@@ -173,9 +205,9 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
           </div>
           <div className="mt-4">
             <CurrencyInput
-              currency={token0}
+              currency={pool.token0}
               value={input0Value}
-              didChangeValue={val => setInput0Value(val)}
+              didChangeValue={val => updateInput0(val)}
               showBalance={true}
               showMax={true}
             />
@@ -194,8 +226,8 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
                 <ApproveButton
                   title={
                     token0ApproveState === ApprovalState.PENDING
-                      ? `Approving ${token0.symbol}`
-                      : `Approve ${token0.symbol}`
+                      ? `Approving ${pool.token0.symbol}`
+                      : `Approve ${pool.token0.symbol}`
                   }
                   state={
                     token0ApproveState === ApprovalState.PENDING
@@ -216,7 +248,13 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
                     ? 'Configure slippage'
                     : 'Supply'
                 }
-                state={mainState === AddLiquidityState.Ready ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
+                state={
+                  mainState === AddLiquidityState.Ready
+                    ? PrimaryButtonState.Enabled
+                    : mainState === AddLiquidityState.Depositing
+                    ? PrimaryButtonState.InProgress
+                    : PrimaryButtonState.Disabled
+                }
                 onClick={() => setShowModal(true)}
               />
             </div>
@@ -224,7 +262,14 @@ const AddLiquidity = ({ poolAddress, token0, token1 }: AddLiquidityProps) => {
         </>
       )}
 
-      <AddLiquityModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
+      <AddLiquityModal
+        isVisible={showModal}
+        onDismiss={() => setShowModal(false)}
+        pool={pool}
+        token0Amount={input0Value}
+        token1Amount={input1Value}
+        slippage={slippage}
+      />
     </div>
   )
 }
