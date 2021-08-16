@@ -15,10 +15,13 @@ interface ConfirmTransactionModalProps {
   account: string | null | undefined
   confirmLogic: () => void
   onDismiss: () => void
+  onSuccessConfirm: () => void
   originChainId: ChainId
   destinationChainId: ChainId
   tokenSymbol: string
   wrappedTokenSymbol: string
+  state: ConfirmTransactionModalState
+  setState: (state: ConfirmTransactionModalState) => void
 }
 
 enum ConfirmTransactionModalState {
@@ -40,13 +43,14 @@ const ConfirmTransactionModal = ({
   account,
   confirmLogic,
   onDismiss,
+  onSuccessConfirm,
   originChainId,
   destinationChainId,
   tokenSymbol,
-  wrappedTokenSymbol
+  wrappedTokenSymbol,
+  state,
+  setState
 }: ConfirmTransactionModalProps) => {
-  const [state, setState] = useState(ConfirmTransactionModalState.NotConfirmed)
-
   const ConfirmContent = () => {
     return (
       <>
@@ -100,19 +104,21 @@ const ConfirmTransactionModal = ({
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Gas fee (estimated)</div>
-              <div>1 {currency.symbol}</div>
+              <div>0 {currency.symbol}</div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
-                <div>1 {currency.symbol}</div>
+                <div>0 {currency.symbol}</div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Amount after transaction</div>
               <div>
-                <div>299 {currency.symbol}</div>
+                <div>
+                  {amount} {currency.symbol}
+                </div>
               </div>
             </div>
           </div>
@@ -120,10 +126,13 @@ const ConfirmTransactionModal = ({
             title="Confirm"
             state={PrimaryButtonState.Enabled}
             onClick={async () => {
-              console.log('PrimaryButton #Confirm')
               setState(ConfirmTransactionModalState.InProgress)
-              await confirmLogic()
-              setState(ConfirmTransactionModalState.Successful)
+              try {
+                await confirmLogic()
+                // setState(ConfirmTransactionModalState.Successful)
+              } catch (e) {
+                setState(ConfirmTransactionModalState.NotConfirmed)
+              }
             }}
           />
         </div>
@@ -177,7 +186,7 @@ const ConfirmTransactionModal = ({
             title="Close"
             state={PrimaryButtonState.Enabled}
             onClick={() => {
-              onDismiss()
+              onSuccessConfirm()
               setState(ConfirmTransactionModalState.NotConfirmed)
             }}
           />
@@ -187,7 +196,13 @@ const ConfirmTransactionModal = ({
   }
 
   return (
-    <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
+    <BaseModal
+      isVisible={isVisible}
+      onDismiss={() => {
+        setState(ConfirmTransactionModalState.NotConfirmed)
+        onDismiss()
+      }}
+    >
       {state === ConfirmTransactionModalState.NotConfirmed && <ConfirmContent />}
       {state === ConfirmTransactionModalState.InProgress && (
         <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />

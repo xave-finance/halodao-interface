@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
+import { Contract } from '@ethersproject/contracts'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
@@ -14,7 +15,6 @@ import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { getContract, shortenAddress } from 'utils'
 
-import { Contract } from '@ethersproject/contracts'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
@@ -38,6 +38,12 @@ export enum ButtonState {
   Retry
 }
 
+enum ConfirmTransactionModalState {
+  NotConfirmed,
+  InProgress,
+  Successful
+}
+
 const Bridge = () => {
   const addTransaction = useTransactionAdder()
   const { account, error, chainId, library } = useWeb3React()
@@ -45,6 +51,7 @@ const Bridge = () => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
+  const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
   const [token, setToken] = useState<any>(MOCK)
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -234,7 +241,7 @@ const Bridge = () => {
     fetchBalance()
   }, [account, fetchAllowance, fetchBalance])
 
-  const deposit = async (amount: ethers.BigNumber, chainId: number) => {
+  const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await depositToPrimaryBridge(amount, chainId)
@@ -244,12 +251,13 @@ const Bridge = () => {
       setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
+      return false
     }
-
+    return true
     /** @todo Add logging to google analytics */
   }
 
-  const burn = async (amount: ethers.BigNumber) => {
+  const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await burnWrappedTokens(amount)
@@ -259,7 +267,9 @@ const Bridge = () => {
       setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
+      return false
     }
+    return true
 
     /** @todo Add logging to google analytics */
   }
@@ -514,16 +524,36 @@ const Bridge = () => {
         account={account}
         confirmLogic={async () => {
           if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-            await burn(ethers.utils.parseEther(`${inputValue}`))
+            if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
+              setModalState(ConfirmTransactionModalState.Successful)
+              setButtonStates()
+            } else {
+              setShowModal(false)
+              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setButtonState(ButtonState.Retry)
+            }
           } else {
-            await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)
+            if (await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)) {
+              setModalState(ConfirmTransactionModalState.Successful)
+              setButtonStates()
+            } else {
+              setShowModal(false)
+              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setButtonState(ButtonState.Retry)
+            }
           }
         }}
-        onDismiss={() => setShowModal(false)}
+        onDismiss={() => {
+          setShowModal(false)
+          setButtonState(ButtonState.Retry)
+        }}
+        onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId as ChainId}
         destinationChainId={destinationChainId}
         tokenSymbol={chainId ? token[chainId as ChainId].symbol : ''}
         wrappedTokenSymbol={token[destinationChainId].symbol}
+        state={modalState}
+        setState={setModalState}
       />
     </PageWrapper>
   )
