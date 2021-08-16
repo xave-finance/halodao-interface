@@ -5,10 +5,12 @@ import { BigNumber } from 'ethers'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
 import { useActiveWeb3React } from 'hooks'
 import { Token } from '@sushiswap/sdk'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const { library } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
+  const addTransaction = useTransactionAdder()
 
   const viewDeposit = useCallback(
     async (amount: BigNumber) => {
@@ -30,9 +32,12 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const deposit = useCallback(
     async (amount: BigNumber, deadline: BigNumber) => {
       console.log(`CurveContract.deposit params: `, formatEther(amount), formatEther(deadline))
-      const res = await CurveContract?.deposit(amount, deadline)
-      console.log(`CurveContract.deposit(${amount.toString()}, ${deadline.toString()}): `, res)
-      return res
+      const tx = await CurveContract?.deposit(amount, deadline)
+      console.log(`CurveContract.deposit(${amount.toString()}, ${deadline.toString()}): `, tx)
+      addTransaction(tx, {
+        summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
+      })
+      return tx
     },
     [CurveContract]
   )
@@ -56,9 +61,12 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const withdraw = useCallback(
     async (amount: BigNumber, deadline: BigNumber) => {
       console.log(`CurveContract.withdraw params: `, formatEther(amount), formatEther(deadline))
-      const res = await CurveContract?.withdraw(amount, deadline)
-      console.log(`CurveContract.withdraw(${amount.toString()}, ${deadline.toString()}): `, res)
-      return res
+      const tx = await CurveContract?.withdraw(amount, deadline)
+      console.log(`CurveContract.withdraw(${amount.toString()}, ${deadline.toString()}): `, tx)
+      addTransaction(tx, {
+        summary: `Remove Liquidity from ${token0.symbol}/${token1.symbol}`
+      })
+      return tx
     },
     [CurveContract]
   )

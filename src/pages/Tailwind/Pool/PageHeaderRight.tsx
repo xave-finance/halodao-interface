@@ -18,15 +18,14 @@ const PageHeaderRight = () => {
 
     // @TODO: get RNBW:xRNBW price
     const rewardTokenPrice = 1
+    const lpTokenPrice = 1
 
     for (const pool of cachedPools) {
-      if (pool.lpTokenPrice) {
-        if (pool.lpTokenBalance) {
-          totalStakeable += Number(formatEther(pool.lpTokenBalance)) * pool.lpTokenPrice
-        }
-        if (pool.lpTokenStaked) {
-          totalStaked += Number(formatEther(pool.lpTokenStaked)) * pool.lpTokenPrice
-        }
+      if (pool.lpTokenBalance) {
+        totalStakeable += Number(formatEther(pool.lpTokenBalance)) * lpTokenPrice
+      }
+      if (pool.lpTokenStaked) {
+        totalStaked += Number(formatEther(pool.lpTokenStaked)) * lpTokenPrice
       }
       if (pool.pendingRewards) {
         totalHaloEarned += Number(formatEther(pool.pendingRewards)) * rewardTokenPrice

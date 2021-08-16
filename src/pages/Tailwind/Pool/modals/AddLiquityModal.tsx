@@ -12,13 +12,9 @@ import { getExplorerLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 
-interface AddLiquityModalProps {
-  pool: PoolData
-  token0Amount: string
-  token1Amount: string
-  slippage: string
-  isVisible: boolean
-  onDismiss: () => void
+export enum AddLiquidityMode {
+  MultiSided,
+  SingleSided
 }
 
 enum AddLiquityModalState {
@@ -27,7 +23,18 @@ enum AddLiquityModalState {
   Successful
 }
 
+interface AddLiquityModalProps {
+  mode: AddLiquidityMode
+  pool: PoolData
+  token0Amount: string
+  token1Amount: string
+  slippage: string
+  isVisible: boolean
+  onDismiss: () => void
+}
+
 const AddLiquityModal = ({
+  mode,
   pool,
   token0Amount,
   token1Amount,
@@ -98,10 +105,12 @@ const AddLiquityModal = ({
           <div className="mt-1 text-xl">
             {pool.token0.symbol}/{pool.token1.symbol} Pool Tokens
           </div>
-          <div className="mt-4 text-sm italic">
-            Output is estimated. You will receive at least{' '}
-            <span className="font-bold">{formatNumber(minLpAmout)} amount of LP</span> or the transaction will revert.
-          </div>
+          {mode === AddLiquidityMode.SingleSided && (
+            <div className="mt-4 text-sm italic">
+              Output is estimated. You will receive at least{' '}
+              <span className="font-bold">{formatNumber(minLpAmout)} amount of LP</span> or the transaction will revert.
+            </div>
+          )}
         </div>
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">

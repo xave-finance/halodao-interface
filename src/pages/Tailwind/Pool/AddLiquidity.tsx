@@ -5,11 +5,14 @@ import { JSBI, TokenAmount } from '@sushiswap/sdk'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
-import AddLiquityModal from './modals/AddLiquityModal'
+import AddLiquityModal, { AddLiquidityMode } from './modals/AddLiquityModal'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { PoolData } from './models/PoolData'
+import { useTokenBalance, useTokenBalances } from 'state/wallet/hooks'
+import { useActiveWeb3React } from 'hooks'
+import { BigNumber } from 'ethers'
 
 interface AddLiquidityProps {
   pool: PoolData
@@ -17,6 +20,7 @@ interface AddLiquidityProps {
 
 enum AddLiquidityState {
   NoAmount,
+  InsufficientBalance,
   NotApproved,
   NotConfigured,
   Ready,
@@ -42,12 +46,20 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
   const showApproveToken0 = input0Value !== '' && token0ApproveState !== ApprovalState.APPROVED
   const showApproveToken1 = input1Value !== '' && token1ApproveState !== ApprovalState.APPROVED
 
+  const { account } = useActiveWeb3React()
+  const balances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
+
   /**
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
     if (input0Value !== '') {
-      if (token0ApproveState !== ApprovalState.APPROVED) {
+      const bal0 = Number(balances[pool.token0.address]?.toExact())
+      const bal1 = Number(balances[pool.token1.address]?.toExact())
+
+      if (bal0 < Number(input0Value) || (activeSegment === 0 && bal1 < Number(input1Value))) {
+        setMainState(AddLiquidityState.InsufficientBalance)
+      } else if (token0ApproveState !== ApprovalState.APPROVED) {
         setMainState(AddLiquidityState.NotApproved)
       } else {
         if (activeSegment === 1 && slippage === '') {
@@ -186,7 +198,13 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           <div className="mt-2">
             <PrimaryButton
               type={PrimaryButtonType.Gradient}
-              title={mainState === AddLiquidityState.NoAmount ? 'Enter an amount' : 'Supply'}
+              title={
+                mainState === AddLiquidityState.NoAmount
+                  ? 'Enter an amount'
+                  : mainState === AddLiquidityState.InsufficientBalance
+                  ? 'Insufficient Balance'
+                  : 'Supply'
+              }
               state={
                 mainState === AddLiquidityState.Ready
                   ? PrimaryButtonState.Enabled
@@ -246,6 +264,8 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
                     ? 'Enter an amount'
                     : mainState === AddLiquidityState.NotConfigured
                     ? 'Configure slippage'
+                    : mainState === AddLiquidityState.InsufficientBalance
+                    ? 'Insufficient Balance'
                     : 'Supply'
                 }
                 state={
@@ -263,6 +283,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
       )}
 
       <AddLiquityModal
+        mode={activeSegment === 0 ? AddLiquidityMode.MultiSided : AddLiquidityMode.SingleSided}
         isVisible={showModal}
         onDismiss={() => setShowModal(false)}
         pool={pool}

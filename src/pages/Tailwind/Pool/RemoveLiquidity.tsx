@@ -43,9 +43,10 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     setRemoveButtonState(PrimaryButtonState.InProgress)
 
     try {
+      const lpAmount = pool.held * (Number(amount) * 0.01)
       const deadline = currentBlockTime ? currentBlockTime.add(60) : BigNumber.from(60)
-      const tx = await withdraw(parseEther(`${amount}`), deadline)
-      tx.wait()
+      const tx = await withdraw(parseEther(`${lpAmount}`), deadline)
+      await tx.wait()
 
       setAmount(0)
       setToken0Amount(0)

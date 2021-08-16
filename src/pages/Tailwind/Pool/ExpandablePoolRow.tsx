@@ -10,6 +10,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 import { PoolData } from './models/PoolData'
+import { useAllTransactions } from 'state/transactions/hooks'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -49,6 +50,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
+  const allTransactions = useAllTransactions()
 
   /**
    * Main logic: fetching pool info
@@ -95,7 +97,9 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
+  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, allTransactions])
+
+  useEffect(() => {}, [pool])
 
   // Return an empty component if failed to fetch pool info
   if (!pool) {

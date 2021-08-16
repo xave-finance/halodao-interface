@@ -13,10 +13,16 @@ const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
   const [disabledTabs, setDisabledTabs] = useState<number[]>([])
 
   useEffect(() => {
-    if (pool.held > 0) {
+    if (pool.held > 0.00001) {
       setDisabledTabs([])
     } else {
+      // Disable Remove Liquidity tab if user has no LPT
       setDisabledTabs([1])
+
+      // Switch back to Add Liquidity tab if user has no more LPT
+      if (activeTab === 1) {
+        setActiveTab(0)
+      }
     }
   }, [pool])
 
