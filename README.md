@@ -7,7 +7,7 @@ An open source interface for HaloDAO -- a protocol for decentralized exchange of
 - Website: [halodao.com](https://halodao.com/)
 - Interface: [dev.app.halodao.com](https://dev.app.halodao.com)
 - Twitter: [@HaloDAOOfficial](https://twitter.com/HaloDAOFinance)
-- Discord: [HaloDAO](https://discord.gg/uAgZvXg7)
+- Discord: [HaloDAO](https://discord.com/invite/halodao)
 
 ## Accessing the HaloDAO Interface
 
