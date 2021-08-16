@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
@@ -12,7 +12,6 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import WarningAlert from 'components/Tailwind/Alerts/WarningAlert'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { useCurrencyBalance } from 'state/wallet/hooks'
 import { getContract, shortenAddress } from 'utils'
 
 import { Contract } from '@ethersproject/contracts'
@@ -56,6 +55,7 @@ const Bridge = () => {
   const [balance, setBalance] = useState(0)
 
   useEffect(() => {
+    if (!chainId) return
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
@@ -70,9 +70,10 @@ const Bridge = () => {
         )
       )
     }
-  }, [token])
+  }, [account, chainId, library, token])
 
   useEffect(() => {
+    if (!chainId) return
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
@@ -91,11 +92,11 @@ const Bridge = () => {
       setDestinationChainId(ChainId.BSC)
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-  }, [chainId])
+  }, [account, chainId, library, token])
 
   useEffect(() => {
+    if (!chainId) return
     if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
-      // setTokenContract(getContract(token[chainId as ChainId], TOKEN_ABI, library, account as string))
       setSecondaryBridgeContract(
         getContract(
           BRIDGE_CONTRACTS[token[chainId as ChainId].address],
@@ -105,7 +106,7 @@ const Bridge = () => {
         )
       )
     }
-  }, [destinationChainId])
+  }, [account, chainId, destinationChainId, library, token])
 
   const setButtonStates = () => {
     if (allowance >= parseFloat(inputValue)) {
@@ -124,6 +125,7 @@ const Bridge = () => {
 
   useEffect(() => {
     setButtonStates()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue])
 
   const giveBridgeAllowance = useCallback(
@@ -206,6 +208,7 @@ const Bridge = () => {
   }
 
   const fetchAllowance = useCallback(async () => {
+    if (!chainId) return
     if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
       setAllowance(
         await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
@@ -215,16 +218,16 @@ const Bridge = () => {
         await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
       )
     }
-  }, [tokenContract])
+  }, [account, chainId, primaryBridgeContract?.address, secondaryBridgeContract?.address, token, tokenContract])
 
   const fetchBalance = useCallback(async () => {
     setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
-  }, [tokenContract])
+  }, [account, tokenContract])
 
   useEffect(() => {
     fetchAllowance()
     fetchBalance()
-  }, [account, fetchAllowance])
+  }, [account, fetchAllowance, fetchBalance])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number) => {
     setButtonState(ButtonState.Confirming)
@@ -468,7 +471,7 @@ const Bridge = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={token[chainId as ChainId].address}
+                tokenAddress={chainId ? token[chainId as ChainId].address : MOCK[137]}
               />
             </div>
 
@@ -501,7 +504,7 @@ const Bridge = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={{ symbol: token[chainId as ChainId].symbol, decimals: 18 } as Currency}
+        currency={{ symbol: chainId ? token[chainId as ChainId].symbol : '', decimals: 18 } as Currency}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
@@ -514,7 +517,7 @@ const Bridge = () => {
         onDismiss={() => setShowModal(false)}
         originChainId={chainId as ChainId}
         destinationChainId={destinationChainId}
-        tokenSymbol={token[chainId as ChainId].symbol}
+        tokenSymbol={chainId ? token[chainId as ChainId].symbol : ''}
         wrappedTokenSymbol={token[destinationChainId].symbol}
       />
     </PageWrapper>

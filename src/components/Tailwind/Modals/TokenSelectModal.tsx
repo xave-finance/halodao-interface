@@ -30,7 +30,7 @@ const TokenList = ({ chainId, onSelect }: TokenListProps) => {
             if (onSelect) onSelect(token)
           }}
         >
-          <CurrencyLogo currency={token[chainId as ChainId]!} size={'30px'} />
+          <CurrencyLogo currency={token[chainId as ChainId]} size={'30px'} />
           <div className="flex flex-col pl-2 focus:bg-primary">
             <div className="ml-2 font-semibold">{token[chainId as ChainId]?.symbol}</div>
             <div className="ml-2 text-xs text-gray-500">{token[chainId as ChainId]?.name}</div>

@@ -43,7 +43,7 @@ const TokenInput = ({
       return (
         <div className="mb-2 md:mb-0 md:w-1/4 flex items-center cursor-pointer" onClick={() => setShowModal(true)}>
           <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold pr-2">{currency.symbol}</div>
+          <div className="ml-2 font-semibold pr-2">{currency ? currency.symbol : ''}</div>
           <SelectButton onClick={() => setShowModal(true)} />
         </div>
       )
