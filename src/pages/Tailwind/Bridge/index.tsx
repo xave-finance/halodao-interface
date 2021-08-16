@@ -70,7 +70,8 @@ const Bridge = () => {
         )
       )
     }
-  }, [account, chainId, library, token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
 
   useEffect(() => {
     if (!chainId) return
@@ -92,7 +93,8 @@ const Bridge = () => {
       setDestinationChainId(ChainId.BSC)
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-  }, [account, chainId, library, token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId])
 
   useEffect(() => {
     if (!chainId) return
@@ -106,7 +108,8 @@ const Bridge = () => {
         )
       )
     }
-  }, [account, chainId, destinationChainId, library, token])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [destinationChainId])
 
   const setButtonStates = () => {
     if (allowance >= parseFloat(inputValue)) {
@@ -218,11 +221,13 @@ const Bridge = () => {
         await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
       )
     }
-  }, [account, chainId, primaryBridgeContract?.address, secondaryBridgeContract?.address, token, tokenContract])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenContract])
 
   const fetchBalance = useCallback(async () => {
     setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
-  }, [account, tokenContract])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenContract])
 
   useEffect(() => {
     fetchAllowance()
