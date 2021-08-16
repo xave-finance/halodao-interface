@@ -1,3 +1,5 @@
+const { borderColor } = require('polished')
+
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
@@ -10,14 +12,23 @@ module.exports = {
         primary: {
           DEFAULT: '#471bb2',
           light: '#e8e4f5',
+          lighter: '#D7CDF0',
           lightest: '#F3F2F8',
           hover: '#15006d',
           disabled: '#9182c6',
           gradientVia: '#5521B6',
           gradientTo: '#2DB7C4'
         },
+        secondary: {
+          DEFAULT: '#A38DD8',
+          alternate: '#5E5E5E'
+        },
+        warning: {
+          DEFAULT: '#FA6F44'
+        },
         link: {
-          DEFAULT: '#518cff'
+          DEFAULT: '#518cff',
+          alternate: '#471bb2'
         },
         success: {
           DEFAULT: '#1BB233'
@@ -37,8 +48,10 @@ module.exports = {
   },
   variants: {
     extend: {
-      ringWidth: ['active'],
-      ringColor: ['active']
+      ringWidth: ['active', 'focus'],
+      ringColor: ['active', 'focus'],
+      borderColor: ['focus'],
+      backgroundColor: ['focus']
     }
   },
   plugins: []

@@ -292,6 +292,7 @@ const TailwindDemo = () => {
             <CurrencyInput
               currency={HALO[ChainId.MAINNET]!}
               value={inputValue}
+              canSelectToken={false}
               didChangeValue={val => setInputValue(val)}
               showBalance={true}
               showMax={true}
@@ -302,6 +303,7 @@ const TailwindDemo = () => {
             <CurrencyInput
               currency={HALO[ChainId.MAINNET]!}
               value={inputValue}
+              canSelectToken={false}
               didChangeValue={val => setInputValue(val)}
               showBalance={false}
               showMax={false}
