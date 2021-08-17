@@ -31,7 +31,6 @@ interface SlippageToleranceProps {
 }
 
 const SlippageTolerance = ({ value, didChangeValue }: SlippageToleranceProps) => {
-  console.log('slippage value: ', value)
   const [customSlippage, setCustomSlippage] = useState('')
 
   return (

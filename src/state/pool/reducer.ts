@@ -1,14 +1,13 @@
 import { createReducer } from '@reduxjs/toolkit'
-import { BigNumber } from 'ethers'
 import { updatePools, addOrUpdatePool } from './actions'
 
 export interface CachedPool {
-  pid: number
+  pid?: number
   lpTokenAddress: string
-  lpTokenBalance?: BigNumber
-  lpTokenStaked?: BigNumber
+  lpTokenBalance?: number
+  lpTokenStaked?: number
   lpTokenPrice?: number
-  pendingRewards?: BigNumber
+  pendingRewards?: number
 }
 
 export interface PoolState {
@@ -27,7 +26,7 @@ export default createReducer(initialState, builder =>
     .addCase(addOrUpdatePool, (state, { payload: pool }) => {
       let index = -1
       for (const [i, p] of state.pools.entries()) {
-        if (p.pid === pool.pid) {
+        if (p.lpTokenAddress === pool.lpTokenAddress) {
           index = i
           break
         }

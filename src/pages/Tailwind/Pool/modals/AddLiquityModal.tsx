@@ -85,7 +85,7 @@ const AddLiquityModal = ({
     setState(AddLiquityModalState.InProgress)
 
     try {
-      const deadline = currentBlockTime ? currentBlockTime.add(60) : BigNumber.from(60)
+      const deadline = currentBlockTime ? currentBlockTime.add(BigNumber.from(60)) : BigNumber.from(60)
       const tx = await deposit(BigNumber.from(lpAmount), deadline)
       setTxHash(tx.hash)
       await tx.wait()

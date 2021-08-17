@@ -13,6 +13,7 @@ import { PoolData } from './models/PoolData'
 import { useTokenBalance, useTokenBalances } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { BigNumber } from 'ethers'
+import { useZap } from 'halo-hooks/amm/useZap'
 
 interface AddLiquidityProps {
   pool: PoolData
@@ -37,6 +38,12 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
   const [lpAmount, setLpAmount] = useState('')
 
   const { viewDeposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+  const {
+    calcSwapAmountForZapFromBase,
+    calcMaxQuoteForDeposit,
+    calcMaxDepositAmountGivenBase,
+    calcMaxDepositAmountGivenQuote
+  } = useZap(pool.address, pool.token0, pool.token1)
 
   const token0Amount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(input0Value !== '' ? input0Value : '0')))
   const [token0ApproveState, token0ApproveCallback] = useApproveCallback(token0Amount, pool.address)
@@ -53,7 +60,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
-    if (input0Value !== '') {
+    if (input0Value !== '' && (activeSegment === 1 || (activeSegment === 0 && input1Value !== ''))) {
       const bal0 = Number(balances[pool.token0.address]?.toExact())
       const bal1 = Number(balances[pool.token1.address]?.toExact())
 
@@ -89,6 +96,9 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
       const input1 = (input0 / pool.rates.token1) * pool.rates.token0 * (pool.weights.token1 / pool.weights.token0)
       setInput1Value(`${input1}`)
       //previewDeposit(input0, input1)
+    } else if (activeSegment === 1) {
+      if (val === '') return
+      previewZap(val)
     }
   }
 
@@ -120,6 +130,13 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
     setLpAmount(amount.toString())
   }
 
+  const previewZap = async (val: string) => {
+    // await calcMaxDepositAmountGivenBase(val)
+    // await calcMaxDepositAmountGivenQuote(val)
+    // await calcMaxQuoteForDeposit(val)
+    await calcSwapAmountForZapFromBase(val)
+  }
+
   return (
     <div>
       <div className="flex items-center justify-end">
@@ -137,6 +154,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
         <>
           <div className="mt-2">
             <CurrencyInput
+              canSelectToken={false}
               currency={pool.token0}
               value={input0Value}
               didChangeValue={val => updateInput0(val)}
@@ -146,6 +164,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           </div>
           <div className="mt-4">
             <CurrencyInput
+              canSelectToken={false}
               currency={pool.token1}
               value={input1Value}
               didChangeValue={val => {
@@ -223,6 +242,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           </div>
           <div className="mt-4">
             <CurrencyInput
+              canSelectToken={true}
               currency={pool.token0}
               value={input0Value}
               didChangeValue={val => updateInput0(val)}

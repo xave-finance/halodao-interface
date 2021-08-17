@@ -22,13 +22,13 @@ const PageHeaderRight = () => {
 
     for (const pool of cachedPools) {
       if (pool.lpTokenBalance) {
-        totalStakeable += Number(formatEther(pool.lpTokenBalance)) * lpTokenPrice
+        totalStakeable += pool.lpTokenBalance * lpTokenPrice
       }
       if (pool.lpTokenStaked) {
-        totalStaked += Number(formatEther(pool.lpTokenStaked)) * lpTokenPrice
+        totalStaked += pool.lpTokenStaked * lpTokenPrice
       }
       if (pool.pendingRewards) {
-        totalHaloEarned += Number(formatEther(pool.pendingRewards)) * rewardTokenPrice
+        totalHaloEarned += pool.pendingRewards * rewardTokenPrice
       }
     }
 

@@ -23,7 +23,6 @@ export const useLiquidityPool = (address: string) => {
   const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
   const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === address.toLowerCase())
   const pid = filtered.length ? filtered[0].pid : undefined
-  console.log('pid: ', pid)
 
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []

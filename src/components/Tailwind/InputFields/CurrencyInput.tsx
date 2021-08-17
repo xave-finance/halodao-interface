@@ -50,10 +50,6 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
   return (
     <div className="flex flex-col md:flex-row">
       {showSelectedCurrency()}
-      <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
-        <CurrencyLogo currency={currency} />
-        <div className="ml-2 font-semibold">{currency.symbol}</div>
-      </div>
       <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
         <div className="flex-auto">
           {showBalance && (
@@ -68,11 +64,11 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
               didChangeValue(val)
             }}
           />
-          <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
+        <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
       </div>
       <TokenSelectModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
-    </>
+    </div>
   )
 }
 

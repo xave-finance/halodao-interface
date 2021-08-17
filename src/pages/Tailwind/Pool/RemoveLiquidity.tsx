@@ -44,7 +44,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
     try {
       const lpAmount = pool.held * (Number(amount) * 0.01)
-      const deadline = currentBlockTime ? currentBlockTime.add(60) : BigNumber.from(60)
+      const deadline = currentBlockTime ? currentBlockTime.add(BigNumber.from(60)) : BigNumber.from(60)
       const tx = await withdraw(parseEther(`${lpAmount}`), deadline)
       await tx.wait()
 

@@ -11,6 +11,10 @@ import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 import { PoolData } from './models/PoolData'
 import { useAllTransactions } from 'state/transactions/hooks'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, AppState } from 'state'
+import { addOrUpdatePool } from 'state/pool/actions'
+import { CachedPool } from 'state/pool/reducer'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -52,6 +56,9 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
   const allTransactions = useAllTransactions()
 
+  const dispatch = useDispatch<AppDispatch>()
+  const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
+
   /**
    * Main logic: fetching pool info
    *
@@ -89,10 +96,23 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
             token0: liquidity.rates[0],
             token1: liquidity.rates[1]
           },
-          held: parseFloat(formatEther(balance)),
-          staked: parseFloat(formatEther(staked)),
-          earned: parseFloat(formatEther(rewards))
+          held: Number(formatEther(balance)),
+          staked: Number(formatEther(staked)),
+          earned: Number(formatEther(rewards))
         })
+
+        // Update cached pool data in app cache
+        let poolData: CachedPool
+        const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === poolAddress.toLowerCase())
+        const existingPool = filtered.length ? filtered[0] : {}
+        poolData = {
+          ...existingPool,
+          lpTokenAddress: poolAddress,
+          lpTokenBalance: Number(formatEther(balance)),
+          lpTokenStaked: Number(formatEther(staked)),
+          pendingRewards: Number(formatEther(rewards))
+        }
+        dispatch(addOrUpdatePool(poolData))
       })
       .catch(e => {
         console.error(e)
