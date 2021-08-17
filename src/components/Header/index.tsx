@@ -481,6 +481,14 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
+            <StyledExternalLink
+              id={`swap-nav-link`}
+              href={
+                'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+              }
+            >
+              {t('swap')}
+            </StyledExternalLink>
             <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
               {t('pool')}
             </StyledNavLink>
@@ -494,14 +502,9 @@ export default function Header() {
             <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
               {t('vesting')}
             </StyledNavLink>
-            <StyledExternalLink
-              id={`swap-nav-link`}
-              href={
-                'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-              }
-            >
-              {t('swap')}
-            </StyledExternalLink>
+            <StyledNavLink id={`lend-nav-link`} to={'/lend'}>
+              {t('lend')}
+            </StyledNavLink>
             <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
               {t('vote')}
             </StyledExternalLink>
@@ -578,6 +581,18 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
   return (
     <>
       <MenuItem>
+        <span onClick={onClick}>
+          <ExternalLink
+            id={`swap-nav-link`}
+            href={
+              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+            }
+          >
+            {t('swap')}
+          </ExternalLink>
+        </span>
+      </MenuItem>
+      <MenuItem>
         <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
           {t('pool')}
         </NavLink>
@@ -598,16 +613,9 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
         </NavLink>
       </MenuItem>
       <MenuItem>
-        <span onClick={onClick}>
-          <ExternalLink
-            id={`swap-nav-link`}
-            href={
-              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-            }
-          >
-            {t('swap')}
-          </ExternalLink>
-        </span>
+        <NavLink id={`vesting-nav-link`} to={'/lend'} onClick={onClick}>
+          {t('lend')}
+        </NavLink>
       </MenuItem>
       <MenuItem>
         <span onClick={onClick}>
