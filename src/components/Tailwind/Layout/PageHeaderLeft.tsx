@@ -8,6 +8,7 @@ interface PageHeaderLeftProps {
     text: string
     url: string
   }
+  paddingRight?: string
 }
 
 const PageHeaderLeft = ({ title, caption, subtitle, link }: PageHeaderLeftProps) => {

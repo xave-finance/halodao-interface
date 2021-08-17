@@ -14,6 +14,7 @@ module.exports = {
           light: '#e8e4f5',
           lighter: '#D7CDF0',
           lightest: '#F3F2F8',
+          dark: '#4F4F4F',
           hover: '#15006d',
           disabled: '#9182c6',
           gradientVia: '#5521B6',
