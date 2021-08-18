@@ -60,6 +60,7 @@ const Bridge = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
   const [allowance, setAllowance] = useState(0)
   const [balance, setBalance] = useState(0)
+  const [successHash, setSuccessHash] = useState('')
 
   useEffect(() => {
     if (!chainId) return
@@ -158,6 +159,7 @@ const Bridge = () => {
       try {
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
+        setSuccessHash(tx.hash)
         return tx
       } catch (e) {
         console.error(e)
@@ -188,6 +190,7 @@ const Bridge = () => {
       try {
         const tx = await secondaryBridgeContract?.burn(amount)
         addTransaction(tx, { summary: 'Burn wrapped tokens' })
+        setSuccessHash(tx.hash)
         return tx
       } catch (e) {
         console.error(e)
@@ -554,6 +557,7 @@ const Bridge = () => {
         wrappedTokenSymbol={token[destinationChainId].symbol}
         state={modalState}
         setState={setModalState}
+        successHash={successHash}
       />
     </PageWrapper>
   )

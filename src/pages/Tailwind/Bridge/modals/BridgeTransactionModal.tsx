@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { ChainId, Currency } from '@sushiswap/sdk'
@@ -22,6 +22,7 @@ interface ConfirmTransactionModalProps {
   wrappedTokenSymbol: string
   state: ConfirmTransactionModalState
   setState: (state: ConfirmTransactionModalState) => void
+  successHash: string
 }
 
 enum ConfirmTransactionModalState {
@@ -49,7 +50,8 @@ const ConfirmTransactionModal = ({
   tokenSymbol,
   wrappedTokenSymbol,
   state,
-  setState
+  setState,
+  successHash
 }: ConfirmTransactionModalProps) => {
   const ConfirmContent = () => {
     return (
@@ -163,7 +165,12 @@ const ConfirmTransactionModal = ({
     )
   }
 
-  const SuccessContent = () => {
+  interface SuccessContentProps {
+    chainId: ChainId
+    successHash: string
+  }
+
+  const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -174,11 +181,11 @@ const ConfirmTransactionModal = ({
         <div className="text-center">
           <a
             className="font-semibold text-link"
-            href={getExplorerLink(ChainId.MAINNET, '', 'transaction')}
+            href={getExplorerLink(chainId, successHash, 'transaction')}
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on Etherscan
+            View on Chain Explorer
           </a>
         </div>
         <div className="mt-12">
@@ -207,7 +214,9 @@ const ConfirmTransactionModal = ({
       {state === ConfirmTransactionModalState.InProgress && (
         <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
       )}
-      {state === ConfirmTransactionModalState.Successful && <SuccessContent />}
+      {state === ConfirmTransactionModalState.Successful && (
+        <SuccessContent chainId={originChainId} successHash={successHash} />
+      )}
     </BaseModal>
   )
 }
