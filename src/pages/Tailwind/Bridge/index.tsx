@@ -121,7 +121,10 @@ const Bridge = () => {
   }, [destinationChainId])
 
   const setButtonStates = () => {
-    if (allowance >= parseFloat(inputValue)) {
+    if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
+      setButtonState(ButtonState.EnterAmount)
+      setApproveState(ApproveButtonState.NotApproved)
+    } else if (allowance >= parseFloat(inputValue)) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
@@ -129,9 +132,6 @@ const Bridge = () => {
       setApproveState(ApproveButtonState.NotApproved)
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
-    } else if (inputValue.trim() === '') {
-      setButtonState(ButtonState.EnterAmount)
-      setApproveState(ApproveButtonState.NotApproved)
     }
   }
 
@@ -320,6 +320,7 @@ const Bridge = () => {
               } else {
                 estimateDeposit()
               }
+              setModalState(ConfirmTransactionModalState.NotConfirmed)
               setShowModal(true)
             }
           }}
@@ -533,7 +534,9 @@ const Bridge = () => {
       <div className="flex items-start md:w-1/2">
         <InfoCard
           title="Bridge Info"
-          description="Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. The bridge fee 0.x%"
+          description={`Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. The bridge fee ${Number(
+            process.env.REACT_APP_SHUTTLE_FEE_PERCENTAGE
+          ) * 100}%`}
         />
       </div>
       <BridgeTransactionModal
@@ -564,7 +567,7 @@ const Bridge = () => {
         }}
         onDismiss={() => {
           setShowModal(false)
-          setButtonState(ButtonState.Retry)
+          if (modalState === ConfirmTransactionModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId as ChainId}

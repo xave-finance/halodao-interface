@@ -6,7 +6,8 @@ import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
-import { shortenAddress, getExplorerLink } from '../../../../utils'
+import { shortenAddress, getExplorerLink } from 'utils'
+import { calculateShuttleFee } from 'utils/bridge'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -115,7 +116,9 @@ const ConfirmTransactionModal = ({
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
-                <div>0 {currency.symbol}</div>
+                <div>
+                  {calculateShuttleFee(Number(amount))} {currency.symbol}
+                </div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
