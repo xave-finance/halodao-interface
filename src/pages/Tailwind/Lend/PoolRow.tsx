@@ -9,7 +9,7 @@ import { shortenAddress } from '../../../utils'
 import { HALO, USDT, XSGD, USDC } from '../../../constants'
 import { PoolData } from './models/PoolData'
 
-const Lend = () => {
+const PoolRow = () => {
   const { account, error } = useWeb3React()
   const [showModal, setShowModal] = useState(false)
 
@@ -73,4 +73,4 @@ const Lend = () => {
   )
 }
 
-export default Lend
+export default PoolRow
