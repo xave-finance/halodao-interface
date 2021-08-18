@@ -513,8 +513,8 @@ const Bridge = () => {
       </div>
       <div className="flex items-start md:w-1/2">
         <InfoCard
-          title="Some Extra Info"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient id vitae morbi ipsum est maecenas tellus at. Consequat in justo"
+          title="Bridge Info"
+          description="Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. The bridge fee 0.x%"
         />
       </div>
       <BridgeTransactionModal
