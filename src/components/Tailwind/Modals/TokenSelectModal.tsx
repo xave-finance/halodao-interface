@@ -17,11 +17,12 @@ interface TokenListProps {
   onSelect?: (token: any | undefined) => void
 }
 
+const TOKENS = [HALO, MOCK, RIO]
+
 const TokenList = ({ chainId, onSelect }: TokenListProps) => {
-  const tokens = [HALO, MOCK, RIO]
   return (
     <div className="p-4">
-      {tokens.map(token => (
+      {TOKENS.map(token => (
         <div
           key={token[chainId as ChainId]?.name}
           className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary"

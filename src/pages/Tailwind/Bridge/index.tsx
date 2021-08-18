@@ -21,8 +21,8 @@ import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
 import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
-import PRIMARY_BRIDGE_ABI from 'constants/bridgeAbis/PrimaryBridge.json'
-import SECONDARY_BRIDGE_ABI from 'constants/bridgeAbis/SecondaryBridge.json'
+import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
+import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { toNumber } from 'utils/formatNumber'
@@ -60,6 +60,7 @@ const Bridge = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
   const [allowance, setAllowance] = useState(0)
   const [balance, setBalance] = useState(0)
+  const [estimatedGas, setEstimatedGas] = useState(0)
   const [successHash, setSuccessHash] = useState('')
 
   useEffect(() => {
@@ -154,6 +155,11 @@ const Bridge = () => {
     [addTransaction, tokenContract, primaryBridgeContract]
   )
 
+  const estimateDeposit = useCallback(async () => {
+    const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, 1)
+    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+  }, [primaryBridgeContract])
+
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
       try {
@@ -184,6 +190,11 @@ const Bridge = () => {
     },
     [addTransaction, tokenContract, secondaryBridgeContract]
   )
+
+  const estimateBurnWrappedToken = useCallback(async () => {
+    const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(1)
+    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+  }, [secondaryBridgeContract])
 
   const burnWrappedTokens = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -304,6 +315,11 @@ const Bridge = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
+              if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+                estimateBurnWrappedToken()
+              } else {
+                estimateDeposit()
+              }
               setShowModal(true)
             }
           }}
@@ -558,6 +574,7 @@ const Bridge = () => {
         state={modalState}
         setState={setModalState}
         successHash={successHash}
+        estimatedGas={estimatedGas}
       />
     </PageWrapper>
   )

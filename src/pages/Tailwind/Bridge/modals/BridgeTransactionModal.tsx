@@ -23,6 +23,7 @@ interface ConfirmTransactionModalProps {
   state: ConfirmTransactionModalState
   setState: (state: ConfirmTransactionModalState) => void
   successHash: string
+  estimatedGas: number
 }
 
 enum ConfirmTransactionModalState {
@@ -51,7 +52,8 @@ const ConfirmTransactionModal = ({
   wrappedTokenSymbol,
   state,
   setState,
-  successHash
+  successHash,
+  estimatedGas
 }: ConfirmTransactionModalProps) => {
   const ConfirmContent = () => {
     return (
@@ -106,7 +108,9 @@ const ConfirmTransactionModal = ({
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Gas fee (estimated)</div>
-              <div>0 {currency.symbol}</div>
+              <div>
+                {estimatedGas} {Currency.getNativeCurrencySymbol(originChainId)}{' '}
+              </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
