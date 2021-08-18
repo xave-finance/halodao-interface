@@ -481,7 +481,7 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
-          <StyledExternalLink
+            <StyledExternalLink
               id={`swap-nav-link`}
               href={
                 'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
