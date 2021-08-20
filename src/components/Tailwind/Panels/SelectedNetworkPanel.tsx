@@ -5,9 +5,12 @@ import NetworkModal, { NetworkModalMode } from 'components/Tailwind/Modals/Netwo
 
 interface SelectedNetworkPanelProps {
   mode: NetworkModalMode
+  chainId: ChainId
+  onChangeNetwork: (chainId: ChainId) => void
+  tokenAddress?: string
 }
 
-const SelectedNetworkPanel = ({ mode }: SelectedNetworkPanelProps) => {
+const SelectedNetworkPanel = ({ mode, chainId, onChangeNetwork, tokenAddress }: SelectedNetworkPanelProps) => {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -19,10 +22,16 @@ const SelectedNetworkPanel = ({ mode }: SelectedNetworkPanelProps) => {
         <span className="text-link-alternate text-sm">Change</span>
       </div>
       <div>
-        <img src={NETWORK_ICON[ChainId.MAINNET]} alt="Switch Network" className="logo h-7 rounded-2xl" />
+        <img src={NETWORK_ICON[chainId]} alt="Switch Network" className="logo h-7 rounded-2xl" />
       </div>
-      <div className="mt-1">{NETWORK_LABEL[ChainId.MAINNET]}</div>
-      <NetworkModal isVisible={showModal} mode={mode} onDismiss={() => setShowModal(false)} />
+      <div>{NETWORK_LABEL[chainId as ChainId]}</div>
+      <NetworkModal
+        isVisible={showModal}
+        mode={mode}
+        onDismiss={() => setShowModal(false)}
+        onChangeNetwork={(chainId: number) => onChangeNetwork(chainId)}
+        tokenAddress={tokenAddress}
+      />
     </div>
   )
 }

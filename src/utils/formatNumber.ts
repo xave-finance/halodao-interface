@@ -1,4 +1,5 @@
 import numeral from 'numeral'
+import ethers from 'ethers'
 
 export enum NumberFormat {
   long,
@@ -53,4 +54,8 @@ export function toFixed(num: number, fixed: number) {
   } else {
     return '0.0'
   }
+}
+
+export function toNumber(num: ethers.BigNumber): number {
+  return parseFloat(ethers.utils.formatEther(num.toString()))
 }

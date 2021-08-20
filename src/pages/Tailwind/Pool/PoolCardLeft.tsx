@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import TabsControl from '../../../components/Tailwind/SegmentControl/TabsControl'
-import AddLiquidity from './AddLiquidity'
-import RemoveLiquidity from './RemoveLiquidity'
+import AddLiquidity from './liquidity/AddLiquidity'
+import RemoveLiquidity from './liquidity/RemoveLiquidity'
 import { PoolData } from './models/PoolData'
 
 interface PoolCardLeftProps {

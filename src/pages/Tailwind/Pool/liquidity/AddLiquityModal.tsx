@@ -1,21 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
-import { BigNumber } from 'ethers'
 import { PoolData } from '../models/PoolData'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { formatEther, parseEther } from 'ethers/lib/utils'
+import { parseEther } from 'ethers/lib/utils'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { getExplorerLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
-
-export enum AddLiquidityMode {
-  MultiSided,
-  SingleSided
-}
+import { useZap } from 'halo-hooks/amm/useZap'
+import { useSwap } from 'halo-hooks/amm/useSwap'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -24,20 +20,24 @@ enum AddLiquityModalState {
 }
 
 interface AddLiquityModalProps {
-  mode: AddLiquidityMode
+  isMultisided: boolean
+  isZappingFromBase?: boolean
   pool: PoolData
-  token0Amount: string
-  token1Amount: string
+  baseAmount?: string
+  quoteAmount?: string
+  zapAmount?: string
   slippage: string
   isVisible: boolean
   onDismiss: () => void
 }
 
 const AddLiquityModal = ({
-  mode,
+  isMultisided,
+  isZappingFromBase,
   pool,
-  token0Amount,
-  token1Amount,
+  baseAmount,
+  quoteAmount,
+  zapAmount,
   slippage,
   isVisible,
   onDismiss
@@ -45,35 +45,82 @@ const AddLiquityModal = ({
   const { chainId } = useActiveWeb3React()
   const currentBlockTime = useCurrentBlockTimestamp()
   const [state, setState] = useState(AddLiquityModalState.NotConfirmed)
-  const [lpAmount, setLpAmount] = useState('')
   const [txHash, setTxHash] = useState('')
-  const { viewDeposit, deposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+  const [tokenAmounts, setTokenAmounts] = useState([0, 0])
+  const [tokenPrices, setTokenPrices] = useState([0, 0])
+  const [lpAmount, setLpAmount] = useState({
+    target: 0,
+    min: 0
+  })
+  const [poolShare, setPoolShare] = useState(0)
 
-  const amount0 = Number(token0Amount)
-  const amount1 = Number(token1Amount)
-  const amount0Price = 1 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1)
-  const amount1Price =
-    (1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)) / (pool.rates.token0 * 100)
+  const {
+    calcSwapAmountForZapFromBase,
+    calcSwapAmountForZapFromQuote,
+    calcBaseAmountGivenQuote,
+    zapFromBase,
+    zapFromQuote
+  } = useZap(pool.address, pool.token0, pool.token1)
+  const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
+  const { deposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
-  const targetLpAmount = lpAmount !== '' ? Number(formatEther(lpAmount)) : 0
-  const minLpAmout = targetLpAmount - targetLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
-  const poolShare = targetLpAmount / pool.pooled.total
+  /**
+   * Helper function to calculate tx deadline
+   **/
+  const futureTime = () => {
+    if (currentBlockTime) {
+      return currentBlockTime.add(60).toNumber()
+    } else {
+      return new Date().getTime() + 60
+    }
+  }
 
-  const previewDeposit = useCallback(async () => {
+  /**
+   * Main logic for updating confirm add liquidity UI
+   **/
+  const calculate = async () => {
     if (!isVisible) return
-    if (amount0 === 0 || amount1 === 0) return
+    if (isMultisided && (!baseAmount || !quoteAmount || baseAmount === '' || quoteAmount === '')) return
+    if (!isMultisided && (!zapAmount || zapAmount === '')) return
 
-    const totalNumeraire =
-      amount0 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1) +
-      amount1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)
+    let baseTokenAmount = 0
+    let quoteTokenAmount = 0
 
-    const amount = await viewDeposit(parseEther(`${totalNumeraire}`))
-    setLpAmount(amount.toString())
-  }, [isVisible, pool, amount0, amount1, viewDeposit])
+    if (isMultisided) {
+      baseTokenAmount = Number(baseAmount)
+      quoteTokenAmount = Number(quoteAmount)
+    } else {
+      if (isZappingFromBase) {
+        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!)
+        quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+        baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+      } else {
+        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!)
+        baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+        quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+      }
+    }
+
+    setTokenAmounts([baseTokenAmount, quoteTokenAmount])
+
+    const [_, lpAmount] = await calcBaseAmountGivenQuote(`${quoteTokenAmount}`)
+    const maxLpAmount = Number(lpAmount)
+    setLpAmount({
+      target: maxLpAmount,
+      min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
+    })
+
+    const basePrice = 1 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1)
+    const quotePrice =
+      (1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)) / (pool.rates.token0 * 100)
+    setTokenPrices([basePrice, quotePrice])
+
+    setPoolShare(maxLpAmount / pool.pooled.total)
+  }
 
   useEffect(() => {
-    previewDeposit()
-  }, [previewDeposit])
+    if (isVisible) calculate()
+  }, [isVisible])
 
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
@@ -81,16 +128,40 @@ const AddLiquityModal = ({
     onDismiss()
   }
 
+  /**
+   * Multi-sided add liquidity logic
+   **/
   const confirmDeposit = async () => {
     setState(AddLiquityModalState.InProgress)
-
     try {
-      const deadline = currentBlockTime ? currentBlockTime.add(BigNumber.from(60)) : BigNumber.from(60)
-      const tx = await deposit(BigNumber.from(lpAmount), deadline)
+      const deadline = futureTime()
+      const tx = await deposit(parseEther(`${lpAmount.target}`), deadline)
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
     } catch (err) {
+      console.error(err)
+      setTxHash('')
+      setState(AddLiquityModalState.NotConfirmed)
+    }
+  }
+
+  /**
+   * Single-sided add liquidity logic
+   **/
+  const confirmZap = async () => {
+    setState(AddLiquityModalState.InProgress)
+    try {
+      const deadline = futureTime()
+      const func = isZappingFromBase ? zapFromBase : zapFromQuote
+      console.log('zapAmount: ', zapAmount)
+      //const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
+      const tx = await func(zapAmount!, deadline, parseEther('0'))
+      setTxHash(tx.hash)
+      await tx.wait()
+      setState(AddLiquityModalState.Successful)
+    } catch (err) {
+      console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
     }
@@ -101,14 +172,15 @@ const AddLiquityModal = ({
       <>
         <div className="bg-primary-lightest p-4">
           <div className="font-semibold text-lg">You will receive</div>
-          <div className="mt-4 font-semibold text-2xl">{formatNumber(targetLpAmount)} LPT</div>
+          <div className="mt-4 font-semibold text-2xl">{formatNumber(lpAmount.target, NumberFormat.long)} LPT</div>
           <div className="mt-1 text-xl">
             {pool.token0.symbol}/{pool.token1.symbol} Pool Tokens
           </div>
-          {mode === AddLiquidityMode.SingleSided && (
+          {!isMultisided && (
             <div className="mt-4 text-sm italic">
               Output is estimated. You will receive at least{' '}
-              <span className="font-bold">{formatNumber(minLpAmout)} amount of LP</span> or the transaction will revert.
+              <span className="font-bold">{formatNumber(lpAmount.min, NumberFormat.long)} amount of LP</span> or the
+              transaction will revert.
             </div>
           )}
         </div>
@@ -117,23 +189,23 @@ const AddLiquityModal = ({
             <div className="flex justify-between mb-2">
               <div className="font-bold">{pool.token0.symbol} Deposited</div>
               <div>
-                {formatNumber(amount0)} {pool.token0.symbol}
+                {formatNumber(tokenAmounts[0], NumberFormat.long)} {pool.token0.symbol}
               </div>
             </div>
             <div className="flex justify-between mb-2">
               <div className="font-bold">{pool.token1.symbol} Deposited</div>
               <div>
-                {formatNumber(amount1)} {pool.token1.symbol}
+                {formatNumber(tokenAmounts[1], NumberFormat.long)} {pool.token1.symbol}
               </div>
             </div>
             <div className="flex justify-between mb-2">
               <div className="font-bold">Rates</div>
               <div>
                 <div>
-                  1 {pool.token0.symbol} = {formatNumber(amount0Price)} {pool.token1.symbol}
+                  1 {pool.token0.symbol} = {formatNumber(tokenPrices[0])} {pool.token1.symbol}
                 </div>
                 <div>
-                  1 {pool.token1.symbol} = {formatNumber(amount1Price)} {pool.token0.symbol}
+                  1 {pool.token1.symbol} = {formatNumber(tokenPrices[1])} {pool.token0.symbol}
                 </div>
               </div>
             </div>
@@ -146,7 +218,7 @@ const AddLiquityModal = ({
             title="Confirm Supply"
             state={PrimaryButtonState.Enabled}
             onClick={() => {
-              confirmDeposit()
+              isMultisided ? confirmDeposit() : confirmZap()
             }}
           />
         </div>
@@ -164,11 +236,11 @@ const AddLiquityModal = ({
         <div className="text-center font-bold mb-2">
           Adding{' '}
           <b>
-            {formatNumber(Number(token0Amount))} {pool.token0.symbol}
+            {formatNumber(Number(baseAmount))} {pool.token0.symbol}
           </b>{' '}
           and{' '}
           <b>
-            {formatNumber(Number(token1Amount))} {pool.token1.symbol}
+            {formatNumber(Number(quoteAmount))} {pool.token1.symbol}
           </b>
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
@@ -178,7 +250,6 @@ const AddLiquityModal = ({
 
   const SuccessContent = () => {
     const explorerLink = chainId ? getExplorerLink(chainId, txHash, 'transaction') : 'https://etherscan.io'
-
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">

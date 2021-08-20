@@ -4,7 +4,7 @@ import { formatNumber } from 'utils/formatNumber'
 import CurrencyLogo from 'components/CurrencyLogo'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
-import { PoolData } from './models/PoolData'
+import { PoolData } from '../models/PoolData'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
@@ -22,6 +22,14 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
 
   const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+
+  const futureTime = () => {
+    if (currentBlockTime) {
+      return currentBlockTime.add(60).toNumber()
+    } else {
+      return new Date().getTime() + 60
+    }
+  }
 
   const updateAmount = async (amt: number) => {
     setAmount(amt)
@@ -44,7 +52,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
     try {
       const lpAmount = pool.held * (Number(amount) * 0.01)
-      const deadline = currentBlockTime ? currentBlockTime.add(BigNumber.from(60)) : BigNumber.from(60)
+      const deadline = futureTime()
       const tx = await withdraw(parseEther(`${lpAmount}`), deadline)
       await tx.wait()
 

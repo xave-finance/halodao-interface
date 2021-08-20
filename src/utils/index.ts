@@ -76,7 +76,7 @@ const builders = {
   },
 
   xdai: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    const prefix = `https://blockscout.com/poa/xdai`
+    const prefix = `https://blockscout.com/xdai/mainnet`
     switch (type) {
       case 'transaction':
         return `${prefix}/tx/${data}`

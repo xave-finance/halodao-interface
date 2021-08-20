@@ -30,8 +30,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   )
 
   const deposit = useCallback(
-    async (amount: BigNumber, deadline: BigNumber) => {
-      console.log(`CurveContract.deposit params: `, formatEther(amount), formatEther(deadline))
+    async (amount: BigNumber, deadline: number) => {
+      console.log(`CurveContract.deposit params: `, formatEther(amount), deadline)
       const tx = await CurveContract?.deposit(amount, deadline)
       console.log(`CurveContract.deposit(${amount.toString()}, ${deadline.toString()}): `, tx)
       addTransaction(tx, {
@@ -59,8 +59,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   )
 
   const withdraw = useCallback(
-    async (amount: BigNumber, deadline: BigNumber) => {
-      console.log(`CurveContract.withdraw params: `, formatEther(amount), formatEther(deadline))
+    async (amount: BigNumber, deadline: number) => {
+      console.log(`CurveContract.withdraw params: `, formatEther(amount), deadline)
       const tx = await CurveContract?.withdraw(amount, deadline)
       console.log(`CurveContract.withdraw(${amount.toString()}, ${deadline.toString()}): `, tx)
       addTransaction(tx, {
