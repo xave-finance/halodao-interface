@@ -117,7 +117,17 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, allTransactions])
+  }, [
+    poolAddress,
+    getTokens,
+    getLiquidity,
+    getBalance,
+    getStakedLPToken,
+    getPendingRewards,
+    allTransactions,
+    cachedPools,
+    dispatch
+  ])
 
   useEffect(() => {}, [pool])
 

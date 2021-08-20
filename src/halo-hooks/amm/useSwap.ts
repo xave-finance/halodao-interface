@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import { PoolData } from 'pages/Tailwind/Pool/models/PoolData'
-import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 
 export const useSwap = (pool: PoolData) => {
   const CurveContract = useContract(pool.address, CURVE_ABI, true)
@@ -15,7 +15,7 @@ export const useSwap = (pool: PoolData) => {
       console.log('Target amount: ', formatUnits(res, pool.token1.decimals))
       return formatUnits(res, pool.token1.decimals)
     },
-    [CurveContract]
+    [CurveContract, pool]
   )
 
   const viewTargetSwap = useCallback(
@@ -26,7 +26,7 @@ export const useSwap = (pool: PoolData) => {
       console.log('Origin amount: ', formatUnits(res, pool.token0.decimals))
       return formatUnits(res, pool.token0.decimals)
     },
-    [CurveContract]
+    [CurveContract, pool]
   )
 
   return { viewOriginSwap, viewTargetSwap }

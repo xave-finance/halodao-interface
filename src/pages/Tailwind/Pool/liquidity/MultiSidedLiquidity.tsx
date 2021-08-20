@@ -94,7 +94,7 @@ const MultiSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [baseInput, quoteInput, baseApproved, quoteApproved])
+  }, [baseInput, quoteInput, baseApproved, quoteApproved, balances])
 
   return (
     <>

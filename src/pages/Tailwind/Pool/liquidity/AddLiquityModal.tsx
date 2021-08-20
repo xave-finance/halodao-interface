@@ -103,7 +103,7 @@ const AddLiquityModal = ({
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
 
-    const [_, lpAmount] = await calcBaseAmountGivenQuote(`${quoteTokenAmount}`)
+    const [, lpAmount] = await calcBaseAmountGivenQuote(`${quoteTokenAmount}`)
     const maxLpAmount = Number(lpAmount)
     setLpAmount({
       target: maxLpAmount,
@@ -120,7 +120,7 @@ const AddLiquityModal = ({
 
   useEffect(() => {
     if (isVisible) calculate()
-  }, [isVisible])
+  }, [isVisible]) //eslint-disable-line
 
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)

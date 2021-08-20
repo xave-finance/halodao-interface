@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
 import { formatNumber } from 'utils/formatNumber'
 import CurrencyLogo from 'components/CurrencyLogo'
-import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { PoolData } from '../models/PoolData'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
-import { BigNumber } from '@ethersproject/bignumber'
 
 interface RemoveLiquidityProps {
   pool: PoolData

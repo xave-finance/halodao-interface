@@ -101,7 +101,7 @@ const SingleSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [zapInput, baseZapApproved, quoteZapApproved])
+  }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage])
 
   return (
     <>

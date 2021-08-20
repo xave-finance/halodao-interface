@@ -24,7 +24,7 @@ const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
         setActiveTab(0)
       }
     }
-  }, [pool])
+  }, [pool, activeTab])
 
   return (
     <div>

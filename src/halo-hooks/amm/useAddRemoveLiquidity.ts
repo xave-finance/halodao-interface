@@ -3,31 +3,27 @@ import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import { BigNumber } from 'ethers'
 import { formatEther, formatUnits } from 'ethers/lib/utils'
-import { useActiveWeb3React } from 'hooks'
 import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
-  const { library } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
 
-  const viewDeposit = useCallback(
-    async (amount: BigNumber) => {
-      if (!library) return BigNumber.from(0)
+  // const viewDeposit = useCallback(
+  //   async (amount: BigNumber) => {
+  //     const res = await CurveContract?.viewDeposit(amount)
+  //     console.log(`CurveContract.viewDeposit(${formatEther(amount)}): `, res)
 
-      const res = await CurveContract?.viewDeposit(amount)
-      console.log(`CurveContract.viewDeposit(${formatEther(amount)}): `, res)
+  //     const [lpAmount, [baseView, quoteView]] = res
+  //     console.log(`LP token: `, formatEther(lpAmount))
+  //     console.log(`Token[0]: `, formatUnits(baseView, token0.decimals))
+  //     console.log(`Token[1]: `, formatUnits(quoteView, token1.decimals))
 
-      const [lpAmount, [baseView, quoteView]] = res
-      console.log(`LP token: `, formatEther(lpAmount))
-      console.log(`Token[0]: `, formatUnits(baseView, token0.decimals))
-      console.log(`Token[1]: `, formatUnits(quoteView, token1.decimals))
-
-      return lpAmount
-    },
-    [CurveContract, library]
-  )
+  //     return lpAmount
+  //   },
+  //   [CurveContract]
+  // )
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
@@ -39,13 +35,11 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       })
       return tx
     },
-    [CurveContract]
+    [CurveContract, token0, token1, addTransaction]
   )
 
   const viewWithdraw = useCallback(
     async (amount: BigNumber) => {
-      if (!library) return ['0', '0']
-
       const res = await CurveContract?.viewWithdraw(amount)
       console.log(`CurveContract.viewWithdraw(${formatEther(amount)}): `, res)
 
@@ -55,7 +49,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
       return [formatUnits(baseView, token0.decimals), formatUnits(quoteView, token1.decimals)]
     },
-    [CurveContract, library]
+    [CurveContract, token0, token1]
   )
 
   const withdraw = useCallback(
@@ -68,8 +62,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       })
       return tx
     },
-    [CurveContract]
+    [CurveContract, token0, token1, addTransaction]
   )
 
-  return { viewDeposit, deposit, viewWithdraw, withdraw }
+  return { deposit, viewWithdraw, withdraw }
 }

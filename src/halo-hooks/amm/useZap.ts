@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useContract } from 'hooks/useContract'
 import ZAP_ABI from 'constants/haloAbis/Zap.json'
-import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { AMM_ZAP_ADDRESS } from '../../constants'
@@ -33,7 +33,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
       return [formatUnits(res[2][1], token1.decimals), formatEther(res[1])]
     },
-    [ZapContract, curveAddress]
+    [ZapContract, curveAddress, token0, token1]
   )
 
   /**
@@ -55,7 +55,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
       return [formatUnits(res[2][0], token0.decimals), formatEther(res[1])]
     },
-    [ZapContract, curveAddress]
+    [ZapContract, curveAddress, token0, token1]
   )
 
   /**
@@ -71,7 +71,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('swap amount: ', formatUnits(swapAmount, token0.decimals))
       return formatUnits(swapAmount, token0.decimals)
     },
-    [ZapContract, curveAddress]
+    [ZapContract, curveAddress, token0]
   )
 
   /**
@@ -87,7 +87,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('swap amount: ', formatUnits(swapAmount, token1.decimals))
       return formatUnits(swapAmount, token1.decimals)
     },
-    [ZapContract, curveAddress]
+    [ZapContract, curveAddress, token1]
   )
 
   const zapFromBase = useCallback(
@@ -109,7 +109,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
 
       return tx
     },
-    [ZapContract]
+    [ZapContract, curveAddress, token0, token1, addTransaction]
   )
 
   const zapFromQuote = useCallback(
@@ -131,7 +131,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
 
       return tx
     },
-    [ZapContract]
+    [ZapContract, curveAddress, token0, token1, addTransaction]
   )
 
   return {
