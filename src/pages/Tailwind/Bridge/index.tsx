@@ -63,6 +63,26 @@ const Bridge = () => {
   const [estimatedGas, setEstimatedGas] = useState(0)
   const [successHash, setSuccessHash] = useState('')
 
+  const setButtonStates = () => {
+    if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
+      setButtonState(ButtonState.EnterAmount)
+      setApproveState(ApproveButtonState.NotApproved)
+    } else if (allowance >= parseFloat(inputValue)) {
+      setButtonState(ButtonState.Next)
+      setApproveState(ApproveButtonState.Approved)
+    } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
+      setButtonState(ButtonState.Default)
+      setApproveState(ApproveButtonState.NotApproved)
+    } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
+      setButtonState(ButtonState.InsufficientBalance)
+    }
+  }
+
+  useEffect(() => {
+    setButtonStates()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue])
+
   useEffect(() => {
     if (!chainId) return
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
@@ -102,6 +122,9 @@ const Bridge = () => {
       setDestinationChainId(ChainId.BSC)
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    setButtonState(ButtonState.EnterAmount)
+    setApproveState(ApproveButtonState.NotApproved)
+    setInputValue('0')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId])
 
@@ -119,26 +142,6 @@ const Bridge = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destinationChainId])
-
-  const setButtonStates = () => {
-    if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
-      setButtonState(ButtonState.EnterAmount)
-      setApproveState(ApproveButtonState.NotApproved)
-    } else if (allowance >= parseFloat(inputValue)) {
-      setButtonState(ButtonState.Next)
-      setApproveState(ApproveButtonState.Approved)
-    } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
-      setButtonState(ButtonState.Default)
-      setApproveState(ApproveButtonState.NotApproved)
-    } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
-      setButtonState(ButtonState.InsufficientBalance)
-    }
-  }
-
-  useEffect(() => {
-    setButtonStates()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -233,20 +236,28 @@ const Bridge = () => {
 
   const fetchAllowance = useCallback(async () => {
     if (!chainId) return
-    if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
-      setAllowance(
-        await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
-      )
-    } else {
-      setAllowance(
-        await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
-      )
+    try {
+      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
+        setAllowance(
+          await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
+        )
+      } else {
+        setAllowance(
+          await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
+        )
+      }
+    } catch (e) {
+      console.error(e)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenContract])
 
   const fetchBalance = useCallback(async () => {
-    setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
+    try {
+      setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
+    } catch (e) {
+      console.error(e)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokenContract])
 
