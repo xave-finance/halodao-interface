@@ -3,6 +3,7 @@ const { borderColor } = require('polished')
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
+  important: true,
   theme: {
     extend: {
       fontFamily: {
@@ -18,7 +19,9 @@ module.exports = {
           hover: '#15006d',
           disabled: '#9182c6',
           gradientVia: '#5521B6',
-          gradientTo: '#2DB7C4'
+          gradientTo: '#2DB7C4',
+          gray: '#828282',
+          lightGray: '#BDBDBD'
         },
         secondary: {
           DEFAULT: '#A38DD8',
