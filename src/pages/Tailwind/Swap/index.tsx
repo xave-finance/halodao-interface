@@ -28,7 +28,7 @@ const Swap = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-start md:w-1/2">
+      <div className="hidden md:flex items-start md:w-1/2">
         <InfoCard
           title="Some Extra Info"
           description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Parturient id vitae morbi ipsum est maecenas tellus at. Consequat in justo"
