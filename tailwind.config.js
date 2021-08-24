@@ -29,7 +29,8 @@ module.exports = {
           alternate: '#471bb2'
         },
         success: {
-          DEFAULT: '#1BB233'
+          DEFAULT: '#1BB233',
+          alternate: '#56A86A'
         }
       },
       maxWidth: {

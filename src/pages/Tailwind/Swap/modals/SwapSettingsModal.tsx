@@ -4,17 +4,6 @@ import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance
 import NumericalInput from 'components/NumericalInput'
 import OnOffToggle from 'components/Tailwind/Toggle/OnOffToggle'
 import { HelpCircle as QuestionIcon } from 'react-feather'
-import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
-import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
-import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
-import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { parseEther } from 'ethers/lib/utils'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { getExplorerLink } from 'utils'
-import { useActiveWeb3React } from 'hooks'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
-import { useZap } from 'halo-hooks/amm/useZap'
-import { useSwap } from 'halo-hooks/amm/useSwap'
 
 enum SwapSettingsModalState {
   NotConfirmed,

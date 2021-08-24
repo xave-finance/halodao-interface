@@ -6,6 +6,7 @@ import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SwapSettingsModal from './modals/SwapSettingsModal'
 import SwapTransactionModal from './modals/SwapTransactionModal'
+import SwapDetails from './SwapDetails'
 import SwitchIcon from 'assets/svg/switch-swap-icon.svg'
 import SettingsIcon from 'assets/svg/cog-icon.svg'
 import { useWalletModalToggle } from '../../../state/application/hooks'
@@ -19,7 +20,7 @@ export enum ButtonState {
   EnterAmount,
   Approving,
   Approved,
-  Next,
+  Swap,
   Confirming,
   InsufficientBalance,
   Retry
@@ -52,25 +53,25 @@ const SwapPanel = () => {
                   setButtonState(ButtonState.Approved)
                 }, 2000)
                 setTimeout(() => {
-                  setButtonState(ButtonState.Next)
+                  setButtonState(ButtonState.Swap)
                 }, 2000)
               }
             }}
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
         </div>
       </div>
     )
   }
 
-  const NextContent = () => {
+  const SwapContent = () => {
     return (
       <div className="mt-4">
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
-          title="Next"
+          title="Swap"
           state={PrimaryButtonState.Enabled}
           onClick={() => {
             if (fromInputValue && toInputValue) {
@@ -96,7 +97,7 @@ const SwapPanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
         </div>
       </div>
     )
@@ -115,7 +116,7 @@ const SwapPanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
         </div>
       </div>
     )
@@ -182,8 +183,8 @@ const SwapPanel = () => {
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Default) {
       return <ApprovedContent />
     }
-    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Next) {
-      return <NextContent />
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Swap) {
+      return <SwapContent />
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Confirming) {
       return <ConfirmingContent />
@@ -210,25 +211,14 @@ const SwapPanel = () => {
       return (
         <>
           <CurrentButtonContent />
-          <div className="flex flex-row justify-start mt-6 px-8 w-container text-sm font-bold">
-            <div className="w-1/2 text-secondary-alternate">Price</div>
-            <div className="w-1/2 flex justify-end">88.2412 DAI/ETH</div>
-          </div>
-          <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-            <div className="w-1/2 text-secondary-alternate">Minimum Received</div>
-            <div className="w-1/2 flex justify-end">8.78 DAI</div>
-          </div>
-          <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-            <div className="w-1/2 text-secondary-alternate">Price Impact</div>
-            <div className="w-1/2 flex justify-end">{`<0.01%`}</div>
-          </div>
-          <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-            <div className="w-1/2 text-secondary-alternate">Liquidity Provider Fee</div>
-            <div className="w-1/2 flex justify-end">Price</div>
-          </div>
+          <SwapDetails />
         </>
       )
     }
+  }
+
+  const computeSwap = () => {
+    setToInputValue(fromInputValue)
   }
 
   return (

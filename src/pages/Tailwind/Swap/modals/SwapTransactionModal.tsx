@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
-import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
+import SwapDetails from '../SwapDetails'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import ArrowDownIcon from 'assets/svg/arrow-down-icon.svg'
+import WarningIcon from 'assets/svg/warning-icon-purple.svg'
 import { getExplorerLink } from '../../../../utils'
 
 interface SwapTransactionModalProps {
@@ -34,6 +36,12 @@ const SwapTransactionModal = ({
   const [state, setState] = useState(SwapTransactionModalState.NotConfirmed)
   const estimatedAmount = 0.004
 
+  const dismissGracefully = () => {
+    setState(SwapTransactionModalState.NotConfirmed)
+    // setTxHash('')
+    onDismiss()
+  }
+
   const ConfirmContent = () => {
     return (
       <>
@@ -59,29 +67,33 @@ const SwapTransactionModal = ({
           <div className="flex justify-between items-center mt-2 pt-2 px-4 space-x-2 text-sm text-secondary-alternate italic">
             Output is estimated. You will receive at least {estimatedAmount} or the transaction will revert.
           </div>
+          <div className="flex justify-between items-center mt-2 p-1.5 bg-primary bg-opacity-10 rounded-md">
+            <div className="flex flex-row space-x-2 pl-2 text-primary-hover w-3/4">
+              <img src={WarningIcon} alt="warning" />
+              <span className="text-sm font-bold">Price Update</span>
+            </div>
+            <div className="w-1/4">
+              <PrimaryButton
+                type={PrimaryButtonType.Gradient}
+                title="Accept"
+                state={PrimaryButtonState.Enabled}
+                onClick={() => {
+                  console.log('Accept')
+                }}
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-row justify-start mt-6 px-8 w-container text-sm font-bold">
-          <div className="w-1/2 text-secondary-alternate">Price</div>
-          <div className="w-1/2 flex justify-end">88.2412 DAI/ETH</div>
-        </div>
-        <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-          <div className="w-1/2 text-secondary-alternate">Minimum Received</div>
-          <div className="w-1/2 flex justify-end">8.78 DAI</div>
-        </div>
-        <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-          <div className="w-1/2 text-secondary-alternate">Price Impact</div>
-          <div className="w-1/2 flex justify-end">{`<0.01%`}</div>
-        </div>
-        <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
-          <div className="w-1/2 text-secondary-alternate">Liquidity Provider Fee</div>
-          <div className="w-1/2 flex justify-end">Price</div>
-        </div>
+        <SwapDetails />
         <div className="bg-white p-4 pb-4">
           <PrimaryButton
-            title="Confirm Supply"
+            title="Confirm Swap"
             state={PrimaryButtonState.Enabled}
             onClick={() => {
               setState(SwapTransactionModalState.InProgress)
+              setTimeout(() => {
+                setState(SwapTransactionModalState.Successful)
+              }, 2000)
             }}
           />
         </div>
@@ -131,23 +143,10 @@ const SwapTransactionModal = ({
           </a>
         </div>
         <div className="mt-12">
-          <PrimaryButton
-            title="Close"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              // onSuccessConfirm()
-              // setState(ConfirmTransactionModalState.NotConfirmed)
-            }}
-          />
+          <PrimaryButton title="Close" state={PrimaryButtonState.Enabled} onClick={dismissGracefully} />
         </div>
       </div>
     )
-  }
-
-  const dismissGracefully = () => {
-    setState(SwapTransactionModalState.NotConfirmed)
-    // setTxHash('')
-    onDismiss()
   }
 
   return (
