@@ -15,6 +15,7 @@ import Demo from './Test/Demo'
 import TailwindDemo from './Test/TailwindDemo'
 import Pool from './Tailwind/Pool'
 import Bridge from './Tailwind/Bridge'
+import Swap from './Tailwind/Swap'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -67,6 +68,7 @@ export default function App() {
           <Polling />
           <Web3ReactManager>
             <Switch>
+              <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
               <Route exact strict path="/pool" component={Pool} />
