@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
+import NumericalInput from 'components/NumericalInput'
 import OnOffToggle from 'components/Tailwind/Toggle/OnOffToggle'
 import { HelpCircle as QuestionIcon } from 'react-feather'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -22,29 +23,26 @@ enum SwapSettingsModalState {
 }
 
 interface SwapSettingsModalProps {
+  txDeadline: string
   isVisible: boolean
   onSlippageChanged: (slippage: string) => void
   onDismiss: () => void
+  didChangeTxDeadline: (newValue: string) => void
 }
 
-const SwapSettingsModal = ({ isVisible, onSlippageChanged, onDismiss }: SwapSettingsModalProps) => {
-  const { chainId } = useActiveWeb3React()
-  const currentBlockTime = useCurrentBlockTimestamp()
+const SwapSettingsModal = ({
+  txDeadline,
+  isVisible,
+  onSlippageChanged,
+  onDismiss,
+  didChangeTxDeadline
+}: SwapSettingsModalProps) => {
   const [state, setState] = useState(SwapSettingsModalState.NotConfirmed)
   const [slippage, setSlippage] = useState('0.1')
-  const [txHash, setTxHash] = useState('')
-  const [tokenAmounts, setTokenAmounts] = useState([0, 0])
-  const [tokenPrices, setTokenPrices] = useState([0, 0])
-  const [lpAmount, setLpAmount] = useState({
-    target: 0,
-    min: 0
-  })
-  const [poolShare, setPoolShare] = useState(0)
   const [fromInputValue, setFromInputValue] = useState('')
 
   const dismissGracefully = () => {
     setState(SwapSettingsModalState.NotConfirmed)
-    setTxHash('')
     onDismiss()
   }
 
@@ -61,15 +59,31 @@ const SwapSettingsModal = ({ isVisible, onSlippageChanged, onDismiss }: SwapSett
             }}
           />
         </div>
+        <div className="flex items-center space-x-2 mt-2">
+          <span>Transaction deadline</span>
+          <QuestionIcon size={16} />
+        </div>
+        <div className="flex items-center space-x-2 mt-2">
+          <div className="w-20">
+            <NumericalInput
+              className="text-sm font-bold text-primary-hover py-1 px-3 border border-solid border-primary rounded-button w-full"
+              value={txDeadline}
+              onUserInput={val => {
+                didChangeTxDeadline(val)
+              }}
+            />
+          </div>
+          <span>minutes</span>
+        </div>
         <div className="mt-4 font-semibold text-lg">Interface settings</div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-4">
           <div className="flex items-center space-x-2 mb-2">
             <span>Transaction deadline</span>
             <QuestionIcon size={16} />
           </div>
           <OnOffToggle didChangeValue={val => setFromInputValue(val)} />
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mt-2">
           <div className="flex items-center space-x-2 mb-2">
             <span>Disable Multihops</span>
             <QuestionIcon size={16} />
