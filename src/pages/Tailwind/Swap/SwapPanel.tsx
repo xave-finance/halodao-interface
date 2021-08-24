@@ -259,8 +259,8 @@ const SwapPanel = () => {
             value={toInputValue}
             canSelectToken={true}
             didChangeValue={val => setToInputValue(val)}
-            showBalance={true}
-            showMax={true}
+            showBalance={false}
+            showMax={false}
           />
         </div>
         <MainContent />
