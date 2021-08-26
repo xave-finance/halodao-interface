@@ -24,7 +24,7 @@ interface ConfirmTransactionModalProps {
   state: ConfirmTransactionModalState
   setState: (state: ConfirmTransactionModalState) => void
   successHash: string
-  estimatedGas: number
+  estimatedGas: string
 }
 
 enum ConfirmTransactionModalState {
@@ -97,7 +97,7 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Destination Address</span>
             <div className="mt-1">
-              <span>{account && shortenAddress(account)} </span>
+              <span>{account && shortenAddress(account, 8)} </span>
             </div>
           </div>
         </div>
@@ -181,6 +181,10 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
+        <div className="text-center text-sm text-gray-500 mb-2">
+          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
+          update on {NETWORK_LABEL[destinationChainId]}
+        </div>
         <div className="text-center">
           <a
             className="font-semibold text-link"

@@ -10,6 +10,7 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { getContract, shortenAddress } from 'utils'
+import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -56,7 +57,7 @@ const BridgePanel = () => {
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
   const [allowance, setAllowance] = useState(0)
   const [balance, setBalance] = useState(0)
-  const [estimatedGas, setEstimatedGas] = useState(0)
+  const [estimatedGas, setEstimatedGas] = useState('')
   const [successHash, setSuccessHash] = useState('')
 
   const setButtonStates = () => {
@@ -120,7 +121,7 @@ const BridgePanel = () => {
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
-    setInputValue('0')
+    setInputValue('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId])
 
@@ -156,7 +157,7 @@ const BridgePanel = () => {
 
   const estimateDeposit = useCallback(async () => {
     const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, 1)
-    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
   }, [primaryBridgeContract])
 
   const depositToPrimaryBridge = useCallback(
@@ -192,7 +193,8 @@ const BridgePanel = () => {
 
   const estimateBurnWrappedToken = useCallback(async () => {
     const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(1)
-    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+    // setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
   }, [secondaryBridgeContract])
 
   const burnWrappedTokens = useCallback(
