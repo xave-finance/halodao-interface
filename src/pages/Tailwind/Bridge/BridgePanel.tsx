@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
+import ReactGA from 'react-ga'
 import ethers from 'ethers'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
@@ -274,8 +276,15 @@ const BridgePanel = () => {
       console.error(e)
       return false
     }
+    /** Log deposit to google analytics */
+    ReactGA.event({
+      category: 'Bridge',
+      action: 'deposit',
+      label: token[chainId as ChainId].symbol,
+      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
+    })
+
     return true
-    /** @todo Add logging to google analytics */
   }
 
   const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
@@ -290,9 +299,15 @@ const BridgePanel = () => {
       console.error(e)
       return false
     }
-    return true
+    /** log burn to google analytics */
+    ReactGA.event({
+      category: 'Bridge',
+      action: 'burn',
+      label: token[destinationChainId].symbol,
+      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
+    })
 
-    /** @todo Add logging to google analytics */
+    return true
   }
 
   const NotApproveContent = () => {
