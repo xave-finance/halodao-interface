@@ -18,7 +18,7 @@ const Bridge = () => {
       <div className="md:float-right md:w-1/2">
         <BridgePanel />
       </div>
-      <div className="flex items-start md:w-1/2">
+      <div className="hidden md:flex items-start md:w-1/2">
         <InfoCard
           title="Bridge Info"
           description={`Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. A bridge fee of ${Number(

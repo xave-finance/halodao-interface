@@ -10,7 +10,6 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { getContract, shortenAddress } from 'utils'
-import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
