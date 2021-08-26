@@ -5,22 +5,21 @@ import { ChainId, Currency } from '@sushiswap/sdk'
 import { MOCK } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
-import SwitchButton from 'components/Tailwind/Buttons/SwitchButton'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
-import { useWalletModalToggle } from 'state/application/hooks'
-import { getContract, shortenAddress } from 'utils'
-
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
+import ArrowIcon from 'assets/svg/switch-icon.svg'
 import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
+import { getContract, shortenAddress } from 'utils'
 import { toNumber } from 'utils/formatNumber'
 
 export enum ButtonState {
@@ -500,7 +499,9 @@ const BridgePanel = () => {
                 onChangeNetwork={() => console.log('hello')}
               />
               <div className="mb-2 w-1/5 flex items-center justify-center">
-                <SwitchButton onClick={() => console.log('clicked')} />
+                <div className="p-2 bg-primary-lighter rounded">
+                  <img src={ArrowIcon} alt="Switch" />
+                </div>
               </div>
               <SelectedNetworkPanel
                 mode={NetworkModalMode.SecondaryBridge}
