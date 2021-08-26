@@ -23,7 +23,7 @@ const Bridge = () => {
           title="Bridge Info"
           description={`Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. A bridge fee of ${Number(
             process.env.REACT_APP_SHUTTLE_FEE_PERCENTAGE
-          ) * 100}% goes to the HaloDAO treasury`}
+          ) * 100}% goes to the HaloDAO treasury.`}
         />
       </div>
     </PageWrapper>
