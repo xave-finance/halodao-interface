@@ -10,7 +10,6 @@ import { formatEther } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 import { PoolData } from './models/PoolData'
-import { useAllTransactions } from 'state/transactions/hooks'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
 import { addOrUpdatePool } from 'state/pool/actions'
@@ -54,7 +53,6 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
-  const allTransactions = useAllTransactions()
 
   const dispatch = useDispatch<AppDispatch>()
   const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
@@ -100,36 +98,30 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
           staked: Number(formatEther(staked)),
           earned: Number(formatEther(rewards))
         })
-
-        // Update cached pool data in app cache
-        let poolData: CachedPool
-        const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === poolAddress.toLowerCase())
-        const existingPool = filtered.length ? filtered[0] : {}
-        poolData = {
-          ...existingPool,
-          lpTokenAddress: poolAddress,
-          lpTokenBalance: Number(formatEther(balance)),
-          lpTokenStaked: Number(formatEther(staked)),
-          pendingRewards: Number(formatEther(rewards))
-        }
-        dispatch(addOrUpdatePool(poolData))
       })
       .catch(e => {
         console.error(e)
       })
-  }, [
-    poolAddress,
-    getTokens,
-    getLiquidity,
-    getBalance,
-    getStakedLPToken,
-    getPendingRewards,
-    allTransactions,
-    cachedPools,
-    dispatch
-  ])
+  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
 
-  useEffect(() => {}, [pool])
+  /**
+   * Update cached pool data in app cache
+   **/
+  useEffect(() => {
+    if (!pool) return
+
+    let poolData: CachedPool
+    const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === pool.address.toLowerCase())
+    const existingPool = filtered.length ? filtered[0] : {}
+    poolData = {
+      ...existingPool,
+      lpTokenAddress: pool.address,
+      lpTokenBalance: pool.held,
+      lpTokenStaked: pool.staked,
+      pendingRewards: pool.earned
+    }
+    dispatch(addOrUpdatePool(poolData))
+  }, [pool]) // eslint-disable-line
 
   // Return an empty component if failed to fetch pool info
   if (!pool) {
