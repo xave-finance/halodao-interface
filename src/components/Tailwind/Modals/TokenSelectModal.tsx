@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO, MOCK, RIO } from '../../../constants'
+import { HALO, MOCK, RIO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Search } from 'react-feather'
@@ -17,7 +17,7 @@ interface TokenListProps {
   onSelect?: (token: any | undefined) => void
 }
 
-const TOKENS = [HALO, MOCK, RIO]
+const TOKENS = [HALO, MOCK, RIO, TRUE_AUD, TRUE_CAD, TRUE_GBP]
 
 const TokenList = ({ chainId, onSelect }: TokenListProps) => {
   return (

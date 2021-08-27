@@ -94,6 +94,78 @@ export const RIO: ChainTokenMap = {
   )
 }
 
+export const TRUE_AUD: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TAUD_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueAUD',
+    'TAUD'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TAUD_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueAUD',
+    'wTAUD'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TAUD_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueAUD',
+    'wTAUD'
+  )
+}
+
+export const TRUE_CAD: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TCAD_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueCAD',
+    'TCAD'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TCAD_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueCAD',
+    'wTCAD'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TCAD_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueCAD',
+    'wTCAD'
+  )
+}
+
+export const TRUE_GBP: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TGBP_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueGBP',
+    'TGBP'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TGBP_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueGBP',
+    'wTGBP'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TGBP_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueGBP',
+    'wTGBP'
+  )
+}
+
 // HALO Token Instance
 export const HALO: ChainTokenMap = {
   // Mainnets
