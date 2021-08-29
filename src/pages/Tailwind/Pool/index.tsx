@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
@@ -14,6 +14,8 @@ import { AppDispatch } from 'state'
 const Pool = () => {
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
+  const [activeRow, setActiveRow] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   useEffect(() => {
     const pools: CachedPool[] = []
@@ -24,7 +26,7 @@ const Pool = () => {
       })
     }
     dispatch(updatePools(pools))
-  }, [rewardPoolAddresses])
+  }, [rewardPoolAddresses]) //eslint-disable-line
 
   return (
     <PageWrapper>
@@ -46,8 +48,20 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {LIQUIDITY_POOLS_ADDRESSES.map(poolAddress => (
-        <ExpandablePoolRow key={poolAddress} poolAddress={poolAddress} />
+      {LIQUIDITY_POOLS_ADDRESSES.map((poolAddress, i) => (
+        <ExpandablePoolRow
+          key={poolAddress}
+          poolAddress={poolAddress}
+          isExpanded={activeRow === i ? isExpanded : false}
+          onClick={() => {
+            if (activeRow === i) {
+              setIsExpanded(!isExpanded)
+            } else {
+              setIsExpanded(true)
+              setActiveRow(i)
+            }
+          }}
+        />
       ))}
     </PageWrapper>
   )

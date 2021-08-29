@@ -46,10 +46,11 @@ const PoolRow = styled.div`
 
 interface ExpandablePoolRowProps {
   poolAddress: string
+  isExpanded: boolean
+  onClick: () => void
 }
 
-const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+const ExpandablePoolRow = ({ poolAddress, isExpanded, onClick }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
   const dispatch = useDispatch<AppDispatch>()
@@ -141,7 +142,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
         className={`
           md:flex md:flex-row md:justify-between md:cursor-pointer md:items-start
         `}
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={onClick}
       >
         <div
           className={`
@@ -182,12 +183,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
           <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 md:text-right">
-          <PoolExpandButton
-            title="Manage"
-            expandedTitle="Close"
-            isExpanded={isExpanded}
-            onClick={() => setIsExpanded(!isExpanded)}
-          />
+          <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />
         </div>
       </PoolRow>
 
@@ -203,7 +199,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
             </div>
           </div>
           <div className="px-4 pb-4 text-right text-white bg-primary-hover rounded-br-card rounded-bl-card md:hidden">
-            <button className="font-black" onClick={() => setIsExpanded(!isExpanded)}>
+            <button className="font-black" onClick={onClick}>
               Close
             </button>
           </div>
