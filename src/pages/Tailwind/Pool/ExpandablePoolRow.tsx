@@ -10,10 +10,9 @@ import { formatEther } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
 import { Token } from '@sushiswap/sdk'
 import { PoolData } from './models/PoolData'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, AppState } from 'state'
-import { addOrUpdatePool } from 'state/pool/actions'
-import { CachedPool } from 'state/pool/reducer'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
+import { updatePools } from 'state/pool/actions'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -53,9 +52,7 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
-
   const dispatch = useDispatch<AppDispatch>()
-  const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
 
   /**
    * Main logic: fetching pool info
@@ -110,17 +107,13 @@ const ExpandablePoolRow = ({ poolAddress }: ExpandablePoolRowProps) => {
   useEffect(() => {
     if (!pool) return
 
-    let poolData: CachedPool
-    const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === pool.address.toLowerCase())
-    const existingPool = filtered.length ? filtered[0] : {}
-    poolData = {
-      ...existingPool,
+    let poolData = {
       lpTokenAddress: pool.address,
       lpTokenBalance: pool.held,
       lpTokenStaked: pool.staked,
       pendingRewards: pool.earned
     }
-    dispatch(addOrUpdatePool(poolData))
+    dispatch(updatePools([poolData]))
   }, [pool]) // eslint-disable-line
 
   // Return an empty component if failed to fetch pool info
