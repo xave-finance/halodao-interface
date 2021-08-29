@@ -108,7 +108,7 @@ const ExpandablePoolRow = ({ poolAddress, isExpanded, onClick }: ExpandablePoolR
   useEffect(() => {
     if (!pool) return
 
-    let poolData = {
+    const poolData = {
       lpTokenAddress: pool.address,
       lpTokenBalance: pool.held,
       lpTokenStaked: pool.staked,
