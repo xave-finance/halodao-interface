@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { TYPE, ExternalLink, LinkIcon, HideLarge } from '../../theme'
+import { TYPE, ExternalLink, LinkIcon } from '../../theme'
 import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
-import { useLPTokenAddresses } from 'halo-hooks/useRewards'
+import { useLPTokenAddresses, useAllocPoints } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
@@ -33,7 +33,7 @@ const HeaderRow = styled(RowBetween)`
   `};
   flex-direction: column;
   width: 60%;
-  padding-right: 0.5rem;
+  padding-right: 2rem;
 `
 
 const TitleRow = styled(RowBetween)`
@@ -42,7 +42,15 @@ const TitleRow = styled(RowBetween)`
 `
 
 const StyledExternalLink = styled(ExternalLink)`
-  ${({ theme }) => theme.mediaWidth.upToSmall` 
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
+
+  .link-icon {
+    display: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     border: 1px solid #518CFF;
     box-sizing: border-box;
     border-radius: 20px; 
@@ -51,10 +59,14 @@ const StyledExternalLink = styled(ExternalLink)`
     margin-bottom: 0.5rem;
     text-align: center;
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .link-icon {
+      display: inline;
+    }
   `};
-  color: #518cff;
-  text-decoration-line: underline;
-  line-height: 130%;
 `
 
 const Farm = () => {
@@ -64,13 +76,22 @@ const Farm = () => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
   const tokenPrice = useTokenPrice(tokenAddresses)
+  const allocPoints = useAllocPoints(lpTokenAddresses)
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
       setTokenAddresses(result.tokenAddresses)
     })
-  }, [lpTokenAddresses]) // eslint-disable-line
+  }, [lpTokenAddresses]) //eslint-disable-line
+
+  useEffect(() => {
+    const newPoolsInfo = poolsInfo
+    newPoolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = allocPoints[poolInfo.pid]
+    })
+    setPoolsInfo(newPoolsInfo)
+  }, [poolsInfo, allocPoints])
 
   return (
     <>
@@ -90,9 +111,7 @@ const Farm = () => {
             <Row>
               <StyledExternalLink href="https://docs.halodao.com/v0-guide/how-to-farm" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
-                <HideLarge>
-                  <LinkIcon></LinkIcon>
-                </HideLarge>
+                <LinkIcon className="link-icon"></LinkIcon>
               </StyledExternalLink>
             </Row>
           </HeaderRow>

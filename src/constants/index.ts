@@ -32,6 +32,140 @@ export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LEN
 export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
+export const MOCK: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'W-MK',
+    'Wrapped Mocked Token'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'MK',
+    'Mock Token'
+  ),
+  [ChainId.XDAI]: new Token(
+    ChainId.XDAI,
+    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
+    18,
+    'W-MK',
+    'Wrapped Mock Token'
+  ),
+  [ChainId.BSC]: new Token(
+    ChainId.BSC,
+    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+    18,
+    'W-MK',
+    'Wrapped Mock Token'
+  )
+}
+
+export const RIO: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'RIO',
+    'Rio Token'
+  ),
+  [ChainId.XDAI]: new Token(
+    ChainId.XDAI,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  ),
+  [ChainId.BSC]: new Token(
+    ChainId.BSC,
+    process.env.REACT_APP_RIO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
+    18,
+    'W-RIO',
+    'Wrapped Rio Token'
+  )
+}
+
+export const TRUE_AUD: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TAUD_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueAUD',
+    'TAUD'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TAUD_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueAUD',
+    'wTAUD'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TAUD_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueAUD',
+    'wTAUD'
+  )
+}
+
+export const TRUE_CAD: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TCAD_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueCAD',
+    'TCAD'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TCAD_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueCAD',
+    'wTCAD'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TCAD_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueCAD',
+    'wTCAD'
+  )
+}
+
+export const TRUE_GBP: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TGBP_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueGBP',
+    'TGBP'
+  ),
+  [ChainId.KOVAN]: new Token(
+    ChainId.KOVAN,
+    process.env.REACT_APP_TGBP_ADDRESS_KOVAN || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueGBP',
+    'wTGBP'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TGBP_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueGBP',
+    'wTGBP'
+  )
+}
+
 // HALO Token Instance
 export const HALO: ChainTokenMap = {
   // Mainnets
@@ -224,6 +358,13 @@ export const MKR = new Token(ChainId.MAINNET, '0x9f8F72aA9304c8B593d555F12eF6589
 export const AMPL = new Token(ChainId.MAINNET, '0xD46bA6D942050d489DBd938a2C909A5d5039A161', 9, 'AMPL', 'Ampleforth')
 export const WBTC = new Token(ChainId.MAINNET, '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599', 8, 'WBTC', 'Wrapped BTC')
 export const RUNE = new Token(ChainId.MAINNET, '0x3155BA85D5F96b2d030a4966AF206230e46849cb', 18, 'RUNE', 'RUNE.ETH')
+export const XSGD = new Token(
+  ChainId.MAINNET,
+  '0x70e8de73ce538da2beed35d14187f6959a8eca96',
+  18,
+  'XSGD',
+  'Xfers: XSGD Token'
+)
 
 export const BSC: { [key: string]: Token } = {
   DAI: new Token(ChainId.BSC, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'Dai Stablecoin'),

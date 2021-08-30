@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactGA from 'react-ga'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -19,12 +20,12 @@ import { GreyCard } from '../Card'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import Spinner from '../../assets/images/spinner.svg'
-import SpinnerPurple from '../../assets/images/spinner-purple.svg'
-import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
-import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
-import ArrowRight from '../../assets/svg/arrow-right.svg'
-import LinkIcon from '../../assets/svg/link-icon.svg'
+import Spinner from 'assets/images/spinner.svg'
+import SpinnerPurple from 'assets/images/spinner-purple.svg'
+import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
+import BunnyRewards from 'assets/svg/bunny-rewards.svg'
+import ArrowRight from 'assets/svg/arrow-right.svg'
+import LinkIcon from 'assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -255,6 +256,8 @@ const GetBPTButton = styled(ExternalLink)`
   `};
 
   & img {
+    display: inline;
+    vertical-align: baseline;
     margin-left: 6px;
     height: 14px;
     margin-bottom: -2px;
@@ -563,6 +566,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setStakeAmount('')
     setStakeButtonState(ButtonHaloStates.Disabled)
     setIsTxInProgress(false)
+    /** log stake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Stake LP token',
+      label: poolInfo.pair,
+      value: parseFloat(formatEther(parseEther(stakeAmount).toString()))
+    })
   }
 
   /**
@@ -582,6 +593,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setUnstakeAmount('')
     setUnstakeButtonState(ButtonHaloSimpleStates.Disabled)
     setIsTxInProgress(false)
+    /** log unstake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Unstake LP token',
+      label: poolInfo.pair,
+      value: parseFloat(formatEther(parseEther(unstakeAmount).toString()))
+    })
   }
 
   /**
@@ -601,6 +620,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Harvest',
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
+    })
 
     // Redirect to vesting page
     const vestingInfo = {
