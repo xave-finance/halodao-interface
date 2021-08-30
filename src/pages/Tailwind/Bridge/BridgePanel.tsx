@@ -4,7 +4,7 @@ import ethers from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, Currency } from '@sushiswap/sdk'
-import { MOCK } from '../../../constants'
+import { MOCK, TRUE_AUD } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -50,9 +50,9 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [token, setToken] = useState<any>(MOCK)
+  const [token, setToken] = useState<any>(TRUE_AUD)
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
-  const [destinationChainId, setDestinationChainId] = useState(100)
+  const [destinationChainId, setDestinationChainId] = useState(ChainId.MATIC)
   const [primaryBridgeContract, setPrimaryBridgeContract] = useState<Contract | null>(null)
   const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
   const [allowance, setAllowance] = useState(0)
@@ -116,7 +116,7 @@ const BridgePanel = () => {
       setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
     } else {
       /** @dev Mock to BSC for now */
-      setDestinationChainId(ChainId.BSC)
+      setDestinationChainId(ChainId.MATIC)
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
@@ -577,7 +577,7 @@ const BridgePanel = () => {
         originChainId={chainId as ChainId}
         destinationChainId={destinationChainId}
         tokenSymbol={chainId ? token[chainId as ChainId].symbol : ''}
-        wrappedTokenSymbol={token[destinationChainId].symbol}
+        wrappedTokenSymbol={token[destinationChainId] ? token[destinationChainId].symbol : ''}
         state={modalState}
         setState={setModalState}
         successHash={successHash}
