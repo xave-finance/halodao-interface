@@ -4,7 +4,7 @@ import ethers from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, Currency } from '@sushiswap/sdk'
-import { MOCK, TRUE_AUD } from '../../../constants'
+import { TRUE_AUD, } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -525,7 +525,7 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={chainId ? token[chainId as ChainId].address : MOCK[137]}
+                tokenAddress={chainId ? token[chainId as ChainId].address : token[ChainId.MATIC]}
               />
             </div>
 
