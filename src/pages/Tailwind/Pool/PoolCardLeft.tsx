@@ -16,10 +16,10 @@ const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
     if (pool.held > 0.00001) {
       setDisabledTabs([])
     } else {
-      // Disable Remove Liquidity tab if user has no LPT
+      // Disable Remove Liquidity tab if user has no HLP
       setDisabledTabs([1])
 
-      // Switch back to Add Liquidity tab if user has no more LPT
+      // Switch back to Add Liquidity tab if user has no more HLP
       if (activeTab === 1) {
         setActiveTab(0)
       }

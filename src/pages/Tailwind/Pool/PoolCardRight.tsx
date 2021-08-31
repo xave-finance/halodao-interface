@@ -52,7 +52,7 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
       <div className="pt-4 flex flex-col md:flex-row">
         <div className="mb-4 flex-1 md:mb-0">
           <div className="font-bold">LP tokens for this pool</div>
-          <div className="font-fredoka text-4xl">{formatNumber(pool.held)} LPT</div>
+          <div className="font-fredoka text-4xl">{formatNumber(pool.held)} HLP</div>
         </div>
         <div className="flex items-end">
           <PoolBigButton title="Stake it" isEnabled={pool.held > 0} onClick={stake} />

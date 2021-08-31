@@ -175,7 +175,7 @@ const AddLiquityModal = ({
       <>
         <div className="bg-primary-lightest p-4">
           <div className="font-semibold text-lg">You will receive</div>
-          <div className="mt-4 font-semibold text-2xl">{formatNumber(lpAmount.target, NumberFormat.long)} LPT</div>
+          <div className="mt-4 font-semibold text-2xl">{formatNumber(lpAmount.target, NumberFormat.long)} HLP</div>
           <div className="mt-1 text-xl">
             {pool.token0.symbol}/{pool.token1.symbol} Pool Tokens
           </div>

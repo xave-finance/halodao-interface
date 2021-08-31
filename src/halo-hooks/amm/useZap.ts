@@ -28,7 +28,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log(`ZapContract?.calcMaxDepositAmountGivenBase(${formatEther(baseAmount)}): `, res)
 
       console.log('deposit amount: ', formatEther(res[0]))
-      console.log('LPT amount: ', formatEther(res[1]))
+      console.log('HLP amount: ', formatEther(res[1]))
       console.log('token0 amount: ', formatUnits(res[2][0], token0.decimals))
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
       return {
@@ -47,7 +47,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
    *
    * Returns an array with 3 elements:
    * 0 - max deposit amount
-   * 1 - LPT amount
+   * 1 - HLP amount
    * 2 - base amount
    **/
   const calcMaxDepositAmountGivenQuote = useCallback(
@@ -59,7 +59,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log(`ZapContract?.calcMaxDepositAmountGivenQuote(${formatEther(quoteAmount)}): `, res)
 
       console.log('deposit amount: ', formatEther(res[0]))
-      console.log('LPT amount: ', formatEther(res[1]))
+      console.log('HLP amount: ', formatEther(res[1]))
       console.log('token0 amount: ', formatUnits(res[2][0], token0.decimals))
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
       return {

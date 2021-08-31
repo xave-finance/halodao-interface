@@ -18,7 +18,7 @@ const PageHeaderRight = () => {
     let totalStaked = 0
     let totalHaloEarned = 0
 
-    // @TODO: get LPT price
+    // @TODO: get HLP price
     const lpTokenPrice = 1
 
     for (const pool of cachedPools) {
@@ -42,11 +42,11 @@ const PageHeaderRight = () => {
     <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
       <div className="flex-auto flex flex-col space-y-2">
         <div className="flex-auto bg-primary-light py-4 px-6 rounded-card">
-          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Stakeable LPT value</div>
+          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Stakeable HLP value</div>
           <div className="text-2xl font-semibold">{formatNumber(stakeableValue, NumberFormat.usd)}</div>
         </div>
         <div className="flex-auto bg-primary-light py-4 px-6 rounded-card">
-          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Staked LPT value</div>
+          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Staked HLP value</div>
           <div className="text-2xl font-semibold">{formatNumber(stakedValue, NumberFormat.usd)}</div>
         </div>
       </div>
