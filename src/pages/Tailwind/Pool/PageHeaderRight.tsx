@@ -1,3 +1,4 @@
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
@@ -9,14 +10,15 @@ const PageHeaderRight = () => {
   const [stakedValue, setStakedValue] = useState(0)
   const [haloEarned, setHaloEarned] = useState(0)
   const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
+  const { haloHaloPrice } = useHaloHalo()
+  const rewardTokenPrice = Number(haloHaloPrice)
 
   useEffect(() => {
     let totalStakeable = 0
     let totalStaked = 0
     let totalHaloEarned = 0
 
-    // @TODO: get RNBW:xRNBW price
-    const rewardTokenPrice = 1
+    // @TODO: get LPT price
     const lpTokenPrice = 1
 
     for (const pool of cachedPools) {
@@ -34,7 +36,7 @@ const PageHeaderRight = () => {
     setStakeableValue(totalStakeable)
     setStakedValue(totalStaked)
     setHaloEarned(totalHaloEarned)
-  }, [cachedPools])
+  }, [cachedPools, rewardTokenPrice])
 
   return (
     <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">

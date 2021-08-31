@@ -19,7 +19,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
    * the number of LP tokens that will be generated, along with the maximized
    * base/quote amounts
    **/
-  const calcQuoteAmountGivenBase = useCallback(
+  const calcMaxDepositAmountGivenBase = useCallback(
     async (amount: string) => {
       console.log('params: ', amount, token0.decimals)
       const baseAmount = parseUnits(amount, token0.decimals)
@@ -31,7 +31,11 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('LPT amount: ', formatEther(res[1]))
       console.log('token0 amount: ', formatUnits(res[2][0], token0.decimals))
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
-      return [formatUnits(res[2][1], token1.decimals), formatEther(res[1])]
+      return {
+        maxDeposit: formatEther(res[0]),
+        lpAmount: formatEther(res[1]),
+        quoteAmount: formatUnits(res[2][1], token1.decimals)
+      }
     },
     [ZapContract, curveAddress, token0, token1]
   )
@@ -40,8 +44,13 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
    * Given a quote amount, calculate the maximum deposit amount, along with the
    * the number of LP tokens that will be generated, along with the maximized
    * base/quote amounts
+   *
+   * Returns an array with 3 elements:
+   * 0 - max deposit amount
+   * 1 - LPT amount
+   * 2 - base amount
    **/
-  const calcBaseAmountGivenQuote = useCallback(
+  const calcMaxDepositAmountGivenQuote = useCallback(
     async (amount: string) => {
       console.log('params: ', amount, token1.decimals)
       const quoteAmount = parseUnits(amount, token1.decimals)
@@ -53,7 +62,11 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       console.log('LPT amount: ', formatEther(res[1]))
       console.log('token0 amount: ', formatUnits(res[2][0], token0.decimals))
       console.log('token1 amount: ', formatUnits(res[2][1], token1.decimals))
-      return [formatUnits(res[2][0], token0.decimals), formatEther(res[1])]
+      return {
+        maxDeposit: formatEther(res[0]),
+        lpAmount: formatEther(res[1]),
+        baseAmount: formatUnits(res[2][0], token0.decimals)
+      }
     },
     [ZapContract, curveAddress, token0, token1]
   )
@@ -135,8 +148,8 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   )
 
   return {
-    calcQuoteAmountGivenBase,
-    calcBaseAmountGivenQuote,
+    calcMaxDepositAmountGivenBase,
+    calcMaxDepositAmountGivenQuote,
     calcSwapAmountForZapFromBase,
     calcSwapAmountForZapFromQuote,
     zapFromBase,

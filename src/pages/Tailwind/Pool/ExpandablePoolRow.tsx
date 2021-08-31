@@ -13,6 +13,7 @@ import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
+import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -46,14 +47,21 @@ const PoolRow = styled.div`
 
 interface ExpandablePoolRowProps {
   poolAddress: string
+  pid?: number
   isExpanded: boolean
   onClick: () => void
 }
 
-const ExpandablePoolRow = ({ poolAddress, isExpanded, onClick }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
-  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(poolAddress)
+  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(
+    poolAddress,
+    pid
+  )
   const dispatch = useDispatch<AppDispatch>()
+
+  const { haloHaloPrice } = useHaloHalo()
+  const rewardTokenPrice = Number(haloHaloPrice)
 
   /**
    * Main logic: fetching pool info
@@ -180,7 +188,7 @@ const ExpandablePoolRow = ({ poolAddress, isExpanded, onClick }: ExpandablePoolR
         </div>
         <div className="col-6 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">HALO Earned:</div>
-          <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
+          <div className="">{formatNumber(pool.earned * rewardTokenPrice, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />

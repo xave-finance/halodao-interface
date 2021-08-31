@@ -11,21 +11,43 @@ import { CachedPool } from 'state/pool/reducer'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 
+interface PoolAddressPidMap {
+  address: string
+  pid: number | undefined
+}
+
 const Pool = () => {
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
   const [activeRow, setActiveRow] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
 
+  const defaultPoolMap = () => {
+    return LIQUIDITY_POOLS_ADDRESSES.map<PoolAddressPidMap>(address => {
+      return {
+        address,
+        pid: undefined
+      }
+    })
+  }
+
+  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap)
+
   useEffect(() => {
     const pools: CachedPool[] = []
+    const map = defaultPoolMap()
     for (const [i, address] of rewardPoolAddresses.entries()) {
       pools.push({
         pid: i,
         lpTokenAddress: address
       })
+      const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filtered.length) {
+        filtered[0].pid = i
+      }
     }
     dispatch(updatePools(pools))
+    setPoolMap(map)
   }, [rewardPoolAddresses]) //eslint-disable-line
 
   return (
@@ -48,10 +70,11 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {LIQUIDITY_POOLS_ADDRESSES.map((poolAddress, i) => (
+      {poolMap.map((pool, i) => (
         <ExpandablePoolRow
-          key={poolAddress}
-          poolAddress={poolAddress}
+          key={pool.address}
+          poolAddress={pool.address}
+          pid={pool.pid}
           isExpanded={activeRow === i ? isExpanded : false}
           onClick={() => {
             if (activeRow === i) {

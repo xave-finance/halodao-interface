@@ -53,11 +53,12 @@ const AddLiquityModal = ({
     min: 0
   })
   const [poolShare, setPoolShare] = useState(0)
+  const [depositAmount, setDepositAmount] = useState('')
 
   const {
     calcSwapAmountForZapFromBase,
     calcSwapAmountForZapFromQuote,
-    calcBaseAmountGivenQuote,
+    calcMaxDepositAmountGivenQuote,
     zapFromBase,
     zapFromQuote
   } = useZap(pool.address, pool.token0, pool.token1)
@@ -103,7 +104,9 @@ const AddLiquityModal = ({
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
 
-    const [, lpAmount] = await calcBaseAmountGivenQuote(`${quoteTokenAmount}`)
+    const { maxDeposit, lpAmount } = await calcMaxDepositAmountGivenQuote(`${quoteTokenAmount}`)
+    setDepositAmount(maxDeposit)
+
     const maxLpAmount = Number(lpAmount)
     setLpAmount({
       target: maxLpAmount,
@@ -135,7 +138,7 @@ const AddLiquityModal = ({
     setState(AddLiquityModalState.InProgress)
     try {
       const deadline = futureTime()
-      const tx = await deposit(parseEther(`${lpAmount.target}`), deadline)
+      const tx = await deposit(parseEther(depositAmount), deadline)
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)

@@ -21,14 +21,19 @@ const initialState: PoolState = {
 const mergePools = (oldPools: CachedPool[], newPools: CachedPool[]) => {
   const mergedPools: CachedPool[] = []
   for (const nPool of newPools) {
-    const matches = oldPools.filter(p => p.pid === nPool.pid || p.lpTokenAddress === nPool.lpTokenAddress)
+    const matches = oldPools.filter(
+      p => p.pid === nPool.pid || p.lpTokenAddress.toLowerCase() === nPool.lpTokenAddress.toLowerCase()
+    )
     if (matches.length) {
       mergedPools.push({ ...matches[0], ...nPool })
     } else {
       mergedPools.push(nPool)
     }
   }
-  return mergedPools
+
+  const existingAddresses = newPools.map(p => p.lpTokenAddress.toLowerCase())
+  const filteredPools = oldPools.filter(p => !existingAddresses.includes(p.lpTokenAddress.toLowerCase()))
+  return [...filteredPools, ...mergedPools]
 }
 
 export default createReducer(initialState, builder =>

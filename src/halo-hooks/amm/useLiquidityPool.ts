@@ -8,21 +8,14 @@ import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
-import { CachedPool } from 'state/pool/reducer'
-import { useSelector } from 'react-redux'
-import { AppState } from 'state'
 import { HALO_REWARDS_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
 import Fraction from 'constants/Fraction'
 
-export const useLiquidityPool = (address: string) => {
+export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const { account, library, chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
   const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
-
-  const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
-  const filtered = cachedPools.filter(p => p.lpTokenAddress.toLowerCase() === address.toLowerCase())
-  const pid = filtered.length ? filtered[0].pid : undefined
 
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []
@@ -112,7 +105,7 @@ export const useLiquidityPool = (address: string) => {
     if (!pid) return BigNumber.from(0)
 
     const res = await RewardsContract?.userInfo(pid, account)
-    console.log(`RewardsContract.userInfo(${account}): `, res)
+    console.log(`RewardsContract.userInfo(${pid}, ${account}): `, res)
     return res.amount
   }, [RewardsContract, account, pid])
 
