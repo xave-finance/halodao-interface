@@ -158,8 +158,7 @@ const AddLiquityModal = ({
       const deadline = futureTime()
       const func = isZappingFromBase ? zapFromBase : zapFromQuote
       console.log('zapAmount: ', zapAmount)
-      //const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
-      const tx = await func(zapAmount!, deadline, parseEther('0'))
+      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
