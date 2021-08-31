@@ -155,10 +155,13 @@ const BridgePanel = () => {
     [addTransaction, tokenContract, primaryBridgeContract]
   )
 
-  const estimateDeposit = useCallback(async () => {
-    const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, 1)
-    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
-  }, [primaryBridgeContract])
+  const estimateDeposit = useCallback(
+    async (chainIdDestination: number) => {
+      const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, chainIdDestination)
+      setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
+    },
+    [primaryBridgeContract]
+  )
 
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
@@ -340,7 +343,7 @@ const BridgePanel = () => {
               if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
                 estimateBurnWrappedToken()
               } else {
-                estimateDeposit()
+                estimateDeposit(destinationChainId)
               }
               setModalState(ConfirmTransactionModalState.NotConfirmed)
               setShowModal(true)

@@ -102,13 +102,6 @@ export const TRUE_AUD: ChainTokenMap = {
     'TrueAUD',
     'TAUD'
   ),
-  [ChainId.KOVAN]: new Token(
-    ChainId.KOVAN,
-    process.env.REACT_APP_TAUD_ADDRESS_KOVAN || ZERO_ADDRESS,
-    18,
-    'Wrapped TrueAUD',
-    'wTAUD'
-  ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_TAUD_ADDRESS_MATIC || ZERO_ADDRESS,
@@ -126,13 +119,6 @@ export const TRUE_CAD: ChainTokenMap = {
     'TrueCAD',
     'TCAD'
   ),
-  [ChainId.KOVAN]: new Token(
-    ChainId.KOVAN,
-    process.env.REACT_APP_TCAD_ADDRESS_KOVAN || ZERO_ADDRESS,
-    18,
-    'Wrapped TrueCAD',
-    'wTCAD'
-  ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_TCAD_ADDRESS_MATIC || ZERO_ADDRESS,
@@ -149,13 +135,6 @@ export const TRUE_GBP: ChainTokenMap = {
     18,
     'TrueGBP',
     'TGBP'
-  ),
-  [ChainId.KOVAN]: new Token(
-    ChainId.KOVAN,
-    process.env.REACT_APP_TGBP_ADDRESS_KOVAN || ZERO_ADDRESS,
-    18,
-    'Wrapped TrueGBP',
-    'wTGBP'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,

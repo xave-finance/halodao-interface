@@ -102,10 +102,10 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
           {[
             ChainId.MAINNET,
             //ChainId.FANTOM,
-            ChainId.BSC,
+            // ChainId.BSC,
             ChainId.MATIC,
             //ChainId.HECO,
-            ChainId.XDAI
+            // ChainId.XDAI
             //ChainId.HARMONY,
             //ChainId.AVALANCHE,
             //ChainId.OKEX
