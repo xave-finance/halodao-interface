@@ -1,5 +1,6 @@
 import React from 'react'
 import { ChainId } from '@sushiswap/sdk'
+import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { NETWORK_ICON, NETWORK_LABEL, NETWORK_PARAMS } from '../../../constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import ConnectedIndicator from 'components/Modal/ConnectedIndicator'
@@ -16,6 +17,8 @@ interface NetworkModalProps {
   isVisible: boolean
   mode: NetworkModalMode
   onDismiss: () => void
+  onChangeNetwork?: (chainId: number) => void
+  tokenAddress?: string
 }
 
 const showDescription = (chainId: ChainId, mode: NetworkModalMode) => {
@@ -53,10 +56,38 @@ const pickClass = (mode: NetworkModalMode) => {
   }
 }
 
-const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
+const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddress }: NetworkModalProps) => {
   const { chainId, library, account } = useActiveWeb3React()
 
   if (!chainId) return null
+
+  if (mode === NetworkModalMode.SecondaryBridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]) {
+    return (
+      <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
+        <div className="bg-primary-lightest p-4 border-b border-gray-700">
+          <div className="flex flex-col">
+            <p className="font-bold text-lg mb-2">Select Network</p>
+            {showDescription(chainId, mode)}
+          </div>
+        </div>
+        <div className="p-4">
+          <div className="flex flex-col">
+            <div className={pickClass(mode)} onClick={onDismiss}>
+              <div>
+                <img
+                  src={NETWORK_ICON[ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]]}
+                  alt="Switch Network"
+                  className="logo h-7 rounded-2xl mr-4"
+                />
+              </div>
+              <div>{NETWORK_LABEL[ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]]}</div>
+              {showConnected(mode)}
+            </div>
+          </div>
+        </div>
+      </BaseModal>
+    )
+  }
 
   return (
     <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
@@ -72,15 +103,15 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
             ChainId.MAINNET,
             //ChainId.FANTOM,
             ChainId.BSC,
-            ChainId.MATIC
+            ChainId.MATIC,
             //ChainId.HECO,
-            //ChainId.XDAI,
+            ChainId.XDAI
             //ChainId.HARMONY,
             //ChainId.AVALANCHE,
             //ChainId.OKEX
             //ChainId.MOONBASE
           ].map((key: ChainId, i: number) => {
-            if (chainId === key) {
+            if (chainId === key && mode !== NetworkModalMode.PrimaryBridge) {
               return (
                 <div
                   key={i}
@@ -101,6 +132,19 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                 </div>
               )
             }
+            if (mode === NetworkModalMode.SecondaryBridge && chainId === key) {
+              return (
+                <div key={i} className="mt-2" onClick={() => onDismiss()}>
+                  <div className={pickClass(mode)}>
+                    <div>
+                      <img src={NETWORK_ICON[key]} alt="Switch Network" className="logo h-7 rounded-2xl mr-4" />
+                    </div>
+                    <div>{NETWORK_LABEL[key]}</div>
+                    {showConnected(mode)}
+                  </div>
+                </div>
+              )
+            }
             return (
               <div
                 key={i}
@@ -111,6 +155,8 @@ const NetworkModal = ({ isVisible, mode, onDismiss }: NetworkModalProps) => {
                     console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
                     library?.send('wallet_addEthereumChain', [params, account])
+                  } else if (mode === NetworkModalMode.SecondaryBridge) {
+                    if (onChangeNetwork) onChangeNetwork(key)
                   }
                 }}
               >

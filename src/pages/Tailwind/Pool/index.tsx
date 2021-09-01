@@ -1,52 +1,54 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
 import ExpandablePoolRow from './ExpandablePoolRow'
-import { PoolData } from './models/PoolData'
-import { ChainId } from '@sushiswap/sdk'
-import { HALO, USDT, XSGD, USDC } from '../../../constants'
+import { LIQUIDITY_POOLS_ADDRESSES } from 'constants/pools'
+import { useLPTokenAddresses } from 'halo-hooks/useRewards'
+import { updatePools } from 'state/pool/actions'
+import { CachedPool } from 'state/pool/reducer'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from 'state'
+
+interface PoolAddressPidMap {
+  address: string
+  pid: number | undefined
+}
 
 const Pool = () => {
-  const pools: PoolData[] = [
-    {
-      name: 'RNBW/USDT',
-      token0: HALO[ChainId.MAINNET]!,
-      token1: USDT,
-      pooled: {
-        token0: 1800,
-        token1: 650
-      },
-      held: 0,
-      staked: 2000,
-      earned: 0
-    },
-    {
-      name: 'XSGD/USDT',
-      token0: XSGD,
-      token1: USDT,
-      pooled: {
-        token0: 3000,
-        token1: 100
-      },
-      held: 100,
-      staked: 0,
-      earned: 10.12345
-    },
-    {
-      name: 'XSGD/USDC',
-      token0: XSGD,
-      token1: USDC,
-      pooled: {
-        token0: 100,
-        token1: 100
-      },
-      held: 0,
-      staked: 100,
-      earned: 0
+  const dispatch = useDispatch<AppDispatch>()
+  const rewardPoolAddresses = useLPTokenAddresses()
+  const [activeRow, setActiveRow] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const defaultPoolMap = () => {
+    return LIQUIDITY_POOLS_ADDRESSES.map<PoolAddressPidMap>(address => {
+      return {
+        address,
+        pid: undefined
+      }
+    })
+  }
+
+  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap)
+
+  useEffect(() => {
+    const pools: CachedPool[] = []
+    const map = defaultPoolMap()
+    for (const [i, address] of rewardPoolAddresses.entries()) {
+      pools.push({
+        pid: i,
+        lpTokenAddress: address
+      })
+      const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filtered.length) {
+        filtered[0].pid = i
+      }
     }
-  ]
+    dispatch(updatePools(pools))
+    setPoolMap(map)
+  }, [rewardPoolAddresses]) //eslint-disable-line
 
   return (
     <PageWrapper>
@@ -68,8 +70,21 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {pools.map(pool => (
-        <ExpandablePoolRow key={pool.name} pool={pool} />
+      {poolMap.map((pool, i) => (
+        <ExpandablePoolRow
+          key={pool.address}
+          poolAddress={pool.address}
+          pid={pool.pid}
+          isExpanded={activeRow === i ? isExpanded : false}
+          onClick={() => {
+            if (activeRow === i) {
+              setIsExpanded(!isExpanded)
+            } else {
+              setIsExpanded(true)
+              setActiveRow(i)
+            }
+          }}
+        />
       ))}
     </PageWrapper>
   )

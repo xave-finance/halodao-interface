@@ -57,7 +57,7 @@ export const tokenSymbolForPool = (address: string) => {
     return 'SLP'
   }
 
-  return 'LPT'
+  return 'HLP'
 }
 
 export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {

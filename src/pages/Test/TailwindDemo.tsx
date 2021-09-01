@@ -52,6 +52,7 @@ const TailwindDemo = () => {
   const [inputValue, setInputValue] = useState('')
   const [amount, setAmount] = useState(100)
   const [showModal, setShowModal] = useState(false)
+  const [slippage, setSlippage] = useState('0.1')
 
   return (
     <>
@@ -313,7 +314,12 @@ const TailwindDemo = () => {
         <div className="flex space-x-8 mb-4">
           <div className="w-1/2">Slippage tollerance</div>
           <div className="w-1/2">
-            <SlippageTolerance />
+            <SlippageTolerance
+              value={slippage}
+              didChangeValue={(newSlippage: string) => {
+                setSlippage(newSlippage)
+              }}
+            />
           </div>
         </div>
         <div className="flex space-x-8 mb-4">
