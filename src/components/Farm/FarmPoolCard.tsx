@@ -420,9 +420,10 @@ interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
   isActivePool: boolean
+  rewardsVersion?: number
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: FarmPoolCardProps) {
+export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewardsVersion = 1 }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
@@ -442,7 +443,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
-  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid])
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid], rewardsVersion)
   const bptStaked = stakedBPTs[poolInfo.pid] ?? 0
 
   // Staked BPT value calculation
@@ -456,7 +457,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
   const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   // Get user earned HALO
-  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid], rewardsVersion)
   let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
   const hasPendingRewardTokenError = unclaimedPoolRewards === PENDING_REWARD_FAILED
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
@@ -468,7 +469,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
-  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
+  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
 
   // Pool Liquidity
   const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
@@ -476,10 +477,10 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
   /**
    * APY computation
    */
-  const rewardTokenPerSecond = useRewardTokenPerSecond()
+  const rewardTokenPerSecond = useRewardTokenPerSecond(rewardsVersion)
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
 
-  const totalAllocPoint = useTotalAllocPoint()
+  const totalAllocPoint = useTotalAllocPoint(rewardsVersion)
   const allocPoint = poolInfo.allocPoint
 
   // stakedLiquidity = LPToken.balanceOf(AmmRewards) * lpTokenUSDValue

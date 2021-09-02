@@ -70,20 +70,33 @@ const StyledExternalLink = styled(ExternalLink)`
 `
 
 const Farm = () => {
+  const v0LpTokenAddresses = useLPTokenAddresses(0)
+  const fetchV0PoolInfo = usePoolInfo(v0LpTokenAddresses)
+  const [v0PoolsInfo, setV0PoolsInfo] = useState<PoolInfo[]>([])
+  const v0AllocPoints = useAllocPoints(v0LpTokenAddresses, 0)
+
   const lpTokenAddresses = useLPTokenAddresses()
   const fetchPoolInfo = usePoolInfo(lpTokenAddresses)
-  const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
-  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
-  const tokenPrice = useTokenPrice(tokenAddresses)
   const allocPoints = useAllocPoints(lpTokenAddresses)
+
+  const { t } = useTranslation()
+  const [allTokenAddresses, setAllTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(allTokenAddresses)
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
-      setTokenAddresses(result.tokenAddresses)
+      setAllTokenAddresses(prev => [...prev, ...result.tokenAddresses])
     })
   }, [lpTokenAddresses]) //eslint-disable-line
+
+  useEffect(() => {
+    fetchV0PoolInfo().then(result => {
+      setV0PoolsInfo(result.poolsInfo)
+      setAllTokenAddresses(prev => [...prev, ...result.tokenAddresses])
+    })
+  }, [v0LpTokenAddresses]) //eslint-disable-line
 
   useEffect(() => {
     const newPoolsInfo = poolsInfo
@@ -92,6 +105,14 @@ const Farm = () => {
     })
     setPoolsInfo(newPoolsInfo)
   }, [poolsInfo, allocPoints])
+
+  useEffect(() => {
+    const newPoolsInfo = v0PoolsInfo
+    newPoolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = v0AllocPoints[poolInfo.pid]
+    })
+    setV0PoolsInfo(newPoolsInfo)
+  }, [v0PoolsInfo, v0AllocPoints])
 
   return (
     <>
@@ -120,7 +141,7 @@ const Farm = () => {
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
-        <FarmPoolTable poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
+        <FarmPoolTable poolsInfo={poolsInfo} v0PoolsInfo={v0PoolsInfo} tokenPrice={tokenPrice} />
       </PageWrapper>
     </>
   )

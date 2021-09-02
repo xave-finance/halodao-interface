@@ -2,6 +2,7 @@ import { Token } from '@sushiswap/sdk'
 import { useCallback } from 'react'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
+import { useHaloPoolInfo } from './useHaloPoolInfo'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
 import { useUniPoolInfo } from './useUniPoolInfo'
 
@@ -31,10 +32,11 @@ export type PoolTokenInfo = {
 }
 
 export const usePoolInfo = (lpTokenAddresses: string[]) => {
-  const { balancer, uni, sushi } = groupByPoolProvider(lpTokenAddresses)
+  const { balancer, uni, sushi, halo } = groupByPoolProvider(lpTokenAddresses)
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
+  const fetchHaloPoolInfo = useHaloPoolInfo(halo)
 
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
@@ -58,6 +60,12 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
       tokenAddresses = [...tokenAddresses, ...uniResult.tokenAddresses]
     }
 
+    if (halo.length) {
+      const haloResult = await fetchHaloPoolInfo()
+      poolsInfo = [...poolsInfo, ...haloResult.poolsInfo]
+      tokenAddresses = [...tokenAddresses, ...haloResult.tokenAddresses]
+    }
+
     return { poolsInfo, tokenAddresses }
-  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo])
+  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, fetchHaloPoolInfo])
 }

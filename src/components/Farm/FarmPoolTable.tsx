@@ -21,10 +21,11 @@ const InactivePools = styled.div`
 
 interface FarmPoolTableProps {
   poolsInfo: PoolInfo[]
+  v0PoolsInfo: PoolInfo[]
   tokenPrice: TokenPrice
 }
 
-const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
+const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProps) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { inactivePools, activePools } = groupPoolsInfo(poolsInfo)
@@ -76,7 +77,7 @@ const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
             )
           })}
 
-          {inactivePools.length > 0 && (
+          {(inactivePools.length || v0PoolsInfo.length) && (
             <InactivePools>
               <TYPE.thHeader className="tbHeader">{t('inactive pools')}</TYPE.thHeader>
               {inactivePools.map(poolInfo => {
@@ -86,6 +87,17 @@ const FarmPoolTable = ({ poolsInfo, tokenPrice }: FarmPoolTableProps) => {
                     poolInfo={poolInfo}
                     tokenPrice={tokenPrice}
                     isActivePool={false}
+                  />
+                )
+              })}
+              {v0PoolsInfo.map(poolInfo => {
+                return (
+                  <FarmPoolCard
+                    key={poolInfo.address}
+                    poolInfo={poolInfo}
+                    tokenPrice={tokenPrice}
+                    isActivePool={false}
+                    rewardsVersion={0}
                   />
                 )
               })}
