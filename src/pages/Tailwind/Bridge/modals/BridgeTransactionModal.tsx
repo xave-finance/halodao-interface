@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { ChainId, Currency } from '@sushiswap/sdk'

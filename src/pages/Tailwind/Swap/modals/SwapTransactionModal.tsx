@@ -16,6 +16,10 @@ interface SwapTransactionModalProps {
   toCurrency: Currency
   fromAmount: string
   toAmount: string
+  minimumAmount: string
+  price: number
+  onSwap: () => Promise<boolean>
+  onPriceUpdate: () => void
   onDismiss: () => void
 }
 
@@ -31,10 +35,15 @@ const SwapTransactionModal = ({
   toCurrency,
   fromAmount,
   toAmount,
+  minimumAmount,
+  price,
+  onSwap,
+  onPriceUpdate,
   onDismiss
 }: SwapTransactionModalProps) => {
   const [state, setState] = useState(SwapTransactionModalState.NotConfirmed)
-  const estimatedAmount = 0.004
+  const [timeLeft, setTimeLeft] = useState(60)
+  const [acceptedPrice, setAcceptedPrice] = useState(false)
 
   const dismissGracefully = () => {
     setState(SwapTransactionModalState.NotConfirmed)
@@ -59,41 +68,66 @@ const SwapTransactionModal = ({
           </div>
           <div className="flex justify-between items-center mt-4 pt-2 px-4 space-x-2">
             <div className="flex flex-row space-x-2">
-              <CurrencyLogo currency={fromCurrency} size="23px" />
-              <span className="text-lg font-bold">{fromAmount}</span>
+              <CurrencyLogo currency={toCurrency} size="23px" />
+              <span className="text-lg font-bold">{toAmount}</span>
             </div>
-            <span className="text-lg">{fromCurrency.symbol}</span>
+            <span className="text-lg">{toCurrency.symbol}</span>
           </div>
           <div className="flex justify-between items-center mt-2 pt-2 px-4 space-x-2 text-sm text-secondary-alternate italic">
-            Output is estimated. You will receive at least {estimatedAmount} or the transaction will revert.
+            Output is estimated. You will receive at least {minimumAmount} or the transaction will revert.
           </div>
           <div className="flex justify-between items-center mt-2 p-1.5 bg-primary bg-opacity-10 rounded-md">
             <div className="flex flex-row space-x-2 pl-2 text-primary-hover w-3/4">
               <img src={WarningIcon} alt="warning" />
-              <span className="text-sm font-bold">Price Update</span>
+              <span className="text-sm font-bold">
+                {acceptedPrice ? `Price valid for ${timeLeft.toString()}s` : 'Price Update'}
+              </span>
             </div>
             <div className="w-1/4">
               <PrimaryButton
                 type={PrimaryButtonType.Gradient}
                 title="Accept"
-                state={PrimaryButtonState.Enabled}
+                state={acceptedPrice ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
                 onClick={() => {
-                  console.log('Accept')
+                  let maxTime = timeLeft
+                  setAcceptedPrice(true)
+                  const timer = setInterval(() => {
+                    maxTime -= 1
+                    setTimeLeft(maxTime)
+                  }, 1000)
+
+                  setTimeout(() => {
+                    clearInterval(timer)
+                    setAcceptedPrice(false)
+                    setTimeLeft(60)
+                    onPriceUpdate()
+                  }, 60000)
                 }}
               />
             </div>
           </div>
         </div>
-        <SwapDetails />
+        <SwapDetails
+          price={price}
+          toCurrency={toCurrency.symbol}
+          fromCurrency={fromCurrency.symbol}
+          minimumReceived={minimumAmount}
+        />
         <div className="bg-white p-4 pb-4">
           <PrimaryButton
             title="Confirm Swap"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              setState(SwapTransactionModalState.InProgress)
-              setTimeout(() => {
+            state={acceptedPrice ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
+            onClick={async () => {
+              // TODO: Handle UX
+              const txn = await onSwap()
+
+              if (txn) {
                 setState(SwapTransactionModalState.Successful)
-              }, 2000)
+              } else {
+                setState(SwapTransactionModalState.NotConfirmed)
+              }
+
+              setAcceptedPrice(false)
             }}
           />
         </div>

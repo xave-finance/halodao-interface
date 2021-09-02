@@ -1,16 +1,8 @@
 import React from 'react'
-import styled from 'styled-components'
 
 interface OnOffToggleProps {
   didChangeValue: (newValue: string) => void
 }
-
-const CheckBox = styled.input`
-  &:checked {
-    transform: translateX(100%);
-    background-color: #471bb2;
-  }
-`
 
 const OnOffToggle = ({ didChangeValue }: OnOffToggleProps) => {
   return (

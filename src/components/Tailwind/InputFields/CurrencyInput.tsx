@@ -17,6 +17,7 @@ interface TokenInputProps {
   showMax: boolean
   onSelectToken?: (token: Token) => void
   tokenList?: Token[]
+  isSufficientBalance?: (balanceCheck: boolean) => void
 }
 
 const TokenInput = ({
@@ -27,7 +28,8 @@ const TokenInput = ({
   showBalance,
   showMax,
   onSelectToken,
-  tokenList
+  tokenList,
+  isSufficientBalance
 }: TokenInputProps) => {
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
@@ -74,6 +76,7 @@ const TokenInput = ({
               className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
               value={value}
               onUserInput={val => {
+                console.log(Number(balance?.raw.toString()) >= Number(val))
                 didChangeValue(val)
               }}
             />

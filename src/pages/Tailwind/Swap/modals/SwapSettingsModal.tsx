@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import NumericalInput from 'components/NumericalInput'
