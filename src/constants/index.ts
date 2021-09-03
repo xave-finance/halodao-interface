@@ -104,7 +104,7 @@ export const HALO: ChainTokenMap = {
     ChainId.MATIC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'RNBW',
+    'wRNBW',
     'RNBWToken'
   ),
   // Testnets
@@ -142,6 +142,25 @@ export const HALO: ChainTokenMap = {
     18,
     'RNBW',
     'RNBWToken'
+  )
+}
+
+// HALOHALO Token Instance
+export const HALOHALO: ChainTokenMap = {
+  // Mainnets
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_HALOHALO_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'xRNBW',
+    'xRNBW Token'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_HALOHALO_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'wXRNBW',
+    'Wrapped xRNBW Token'
   )
 }
 

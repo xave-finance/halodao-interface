@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Currency } from '@sushiswap/sdk'
+import { Currency, Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
@@ -15,7 +15,7 @@ interface TokenInputProps {
   didChangeValue: (newValue: string) => void
   showBalance: boolean
   showMax: boolean
-  onSelectToken?: (token: any | undefined) => void
+  onSelectToken?: (token: Token) => void
 }
 
 const TokenInput = ({
@@ -30,7 +30,6 @@ const TokenInput = ({
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
   const [showModal, setShowModal] = useState(false)
-  // console.log('Token Input:', balance)
 
   const onMax = () => {
     if (balance) {
@@ -82,7 +81,7 @@ const TokenInput = ({
       <TokenSelectModal
         isVisible={showModal}
         onDismiss={() => setShowModal(false)}
-        onSelect={(token: any) => {
+        onSelect={(token: Token) => {
           if (onSelectToken) onSelectToken(token)
           setShowModal(false)
         }}

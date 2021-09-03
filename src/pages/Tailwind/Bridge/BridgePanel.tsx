@@ -4,7 +4,7 @@ import ethers from 'ethers'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId, Currency } from '@sushiswap/sdk'
-import { TRUE_AUD, } from '../../../constants'
+import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -50,7 +50,7 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [token, setToken] = useState<any>(TRUE_AUD)
+  const [token, setToken] = useState<any>(HALO)
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
   const [destinationChainId, setDestinationChainId] = useState(ChainId.MATIC)
   const [primaryBridgeContract, setPrimaryBridgeContract] = useState<Contract | null>(null)

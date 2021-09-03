@@ -1,7 +1,7 @@
 import React from 'react'
 import { useWeb3React } from '@web3-react/core'
-import { ChainId } from '@sushiswap/sdk'
-import { HALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
+import { ChainId, Token } from '@sushiswap/sdk'
+import { HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Search } from 'react-feather'
@@ -9,15 +9,15 @@ import { Search } from 'react-feather'
 interface TokenSelectModalProps {
   isVisible: boolean
   onDismiss: () => void
-  onSelect?: (token: any | undefined) => void
+  onSelect: (token: Token) => void
 }
 
 interface TokenListProps {
   chainId: number
-  onSelect?: (token: any | undefined) => void
+  onSelect: (token: any | undefined) => void
 }
 
-const TOKENS = [HALO, TRUE_AUD, TRUE_CAD, TRUE_GBP]
+const TOKENS = [HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP]
 
 const TokenList = ({ chainId, onSelect }: TokenListProps) => {
   return (
@@ -27,8 +27,7 @@ const TokenList = ({ chainId, onSelect }: TokenListProps) => {
           key={token[chainId as ChainId]?.name}
           className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary"
           onClick={() => {
-            console.log('on select token')
-            if (onSelect) onSelect(token)
+            onSelect(token)
           }}
         >
           <CurrencyLogo currency={token[chainId as ChainId]} size={'30px'} />
