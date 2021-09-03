@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - hdev-214
   # manual trigger
   workflow_dispatch:
 
