@@ -1,28 +1,17 @@
 import { useCallback } from 'react'
 import { PoolIdLpTokenMap } from 'utils/poolInfo'
 import { PoolInfo, PoolProvider } from './usePoolInfo'
-import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
-import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
-import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
 import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
-import { HALO_REWARDS_ADDRESS } from '../constants'
-import { BigNumber } from 'ethers'
-import Fraction from 'constants/Fraction'
 
-import { ChainId, Token, WETH } from '@sushiswap/sdk'
+import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
-import UNI_V2_ABI from '../constants/haloAbis/UniV2.json'
-import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 
 export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { account, library, chainId } = useActiveWeb3React()
-
-  const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
-
   const fetchPoolInfo = useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
     const tokenAddresses: string[] = []
@@ -76,7 +65,7 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [pidLpTokenMap])
+  }, [pidLpTokenMap, chainId, library, account])
 
   return fetchPoolInfo
 }

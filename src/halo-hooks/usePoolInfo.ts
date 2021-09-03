@@ -68,5 +68,5 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, fetchHaloPoolInfo])
+  }, [balancer, uni, sushi, halo, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, fetchHaloPoolInfo])
 }
