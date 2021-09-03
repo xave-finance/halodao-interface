@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - develop
-      - hdev-214
 
 jobs:
   build_and_preview:
