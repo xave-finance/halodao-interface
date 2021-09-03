@@ -32,7 +32,7 @@ const SwapPanel = () => {
   const [toCurrency, setToCurrency] = useState(haloTokenList[chainId as ChainId]![0])
   const [fromCurrency, setFromCurrency] = useState(haloTokenList[chainId as ChainId]![1])
 
-  const { getPrice, getCurve, getMinimumAmount, price, minimumAmount, approve, allowance, swapToken } = useSwapToken(
+  const { getPrice, getMinimumAmount, price, minimumAmount, approve, allowance, swapToken } = useSwapToken(
     toCurrency,
     fromCurrency
   )
@@ -62,10 +62,9 @@ const SwapPanel = () => {
 
   useEffect(() => {
     getPrice()
-    getCurve()
     getMinimumAmount(fromInputValue ? fromInputValue : '0')
     setToInputValue(minimumAmount || '0')
-  }, [toCurrency, fromCurrency, getCurve, getMinimumAmount, getPrice, fromInputValue, minimumAmount])
+  }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue, minimumAmount])
 
   useEffect(() => {
     setToCurrency(haloTokenList[chainId as ChainId]![0])
@@ -73,9 +72,9 @@ const SwapPanel = () => {
   }, [chainId])
 
   useEffect(() => {
-    // if (ApproveButtonState.Approving) return
-
     if (allowance !== '' && Number(allowance) > 0) {
+      //if (ApproveButtonState.Approving) return
+
       console.log('Allowance: ', allowance)
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Swap)
