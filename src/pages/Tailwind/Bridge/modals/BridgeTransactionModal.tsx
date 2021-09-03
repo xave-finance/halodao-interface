@@ -83,8 +83,7 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
-              <span>{amount} </span>
-              <span>{currency.symbol}</span>
+              <span>{currency.name}</span>
             </div>
           </div>
           <div className="mt-4">

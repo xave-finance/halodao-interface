@@ -548,7 +548,7 @@ const BridgePanel = () => {
       </div>
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={{ symbol: chainId ? token[chainId as ChainId].symbol : '', decimals: 18 } as Currency}
+        currency={token[chainId as ChainId]}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
