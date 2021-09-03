@@ -274,7 +274,7 @@ export default function HaloHalo() {
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
               The longer you keep xRNBW, the more RNBW you can claim later on (
-              {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
+              {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APR' : 'APR pending'}). Claim
               anytime but lose out on monthly RNBW vesting multiples.
             </RowBetween>
           </CardSection>

@@ -9,7 +9,8 @@ import { useUniPoolInfo } from './useUniPoolInfo'
 export enum PoolProvider {
   Balancer,
   Uni,
-  Sushi
+  Sushi,
+  Halo
 }
 
 export type PoolInfo = {

@@ -29,7 +29,7 @@ import LinkIcon from '../../assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
@@ -472,7 +472,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
 
   // Pool Liquidity
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+  const poolLiquidity =
+    poolInfo.provider === PoolProvider.Halo ? poolInfo.liquidity : getPoolLiquidity(poolInfo, tokenPrice)
 
   /**
    * APY computation
@@ -491,6 +492,21 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
 
+  let stakingMessage = HALO_REWARDS_MESSAGE.staking
+  let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
+
+  switch (poolInfo.provider) {
+    case PoolProvider.Halo:
+      stakingMessage = HALO_REWARDS_MESSAGE.stakingHLP
+      unstakingMessage = HALO_REWARDS_MESSAGE.unstakingHLP
+      break
+    case PoolProvider.Uni:
+      stakingMessage = HALO_REWARDS_MESSAGE.stakingUNI
+      unstakingMessage = HALO_REWARDS_MESSAGE.unstakingUNI
+      break
+    default:
+      break
+  }
   /**
    * Updating the state of stake button
    */
@@ -779,7 +795,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
                         )}
                         {stakeButtonState === ButtonHaloStates.TxInProgress && (
                           <>
-                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            {stakingMessage}&nbsp;
                             <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
                           </>
                         )}
@@ -829,7 +845,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
                       unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
                     {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
                       <>
-                        {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                        {unstakingMessage}&nbsp;
                         <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
                       </>
                     )}
