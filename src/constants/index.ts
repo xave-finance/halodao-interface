@@ -102,7 +102,7 @@ export const HALO: ChainTokenMap = {
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC|| ZERO_ADDRESS,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
     'wRNBW',
     'RNBWToken'
