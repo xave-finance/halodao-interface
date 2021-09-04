@@ -55,7 +55,7 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
             asToken: new Token(chainId, token1Address, token1Decimals, token1Symbol, token1Symbol)
           }
         ],
-        asToken: new Token(chainId, poolAddress, curveDecimals, 'HALO_V1', 'HALO_V1'),
+        asToken: new Token(chainId, poolAddress, curveDecimals, 'HLP', 'HLP'),
         allocPoint: 0,
         provider: PoolProvider.Halo
       })
