@@ -154,7 +154,12 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
                   if (mode !== NetworkModalMode.SecondaryBridge) {
                     console.log('mode', mode)
                     const params = NETWORK_PARAMS[key]
-                    library?.send('wallet_addEthereumChain', [params, account])
+                    // library?.send('wallet_addEthereumChain', [params, account])
+                    if (key === ChainId.MAINNET) {
+                      library?.send('wallet_switchEthereumChain', [{ chainId: '0x1' }, account])
+                    } else {
+                      library?.send('wallet_addEthereumChain', [params, account])
+                    }
                   } else if (mode === NetworkModalMode.SecondaryBridge) {
                     if (onChangeNetwork) onChangeNetwork(key)
                   }
