@@ -683,7 +683,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="13%">
-            <LabelText className="first">{t('apy')}:</LabelText>
+            <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
