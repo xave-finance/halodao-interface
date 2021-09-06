@@ -22,6 +22,8 @@ import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -94,6 +96,7 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   // Updating the state of stake button
   useEffect(() => {
@@ -101,6 +104,10 @@ export default function HaloHaloWithdrawPanel({
 
     const withdrawAsFloat = parseFloat(withdrawValue)
     if (withdrawAsFloat > 0 && withdrawAsFloat <= parseFloat(xHaloHaloBalance)) {
+      if (!features?.vest && chainId === ChainId.MATIC) {
+        setButtonState(ButtonHaloStates.Approved)
+        return
+      }
       if (allowance !== '' && parseFloat(allowance) > 0) {
         setButtonState(ButtonHaloStates.Approved)
       } else if (requestedApproval) {
@@ -111,7 +118,7 @@ export default function HaloHaloWithdrawPanel({
     } else {
       setButtonState(ButtonHaloStates.Disabled)
     }
-  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval])
+  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval, chainId, features])
 
   // handle approval
   const handleApprove = useCallback(async () => {
@@ -258,10 +265,16 @@ export default function HaloHaloWithdrawPanel({
                 buttonState
               )}
               onClick={async () => {
-                if (buttonState === ButtonHaloStates.Approved) {
-                  withdraw()
+                if (features?.vest) {
+                  if (buttonState === ButtonHaloStates.Approved) {
+                    withdraw()
+                  } else {
+                    handleApprove()
+                  }
                 } else {
-                  handleApprove()
+                  if (chainId === ChainId.MATIC) {
+                    window.location.href = 'https://google.com'
+                  }
                 }
               }}
             >

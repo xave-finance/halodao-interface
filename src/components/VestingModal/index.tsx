@@ -9,6 +9,9 @@ import { ReactComponent as CloseIcon } from '../../assets/images/x.svg'
 import BunnyWithSweets from '../../assets/svg/bunny-with-sweets.svg'
 import { ButtonHaloWhite } from 'components/Button'
 import { PoolVestingInfo } from 'state/user/actions'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
+import { useActiveWeb3React } from '../../hooks'
 
 const StyledWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -68,12 +71,30 @@ interface VestingModalProps {
   poolVestingInfo?: PoolVestingInfo
 }
 
+interface AlternativeButtonProps {
+  onClick: () => void
+}
+
+const AlternativeButton = ({ onClick }: AlternativeButtonProps) => {
+  return (
+    <div className="p-8" onClick={onClick}>
+      Let&apos;s Vest!
+    </div>
+  )
+}
+
+const handleAlternativeButtonClick = () => {
+  window.location.href = 'https://google.com'
+}
+
 const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
   const isOpen = useModalOpen(ApplicationModal.VESTING)
   const toggleModal = useVestingModalToggle()
   const poolName = poolVestingInfo?.name ?? 'pool'
   const earningRewards = poolVestingInfo?.balance.rewardToken ?? 0
   const earningHALO = poolVestingInfo?.balance.halo ?? 0
+  const { chainId } = useActiveWeb3React()
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   return (
     <Modal isOpen={isOpen} onDismiss={toggleModal}>
@@ -87,9 +108,12 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
           <div className="bal-halo">({formatNumber(earningHALO)} RNBW)</div>
           <img src={BunnyWithSweets} alt="Bunny Mascot" />
           <TYPE.body color="white">As xRNBW, you&apos;re earning right now!</TYPE.body>
-          <ButtonHaloWhite padding="8px" onClick={toggleModal}>
-            Let&apos;s Vest!
-          </ButtonHaloWhite>
+          {features?.vest && (
+            <ButtonHaloWhite padding="8px" onClick={toggleModal}>
+              Let&apos;s Vest!
+            </ButtonHaloWhite>
+          )}
+          {!features?.vest && <AlternativeButton onClick={handleAlternativeButtonClick} />}
           <StyledExternalLink href="https://docs.halodao.com/products/dessert-pool/how-vesting-works">
             Learn more
           </StyledExternalLink>

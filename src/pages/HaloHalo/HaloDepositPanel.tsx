@@ -22,6 +22,8 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -96,6 +98,7 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   // Updating the state of stake button
   useEffect(() => {
@@ -103,6 +106,10 @@ export default function CurrencyInputPanel({
 
     const depositAsFloat = parseFloat(depositValue)
     if (depositAsFloat > 0 && depositAsFloat <= parseFloat(haloBalance)) {
+      if (!features?.vest && chainId === ChainId.MATIC) {
+        setButtonState(ButtonHaloStates.Approved)
+        return
+      }
       if (allowance !== '' && parseFloat(allowance) > 0) {
         setButtonState(ButtonHaloStates.Approved)
       } else if (requestedApproval) {
@@ -113,7 +120,7 @@ export default function CurrencyInputPanel({
     } else {
       setButtonState(ButtonHaloStates.Disabled)
     }
-  }, [allowance, depositValue, haloBalance, pendingTx, requestedApproval])
+  }, [allowance, depositValue, haloBalance, pendingTx, requestedApproval, chainId, features])
 
   // handle approval
   const handleApprove = useCallback(async () => {
@@ -257,10 +264,16 @@ export default function CurrencyInputPanel({
                 buttonState
               )}
               onClick={async () => {
-                if (buttonState === ButtonHaloStates.Approved) {
-                  deposit()
+                if (features?.vest) {
+                  if (buttonState === ButtonHaloStates.Approved) {
+                    deposit()
+                  } else {
+                    handleApprove()
+                  }
                 } else {
-                  handleApprove()
+                  if (chainId === ChainId.MATIC) {
+                    window.location.href = 'https://google.com'
+                  }
                 }
               }}
             >
