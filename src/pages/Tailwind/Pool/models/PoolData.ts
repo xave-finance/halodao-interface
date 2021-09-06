@@ -1,6 +1,4 @@
 import { Token } from '@sushiswap/sdk'
-import { BigNumber } from 'ethers'
-
 export interface PoolData {
   pid?: string
   address: string

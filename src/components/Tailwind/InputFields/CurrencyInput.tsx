@@ -32,7 +32,6 @@ const TokenInput = ({
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
   const [showModal, setShowModal] = useState(false)
-  // console.log('Token Input:', balance)
 
   const onMax = () => {
     if (balance) {

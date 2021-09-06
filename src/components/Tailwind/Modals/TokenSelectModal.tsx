@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Token } from '@sushiswap/sdk'
-import { HALO, MOCK, RIO } from '../../../constants'
+import { useWeb3React } from '@web3-react/core'
+import { ChainId, Token } from '@sushiswap/sdk'
+import { HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Search } from 'react-feather'
@@ -15,7 +16,7 @@ interface TokenSelectModalProps {
 
 interface TokenRowProps {
   token: Token
-  onSelect: () => void
+  onSelect: (token: Token) => void
 }
 
 const TokenRow = ({ token, onSelect }: TokenRowProps) => {
@@ -48,8 +49,10 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList }: TokenSe
 
     const hardCodedTokens: Token[] = []
     if (HALO[chainId]) hardCodedTokens.push(HALO[chainId]!)
-    if (MOCK[chainId]) hardCodedTokens.push(MOCK[chainId]!)
-    if (RIO[chainId]) hardCodedTokens.push(RIO[chainId]!)
+    if (HALOHALO[chainId]) hardCodedTokens.push(HALOHALO[chainId]!)
+    if (TRUE_AUD[chainId]) hardCodedTokens.push(TRUE_AUD[chainId]!)
+    if (TRUE_CAD[chainId]) hardCodedTokens.push(TRUE_CAD[chainId]!)
+    if (TRUE_GBP[chainId]) hardCodedTokens.push(TRUE_GBP[chainId]!)
     setTokens(hardCodedTokens)
   }, [chainId, tokenList])
 

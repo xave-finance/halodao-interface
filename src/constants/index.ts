@@ -32,80 +32,55 @@ export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LEN
 export const GOVERNANCE_ADDRESS = '0x5e4be8Bc9637f0EAA1A755019e06A68ce081D58F'
 export const TIMELOCK_ADDRESS = '0x1a9C8182C09F50C8318d769245beA52c32BE35BC'
 
-export const MOCK: ChainTokenMap = {
+export const TRUE_AUD: ChainTokenMap = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
-    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    process.env.REACT_APP_TAUD_ADDRESS_MAINNET || ZERO_ADDRESS,
     18,
-    'W-MK',
-    'Wrapped Mocked Token'
+    'TrueAUD',
+    'TAUD'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
-    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    process.env.REACT_APP_TAUD_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'MK',
-    'Mock Token'
-  ),
-  [ChainId.XDAI]: new Token(
-    ChainId.XDAI,
-    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
-    18,
-    'W-MK',
-    'Wrapped Mock Token'
-  ),
-  [ChainId.BSC]: new Token(
-    ChainId.BSC,
-    process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
-    18,
-    'W-MK',
-    'Wrapped Mock Token'
+    'Wrapped TrueAUD',
+    'wTAUD'
   )
 }
 
-export const MOCK_TOKEN_ADDRESS: ChainAddressMap = {
-  [ChainId.MATIC]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
-  [ChainId.XDAI]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
-  [ChainId.BSC]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
-  [ChainId.MAINNET]: process.env.REACT_APP_MOCK_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS
-}
-
-export const RIO: ChainTokenMap = {
+export const TRUE_CAD: ChainTokenMap = {
   [ChainId.MAINNET]: new Token(
     ChainId.MAINNET,
-    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS,
+    process.env.REACT_APP_TCAD_ADDRESS_MAINNET || ZERO_ADDRESS,
     18,
-    'W-RIO',
-    'Wrapped Rio Token'
+    'TrueCAD',
+    'TCAD'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
-    process.env.REACT_APP_RIO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
+    process.env.REACT_APP_TCAD_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'RIO',
-    'Rio Token'
-  ),
-  [ChainId.XDAI]: new Token(
-    ChainId.XDAI,
-    process.env.REACT_APP_RIO_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
-    18,
-    'W-RIO',
-    'Wrapped Rio Token'
-  ),
-  [ChainId.BSC]: new Token(
-    ChainId.BSC,
-    process.env.REACT_APP_RIO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
-    18,
-    'W-RIO',
-    'Wrapped Rio Token'
+    'Wrapped TrueCAD',
+    'wTCAD'
   )
 }
 
-export const RIO_TOKEN_ADDRESS: ChainAddressMap = {
-  [ChainId.MATIC]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
-  [ChainId.XDAI]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_XDAI || ZERO_ADDRESS,
-  [ChainId.BSC]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_BSC || ZERO_ADDRESS,
-  [ChainId.MAINNET]: process.env.REACT_APP_RIO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS
+export const TRUE_GBP: ChainTokenMap = {
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_TGBP_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'TrueGBP',
+    'TGBP'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_TGBP_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped TrueGBP',
+    'wTGBP'
+  )
 }
 
 // HALO Token Instance
@@ -129,7 +104,7 @@ export const HALO: ChainTokenMap = {
     ChainId.MATIC,
     process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'RNBW',
+    'wRNBW',
     'RNBWToken'
   ),
   // Testnets
@@ -163,10 +138,29 @@ export const HALO: ChainTokenMap = {
   ),
   [ChainId.MATIC_TESTNET]: new Token(
     ChainId.MATIC_TESTNET,
-    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS,
+    process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS,
     18,
     'RNBW',
     'RNBWToken'
+  )
+}
+
+// HALOHALO Token Instance
+export const HALOHALO: ChainTokenMap = {
+  // Mainnets
+  [ChainId.MAINNET]: new Token(
+    ChainId.MAINNET,
+    process.env.REACT_APP_HALOHALO_ADDRESS_MAINNET || ZERO_ADDRESS,
+    18,
+    'xRNBW',
+    'xRNBW Token'
+  ),
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_HALOHALO_ADDRESS_MATIC || ZERO_ADDRESS,
+    18,
+    'wXRNBW',
+    'Wrapped xRNBW Token'
   )
 }
 
@@ -181,7 +175,7 @@ export const HALO_TOKEN_ADDRESS: ChainAddressMap = {
   [ChainId.RINKEBY]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_RINKEBY || ZERO_ADDRESS,
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_GOERLI || ZERO_ADDRESS,
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
 // HALO Rewards Addresses
@@ -195,7 +189,7 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_RINKEBY || ZERO_ADDRESS,
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_GOERLI || ZERO_ADDRESS,
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
 // HALO RewardsManager Addresses
@@ -209,7 +203,7 @@ export const HALO_REWARDS_MANAGER_ADDRESS: ChainAddressMap = {
   [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_MANAGER_ADDRESS_RINKEBY || ZERO_ADDRESS,
   [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_MANAGER_ADDRESS_GOERLI || ZERO_ADDRESS,
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_MANAGER_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_MANAGER_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_MANAGER_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
 // HALOHALO Addressess
@@ -223,7 +217,7 @@ export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.RINKEBY]: process.env.REACT_APP_HALOHALO_ADDRESS_RINKEBY || ZERO_ADDRESS,
   [ChainId.GÖRLI]: process.env.REACT_APP_HALOHALO_ADDRESS_GOERLI || ZERO_ADDRESS,
   [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
-  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
 export const AMM_ZAP_ADDRESS: ChainAddressMap = {
