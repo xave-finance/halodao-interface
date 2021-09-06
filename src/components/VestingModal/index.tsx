@@ -7,6 +7,7 @@ import { ApplicationModal } from 'state/application/actions'
 import { useModalOpen, useVestingModalToggle } from 'state/application/hooks'
 import { ReactComponent as CloseIcon } from '../../assets/images/x.svg'
 import BunnyWithSweets from '../../assets/svg/bunny-with-sweets.svg'
+import BunnyWithConfetti from '../../assets/svg/bunny-with-confetti.svg'
 import { ButtonHaloWhite } from 'components/Button'
 import { PoolVestingInfo } from 'state/user/actions'
 import { ChainId } from '@sushiswap/sdk'
@@ -77,7 +78,7 @@ interface AlternativeButtonProps {
 
 const AlternativeButton = ({ onClick }: AlternativeButtonProps) => {
   return (
-    <div className="p-8" onClick={onClick}>
+    <div className="p-8 rounded bg-primary font-bold" onClick={onClick}>
       Let&apos;s Vest!
     </div>
   )
@@ -103,17 +104,29 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
           <CloseIcon />
         </StyledCloseIconWrapper>
         <StyledContent>
-          <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
-          <div className="bal-rewards">{formatNumber(earningRewards)} xRNBW</div>
-          <div className="bal-halo">({formatNumber(earningHALO)} RNBW)</div>
-          <img src={BunnyWithSweets} alt="Bunny Mascot" />
-          <TYPE.body color="white">As xRNBW, you&apos;re earning right now!</TYPE.body>
           {features?.vest && (
-            <ButtonHaloWhite padding="8px" onClick={toggleModal}>
-              Let&apos;s Vest!
-            </ButtonHaloWhite>
+            <>
+              <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
+              <div className="bal-rewards">{formatNumber(earningRewards)} xRNBW</div>
+              <div className="bal-halo">({formatNumber(earningHALO)} RNBW)</div>
+              <img src={BunnyWithSweets} alt="Bunny Mascot" />
+              <TYPE.body color="white">As xRNBW, you&apos;re earning right now!</TYPE.body>
+              <ButtonHaloWhite padding="8px" onClick={toggleModal}>
+                Let&apos;s Vest!
+              </ButtonHaloWhite>
+            </>
           )}
-          {!features?.vest && <AlternativeButton onClick={handleAlternativeButtonClick} />}
+          {!features?.vest && (
+            <>
+              <img src={BunnyWithConfetti} alt="Bunny Mascot" />
+              <TYPE.body color="white">{poolName} rewards Harvested</TYPE.body>
+              <TYPE.body color="white">
+                Your harvested <span className="bal-rewards">{formatNumber(earningRewards)} </span> xRNBW is already
+                part of the Rainbow Pool earning vesting rewards!
+              </TYPE.body>
+              <AlternativeButton onClick={handleAlternativeButtonClick} />
+            </>
+          )}
           <StyledExternalLink href="https://docs.halodao.com/products/dessert-pool/how-vesting-works">
             Learn more
           </StyledExternalLink>

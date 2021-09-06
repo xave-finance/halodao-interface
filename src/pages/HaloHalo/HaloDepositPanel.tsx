@@ -178,6 +178,80 @@ export default function CurrencyInputPanel({
     })
   }
 
+  const DepositContent = () => {
+    if (chainId === ChainId.MATIC) {
+      setButtonState(ButtonHaloStates.Approved)
+      return (
+        <>
+          <p className="font-semibold text-center">Got extra RNBW? Earn more rewards on our next rewards epoch. </p>
+        </>
+      )
+    }
+    return (
+      <>
+        {!hideInput && (
+          <LabelRow
+            style={{
+              padding: 0
+            }}
+          >
+            <RowBetween
+              style={{
+                display: 'block'
+              }}
+            >
+              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+              {account && (
+                <TYPE.body
+                  onClick={handleMaxDeposit}
+                  style={{
+                    cursor: 'pointer',
+                    fontFamily: 'Open Sans',
+                    fontStyle: 'normal',
+                    fontWeight: 800,
+                    lineHeight: '16px',
+                    letterSpacing: '0.2em',
+                    color: '#000000'
+                  }}
+                >
+                  BALANCE: {haloBalance} RNBW
+                </TYPE.body>
+              )}
+            </RowBetween>
+          </LabelRow>
+        )}
+        <InputRow
+          style={
+            hideInput
+              ? {
+                  padding: '4px 0 0 0',
+                  borderRadius: '8px'
+                }
+              : {
+                  padding: '4px 0 0 0'
+                }
+          }
+          selected={disableCurrencySelect}
+        >
+          {!hideInput && (
+            <>
+              <NumericalInput
+                className="token-amount-input"
+                value={depositValue}
+                onUserInput={val => {
+                  onUserDepositInput(val)
+                }}
+              />
+              {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
+            </>
+          )}
+        </InputRow>
+      </>
+    )
+  }
+
   return (
     <>
       {/* Deposit Input */}
@@ -187,65 +261,7 @@ export default function CurrencyInputPanel({
           cornerRadiusBottomNone={cornerRadiusBottomNone}
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
-          {!hideInput && (
-            <LabelRow
-              style={{
-                padding: 0
-              }}
-            >
-              <RowBetween
-                style={{
-                  display: 'block'
-                }}
-              >
-                <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
-                  {label}
-                </TYPE.body>
-                {account && (
-                  <TYPE.body
-                    onClick={handleMaxDeposit}
-                    style={{
-                      cursor: 'pointer',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 800,
-                      lineHeight: '16px',
-                      letterSpacing: '0.2em',
-                      color: '#000000'
-                    }}
-                  >
-                    BALANCE: {haloBalance} RNBW
-                  </TYPE.body>
-                )}
-              </RowBetween>
-            </LabelRow>
-          )}
-          <InputRow
-            style={
-              hideInput
-                ? {
-                    padding: '4px 0 0 0',
-                    borderRadius: '8px'
-                  }
-                : {
-                    padding: '4px 0 0 0'
-                  }
-            }
-            selected={disableCurrencySelect}
-          >
-            {!hideInput && (
-              <>
-                <NumericalInput
-                  className="token-amount-input"
-                  value={depositValue}
-                  onUserInput={val => {
-                    onUserDepositInput(val)
-                  }}
-                />
-                {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
-              </>
-            )}
-          </InputRow>
+          <DepositContent />
           <Column
             style={
               hideInput
@@ -303,3 +319,4 @@ export default function CurrencyInputPanel({
     </>
   )
 }
+

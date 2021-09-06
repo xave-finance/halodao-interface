@@ -180,6 +180,82 @@ export default function HaloHaloWithdrawPanel({
     })
   }
 
+  const WithdrawContent = () => {
+    if (chainId === ChainId.MATIC) {
+      setButtonState(ButtonHaloStates.Approved)
+      return (
+        <>
+          <p className="font-semibold text-center">
+            Do you want to claim your RNBW? Swap your vested xRNBW into RNBW.{' '}
+          </p>
+        </>
+      )
+    }
+    return (
+      <>
+        {!hideInput && (
+          <LabelRow
+            style={{
+              padding: 0
+            }}
+          >
+            <RowBetween
+              style={{
+                display: 'block'
+              }}
+            >
+              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                {label}
+              </TYPE.body>
+              {account && (
+                <TYPE.body
+                  onClick={handleMaxWithdraw}
+                  style={{
+                    cursor: 'pointer',
+                    fontFamily: 'Open Sans',
+                    fontStyle: 'normal',
+                    fontWeight: 800,
+                    lineHeight: '16px',
+                    letterSpacing: '0.2em',
+                    color: '#000000'
+                  }}
+                >
+                  BALANCE: {xHaloHaloBalance} xRNBW
+                </TYPE.body>
+              )}
+            </RowBetween>
+          </LabelRow>
+        )}
+        <InputRow
+          style={
+            hideInput
+              ? {
+                  padding: '4px 0 0 0',
+                  borderRadius: '8px'
+                }
+              : {
+                  padding: '4px 0 0 0'
+                }
+          }
+          selected={disableCurrencySelect}
+        >
+          {!hideInput && (
+            <>
+              <NumericalInput
+                className="token-amount-input"
+                value={withdrawValue}
+                onUserInput={val => {
+                  onUserWithdrawInput(val)
+                }}
+              />
+              {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
+            </>
+          )}
+        </InputRow>
+      </>
+    )
+  }
+
   return (
     <>
       <InputPanel id={id}>
@@ -188,65 +264,7 @@ export default function HaloHaloWithdrawPanel({
           cornerRadiusBottomNone={cornerRadiusBottomNone}
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
-          {!hideInput && (
-            <LabelRow
-              style={{
-                padding: 0
-              }}
-            >
-              <RowBetween
-                style={{
-                  display: 'block'
-                }}
-              >
-                <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
-                  {label}
-                </TYPE.body>
-                {account && (
-                  <TYPE.body
-                    onClick={handleMaxWithdraw}
-                    style={{
-                      cursor: 'pointer',
-                      fontFamily: 'Open Sans',
-                      fontStyle: 'normal',
-                      fontWeight: 800,
-                      lineHeight: '16px',
-                      letterSpacing: '0.2em',
-                      color: '#000000'
-                    }}
-                  >
-                    BALANCE: {xHaloHaloBalance} xRNBW
-                  </TYPE.body>
-                )}
-              </RowBetween>
-            </LabelRow>
-          )}
-          <InputRow
-            style={
-              hideInput
-                ? {
-                    padding: '4px 0 0 0',
-                    borderRadius: '8px'
-                  }
-                : {
-                    padding: '4px 0 0 0'
-                  }
-            }
-            selected={disableCurrencySelect}
-          >
-            {!hideInput && (
-              <>
-                <NumericalInput
-                  className="token-amount-input"
-                  value={withdrawValue}
-                  onUserInput={val => {
-                    onUserWithdrawInput(val)
-                  }}
-                />
-                {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
-              </>
-            )}
-          </InputRow>
+          <WithdrawContent />
           <Column
             style={
               hideInput
