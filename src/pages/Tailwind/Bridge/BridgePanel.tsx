@@ -584,7 +584,7 @@ const BridgePanel = () => {
         state={modalState}
         setState={setModalState}
         successHash={successHash}
-        // estimatedGas={estimatedGas}
+        estimatedGas={estimatedGas}
       />
     </>
   )
