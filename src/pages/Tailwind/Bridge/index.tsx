@@ -47,9 +47,7 @@ const Bridge = () => {
       <div className="hidden md:flex items-start md:w-1/2">
         <InfoCard
           title="Bridge Info"
-          description={`Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. A bridge fee of ${Number(
-            process.env.REACT_APP_SHUTTLE_FEE_PERCENTAGE
-          ) * 100}% goes to the HaloDAO treasury.`}
+          description="Use the HaloDAO bridge to move your tokens between any of the supported EVM compatible networks. The bridge takes a fixed fee that accrues to the Rainbow Pool."
         />
       </div>
     </PageWrapper>
