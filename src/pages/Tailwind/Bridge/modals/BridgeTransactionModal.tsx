@@ -54,8 +54,8 @@ const ConfirmTransactionModal = ({
   state,
   setState,
   successHash
-  // estimatedGas
-}: ConfirmTransactionModalProps) => {
+}: // estimatedGas
+ConfirmTransactionModalProps) => {
   const ConfirmContent = () => {
     return (
       <>
