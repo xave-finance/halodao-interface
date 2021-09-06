@@ -32,7 +32,8 @@ export enum ButtonState {
   Next,
   Confirming,
   InsufficientBalance,
-  Retry
+  Retry,
+  MaxCap
 }
 
 enum ConfirmTransactionModalState {
@@ -60,7 +61,7 @@ const BridgePanel = () => {
   const [estimatedGas, setEstimatedGas] = useState('')
   const [successHash, setSuccessHash] = useState('')
 
-  const setButtonStates = () => {
+  const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
@@ -72,13 +73,14 @@ const BridgePanel = () => {
       setApproveState(ApproveButtonState.NotApproved)
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
+    } else if (parseFloat(inputValue) > 10000) {
+      setButtonState(ButtonState.MaxCap)
     }
-  }
+  }, [inputValue, allowance, balance])
 
   useEffect(() => {
     setButtonStates()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue])
+  }, [setButtonStates])
 
   useEffect(() => {
     if (!chainId) return
@@ -250,8 +252,7 @@ const BridgePanel = () => {
     } catch (e) {
       console.error(e)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenContract])
+  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, token])
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -259,13 +260,12 @@ const BridgePanel = () => {
     } catch (e) {
       console.error(e)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenContract])
+  }, [tokenContract, account])
 
   useEffect(() => {
     fetchAllowance()
     fetchBalance()
-  }, [account, fetchAllowance, fetchBalance])
+  }, [account, fetchAllowance, fetchBalance, token])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     setButtonState(ButtonState.Confirming)
@@ -431,6 +431,19 @@ const BridgePanel = () => {
     )
   }
 
+  const MaxCapContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Input Greater than Maximum Cap"
+          state={PrimaryButtonState.Disabled}
+          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
   const RetryContent = () => {
     return (
       <div className="mt-4">
@@ -470,6 +483,9 @@ const BridgePanel = () => {
     }
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
+    }
+    if (buttonState === ButtonState.MaxCap) {
+      content = <MaxCapContent />
     }
     return content
   }
