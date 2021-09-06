@@ -11,7 +11,7 @@ export enum ApproveButtonState {
 interface ApproveButtonProps {
   title: string
   state: ApproveButtonState
-  onClick: () => void
+  onClick?: () => void
 }
 
 const ApproveButton = ({ title, state, onClick }: ApproveButtonProps) => {

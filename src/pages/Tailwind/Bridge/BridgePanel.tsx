@@ -332,7 +332,7 @@ const BridgePanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -366,10 +366,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton title="Approving" state={ApproveButtonState.Approving} onClick={() => {}} />
+          <ApproveButton title="Approving" state={ApproveButtonState.Approving} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -379,10 +379,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton title="Approve" state={ApproveButtonState.Approved} onClick={() => {}} />
+          <ApproveButton title="Approve" state={ApproveButtonState.Approved} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -391,12 +391,7 @@ const BridgePanel = () => {
   const ConfirmingContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Confirming"
-          state={PrimaryButtonState.InProgress}
-          onClick={() => {}}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Confirming" state={PrimaryButtonState.InProgress} />
       </div>
     )
   }
@@ -404,12 +399,7 @@ const BridgePanel = () => {
   const EnterAmountContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Enter an amount"
-          state={PrimaryButtonState.Disabled}
-          onClick={() => {}}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Enter an amount" state={PrimaryButtonState.Disabled} />
       </div>
     )
   }
@@ -421,7 +411,6 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Insufficient Balance"
           state={PrimaryButtonState.Disabled}
-          onClick={() => {}}
         />
       </div>
     )
@@ -434,7 +423,6 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Input Greater than Maximum Cap"
           state={PrimaryButtonState.Disabled}
-          onClick={() => {}}
         />
       </div>
     )
