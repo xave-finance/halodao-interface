@@ -180,7 +180,7 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="by-secondary-lighter text-center text-sm text-gray-500 mb-2 border border-bg-secondary-light radius-lg p-4">
+        <div className="bg-secondary-lighter text-center text-sm text-gray-500 mb-2 border border-secondary-light radius-2xl p-2">
           Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
           update on {NETWORK_LABEL[destinationChainId]}
         </div>
