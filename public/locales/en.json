@@ -115,6 +115,7 @@
   "harvest": "Harvest",
   "max": "MAX",
   "apy": "APY",
+  "apr": "APR",
   "new": "New",
   "emptyStateTitleInFarm": "Let's get farming!",
   "emptyStateTitleInVest": "Let's get vesting!",
@@ -123,5 +124,6 @@
   "add": "Add",
   "staking disabled": "Staking Disabled",
   "inactive pools": "Inactive Pools",
-  "inactive": "Inactive"
+  "inactive": "Inactive",
+  "bridge": "Bridge"
 }

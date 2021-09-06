@@ -20,12 +20,12 @@ import { GreyCard } from '../Card'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import Spinner from '../../assets/images/spinner.svg'
-import SpinnerPurple from '../../assets/images/spinner-purple.svg'
-import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
-import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
-import ArrowRight from '../../assets/svg/arrow-right.svg'
-import LinkIcon from '../../assets/svg/link-icon.svg'
+import Spinner from 'assets/images/spinner.svg'
+import SpinnerPurple from 'assets/images/spinner-purple.svg'
+import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
+import BunnyRewards from 'assets/svg/bunny-rewards.svg'
+import ArrowRight from 'assets/svg/arrow-right.svg'
+import LinkIcon from 'assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
@@ -666,7 +666,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="13%">
-            <LabelText className="first">{t('apy')}:</LabelText>
+            <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">

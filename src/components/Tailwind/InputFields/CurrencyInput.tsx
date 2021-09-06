@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Currency } from '@sushiswap/sdk'
+import { Currency, Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
@@ -15,9 +15,18 @@ interface TokenInputProps {
   didChangeValue: (newValue: string) => void
   showBalance: boolean
   showMax: boolean
+  onSelectToken?: (token: Token) => void
 }
 
-const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalance, showMax }: TokenInputProps) => {
+const TokenInput = ({
+  currency,
+  value,
+  canSelectToken,
+  didChangeValue,
+  showBalance,
+  showMax,
+  onSelectToken
+}: TokenInputProps) => {
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
   const [showModal, setShowModal] = useState(false)
@@ -33,7 +42,7 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
       return (
         <div className="mb-2 md:mb-0 md:w-1/4 flex items-center cursor-pointer" onClick={() => setShowModal(true)}>
           <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold pr-2">{currency.symbol}</div>
+          <div className="ml-2 font-semibold pr-2">{currency ? currency.symbol : ''}</div>
           <SelectButton onClick={() => setShowModal(true)} />
         </div>
       )
@@ -62,7 +71,6 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
               className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
               value={value}
               onUserInput={val => {
-                console.log('did change value!')
                 didChangeValue(val)
               }}
             />
@@ -70,7 +78,14 @@ const TokenInput = ({ currency, value, canSelectToken, didChangeValue, showBalan
           <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
       </div>
-      <TokenSelectModal isVisible={showModal} onDismiss={() => setShowModal(false)} />
+      <TokenSelectModal
+        isVisible={showModal}
+        onDismiss={() => setShowModal(false)}
+        onSelect={(token: Token) => {
+          if (onSelectToken) onSelectToken(token)
+          setShowModal(false)
+        }}
+      />
     </>
   )
 }

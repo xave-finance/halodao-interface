@@ -1,6 +1,7 @@
 import React from 'react'
-import { ChainId } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
+import { useWeb3React } from '@web3-react/core'
+import { ChainId, Token } from '@sushiswap/sdk'
+import { HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Search } from 'react-feather'
@@ -8,9 +9,40 @@ import { Search } from 'react-feather'
 interface TokenSelectModalProps {
   isVisible: boolean
   onDismiss: () => void
+  onSelect: (token: Token) => void
 }
 
-const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
+interface TokenListProps {
+  chainId: number
+  onSelect: (token: any | undefined) => void
+}
+
+const TOKENS = [HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP]
+
+const TokenList = ({ chainId, onSelect }: TokenListProps) => {
+  return (
+    <div className="p-4">
+      {TOKENS.map(token => (
+        <div
+          key={token[chainId as ChainId]?.name}
+          className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary"
+          onClick={() => {
+            onSelect(token)
+          }}
+        >
+          <CurrencyLogo currency={token[chainId as ChainId]} size={'30px'} />
+          <div className="flex flex-col pl-2 focus:bg-primary">
+            <div className="ml-2 font-semibold">{token[chainId as ChainId]?.symbol}</div>
+            <div className="ml-2 text-xs text-gray-500">{token[chainId as ChainId]?.name}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const TokenSelectModal = ({ isVisible, onSelect, onDismiss }: TokenSelectModalProps) => {
+  const { chainId } = useWeb3React()
   return (
     <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
       <div className="bg-primary-lightest p-4 border-b">
@@ -25,22 +57,7 @@ const TokenSelectModal = ({ isVisible, onDismiss }: TokenSelectModalProps) => {
           </div>
         </div>
       </div>
-      <div>
-        <div className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary">
-          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} size={'30px'} />
-          <div className="flex flex-col pl-2 focus:bg-primary">
-            <div className="ml-2 font-semibold">{HALO[ChainId.MAINNET]!.symbol}</div>
-            <div className="ml-2 text-xs text-gray-500">{HALO[ChainId.MAINNET]!.name}</div>
-          </div>
-        </div>
-        <div className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary">
-          <CurrencyLogo currency={HALO[ChainId.MAINNET]!} size={'30px'} />
-          <div className="flex flex-col pl-2 focus:bg-primary">
-            <div className="ml-2 font-semibold">{HALO[ChainId.MAINNET]!.symbol}</div>
-            <div className="ml-2 text-xs text-gray-500">{HALO[ChainId.MAINNET]!.name}</div>
-          </div>
-        </div>
-      </div>
+      <TokenList chainId={chainId as number} onSelect={onSelect} />
     </BaseModal>
   )
 }
