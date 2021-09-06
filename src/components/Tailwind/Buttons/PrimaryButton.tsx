@@ -16,7 +16,7 @@ interface PrimaryButtonProps {
   type?: PrimaryButtonType
   title: string
   state: PrimaryButtonState
-  onClick: () => void
+  onClick?: () => void
 }
 
 const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick }: PrimaryButtonProps) => {
