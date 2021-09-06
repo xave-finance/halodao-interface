@@ -83,7 +83,7 @@ const BridgePanel = () => {
     setButtonStates()
   }, [setButtonStates])
 
-  useEffect(() => {
+  const onTokenChange = useCallback(() => {
     if (!chainId) return
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
@@ -99,10 +99,12 @@ const BridgePanel = () => {
         )
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
-
+  }, [token, account, chainId, library])
   useEffect(() => {
+    onTokenChange()
+  }, [token, onTokenChange])
+
+  const onChainIdChange = useCallback(() => {
     if (!chainId) return
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
@@ -125,10 +127,13 @@ const BridgePanel = () => {
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+  }, [chainId, token, library, account])
 
   useEffect(() => {
+    onChainIdChange()
+  }, [onChainIdChange])
+
+  const onDestinationChainIdChange = useCallback(() => {
     if (!chainId) return
     if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
       setSecondaryBridgeContract(
@@ -140,8 +145,11 @@ const BridgePanel = () => {
         )
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destinationChainId])
+  }, [chainId, token, library, account, destinationChainId])
+
+  useEffect(() => {
+    onDestinationChainIdChange()
+  }, [onDestinationChainIdChange])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -257,7 +265,7 @@ const BridgePanel = () => {
 
   const fetchBalance = useCallback(async () => {
     try {
-      setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
+      setBalance(toNumber(await tokenContract?.balanceOf(account)))
     } catch (e) {
       console.error(e)
     }
@@ -325,7 +333,7 @@ const BridgePanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
         </div>
       </div>
     )
@@ -359,16 +367,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton
-            title="Approving"
-            state={ApproveButtonState.Approving}
-            onClick={() => {
-              console.log('clicked')
-            }}
-          />
+          <ApproveButton title="Approving" state={ApproveButtonState.Approving} onClick={() => {}} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
         </div>
       </div>
     )
@@ -378,16 +380,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.Approved}
-            onClick={() => {
-              console.log('clicked')
-            }}
-          />
+          <ApproveButton title="Approve" state={ApproveButtonState.Approved} onClick={() => {}} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => {}} />
         </div>
       </div>
     )
@@ -400,7 +396,7 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Confirming"
           state={PrimaryButtonState.InProgress}
-          onClick={() => console.log('clicked')}
+          onClick={() => {}}
         />
       </div>
     )
@@ -413,7 +409,7 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Enter an amount"
           state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
+          onClick={() => {}}
         />
       </div>
     )
@@ -426,7 +422,7 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Insufficient Balance"
           state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
+          onClick={() => {}}
         />
       </div>
     )
@@ -439,7 +435,7 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Input Greater than Maximum Cap"
           state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
+          onClick={() => {}}
         />
       </div>
     )
