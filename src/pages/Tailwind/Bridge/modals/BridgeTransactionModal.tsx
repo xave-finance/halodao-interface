@@ -180,11 +180,7 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="bg-secondary-lighter text-center text-sm mb-2 border-2 border-secondary-light rounded-lg p-2">
-          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
-        </div>
-        <div className="text-center">
+        <div className="text-center mb-2">
           <a
             className="font-semibold text-link"
             href={getExplorerLink(chainId, successHash, 'transaction')}
@@ -194,7 +190,11 @@ const ConfirmTransactionModal = ({
             View on Chain Explorer
           </a>
         </div>
-        <div className="mt-12">
+        <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
+          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
+          update on {NETWORK_LABEL[destinationChainId]}
+        </div>
+        <div className="mt-2">
           <PrimaryButton
             title="Close"
             state={PrimaryButtonState.Enabled}
