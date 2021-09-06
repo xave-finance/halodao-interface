@@ -26,7 +26,7 @@ import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
 import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
 import ArrowRight from '../../assets/svg/arrow-right.svg'
 import LinkIcon from '../../assets/svg/link-icon.svg'
-import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE, HALO_REWARDS_V1_ADDRESS } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -464,7 +464,11 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
 
   // Make use of `useApproveCallback` for checking & setting allowance
-  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
+  const rewardsContractAddress = chainId
+    ? rewardsVersion === 0
+      ? HALO_REWARDS_ADDRESS[chainId]
+      : HALO_REWARDS_V1_ADDRESS[chainId]
+    : undefined
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
