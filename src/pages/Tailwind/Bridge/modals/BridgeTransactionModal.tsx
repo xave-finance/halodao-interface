@@ -103,10 +103,10 @@ const ConfirmTransactionModal = ({
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Gas fee (estimated)</div>
+              {/* <div className="text-secondary-alternate">Gas fee (estimated)</div>
               <div>
                 {estimatedGas} {Currency.getNativeCurrencySymbol(originChainId)}{' '}
-              </div>
+              </div> */}
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
