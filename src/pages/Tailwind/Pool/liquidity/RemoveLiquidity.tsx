@@ -49,6 +49,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       setToken0Amount(0)
       setToken1Amount(0)
       setRemoveButtonState(PrimaryButtonState.Disabled)
+      window.location.reload()
     } catch (err) {
       console.error(err)
       setRemoveButtonState(PrimaryButtonState.Enabled)
