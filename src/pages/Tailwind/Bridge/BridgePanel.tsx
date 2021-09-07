@@ -123,9 +123,9 @@ const BridgePanel = () => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
               if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-                estimateBurnWrappedToken()
+                estimateBurnWrappedToken(inputValue)
               } else {
-                estimateDeposit(destinationChainId)
+                estimateDeposit(destinationChainId, inputValue)
               }
               setModalState(ConfirmTransactionModalState.NotConfirmed)
               setShowModal(true)

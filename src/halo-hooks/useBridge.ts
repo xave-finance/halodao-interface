@@ -60,7 +60,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   }, [token, onTokenChange])
 
   const onChainIdChange = useCallback(() => {
-    if (!chainId || !library) return
+    if (!chainId || !library || !setButtonState || !setInputValue || !setApproveState) return
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
@@ -80,9 +80,9 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
 
-    setButtonState!(ButtonState.EnterAmount)
-    setApproveState!(ApproveButtonState.NotApproved)
-    setInputValue!('')
+    setButtonState(ButtonState.EnterAmount)
+    setApproveState(ApproveButtonState.NotApproved)
+    setInputValue('')
   }, [chainId, token, library, account, setApproveState, setButtonState, setInputValue])
 
   useEffect(() => {
@@ -109,23 +109,25 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
+      if (!setApproveState || !setButtonState) return
       try {
         const tx = await tokenContract?.approve(primaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
       } catch (e) {
         console.error(e)
-        setApproveState!(ApproveButtonState.NotApproved)
-        setButtonState!(ButtonState.Default)
+        setApproveState(ApproveButtonState.NotApproved)
+        setButtonState(ButtonState.Default)
       }
     },
     [addTransaction, tokenContract, primaryBridgeContract, setApproveState, setButtonState]
   )
 
   const estimateDeposit = useCallback(
-    async (chainIdDestination: number) => {
-      const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, chainIdDestination)
-      setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
+    async (chainIdDestination: number, inputValue: string) => {
+      const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(parseEther(inputValue), chainIdDestination)
+      //.toFixed()
+      setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [primaryBridgeContract]
   )
@@ -148,27 +150,33 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
+      if (!setButtonState || !setApproveState) return
       try {
         const tx = await tokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
         return tx
       } catch (e) {
         console.error(e)
-        setApproveState!(ApproveButtonState.NotApproved)
-        setButtonState!(ButtonState.Default)
+        setApproveState(ApproveButtonState.NotApproved)
+        setButtonState(ButtonState.Default)
       }
     },
     [addTransaction, tokenContract, secondaryBridgeContract, setApproveState, setButtonState]
   )
 
-  const estimateBurnWrappedToken = useCallback(async () => {
-    const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(1)
-    // setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
-    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
-  }, [secondaryBridgeContract])
+  const estimateBurnWrappedToken = useCallback(
+    async (inputValue: string) => {
+      const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(parseEther(inputValue))
+
+      // setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
+      setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
+    },
+    [secondaryBridgeContract]
+  )
 
   const burnWrappedTokens = useCallback(
     async (amount: ethers.BigNumber) => {
+      if (!setButtonState || !setApproveState) return
       try {
         const tx = await secondaryBridgeContract?.burn(amount)
         addTransaction(tx, { summary: 'Burn wrapped tokens' })
@@ -176,15 +184,16 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
         return tx
       } catch (e) {
         console.error(e)
-        setApproveState!(ApproveButtonState.Approved)
-        setButtonState!(ButtonState.Retry)
+        setApproveState(ApproveButtonState.Approved)
+        setButtonState(ButtonState.Retry)
       }
     },
     [addTransaction, secondaryBridgeContract, setApproveState, setButtonState]
   )
 
   const approveAllowance = async (amount: ethers.BigNumber) => {
-    setApproveState!(ApproveButtonState.Approving)
+    if (!setApproveState || !setButtonState) return
+    setApproveState(ApproveButtonState.Approving)
     try {
       let tx
       if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
@@ -193,8 +202,8 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
         tx = await giveBridgeAllowance(amount)
       }
       await tx.wait()
-      setApproveState!(ApproveButtonState.Approved)
-      setButtonState!(ButtonState.Next)
+      setApproveState(ApproveButtonState.Approved)
+      setButtonState(ButtonState.Next)
       setAllowance(toNumber(amount))
     } catch (e) {
       console.error(e)
@@ -242,12 +251,14 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   }, [account, fetchAllowance, fetchBalance, token, allowance, primaryBridgeContract, secondaryBridgeContract])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
+    if (!setApproveState || !setButtonState) return false
+
     setButtonState!(ButtonState.Confirming)
     try {
       const tx = await depositToPrimaryBridge(amount, chainId)
       await tx.wait()
-      setApproveState!(ApproveButtonState.NotApproved)
-      setButtonState!(ButtonState.Default)
+      setApproveState(ApproveButtonState.NotApproved)
+      setButtonState(ButtonState.Default)
       setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
@@ -265,12 +276,13 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   }
 
   const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
-    setButtonState!(ButtonState.Confirming)
+    if (!setApproveState || !setButtonState) return false
+    setButtonState(ButtonState.Confirming)
     try {
       const tx = await burnWrappedTokens(amount)
       await tx.wait()
-      setApproveState!(ApproveButtonState.NotApproved)
-      setButtonState!(ButtonState.Default)
+      setApproveState(ApproveButtonState.NotApproved)
+      setButtonState(ButtonState.Default)
       setAllowance(allowance - toNumber(amount))
     } catch (e) {
       console.error(e)
