@@ -62,7 +62,7 @@ const TokenInput = ({
     <>
       <div className="flex flex-col md:flex-row">
         {showSelectedCurrency()}
-        <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
+        <div className="mb-2 md:mb-0 md:ml-4 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">

@@ -480,8 +480,8 @@ const BridgePanel = () => {
     } else {
       return (
         <>
-          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate">
-            Destination Address <span className="pr-2" /> <Lock />
+          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate items-center">
+            Destination Address <span className="pr-2" /> <Lock size={16} />
           </p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
