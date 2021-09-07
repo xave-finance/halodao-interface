@@ -8,6 +8,7 @@ import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
 import { calculateShuttleFee } from 'utils/bridge'
+import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -173,6 +174,7 @@ const ConfirmTransactionModal = ({
   }
 
   const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
+    const { confirmations, requiredConfirmations, done } = useTransactionConfirmation(successHash)
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -185,6 +187,10 @@ const ConfirmTransactionModal = ({
           update on {NETWORK_LABEL[destinationChainId]}
         </div>
         <div className="text-center">
+          {/* Temporary code */}
+          {console.log('SuccessContent confirmations:', confirmations)}
+          {console.log('SuccessContent requiredConfirmations:', requiredConfirmations)}
+          {console.log('SuccessContent done:', done)}
           <a
             className="font-semibold text-link"
             href={getExplorerLink(chainId, successHash, 'transaction')}
