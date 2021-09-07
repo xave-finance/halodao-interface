@@ -118,7 +118,7 @@ const AddLiquityModal = ({
       (1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)) / (pool.rates.token0 * 100)
     setTokenPrices([basePrice, quotePrice])
 
-    setPoolShare(maxLpAmount / pool.pooled.total)
+    setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
   }
 
   useEffect(() => {
