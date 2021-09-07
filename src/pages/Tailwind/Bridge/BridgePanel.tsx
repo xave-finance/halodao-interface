@@ -23,6 +23,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { getContract, shortenAddress } from 'utils'
 import { toNumber } from 'utils/formatNumber'
+import { Lock } from 'react-feather'
 
 export enum ButtonState {
   Default,
@@ -486,7 +487,9 @@ const BridgePanel = () => {
     } else {
       return (
         <>
-          <p className="mt-2 font-semibold text-secondary-alternate">Destination Address</p>
+          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate">
+            Destination Address <span className="pr-2" /> <Lock />
+          </p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
           </div>
