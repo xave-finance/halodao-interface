@@ -535,28 +535,3 @@ export const HALO_REWARDS_MESSAGE = {
   claiming: 'Claiming your rewards',
   unstakeAndClaim: 'Unstaking and claiming'
 }
-
-export const ORACLE_ADDRESSES: { [key: string]: ChainAddressMap } = {
-  CADC: {
-    [ChainId.MAINNET]: '0xa34317DB73e77d453b1B8d04550c44D10e981C8e'
-  },
-  EURS: {
-    [ChainId.MAINNET]: '0xb49f677943BC038e9857d61E7d053CaA2C1734C1',
-    [ChainId.KOVAN]: '0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13'
-  },
-  XSGD: {
-    [ChainId.MAINNET]: '0xe25277fF4bbF9081C75Ab0EB13B4A13a721f3E13'
-  },
-  USDC: {
-    [ChainId.MAINNET]: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-    [ChainId.KOVAN]: '0x9211c6b3BF41A10F78539810Cf5c64e1BB78Ec60'
-  },
-  AUD: {
-    [ChainId.MAINNET]: '0x77F9710E7d0A19669A13c055F62cd80d313dF022',
-    [ChainId.KOVAN]: '0x5813A90f826e16dB392abd2aF7966313fc1fd5B8'
-  },
-  CHF: {
-    [ChainId.MAINNET]: '0x449d117117838fFA61263B61dA6301AA2a88B13A',
-    [ChainId.KOVAN]: '0xed0616BeF04D374969f302a34AE4A63882490A8C'
-  }
-}

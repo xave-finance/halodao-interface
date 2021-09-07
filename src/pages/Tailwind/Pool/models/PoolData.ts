@@ -21,4 +21,5 @@ export interface PoolData {
   held: number
   staked: number
   earned: number
+  totalSupply: number
 }

@@ -9,9 +9,9 @@ import { parseEther } from 'ethers/lib/utils'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { getExplorerLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
+import { useTime } from 'halo-hooks/useTime'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -43,7 +43,7 @@ const AddLiquityModal = ({
   onDismiss
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
-  const currentBlockTime = useCurrentBlockTimestamp()
+  const { getFutureTime } = useTime()
   const [state, setState] = useState(AddLiquityModalState.NotConfirmed)
   const [txHash, setTxHash] = useState('')
   const [tokenAmounts, setTokenAmounts] = useState([0, 0])
@@ -64,17 +64,6 @@ const AddLiquityModal = ({
   } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
   const { deposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
-
-  /**
-   * Helper function to calculate tx deadline
-   **/
-  const futureTime = () => {
-    if (currentBlockTime) {
-      return currentBlockTime.add(60).toNumber()
-    } else {
-      return new Date().getTime() + 60
-    }
-  }
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -137,7 +126,7 @@ const AddLiquityModal = ({
   const confirmDeposit = async () => {
     setState(AddLiquityModalState.InProgress)
     try {
-      const deadline = futureTime()
+      const deadline = getFutureTime()
       const tx = await deposit(parseEther(depositAmount), deadline)
       setTxHash(tx.hash)
       await tx.wait()
@@ -155,9 +144,8 @@ const AddLiquityModal = ({
   const confirmZap = async () => {
     setState(AddLiquityModalState.InProgress)
     try {
-      const deadline = futureTime()
+      const deadline = getFutureTime()
       const func = isZappingFromBase ? zapFromBase : zapFromQuote
-      console.log('zapAmount: ', zapAmount)
       const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
       setTxHash(tx.hash)
       await tx.wait()

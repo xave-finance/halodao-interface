@@ -13,7 +13,6 @@ import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
-import useHaloHalo from 'halo-hooks/useHaloHalo'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -54,14 +53,11 @@ interface ExpandablePoolRowProps {
 
 const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
-  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards } = useLiquidityPool(
+  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
     pid
   )
   const dispatch = useDispatch<AppDispatch>()
-
-  const { haloHaloPrice } = useHaloHalo()
-  const rewardTokenPrice = Number(haloHaloPrice)
 
   /**
    * Main logic: fetching pool info
@@ -70,7 +66,14 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
    * - network changed
    **/
   useEffect(() => {
-    const promises = [getTokens(), getLiquidity(), getBalance(), getStakedLPToken(), getPendingRewards()]
+    const promises = [
+      getTokens(),
+      getLiquidity(),
+      getBalance(),
+      getStakedLPToken(),
+      getPendingRewards(),
+      getTotalSupply()
+    ]
 
     Promise.all(promises)
       .then(results => {
@@ -79,8 +82,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
         const balance: BigNumber = results[2]
         const staked: BigNumber = results[3]
         const rewards: BigNumber = results[4]
-
-        console.log('liquidity: ', liquidity)
+        const totalSupply: BigNumber = results[5]
 
         setPool({
           address: poolAddress,
@@ -102,13 +104,14 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
           },
           held: Number(formatEther(balance)),
           staked: Number(formatEther(staked)),
-          earned: Number(formatEther(rewards))
+          earned: Number(formatEther(rewards)),
+          totalSupply: Number(formatEther(totalSupply))
         })
       })
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards])
+  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply])
 
   /**
    * Update cached pool data in app cache
@@ -120,6 +123,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
       lpTokenAddress: pool.address,
       lpTokenBalance: pool.held,
       lpTokenStaked: pool.staked,
+      lpTokenPrice: pool.totalSupply > 0 ? pool.pooled.total / pool.totalSupply : 0,
       pendingRewards: pool.earned
     }
     dispatch(updatePools([poolData]))
@@ -187,8 +191,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
           <div className="">{formatNumber(pool.staked)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
-          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">HALO Earned:</div>
-          <div className="">{formatNumber(pool.earned * rewardTokenPrice, NumberFormat.usd)}</div>
+          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">xRNBW Earned:</div>
+          <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />

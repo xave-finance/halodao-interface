@@ -10,21 +10,6 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
 
-  // const viewDeposit = useCallback(
-  //   async (amount: BigNumber) => {
-  //     const res = await CurveContract?.viewDeposit(amount)
-  //     console.log(`CurveContract.viewDeposit(${formatEther(amount)}): `, res)
-
-  //     const [lpAmount, [baseView, quoteView]] = res
-  //     console.log(`LP token: `, formatEther(lpAmount))
-  //     console.log(`Token[0]: `, formatUnits(baseView, token0.decimals))
-  //     console.log(`Token[1]: `, formatUnits(quoteView, token1.decimals))
-
-  //     return lpAmount
-  //   },
-  //   [CurveContract]
-  // )
-
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
       console.log(`CurveContract.deposit params: `, formatEther(amount), deadline)

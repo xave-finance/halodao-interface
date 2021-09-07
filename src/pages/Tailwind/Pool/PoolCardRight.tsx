@@ -10,7 +10,7 @@ interface PoolCardRightProps {
 
 const PoolCardRight = ({ pool }: PoolCardRightProps) => {
   const stake = () => {
-    console.log('stake')
+    console.log('@todo: stake')
   }
 
   const lpToken0Price = pool.weights.token0 * (1 / (pool.rates.token0 * 100))

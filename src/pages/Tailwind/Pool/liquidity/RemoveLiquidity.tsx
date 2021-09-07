@@ -6,7 +6,7 @@ import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/P
 import { PoolData } from '../models/PoolData'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
+import { useTime } from 'halo-hooks/useTime'
 
 interface RemoveLiquidityProps {
   pool: PoolData
@@ -16,24 +16,15 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const [amount, setAmount] = useState(0)
   const [token0Amount, setToken0Amount] = useState(0)
   const [token1Amount, setToken1Amount] = useState(0)
-  const currentBlockTime = useCurrentBlockTimestamp()
+  const { getFutureTime } = useTime()
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
 
   const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
-
-  const futureTime = () => {
-    if (currentBlockTime) {
-      return currentBlockTime.add(60).toNumber()
-    } else {
-      return new Date().getTime() + 60
-    }
-  }
 
   const updateAmount = async (amt: number) => {
     setAmount(amt)
 
     const lpAmount = pool.held * (amt * 0.01)
-    console.log('lpAmount: ', lpAmount)
     const tokenAmounts = await viewWithdraw(parseEther(`${lpAmount}`))
     setToken0Amount(Number(tokenAmounts[0]))
     setToken1Amount(Number(tokenAmounts[1]))
@@ -50,7 +41,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
     try {
       const lpAmount = pool.held * (Number(amount) * 0.01)
-      const deadline = futureTime()
+      const deadline = getFutureTime()
       const tx = await withdraw(parseEther(`${lpAmount}`), deadline)
       await tx.wait()
 
@@ -87,22 +78,6 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
           </div>
         </div>
       </div>
-      {/* <div className="mt-4 flex flex-col md:flex-row md:space-x-4">
-        <div className="mb-2 md:w-1/2 md:mb-0">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.NotApproved}
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-        <div className="md:w-1/2">
-          <PrimaryButton
-            title="Remove Supply"
-            state={PrimaryButtonState.Disabled}
-            onClick={() => console.log('clicked')}
-          />
-        </div>
-      </div> */}
       <div className="mt-4">
         <PrimaryButton title="Remove Supply" state={removeButtonState} onClick={confirmWithdraw} />
       </div>
