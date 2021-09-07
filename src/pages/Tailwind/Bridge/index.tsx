@@ -1,12 +1,14 @@
 import React from 'react'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
+import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import BridgePanel from './BridgePanel'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { NETWORK_SUPPORTED_FEATURES, NETWORK_LABEL } from '../../../constants/networks'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
+import { useWalletModalToggle } from 'state/application/hooks'
 
 const NotSupportedContent = () => {
   const { chainId } = useActiveWeb3React()
@@ -19,11 +21,28 @@ const NotSupportedContent = () => {
     </div>
   )
 }
+
+const NotConnected = () => {
+  const toggleWalletModal = useWalletModalToggle()
+  const caption = 'Get access to the bridge right connect to you wallet!'
+  return (
+    <div className="flex items-center bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
+      <div className="w-full">
+        <PageWarning caption={caption} />
+        <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
+      </div>
+    </div>
+  )
+}
+
 const CurrentPanelContent = () => {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
-  if (features?.bridge) {
+
+  if (features?.bridge && chainId !== 1) {
     return <BridgePanel />
+  } else if (chainId === 1) {
+    return <NotConnected />
   }
   return <NotSupportedContent />
 }
