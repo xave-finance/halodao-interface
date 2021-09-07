@@ -1,11 +1,11 @@
 import React from 'react'
 import BunnyAnnouncement from 'assets/svg/bunny-announcement.svg'
 
-interface PageNotSupportedProps {
+interface PageWarningProps {
   caption: string
 }
 
-const PageNotSupported = ({ caption }: PageNotSupportedProps) => {
+const PageWarning = ({ caption }: PageWarningProps) => {
   return (
     <div className="flex flex-col justify-center mt-4">
       <div className="flex justify-center">
@@ -16,4 +16,4 @@ const PageNotSupported = ({ caption }: PageNotSupportedProps) => {
   )
 }
 
-export default PageNotSupported
+export default PageWarning
