@@ -24,7 +24,7 @@ const TokenRow = ({ token, onSelect }: TokenRowProps) => {
     <div
       key={token.name}
       className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary"
-      onClick={onSelect}
+      onClick={() => onSelect(token)}
     >
       <CurrencyLogo currency={token} size={'30px'} />
       <div className="flex flex-col pl-2 focus:bg-primary">
