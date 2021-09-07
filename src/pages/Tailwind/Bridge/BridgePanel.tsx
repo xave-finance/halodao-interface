@@ -115,7 +115,6 @@ const BridgePanel = () => {
       )
       setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
     } else {
-      /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
     setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
@@ -266,6 +265,10 @@ const BridgePanel = () => {
     fetchAllowance()
     fetchBalance()
   }, [account, fetchAllowance, fetchBalance])
+
+  useEffect(() => {
+    setButtonStates()
+  }, [allowance, balance, setButtonStates])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     setButtonState(ButtonState.Confirming)
