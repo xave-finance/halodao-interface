@@ -22,13 +22,10 @@ const NotSupportedContent = () => {
 const CurrentPanelContent = () => {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
-  let content = <></>
   if (features?.bridge) {
-    content = <BridgePanel />
-  } else {
-    content = <NotSupportedContent />
+    return <BridgePanel />
   }
-  return content
+  return <NotSupportedContent />
 }
 const Bridge = () => {
   return (
