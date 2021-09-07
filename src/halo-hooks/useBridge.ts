@@ -133,6 +133,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
+      if (!setButtonState || !setApproveState) return
       try {
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
@@ -140,8 +141,8 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
         return tx
       } catch (e) {
         console.error(e)
-        setApproveState!(ApproveButtonState.Approved)
-        setButtonState!(ButtonState.Retry)
+        setApproveState(ApproveButtonState.Approved)
+        setButtonState(ButtonState.Retry)
       }
     },
     [addTransaction, primaryBridgeContract, setApproveState, setButtonState]
