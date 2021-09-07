@@ -22,8 +22,6 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
-import { ChainId } from '@sushiswap/sdk'
-import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -98,7 +96,6 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
-  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   // Updating the state of stake button
   useEffect(() => {
@@ -106,10 +103,6 @@ export default function CurrencyInputPanel({
 
     const depositAsFloat = parseFloat(depositValue)
     if (depositAsFloat > 0 && depositAsFloat <= parseFloat(haloBalance)) {
-      if (!features?.vest && chainId === ChainId.MATIC) {
-        setButtonState(ButtonHaloStates.Approved)
-        return
-      }
       if (allowance !== '' && parseFloat(allowance) > 0) {
         setButtonState(ButtonHaloStates.Approved)
       } else if (requestedApproval) {
@@ -120,7 +113,7 @@ export default function CurrencyInputPanel({
     } else {
       setButtonState(ButtonHaloStates.Disabled)
     }
-  }, [allowance, depositValue, haloBalance, pendingTx, requestedApproval, chainId, features])
+  }, [allowance, depositValue, haloBalance, pendingTx, requestedApproval])
 
   // handle approval
   const handleApprove = useCallback(async () => {
@@ -178,80 +171,6 @@ export default function CurrencyInputPanel({
     })
   }
 
-  const DepositContent = () => {
-    if (chainId === ChainId.MATIC) {
-      setButtonState(ButtonHaloStates.Approved)
-      return (
-        <>
-          <p className="font-semibold text-center">Got extra RNBW? Earn more rewards on our next rewards epoch. </p>
-        </>
-      )
-    }
-    return (
-      <>
-        {!hideInput && (
-          <LabelRow
-            style={{
-              padding: 0
-            }}
-          >
-            <RowBetween
-              style={{
-                display: 'block'
-              }}
-            >
-              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
-                {label}
-              </TYPE.body>
-              {account && (
-                <TYPE.body
-                  onClick={handleMaxDeposit}
-                  style={{
-                    cursor: 'pointer',
-                    fontFamily: 'Open Sans',
-                    fontStyle: 'normal',
-                    fontWeight: 800,
-                    lineHeight: '16px',
-                    letterSpacing: '0.2em',
-                    color: '#000000'
-                  }}
-                >
-                  BALANCE: {haloBalance} RNBW
-                </TYPE.body>
-              )}
-            </RowBetween>
-          </LabelRow>
-        )}
-        <InputRow
-          style={
-            hideInput
-              ? {
-                  padding: '4px 0 0 0',
-                  borderRadius: '8px'
-                }
-              : {
-                  padding: '4px 0 0 0'
-                }
-          }
-          selected={disableCurrencySelect}
-        >
-          {!hideInput && (
-            <>
-              <NumericalInput
-                className="token-amount-input"
-                value={depositValue}
-                onUserInput={val => {
-                  onUserDepositInput(val)
-                }}
-              />
-              {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
-            </>
-          )}
-        </InputRow>
-      </>
-    )
-  }
-
   return (
     <>
       {/* Deposit Input */}
@@ -261,7 +180,65 @@ export default function CurrencyInputPanel({
           cornerRadiusBottomNone={cornerRadiusBottomNone}
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
-          <DepositContent />
+          {!hideInput && (
+            <LabelRow
+              style={{
+                padding: 0
+              }}
+            >
+              <RowBetween
+                style={{
+                  display: 'block'
+                }}
+              >
+                <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                  {label}
+                </TYPE.body>
+                {account && (
+                  <TYPE.body
+                    onClick={handleMaxDeposit}
+                    style={{
+                      cursor: 'pointer',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 800,
+                      lineHeight: '16px',
+                      letterSpacing: '0.2em',
+                      color: '#000000'
+                    }}
+                  >
+                    BALANCE: {haloBalance} RNBW
+                  </TYPE.body>
+                )}
+              </RowBetween>
+            </LabelRow>
+          )}
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: '4px 0 0 0',
+                    borderRadius: '8px'
+                  }
+                : {
+                    padding: '4px 0 0 0'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
+            {!hideInput && (
+              <>
+                <NumericalInput
+                  className="token-amount-input"
+                  value={depositValue}
+                  onUserInput={val => {
+                    onUserDepositInput(val)
+                  }}
+                />
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxDeposit}>{t('max')}</ButtonMax>}
+              </>
+            )}
+          </InputRow>
           <Column
             style={
               hideInput
@@ -280,16 +257,10 @@ export default function CurrencyInputPanel({
                 buttonState
               )}
               onClick={async () => {
-                if (features?.vest) {
-                  if (buttonState === ButtonHaloStates.Approved) {
-                    deposit()
-                  } else {
-                    handleApprove()
-                  }
+                if (buttonState === ButtonHaloStates.Approved) {
+                  deposit()
                 } else {
-                  if (chainId === ChainId.MATIC) {
-                    window.location.href = 'https://google.com'
-                  }
+                  handleApprove()
                 }
               }}
             >
@@ -319,4 +290,3 @@ export default function CurrencyInputPanel({
     </>
   )
 }
-

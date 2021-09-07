@@ -22,8 +22,6 @@ import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { ChainId } from '@sushiswap/sdk'
-import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -96,7 +94,6 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
-  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   // Updating the state of stake button
   useEffect(() => {
@@ -104,10 +101,6 @@ export default function HaloHaloWithdrawPanel({
 
     const withdrawAsFloat = parseFloat(withdrawValue)
     if (withdrawAsFloat > 0 && withdrawAsFloat <= parseFloat(xHaloHaloBalance)) {
-      if (!features?.vest && chainId === ChainId.MATIC) {
-        setButtonState(ButtonHaloStates.Approved)
-        return
-      }
       if (allowance !== '' && parseFloat(allowance) > 0) {
         setButtonState(ButtonHaloStates.Approved)
       } else if (requestedApproval) {
@@ -118,7 +111,7 @@ export default function HaloHaloWithdrawPanel({
     } else {
       setButtonState(ButtonHaloStates.Disabled)
     }
-  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval, chainId, features])
+  }, [allowance, withdrawValue, xHaloHaloBalance, pendingTx, requestedApproval])
 
   // handle approval
   const handleApprove = useCallback(async () => {
@@ -180,82 +173,6 @@ export default function HaloHaloWithdrawPanel({
     })
   }
 
-  const WithdrawContent = () => {
-    if (chainId === ChainId.MATIC) {
-      setButtonState(ButtonHaloStates.Approved)
-      return (
-        <>
-          <p className="font-semibold text-center">
-            Do you want to claim your RNBW? Swap your vested xRNBW into RNBW.{' '}
-          </p>
-        </>
-      )
-    }
-    return (
-      <>
-        {!hideInput && (
-          <LabelRow
-            style={{
-              padding: 0
-            }}
-          >
-            <RowBetween
-              style={{
-                display: 'block'
-              }}
-            >
-              <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
-                {label}
-              </TYPE.body>
-              {account && (
-                <TYPE.body
-                  onClick={handleMaxWithdraw}
-                  style={{
-                    cursor: 'pointer',
-                    fontFamily: 'Open Sans',
-                    fontStyle: 'normal',
-                    fontWeight: 800,
-                    lineHeight: '16px',
-                    letterSpacing: '0.2em',
-                    color: '#000000'
-                  }}
-                >
-                  BALANCE: {xHaloHaloBalance} xRNBW
-                </TYPE.body>
-              )}
-            </RowBetween>
-          </LabelRow>
-        )}
-        <InputRow
-          style={
-            hideInput
-              ? {
-                  padding: '4px 0 0 0',
-                  borderRadius: '8px'
-                }
-              : {
-                  padding: '4px 0 0 0'
-                }
-          }
-          selected={disableCurrencySelect}
-        >
-          {!hideInput && (
-            <>
-              <NumericalInput
-                className="token-amount-input"
-                value={withdrawValue}
-                onUserInput={val => {
-                  onUserWithdrawInput(val)
-                }}
-              />
-              {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
-            </>
-          )}
-        </InputRow>
-      </>
-    )
-  }
-
   return (
     <>
       <InputPanel id={id}>
@@ -264,7 +181,65 @@ export default function HaloHaloWithdrawPanel({
           cornerRadiusBottomNone={cornerRadiusBottomNone}
           cornerRadiusTopNone={cornerRadiusTopNone}
         >
-          <WithdrawContent />
+          {!hideInput && (
+            <LabelRow
+              style={{
+                padding: 0
+              }}
+            >
+              <RowBetween
+                style={{
+                  display: 'block'
+                }}
+              >
+                <TYPE.body color={theme.text2} fontWeight={500} fontSize={14}>
+                  {label}
+                </TYPE.body>
+                {account && (
+                  <TYPE.body
+                    onClick={handleMaxWithdraw}
+                    style={{
+                      cursor: 'pointer',
+                      fontFamily: 'Open Sans',
+                      fontStyle: 'normal',
+                      fontWeight: 800,
+                      lineHeight: '16px',
+                      letterSpacing: '0.2em',
+                      color: '#000000'
+                    }}
+                  >
+                    BALANCE: {xHaloHaloBalance} xRNBW
+                  </TYPE.body>
+                )}
+              </RowBetween>
+            </LabelRow>
+          )}
+          <InputRow
+            style={
+              hideInput
+                ? {
+                    padding: '4px 0 0 0',
+                    borderRadius: '8px'
+                  }
+                : {
+                    padding: '4px 0 0 0'
+                  }
+            }
+            selected={disableCurrencySelect}
+          >
+            {!hideInput && (
+              <>
+                <NumericalInput
+                  className="token-amount-input"
+                  value={withdrawValue}
+                  onUserInput={val => {
+                    onUserWithdrawInput(val)
+                  }}
+                />
+                {account && label !== 'To' && <ButtonMax onClick={handleMaxWithdraw}>{t('max')}</ButtonMax>}
+              </>
+            )}
+          </InputRow>
           <Column
             style={
               hideInput
@@ -283,16 +258,10 @@ export default function HaloHaloWithdrawPanel({
                 buttonState
               )}
               onClick={async () => {
-                if (features?.vest) {
-                  if (buttonState === ButtonHaloStates.Approved) {
-                    withdraw()
-                  } else {
-                    handleApprove()
-                  }
+                if (buttonState === ButtonHaloStates.Approved) {
+                  withdraw()
                 } else {
-                  if (chainId === ChainId.MATIC) {
-                    window.location.href = 'https://google.com'
-                  }
+                  handleApprove()
                 }
               }}
             >
