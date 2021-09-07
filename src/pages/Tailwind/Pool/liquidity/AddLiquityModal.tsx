@@ -12,6 +12,7 @@ import { useActiveWeb3React } from 'hooks'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
+import ReactGA from 'react-ga'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -131,6 +132,7 @@ const AddLiquityModal = ({
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
+      logGAEvent()
     } catch (err) {
       console.error(err)
       setTxHash('')
@@ -150,11 +152,21 @@ const AddLiquityModal = ({
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
+      logGAEvent()
     } catch (err) {
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
     }
+  }
+
+  const logGAEvent = () => {
+    ReactGA.event({
+      category: 'Liquidity',
+      action: `Add Liquidity - ${isMultisided ? 'Multisided' : 'Singlesided'}`,
+      label: pool.name,
+      value: lpAmount.target
+    })
   }
 
   const ConfirmContent = () => {

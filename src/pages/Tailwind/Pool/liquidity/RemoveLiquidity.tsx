@@ -7,6 +7,7 @@ import { PoolData } from '../models/PoolData'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import { useTime } from 'halo-hooks/useTime'
+import ReactGA from 'react-ga'
 
 interface RemoveLiquidityProps {
   pool: PoolData
@@ -49,6 +50,14 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       setToken0Amount(0)
       setToken1Amount(0)
       setRemoveButtonState(PrimaryButtonState.Disabled)
+
+      ReactGA.event({
+        category: 'Liquidity',
+        action: 'Remove Liquidity',
+        label: pool.name,
+        value: lpAmount
+      })
+
       window.location.reload()
     } catch (err) {
       console.error(err)
