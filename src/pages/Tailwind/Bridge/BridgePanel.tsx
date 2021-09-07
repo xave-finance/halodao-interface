@@ -529,7 +529,7 @@ const BridgePanel = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={token ?? HALO[ChainId.MAINNET]!}
+                currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -549,7 +549,7 @@ const BridgePanel = () => {
 
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={token ?? HALO[ChainId.MAINNET]!}
+        currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
         amount={inputValue}
         account={account}
         confirmLogic={async () => {

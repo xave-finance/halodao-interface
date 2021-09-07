@@ -47,11 +47,16 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList }: TokenSe
     if (!chainId) return
 
     const hardCodedTokens: Token[] = []
-    if (HALO[chainId]) hardCodedTokens.push(HALO[chainId]!)
-    if (HALOHALO[chainId]) hardCodedTokens.push(HALOHALO[chainId]!)
-    if (TRUE_AUD[chainId]) hardCodedTokens.push(TRUE_AUD[chainId]!)
-    if (TRUE_CAD[chainId]) hardCodedTokens.push(TRUE_CAD[chainId]!)
-    if (TRUE_GBP[chainId]) hardCodedTokens.push(TRUE_GBP[chainId]!)
+    const haloToken = HALO[chainId]
+    if (haloToken) hardCodedTokens.push(haloToken)
+    const haloHaloToken = HALOHALO[chainId]
+    if (haloHaloToken) hardCodedTokens.push(haloHaloToken)
+    const audToken = TRUE_AUD[chainId]
+    if (audToken) hardCodedTokens.push(audToken)
+    const cadToken = TRUE_CAD[chainId]
+    if (cadToken) hardCodedTokens.push(cadToken)
+    const gbpToken = TRUE_GBP[chainId]
+    if (gbpToken) hardCodedTokens.push(gbpToken)
     setTokens(hardCodedTokens)
   }, [chainId, tokenList])
 

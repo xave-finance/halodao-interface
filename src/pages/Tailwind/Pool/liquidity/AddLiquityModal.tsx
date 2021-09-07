@@ -82,11 +82,11 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isZappingFromBase) {
-        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!)
+        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
         quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
         baseTokenAmount = Number(zapAmount) - Number(swapAmount)
       } else {
-        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!)
+        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
         baseTokenAmount = Number(await viewTargetSwap(swapAmount))
         quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
       }
@@ -121,6 +121,15 @@ const AddLiquityModal = ({
     onDismiss()
   }
 
+  const logGAEvent = () => {
+    ReactGA.event({
+      category: 'Liquidity',
+      action: `Add Liquidity - ${isMultisided ? 'Multisided' : 'Singlesided'}`,
+      label: pool.name,
+      value: lpAmount.target
+    })
+  }
+
   /**
    * Multi-sided add liquidity logic
    **/
@@ -148,7 +157,7 @@ const AddLiquityModal = ({
     try {
       const deadline = getFutureTime()
       const func = isZappingFromBase ? zapFromBase : zapFromQuote
-      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
+      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`)) // eslint-disable-line
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
@@ -158,15 +167,6 @@ const AddLiquityModal = ({
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
     }
-  }
-
-  const logGAEvent = () => {
-    ReactGA.event({
-      category: 'Liquidity',
-      action: `Add Liquidity - ${isMultisided ? 'Multisided' : 'Singlesided'}`,
-      label: pool.name,
-      value: lpAmount.target
-    })
   }
 
   const ConfirmContent = () => {
