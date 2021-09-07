@@ -118,6 +118,13 @@ const AddLiquityModal = ({
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
     setTxHash('')
+    setTokenAmounts([0, 0])
+    setTokenPrices([0, 0])
+    setLpAmount({
+      target: 0,
+      min: 0
+    })
+    setPoolShare(0)
     onDismiss()
   }
 
@@ -218,7 +225,7 @@ const AddLiquityModal = ({
           </div>
           <PrimaryButton
             title="Confirm Supply"
-            state={PrimaryButtonState.Enabled}
+            state={lpAmount.target > 0 ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
             onClick={() => {
               isMultisided ? confirmDeposit() : confirmZap()
             }}
