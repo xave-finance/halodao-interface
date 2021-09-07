@@ -126,7 +126,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   const estimateDeposit = useCallback(
     async (chainIdDestination: number, inputValue: string) => {
       const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(parseEther(inputValue), chainIdDestination)
-      //.toFixed()
       setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [primaryBridgeContract]
@@ -167,8 +166,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   const estimateBurnWrappedToken = useCallback(
     async (inputValue: string) => {
       const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(parseEther(inputValue))
-
-      // setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
       setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [secondaryBridgeContract]
@@ -245,7 +242,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     const refreshInterval = setInterval(() => {
       fetchAllowance()
       fetchBalance()
-      console.log(allowance)
     }, 10000)
     return () => clearInterval(refreshInterval)
   }, [account, fetchAllowance, fetchBalance, token, allowance, primaryBridgeContract, secondaryBridgeContract])
@@ -253,7 +249,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     if (!setApproveState || !setButtonState) return false
 
-    setButtonState!(ButtonState.Confirming)
+    setButtonState(ButtonState.Confirming)
     try {
       const tx = await depositToPrimaryBridge(amount, chainId)
       await tx.wait()
@@ -289,7 +285,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
       return false
     }
     /** log burn to google analytics */
-    console.log(parseFloat(amount.toString()))
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
