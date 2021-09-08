@@ -28,7 +28,7 @@ const WithdrawOnUnsupportedNetwork = ({ chainId }: WithdrawOnUnsupportedNetworkP
           }
         }}
       >
-        Claim RNBW <ExternalLink />
+        Claim RNBW <span className="mr-2" /> <ExternalLink />
       </button>
     </div>
   )
