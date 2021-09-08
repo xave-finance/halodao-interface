@@ -220,6 +220,19 @@ export const HALOHALO_ADDRESS: ChainAddressMap = {
   [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALOHALO_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
+export const AMM_ZAP_ADDRESS: ChainAddressMap = {
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_AMM_ZAP_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_AMM_ZAP_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_AMM_ZAP_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_AMM_ZAP_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_AMM_ZAP_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_AMM_ZAP_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_AMM_ZAP_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_AMM_ZAP_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+}
+
 // Balancer URLs
 export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'https://pools.balancer.exchange/#/pool'
 export const BALANCER_SUBGRAPH_URL =

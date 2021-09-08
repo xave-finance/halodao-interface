@@ -31,9 +31,9 @@ const PoolColumns = () => {
       <div className="col-1 text-gray-500 font-bold">Pair Name</div>
       <div className="col-2 text-gray-500 font-bold">Pooled (A) Tokens</div>
       <div className="col-3 text-gray-500 font-bold">Pooled (B) Tokens</div>
-      <div className="col-4 text-gray-500 font-bold">Held LPT</div>
-      <div className="col-5 text-gray-500 font-bold">Staked LPT</div>
-      <div className="col-6 text-gray-500 font-bold">Fees Earned</div>
+      <div className="col-4 text-gray-500 font-bold">Held HLP</div>
+      <div className="col-5 text-gray-500 font-bold">Staked HLP</div>
+      <div className="col-6 text-gray-500 font-bold">xRNBW Earned</div>
       <div className="col-7">&nbsp;</div>
     </Wrapper>
   )
