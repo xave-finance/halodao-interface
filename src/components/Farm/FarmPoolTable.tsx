@@ -77,7 +77,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProp
             )
           })}
 
-          {(inactivePools.length || v0PoolsInfo.length) && (
+          {(inactivePools.length > 0 || v0PoolsInfo.length > 0) && (
             <InactivePools>
               <TYPE.thHeader className="tbHeader">{t('inactive pools')}</TYPE.thHeader>
               {inactivePools.map(poolInfo => {
