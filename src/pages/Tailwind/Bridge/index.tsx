@@ -24,7 +24,7 @@ const NotSupportedContent = () => {
 
 const NotConnected = () => {
   const toggleWalletModal = useWalletModalToggle()
-  const caption = 'Get access to the bridge right connect to you wallet!'
+  const caption = 'Connect your wallet to start bridging your tokens!'
   return (
     <div className="flex items-center bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
       <div className="w-full">
