@@ -218,7 +218,7 @@ const BridgePanel = () => {
       <div className="mt-4">
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
-          title="Input below than minimum bridge threshold"
+          title={`Minimum bridge threshold below ${minimum} ${token[chainId as ChainId].symbol}`}
           state={PrimaryButtonState.Disabled}
         />
       </div>
