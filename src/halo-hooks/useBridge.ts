@@ -34,7 +34,8 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
   const [successHash, setSuccessHash] = useState('')
 
   const onTokenChange = useCallback(() => {
-    if (!chainId || !library) return
+    if (!chainId || !library || !chainToken[chainId as ChainId]?.address) return
+
     setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
       getContract(
@@ -61,7 +62,15 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
   }, [chainToken, onTokenChange])
 
   const onChainIdChange = useCallback(() => {
-    if (!chainId || !library || !setButtonState || !setInputValue || !setApproveState) return
+    if (
+      !chainId ||
+      !library ||
+      !setButtonState ||
+      !setInputValue ||
+      !setApproveState ||
+      !chainToken[chainId as ChainId]?.address
+    )
+      return
     setPrimaryBridgeContract(
       getContract(
         BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
@@ -96,7 +105,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
   }, [onChainIdChange])
 
   const onDestinationChainIdChange = useCallback(() => {
-    if (!chainId || !library) return
+    if (!chainId || !library || !chainToken[chainId as ChainId]?.address) return
     if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== destinationChainId) {
       setSecondaryBridgeContract(
         getContract(

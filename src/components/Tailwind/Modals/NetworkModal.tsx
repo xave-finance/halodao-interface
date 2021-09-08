@@ -58,10 +58,9 @@ const pickClass = (mode: NetworkModalMode) => {
 
 const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddress }: NetworkModalProps) => {
   const { chainId, library, account } = useActiveWeb3React()
-
   if (!chainId) return null
 
-  if (mode === NetworkModalMode.SecondaryBridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress as string]) {
+  if (tokenAddress && mode === NetworkModalMode.SecondaryBridge && chainId !== ORIGINAL_TOKEN_CHAIN_ID[tokenAddress]) {
     return (
       <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
         <div className="bg-primary-lightest p-4 border-b border-gray-700">

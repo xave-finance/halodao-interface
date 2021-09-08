@@ -302,7 +302,7 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={chainId ? chainToken[chainId as ChainId].address : chainToken[ChainId.MATIC]}
+                tokenAddress={chainId ? chainToken[chainId as ChainId] : chainToken[ChainId.MATIC]}
               />
             </div>
 
