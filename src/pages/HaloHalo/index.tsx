@@ -27,6 +27,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
 import EmptyState from 'components/EmptyState'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
+import { useActiveWeb3React } from '../../hooks'
+import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
+import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -194,6 +199,8 @@ export default function HaloHalo() {
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
   const { t } = useTranslation()
+  const { chainId } = useActiveWeb3React()
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -233,36 +240,48 @@ export default function HaloHalo() {
           </VoteCard>
         </VoteCardWrapper>
         <DepositWrapper>
-          <HaloHaloHeader />
+          <HaloHaloHeader vest={features?.vest} />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
-                <HaloDepositPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to deposit: '}
-                  id="stake-liquidity-token"
-                  buttonText="Claim RNBW"
-                  cornerRadiusBottomNone={true}
-                />
-                <HaloHaloWithdrawPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to withdraw: '}
-                  id="withdraw-liquidity-token"
-                  buttonText="Withdraw"
-                  cornerRadiusTopNone={true}
-                />
-                <RowBetweenHaloPair>
-                  <RowBetween>
-                    <HaloPairCenterContainer>
-                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
-                    </HaloPairCenterContainer>
-                  </RowBetween>
-                </RowBetweenHaloPair>
+                {features?.vest && (
+                  <HaloDepositPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to deposit: '}
+                    id="stake-liquidity-token"
+                    buttonText="Claim RNBW"
+                    cornerRadiusBottomNone={true}
+                  />
+                )}
+                {!features?.vest && <DepositOnUnsupportedNetwork chainId={chainId as ChainId} />}
+                {features?.vest && (
+                  <HaloHaloWithdrawPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to withdraw: '}
+                    id="withdraw-liquidity-token"
+                    buttonText="Withdraw"
+                    cornerRadiusTopNone={true}
+                  />
+                )}
+                {!features?.vest && (
+                  <div className="mt-4">
+                    <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
+                  </div>
+                )}
+                {features?.vest && (
+                  <RowBetweenHaloPair>
+                    <RowBetween>
+                      <HaloPairCenterContainer>
+                        <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
+                        <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
+                        <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
+                        <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
+                      </HaloPairCenterContainer>
+                    </RowBetween>
+                  </RowBetweenHaloPair>
+                )}
               </AutoColumn>
             </AutoColumnDeposit>
           </Wrapper>
