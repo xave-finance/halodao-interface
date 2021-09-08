@@ -10,9 +10,10 @@ import BunnyWithSweets from '../../assets/svg/bunny-with-sweets.svg'
 import BunnyWithConfetti from '../../assets/svg/bunny-with-confetti.svg'
 import { ButtonHaloWhite } from 'components/Button'
 import { PoolVestingInfo } from 'state/user/actions'
-import { ChainId } from '@sushiswap/sdk'
 import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 import { useActiveWeb3React } from '../../hooks'
+import { ExternalLink as ExternalLinkIcon } from 'react-feather'
+import { ChainId } from '@sushiswap/sdk'
 
 const StyledWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -73,19 +74,31 @@ interface VestingModalProps {
 }
 
 interface AlternativeButtonProps {
-  onClick: () => void
+  chainId: ChainId
 }
 
-const AlternativeButton = ({ onClick }: AlternativeButtonProps) => {
+const AlternativeButton = ({ chainId }: AlternativeButtonProps) => {
   return (
-    <div className="p-8 rounded bg-primary font-bold" onClick={onClick}>
-      Let&apos;s Vest!
-    </div>
+    <button
+      className={`
+   flex items-center justify-center
+   font-bold text-white
+   py-2 w-full
+   rounded
+   text-primary font-bold
+   bg-white
+   border-2 border-primary
+ `}
+      onClick={() => {
+        if (chainId === ChainId.MATIC) {
+          window.location.href =
+            'https://app.sushi.com/swap?inputCurrency=0xc104e54803aba12f7a171a49ddc333da39f47193&outputCurrency=0x18e7bdb379928a651f093ef1bc328889b33a560c'
+        }
+      }}
+    >
+      Let&apos;s Vest! <span className="mr-2" /> <ExternalLinkIcon />
+    </button>
   )
-}
-
-const handleAlternativeButtonClick = () => {
-  window.location.href = 'https://google.com'
 }
 
 const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
@@ -105,7 +118,7 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
         </StyledCloseIconWrapper>
         <StyledContent>
           {features?.vest && (
-            <>
+            <div className="flex flex-col justify-center items-center w-full">
               <TYPE.body color="white">From your {poolName} you have earned</TYPE.body>
               <div className="bal-rewards">{formatNumber(earningRewards)} xRNBW</div>
               <div className="bal-halo">({formatNumber(earningHALO)} RNBW)</div>
@@ -114,18 +127,21 @@ const VestingModal = ({ poolVestingInfo }: VestingModalProps) => {
               <ButtonHaloWhite padding="8px" onClick={toggleModal}>
                 Let&apos;s Vest!
               </ButtonHaloWhite>
-            </>
+            </div>
           )}
           {!features?.vest && (
-            <>
+            <div className="flex flex-col justify-center items-center w-full">
               <img src={BunnyWithConfetti} alt="Bunny Mascot" />
+              <span className="mb-2" />
               <TYPE.body color="white">{poolName} rewards Harvested</TYPE.body>
+              <span className="mb-4" />
               <TYPE.body color="white">
-                Your harvested <span className="bal-rewards">{formatNumber(earningRewards)} </span> xRNBW is already
-                part of the Rainbow Pool earning vesting rewards!
+                Your harvested <span className="font-bold">{formatNumber(earningRewards)} </span> xRNBW is already part
+                of the Rainbow Pool earning vesting rewards!
               </TYPE.body>
-              <AlternativeButton onClick={handleAlternativeButtonClick} />
-            </>
+              <span className="mb-2" />
+              <AlternativeButton chainId={chainId as ChainId} />
+            </div>
           )}
           <StyledExternalLink href="https://docs.halodao.com/products/dessert-pool/how-vesting-works">
             Learn more
