@@ -104,7 +104,7 @@
   "earned": "Earned",
   "getTokens": "To stake, get %s Tokens here",
   "closeTxt": "Close",
-  "stakeToEarn": "Stake your Liquidity Pool Tokens (HLP) to earn Rainbow Pool (xRNBW)!",
+  "stakeToEarn": "Stake your Liquidity Pool Tokens (HLP or UNI-V2) to earn Rainbow Pool (xRNBW)!",
   "learnAboutStaking": "Learn about staking",
   "approve": "Approve",
   "approving": "Approving",
