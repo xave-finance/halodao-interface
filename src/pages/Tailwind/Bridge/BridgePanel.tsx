@@ -63,18 +63,17 @@ const BridgePanel = () => {
   } = useBridge({ setButtonState, setApproveState, setInputValue, token })
 
   const setButtonStates = useCallback(() => {
-    console.log(parseFloat(inputValue))
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
+    } else if (parseFloat(inputValue) > 10000) {
+      setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
       setApproveState(ApproveButtonState.NotApproved)
-    } else if (parseFloat(inputValue) > 10000) {
-      setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
     }
