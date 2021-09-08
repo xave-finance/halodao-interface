@@ -37,14 +37,15 @@ enum ConfirmTransactionModalState {
 }
 
 const BridgePanel = () => {
-  const { account, error, chainId, library } = useActiveWeb3React()
+  const { account, error, chainId } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [token, setToken] = useState<any>(HALO)
+  const [chainToken, setChainToken] = useState<any>(HALO)
+
   const {
     onTokenChange,
     onChainIdChange,
@@ -60,7 +61,7 @@ const BridgePanel = () => {
     balance,
     estimatedGas,
     successHash
-  } = useBridge({ setButtonState, setApproveState, setInputValue, token })
+  } = useBridge({ setButtonState, setApproveState, setInputValue, chainToken })
 
   const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
@@ -122,7 +123,7 @@ const BridgePanel = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
-              if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+              if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
                 estimateBurnWrappedToken(inputValue)
               } else {
                 estimateDeposit(destinationChainId, inputValue)
@@ -289,8 +290,8 @@ const BridgePanel = () => {
             <div className="flex space-x-4">
               <SelectedNetworkPanel
                 mode={NetworkModalMode.PrimaryBridge}
-                chainId={chainId ?? ChainId.MAINNET}
-                onChangeNetwork={() => console.log('hello')}
+                chainId={chainId as ChainId}
+                onChangeNetwork={() => console.log('disabled')}
               />
               <div className="mb-2 w-1/5 flex items-center justify-center">
                 <div className="p-2 bg-primary-lighter rounded">
@@ -301,7 +302,7 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={token ? token.address : chainToken[ChainId.MATIC]?.address}
+                tokenAddress={chainId ? chainToken[chainId as ChainId].address : chainToken[ChainId.MATIC]}
               />
             </div>
 
@@ -309,7 +310,7 @@ const BridgePanel = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
+                currency={chainToken[chainId as ChainId]}
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -329,11 +330,11 @@ const BridgePanel = () => {
 
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
+        currency={chainToken ?? HALO[ChainId.MAINNET]!}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
+          if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ConfirmTransactionModalState.Successful)
               setButtonStates()
@@ -360,7 +361,7 @@ const BridgePanel = () => {
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        tokenSymbol={token ? token.symbol ?? '' : ''}
+        tokenSymbol={chainToken ? chainToken.symbol ?? '' : ''}
         wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}

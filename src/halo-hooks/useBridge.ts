@@ -14,18 +14,14 @@ import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import ReactGA from 'react-ga'
 
-/**
- * TODO: change in bsc
- */
-
 interface BridgeProps {
-  setButtonState?: (buttonState: ButtonState) => void
-  setApproveState?: (approveState: ApproveButtonState) => void
-  setInputValue?: (input: string) => void
-  token?: any
+  setButtonState: (buttonState: ButtonState) => void
+  setApproveState: (approveState: ApproveButtonState) => void
+  setInputValue: (input: string) => void
+  chainToken: any
 }
 
-const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: BridgeProps) => {
+const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken }: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -39,51 +35,61 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const onTokenChange = useCallback(() => {
     if (!chainId || !library) return
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(
+        BRIDGE_CONTRACTS[chainToken[chainId as ChainId]!.address],
+        PRIMARY_BRIDGE_ABI,
+        library,
+        account as string
+      )
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
       setSecondaryBridgeContract(
         getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
+          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
           SECONDARY_BRIDGE_ABI,
           library,
           account as string
         )
       )
     }
-  }, [token, account, chainId, library])
+  }, [chainToken, account, chainId, library])
 
   useEffect(() => {
     onTokenChange()
-  }, [token, onTokenChange])
+  }, [chainToken, onTokenChange])
 
   const onChainIdChange = useCallback(() => {
     if (!chainId || !library || !setButtonState || !setInputValue || !setApproveState) return
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(
+        BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
+        PRIMARY_BRIDGE_ABI,
+        library,
+        account as string
+      )
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId]!.address] !== chainId) {
       setSecondaryBridgeContract(
         getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
+          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
           SECONDARY_BRIDGE_ABI,
           library,
           account as string
         )
       )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId]!.address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
 
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
-  }, [chainId, token, library, account, setApproveState, setButtonState, setInputValue])
+  }, [chainId, chainToken, library, account, setApproveState, setButtonState, setInputValue])
 
   useEffect(() => {
     onChainIdChange()
@@ -91,17 +97,17 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const onDestinationChainIdChange = useCallback(() => {
     if (!chainId || !library) return
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== destinationChainId) {
       setSecondaryBridgeContract(
         getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
+          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
           SECONDARY_BRIDGE_ABI,
           library,
           account as string
         )
       )
     }
-  }, [chainId, token, library, account, destinationChainId])
+  }, [chainId, chainToken, library, account, destinationChainId])
 
   useEffect(() => {
     onDestinationChainIdChange()
@@ -133,7 +139,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
@@ -150,7 +155,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await tokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
@@ -194,7 +198,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+      if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -212,7 +216,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   const fetchAllowance = useCallback(async () => {
     if (!chainId) return
     try {
-      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
+      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -224,7 +228,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     } catch (e) {
       console.error(e)
     }
-  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, token])
+  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, chainToken])
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -235,7 +239,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   }, [tokenContract, account])
 
   useEffect(() => {
-    if (account && primaryBridgeContract && secondaryBridgeContract && token) {
+    if (account && primaryBridgeContract && secondaryBridgeContract && chainToken) {
       fetchAllowance()
       fetchBalance()
     }
@@ -245,7 +249,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
       fetchBalance()
     }, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, fetchAllowance, fetchBalance, token, allowance, primaryBridgeContract, secondaryBridgeContract])
+  }, [account, fetchAllowance, fetchBalance, chainToken, allowance, primaryBridgeContract, secondaryBridgeContract])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     if (!setApproveState || !setButtonState) return false
@@ -265,7 +269,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: token[chainId as ChainId].symbol,
+      label: chainToken[chainId as ChainId]!.symbol,
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -289,7 +293,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
-      label: token[destinationChainId].symbol,
+      label: chainToken[destinationChainId]!.symbol,
       value: parseFloat(amount.toString())
     })
 
