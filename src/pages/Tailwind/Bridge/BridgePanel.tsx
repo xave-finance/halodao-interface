@@ -16,7 +16,7 @@ import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
-import useBridge from 'halo-hooks/useBridge'
+import useBridge, { useMinimumAmount } from 'halo-hooks/useBridge'
 
 export enum ButtonState {
   Default,
@@ -27,7 +27,8 @@ export enum ButtonState {
   Confirming,
   InsufficientBalance,
   Retry,
-  MaxCap
+  MaxCap,
+  Minimum
 }
 
 enum ConfirmTransactionModalState {
@@ -63,9 +64,18 @@ const BridgePanel = () => {
     primaryBridgeContract
   } = useBridge({ setButtonState, setApproveState, setInputValue, token })
 
+  const { minimum, getMinimum } = useMinimumAmount(primaryBridgeContract as ethers.Contract)
+
+  useEffect(() => {
+    getMinimum()
+  }, [primaryBridgeContract, getMinimum])
+
   const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
+      setApproveState(ApproveButtonState.NotApproved)
+    } else if (Number(inputValue) < minimum) {
+      setButtonState(ButtonState.Minimum)
       setApproveState(ApproveButtonState.NotApproved)
     } else if (allowance >= parseFloat(inputValue)) {
       setButtonState(ButtonState.Next)
@@ -78,7 +88,7 @@ const BridgePanel = () => {
     } else if (parseFloat(inputValue) > 10000) {
       setButtonState(ButtonState.MaxCap)
     }
-  }, [inputValue, allowance, balance])
+  }, [inputValue, allowance, minimum, balance])
 
   useEffect(() => {
     setButtonStates()
@@ -203,6 +213,18 @@ const BridgePanel = () => {
     )
   }
 
+  const BelowMinimumContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Input below than minimum bridge threshold"
+          state={PrimaryButtonState.Disabled}
+        />
+      </div>
+    )
+  }
+
   const RetryContent = () => {
     return (
       <div className="mt-4">
@@ -245,6 +267,9 @@ const BridgePanel = () => {
     }
     if (buttonState === ButtonState.MaxCap) {
       content = <MaxCapContent />
+    }
+    if (buttonState === ButtonState.Minimum) {
+      content = <BelowMinimumContent />
     }
     return content
   }

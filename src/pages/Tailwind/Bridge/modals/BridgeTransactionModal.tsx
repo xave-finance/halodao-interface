@@ -7,7 +7,7 @@ import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
-import { useShuttleFee, useMinimumAmount } from 'halo-hooks/useBridge'
+import { useShuttleFee } from 'halo-hooks/useBridge'
 import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 
 interface ConfirmTransactionModalProps {
@@ -60,15 +60,10 @@ const ConfirmTransactionModal = ({
   primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
   const { shuttleFee, getFee } = useShuttleFee(primaryBridgeContract)
-  const { minimum, getMinimum } = useMinimumAmount(primaryBridgeContract)
 
   useEffect(() => {
     getFee()
   }, [primaryBridgeContract, getFee])
-
-  useEffect(() => {
-    getMinimum()
-  }, [primaryBridgeContract, getMinimum])
 
   const ConfirmContent = () => {
     return (
@@ -128,7 +123,6 @@ const ConfirmTransactionModal = ({
                 <div>
                   {/* {calculateShuttleFee(currency, Number(amount))} {currency.symbol} */}
                   {shuttleFee} {currency.symbol}
-                  {console.log('minimum:', minimum)}
                 </div>
               </div>
             </div>
