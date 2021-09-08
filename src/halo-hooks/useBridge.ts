@@ -38,7 +38,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
     setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
       getContract(
-        BRIDGE_CONTRACTS[chainToken[chainId as ChainId]!.address],
+        BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
         PRIMARY_BRIDGE_ABI,
         library,
         account as string
@@ -70,7 +70,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
         account as string
       )
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId]!.address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
       setSecondaryBridgeContract(
         getContract(
           BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
@@ -79,7 +79,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
           account as string
         )
       )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId]!.address])
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
@@ -269,7 +269,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: chainToken[chainId as ChainId]!.symbol,
+      label: chainToken[chainId as ChainId].symbol,
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -293,7 +293,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
-      label: chainToken[destinationChainId]!.symbol,
+      label: chainToken[destinationChainId].symbol,
       value: parseFloat(amount.toString())
     })
 
