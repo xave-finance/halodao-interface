@@ -17,9 +17,10 @@ interface PrimaryButtonProps {
   title: string
   state: PrimaryButtonState
   onClick: () => void
+  icon?: any
 }
 
-const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick }: PrimaryButtonProps) => {
+const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick, icon }: PrimaryButtonProps) => {
   const isDefaultType = type === PrimaryButtonType.Default
   const isEnabled = state === PrimaryButtonState.Enabled
   const isLoading = state === PrimaryButtonState.InProgress
@@ -46,7 +47,7 @@ const PrimaryButton = ({ type = PrimaryButtonType.Default, title, state, onClick
         ${isEnabled && isDefaultType ? 'hover:bg-primary-hover' : ''}
       `}
       >
-        {title}
+        {title} <span className="mr-2" /> {icon}
         {isLoading && <img className="ml-2 animate-spin" src={SpinnerIcon} alt="Loading..." />}
       </button>
     </div>

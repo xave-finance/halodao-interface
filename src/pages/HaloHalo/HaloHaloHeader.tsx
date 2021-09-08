@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RowBetween } from '../../components/Row'
-import Halohalo from '../../assets/svg/halohalo-2.svg'
+import XRNBW from '../../assets/svg/xrnbw-token.svg'
 
 const StyledHaloHaloHeader = styled.div`
   padding: 30px 0 0 30px;
@@ -48,13 +48,26 @@ const RowBetweenWrapper = styled.div`
   }
 `
 
-export default function HaloHaloHeader() {
+interface HaloHaloHeaderProps {
+  vest?: boolean
+}
+export default function HaloHaloHeader({ vest }: HaloHaloHeaderProps) {
   return (
     <StyledHaloHaloHeader>
       <RowBetweenWrapper>
         <RowBetween>
-          <HaloImg src={Halohalo} alt="Halo Halo" />
-          <HaloTitle>RNBW → xRNBW</HaloTitle>
+          {vest && (
+            <>
+              <HaloImg src={XRNBW} alt="Halo Halo" width="84" height="84" />
+              <HaloTitle>RNBW → xRNBW</HaloTitle>
+            </>
+          )}
+          {!vest && (
+            <div className="flex flex-col justify-center items-center w-full">
+              <img src={XRNBW} alt="Halo Halo" width="58" height="58" />
+              <HaloTitle className="text-center m-0">RNBW → xRNBW</HaloTitle>
+            </div>
+          )}
         </RowBetween>
       </RowBetweenWrapper>
     </StyledHaloHaloHeader>
