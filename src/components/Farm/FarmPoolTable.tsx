@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWeb3React } from '@web3-react/core'
 import { TYPE, HideSmall } from '../../theme'
@@ -23,12 +23,23 @@ interface FarmPoolTableProps {
   poolsInfo: PoolInfo[]
   v0PoolsInfo: PoolInfo[]
   tokenPrice: TokenPrice
+  selectedPool?: string
 }
 
-const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProps) => {
+const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice, selectedPool }: FarmPoolTableProps) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const { inactivePools, activePools } = groupPoolsInfo(poolsInfo)
+
+  /**
+   * Automatically scroll to a pool card if address is provided
+   * @TODO: not currently working because the pool cards takes a long time to fully load
+   */
+  useEffect(() => {
+    if (selectedPool) {
+      document.getElementById(`pool-${selectedPool}`)?.scrollIntoView()
+    }
+  }, [selectedPool])
 
   if (account) {
     return (
@@ -73,7 +84,13 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProp
 
           {activePools.map(poolInfo => {
             return (
-              <FarmPoolCard key={poolInfo.address} poolInfo={poolInfo} tokenPrice={tokenPrice} isActivePool={true} />
+              <FarmPoolCard
+                key={poolInfo.address}
+                poolInfo={poolInfo}
+                tokenPrice={tokenPrice}
+                isActivePool={true}
+                preselected={poolInfo.address.toLowerCase() === selectedPool?.toLowerCase()}
+              />
             )
           })}
 

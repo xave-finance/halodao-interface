@@ -10,6 +10,7 @@ import { useLPTokenAddresses, useAllocPoints } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { useParams } from 'react-router'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1040px;
@@ -70,6 +71,9 @@ const StyledExternalLink = styled(ExternalLink)`
 `
 
 const Farm = () => {
+  const { address } = useParams<{ address: string | undefined }>()
+  const [selectedPoolAddress, setSelectedPoolAddress] = useState<string | undefined>(undefined)
+
   const v0LpTokenAddresses = useLPTokenAddresses(0)
   const fetchV0PoolInfo = usePoolInfo(v0LpTokenAddresses)
   const [v0PoolsInfo, setV0PoolsInfo] = useState<PoolInfo[]>([])
@@ -114,6 +118,10 @@ const Farm = () => {
     setV0PoolsInfo(newPoolsInfo)
   }, [v0PoolsInfo, v0AllocPoints])
 
+  useEffect(() => {
+    setSelectedPoolAddress(address?.toLowerCase())
+  }, [address])
+
   return (
     <>
       <PageWrapper id={`farm-page`}>
@@ -141,7 +149,12 @@ const Farm = () => {
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
-        <FarmPoolTable poolsInfo={poolsInfo} v0PoolsInfo={v0PoolsInfo} tokenPrice={tokenPrice} />
+        <FarmPoolTable
+          poolsInfo={poolsInfo}
+          v0PoolsInfo={v0PoolsInfo}
+          tokenPrice={tokenPrice}
+          selectedPool={selectedPoolAddress}
+        />
       </PageWrapper>
     </>
   )

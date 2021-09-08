@@ -425,15 +425,22 @@ interface FarmPoolCardProps {
   tokenPrice: TokenPrice
   isActivePool: boolean
   rewardsVersion?: number
+  preselected?: boolean
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewardsVersion = 1 }: FarmPoolCardProps) {
+export default function FarmPoolCard({
+  poolInfo,
+  tokenPrice,
+  isActivePool,
+  rewardsVersion = 1,
+  preselected = false
+}: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const history = useHistory()
 
-  const [showMore, setShowMore] = useState(false)
+  const [showMore, setShowMore] = useState(preselected)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
   const [stakeButtonState, setStakeButtonState] = useState(ButtonHaloStates.Disabled)
@@ -511,6 +518,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
     default:
       break
   }
+
   /**
    * Updating the state of stake button
    */
@@ -666,7 +674,11 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   }
 
   return (
-    <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
+    <StyledCard
+      id={`pool-${poolInfo.address.toLowerCase()}`}
+      bgColor="#ffffff"
+      className={'pool-card ' + (showMore ? 'expanded' : 'default')}
+    >
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom
