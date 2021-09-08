@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Token } from '@sushiswap/sdk'
-import { HALO, MOCK, RIO } from '../../../constants'
+import { HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'
 import { Search } from 'react-feather'
@@ -15,7 +15,7 @@ interface TokenSelectModalProps {
 
 interface TokenRowProps {
   token: Token
-  onSelect: () => void
+  onSelect: (token: Token) => void
 }
 
 const TokenRow = ({ token, onSelect }: TokenRowProps) => {
@@ -23,7 +23,7 @@ const TokenRow = ({ token, onSelect }: TokenRowProps) => {
     <div
       key={token.name}
       className="flex flex-row items-center cursor-pointer p-4 hover:bg-secondary"
-      onClick={onSelect}
+      onClick={() => onSelect(token)}
     >
       <CurrencyLogo currency={token} size={'30px'} />
       <div className="flex flex-col pl-2 focus:bg-primary">
@@ -47,9 +47,16 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList }: TokenSe
     if (!chainId) return
 
     const hardCodedTokens: Token[] = []
-    if (HALO[chainId]) hardCodedTokens.push(HALO[chainId]!)
-    if (MOCK[chainId]) hardCodedTokens.push(MOCK[chainId]!)
-    if (RIO[chainId]) hardCodedTokens.push(RIO[chainId]!)
+    const haloToken = HALO[chainId]
+    if (haloToken) hardCodedTokens.push(haloToken)
+    const haloHaloToken = HALOHALO[chainId]
+    if (haloHaloToken) hardCodedTokens.push(haloHaloToken)
+    const audToken = TRUE_AUD[chainId]
+    if (audToken) hardCodedTokens.push(audToken)
+    const cadToken = TRUE_CAD[chainId]
+    if (cadToken) hardCodedTokens.push(cadToken)
+    const gbpToken = TRUE_GBP[chainId]
+    if (gbpToken) hardCodedTokens.push(gbpToken)
     setTokens(hardCodedTokens)
   }, [chainId, tokenList])
 

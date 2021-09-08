@@ -9,9 +9,10 @@ import { parseEther } from 'ethers/lib/utils'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { getExplorerLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
+import { useTime } from 'halo-hooks/useTime'
+import ReactGA from 'react-ga'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -43,7 +44,7 @@ const AddLiquityModal = ({
   onDismiss
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
-  const currentBlockTime = useCurrentBlockTimestamp()
+  const { getFutureTime } = useTime()
   const [state, setState] = useState(AddLiquityModalState.NotConfirmed)
   const [txHash, setTxHash] = useState('')
   const [tokenAmounts, setTokenAmounts] = useState([0, 0])
@@ -66,17 +67,6 @@ const AddLiquityModal = ({
   const { deposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
   /**
-   * Helper function to calculate tx deadline
-   **/
-  const futureTime = () => {
-    if (currentBlockTime) {
-      return currentBlockTime.add(60).toNumber()
-    } else {
-      return new Date().getTime() + 60
-    }
-  }
-
-  /**
    * Main logic for updating confirm add liquidity UI
    **/
   const calculate = async () => {
@@ -92,11 +82,11 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isZappingFromBase) {
-        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!)
+        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
         quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
         baseTokenAmount = Number(zapAmount) - Number(swapAmount)
       } else {
-        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!)
+        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
         baseTokenAmount = Number(await viewTargetSwap(swapAmount))
         quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
       }
@@ -118,7 +108,7 @@ const AddLiquityModal = ({
       (1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)) / (pool.rates.token0 * 100)
     setTokenPrices([basePrice, quotePrice])
 
-    setPoolShare(maxLpAmount / pool.pooled.total)
+    setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
   }
 
   useEffect(() => {
@@ -128,7 +118,23 @@ const AddLiquityModal = ({
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
     setTxHash('')
+    setTokenAmounts([0, 0])
+    setTokenPrices([0, 0])
+    setLpAmount({
+      target: 0,
+      min: 0
+    })
+    setPoolShare(0)
     onDismiss()
+  }
+
+  const logGAEvent = () => {
+    ReactGA.event({
+      category: 'Liquidity',
+      action: `Add Liquidity - ${isMultisided ? 'Multisided' : 'Singlesided'}`,
+      label: pool.name,
+      value: lpAmount.target
+    })
   }
 
   /**
@@ -137,11 +143,12 @@ const AddLiquityModal = ({
   const confirmDeposit = async () => {
     setState(AddLiquityModalState.InProgress)
     try {
-      const deadline = futureTime()
+      const deadline = getFutureTime()
       const tx = await deposit(parseEther(depositAmount), deadline)
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
+      logGAEvent()
     } catch (err) {
       console.error(err)
       setTxHash('')
@@ -155,13 +162,13 @@ const AddLiquityModal = ({
   const confirmZap = async () => {
     setState(AddLiquityModalState.InProgress)
     try {
-      const deadline = futureTime()
+      const deadline = getFutureTime()
       const func = isZappingFromBase ? zapFromBase : zapFromQuote
-      console.log('zapAmount: ', zapAmount)
-      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`))
+      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`)) // eslint-disable-line
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
+      logGAEvent()
     } catch (err) {
       console.error(err)
       setTxHash('')
@@ -218,7 +225,7 @@ const AddLiquityModal = ({
           </div>
           <PrimaryButton
             title="Confirm Supply"
-            state={PrimaryButtonState.Enabled}
+            state={lpAmount.target > 0 ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
             onClick={() => {
               isMultisided ? confirmDeposit() : confirmZap()
             }}
@@ -264,14 +271,29 @@ const AddLiquityModal = ({
           </a>
         </div>
         <div className="mt-12">
-          <PrimaryButton title="Close" state={PrimaryButtonState.Enabled} onClick={dismissGracefully} />
+          <PrimaryButton
+            title="Close"
+            state={PrimaryButtonState.Enabled}
+            onClick={() => {
+              window.location.reload()
+            }}
+          />
         </div>
       </div>
     )
   }
 
   return (
-    <BaseModal isVisible={isVisible} onDismiss={dismissGracefully}>
+    <BaseModal
+      isVisible={isVisible}
+      onDismiss={() => {
+        if (state === AddLiquityModalState.Successful) {
+          window.location.reload()
+        } else {
+          dismissGracefully()
+        }
+      }}
+    >
       {state === AddLiquityModalState.NotConfirmed && <ConfirmContent />}
       {state === AddLiquityModalState.InProgress && <InProgressContent />}
       {state === AddLiquityModalState.Successful && <SuccessContent />}

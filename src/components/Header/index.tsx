@@ -502,7 +502,7 @@ export default function Header() {
             <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
               {t('vesting')}
             </StyledNavLink>
-            <StyledNavLink id={`vesting-nav-link`} to={'/bridge'}>
+            <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
               {t('bridge')}
             </StyledNavLink>
             <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>

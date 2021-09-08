@@ -1,4 +1,3 @@
-import useHaloHalo from 'halo-hooks/useHaloHalo'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { AppState } from 'state'
@@ -8,20 +7,16 @@ import { formatNumber, NumberFormat } from 'utils/formatNumber'
 const PageHeaderRight = () => {
   const [stakeableValue, setStakeableValue] = useState(0)
   const [stakedValue, setStakedValue] = useState(0)
-  const [haloEarned, setHaloEarned] = useState(0)
+  const [rewardsEarned, setRewardsEarned] = useState(0)
   const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
-  const { haloHaloPrice } = useHaloHalo()
-  const rewardTokenPrice = Number(haloHaloPrice)
 
   useEffect(() => {
     let totalStakeable = 0
     let totalStaked = 0
-    let totalHaloEarned = 0
-
-    // @TODO: get HLP price
-    const lpTokenPrice = 1
+    let totalRewardsEarned = 0
 
     for (const pool of cachedPools) {
+      const lpTokenPrice = pool.lpTokenPrice ?? 1
       if (pool.lpTokenBalance) {
         totalStakeable += pool.lpTokenBalance * lpTokenPrice
       }
@@ -29,14 +24,14 @@ const PageHeaderRight = () => {
         totalStaked += pool.lpTokenStaked * lpTokenPrice
       }
       if (pool.pendingRewards) {
-        totalHaloEarned += pool.pendingRewards * rewardTokenPrice
+        totalRewardsEarned += pool.pendingRewards
       }
     }
 
     setStakeableValue(totalStakeable)
     setStakedValue(totalStaked)
-    setHaloEarned(totalHaloEarned)
-  }, [cachedPools, rewardTokenPrice])
+    setRewardsEarned(totalRewardsEarned)
+  }, [cachedPools])
 
   return (
     <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
@@ -52,8 +47,8 @@ const PageHeaderRight = () => {
       </div>
       <div className="flex-auto bg-primary-light py-4 px-6 rounded-card flex flex-col">
         <div className="flex-1"></div>
-        <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Total HALO Earned</div>
-        <div className="text-2xl font-semibold">{formatNumber(haloEarned, NumberFormat.usd)}</div>
+        <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Total xRNBW Earned</div>
+        <div className="text-2xl font-semibold">{formatNumber(rewardsEarned, NumberFormat.usd)}</div>
       </div>
     </div>
   )
