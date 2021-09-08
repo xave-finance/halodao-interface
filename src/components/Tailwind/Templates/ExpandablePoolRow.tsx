@@ -98,11 +98,11 @@ const ExpandablePoolRow = ({ pool }: ExpandablePoolRowProps) => {
           <div className="">{formatNumber(pool.tokenA.bal)}</div>
         </div>
         <div className="col-4 mb-4 md:mb-0">
-          <div className="text-sm tracking-widest md:hidden">Held LPT:</div>
+          <div className="text-sm tracking-widest md:hidden">Held HLP:</div>
           <div className="">{formatNumber(pool.held)}</div>
         </div>
         <div className="col-5 mb-4 md:mb-0">
-          <div className="text-sm tracking-widest md:hidden">Staked LPT:</div>
+          <div className="text-sm tracking-widest md:hidden">Staked HLP:</div>
           <div className="">{formatNumber(pool.staked)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">

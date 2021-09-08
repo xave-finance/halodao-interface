@@ -5,7 +5,6 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
-import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
@@ -23,6 +22,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { getContract, shortenAddress } from 'utils'
 import { toNumber } from 'utils/formatNumber'
+import { useActiveWeb3React } from 'hooks'
 import { Lock } from 'react-feather'
 
 export enum ButtonState {
@@ -44,14 +44,15 @@ enum ConfirmTransactionModalState {
 
 const BridgePanel = () => {
   const addTransaction = useTransactionAdder()
-  const { account, error, chainId, library } = useWeb3React()
+  const { account, error, chainId, library } = useActiveWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [token, setToken] = useState<any>(HALO)
+  const [chainToken, setChainToken] = useState(HALO)
+  const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
   const [destinationChainId, setDestinationChainId] = useState(ChainId.MATIC)
   const [primaryBridgeContract, setPrimaryBridgeContract] = useState<Contract | null>(null)
@@ -82,64 +83,54 @@ const BridgePanel = () => {
   }, [inputValue])
 
   useEffect(() => {
-    if (!chainId) return
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    if (!chainId || !library) return
+
+    const selectedToken = chainToken[chainId]
+    if (!selectedToken) return
+    setToken(selectedToken)
+
+    setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [chainToken])
 
   useEffect(() => {
-    if (!chainId) return
+    if (!chainId || !token || !library) return
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+    setTokenContract(getContract(token.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+  }, [chainId, library, token])
 
   useEffect(() => {
-    if (!chainId) return
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
+    if (!chainId || !destinationChainId || !library || !token) return
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destinationChainId])
+  }, [chainId, destinationChainId, library, token])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -221,7 +212,7 @@ const BridgePanel = () => {
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+      if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -237,9 +228,8 @@ const BridgePanel = () => {
   }
 
   const fetchAllowance = useCallback(async () => {
-    if (!chainId) return
     try {
-      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
+      if (token && chainId === ORIGINAL_TOKEN_CHAIN_ID[token.address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -280,11 +270,12 @@ const BridgePanel = () => {
       console.error(e)
       return false
     }
+
     /** Log deposit to google analytics */
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: token[chainId as ChainId].symbol,
+      label: token ? token.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -303,11 +294,13 @@ const BridgePanel = () => {
       console.error(e)
       return false
     }
+
     /** log burn to google analytics */
+    const targetToken = chainToken[destinationChainId]
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
-      label: token[destinationChainId].symbol,
+      label: targetToken ? targetToken.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -341,7 +334,7 @@ const BridgePanel = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
-              if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+              if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
                 estimateBurnWrappedToken()
               } else {
                 estimateDeposit(destinationChainId)
@@ -487,8 +480,8 @@ const BridgePanel = () => {
     } else {
       return (
         <>
-          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate">
-            Destination Address <span className="pr-2" /> <Lock />
+          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate items-center">
+            Destination Address <span className="pr-2" /> <Lock size={16} />
           </p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
@@ -516,7 +509,7 @@ const BridgePanel = () => {
             <div className="flex space-x-4">
               <SelectedNetworkPanel
                 mode={NetworkModalMode.PrimaryBridge}
-                chainId={chainId as ChainId}
+                chainId={chainId ?? ChainId.MAINNET}
                 onChangeNetwork={() => console.log('hello')}
               />
               <div className="mb-2 w-1/5 flex items-center justify-center">
@@ -528,7 +521,7 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={chainId ? token[chainId as ChainId].address : token[ChainId.MATIC]}
+                tokenAddress={token ? token.address : chainToken[ChainId.MATIC]?.address}
               />
             </div>
 
@@ -536,26 +529,31 @@ const BridgePanel = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={token[chainId as ChainId]}
+                currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
                 showBalance={true}
                 showMax={true}
-                onSelectToken={setToken}
+                onSelectToken={selectedToken => {
+                  if (chainId) {
+                    setChainToken({ [chainId]: selectedToken })
+                  }
+                }}
               />
             </div>
             <MainContent />
           </div>
         </div>
       </div>
+
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={token[chainId as ChainId]}
+        currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+          if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ConfirmTransactionModalState.Successful)
               setButtonStates()
@@ -580,10 +578,10 @@ const BridgePanel = () => {
           if (modalState === ConfirmTransactionModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
         onSuccessConfirm={() => setShowModal(false)}
-        originChainId={chainId as ChainId}
+        originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        tokenSymbol={chainId ? token[chainId as ChainId].symbol : ''}
-        wrappedTokenSymbol={token[destinationChainId] ? token[destinationChainId].symbol : ''}
+        tokenSymbol={token ? token.symbol ?? '' : ''}
+        wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}
         successHash={successHash}
