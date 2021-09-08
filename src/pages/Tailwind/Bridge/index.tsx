@@ -36,12 +36,12 @@ const NotConnected = () => {
 }
 
 const CurrentPanelContent = () => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
-  if (features?.bridge && chainId !== 1) {
+  if (features?.bridge && account !== null) {
     return <BridgePanel />
-  } else if (chainId === 1) {
+  } else if (account === null) {
     return <NotConnected />
   }
   return <NotSupportedContent />
