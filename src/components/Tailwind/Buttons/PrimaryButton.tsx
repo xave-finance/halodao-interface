@@ -17,7 +17,6 @@ interface PrimaryButtonProps {
   title: string
   state: PrimaryButtonState
   onClick?: () => void
-  onClick?: () => void
   icon?: any
 }
 
