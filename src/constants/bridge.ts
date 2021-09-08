@@ -47,3 +47,24 @@ export const ORIGINAL_TOKEN_CHAIN_ID = {
   [process.env.REACT_APP_TGBP_ADDRESS_MAINNET as string]: ChainId.MAINNET,
   [process.env.REACT_APP_TGBP_ADDRESS_MATIC as string]: ChainId.MAINNET
 }
+
+export const ORIGINAL_TOKEN_CHAIN_ADDRESS = {
+  // RNBW
+  [process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET as string]: process.env
+    .REACT_APP_HALO_TOKEN_ADDRESS_MAINNET as string,
+  [process.env.REACT_APP_HALO_TOKEN_ADDRESS_MATIC as string]: process.env
+    .REACT_APP_HALO_TOKEN_ADDRESS_MAINNET as string,
+  // XRNBW
+  // Note: It uses RNBW price feed since XRNBW price is not tracked by coingecko
+  [process.env.REACT_APP_HALOHALO_ADDRESS_MAINNET as string]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET,
+  [process.env.REACT_APP_HALOHALO_ADDRESS_MATIC as string]: process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET,
+  // TAUD
+  [process.env.REACT_APP_TAUD_ADDRESS_MAINNET as string]: process.env.REACT_APP_TAUD_ADDRESS_MAINNET,
+  [process.env.REACT_APP_TAUD_ADDRESS_MATIC as string]: process.env.REACT_APP_TAUD_ADDRESS_MAINNET,
+  // TCAD
+  [process.env.REACT_APP_TCAD_ADDRESS_MAINNET as string]: process.env.REACT_APP_TCAD_ADDRESS_MAINNET,
+  [process.env.REACT_APP_TCAD_ADDRESS_MATIC as string]: process.env.REACT_APP_TCAD_ADDRESS_MAINNET,
+  // TGBP
+  [process.env.REACT_APP_TGBP_ADDRESS_MAINNET as string]: process.env.REACT_APP_TGBP_ADDRESS_MAINNET,
+  [process.env.REACT_APP_TGBP_ADDRESS_MATIC as string]: process.env.REACT_APP_TGBP_ADDRESS_MAINNET
+}

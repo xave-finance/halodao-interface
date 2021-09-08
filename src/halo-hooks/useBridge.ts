@@ -7,11 +7,12 @@ import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { getContract } from 'utils'
-import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
+import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID, ORIGINAL_TOKEN_CHAIN_ADDRESS } from 'constants/bridge'
 import { ButtonState } from 'pages/Tailwind/Bridge/BridgePanel'
 import { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
 
 /**
@@ -320,6 +321,36 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     estimatedGas,
     successHash
   }
+}
+
+export const useShuttleFee = (primaryBridgeContract: Contract) => {
+  const [shuttleFee, setShuttleFee] = useState(0)
+
+  const getFee = useCallback(async () => {
+    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
+    getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
+      const flatFee = Number(process.env.REACT_APP_SHUTTLE_FLAT_FEE_USD) / prices[originalTokenAddress]
+      setShuttleFee(Number(flatFee.toFixed(2)))
+    })
+  }, [primaryBridgeContract])
+
+  return { getFee, shuttleFee }
+}
+
+export const useMinimumAmount = (primaryBridgeContract: Contract) => {
+  const [minimum, setMinimum] = useState(0)
+
+  const getMinimum = useCallback(async () => {
+    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
+    getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
+      const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
+      setMinimum(Number(flatFee.toFixed(2)))
+    })
+  }, [primaryBridgeContract])
+
+  return { minimum, getMinimum }
 }
 
 export default useBridge

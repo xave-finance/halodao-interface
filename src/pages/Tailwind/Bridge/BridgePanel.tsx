@@ -59,7 +59,8 @@ const BridgePanel = () => {
     setDestinationChainId,
     balance,
     estimatedGas,
-    successHash
+    successHash,
+    primaryBridgeContract
   } = useBridge({ setButtonState, setApproveState, setInputValue, token })
 
   const setButtonStates = useCallback(() => {
@@ -361,6 +362,7 @@ const BridgePanel = () => {
         setState={setModalState}
         successHash={successHash}
         estimatedGas={estimatedGas}
+        primaryBridgeContract={primaryBridgeContract}
       />
     </>
   )

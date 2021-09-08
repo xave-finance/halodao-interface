@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
@@ -7,7 +7,7 @@ import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
-import { calculateShuttleFee } from 'utils/bridge'
+import { useShuttleFee, useMinimumAmount } from 'halo-hooks/useBridge'
 import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 
 interface ConfirmTransactionModalProps {
@@ -26,6 +26,7 @@ interface ConfirmTransactionModalProps {
   setState: (state: ConfirmTransactionModalState) => void
   successHash: string
   estimatedGas: string
+  primaryBridgeContract: any
 }
 
 enum ConfirmTransactionModalState {
@@ -55,8 +56,20 @@ const ConfirmTransactionModal = ({
   state,
   setState,
   successHash,
-  estimatedGas
+  estimatedGas,
+  primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
+  const { shuttleFee, getFee } = useShuttleFee(primaryBridgeContract)
+  const { minimum, getMinimum } = useMinimumAmount(primaryBridgeContract)
+
+  useEffect(() => {
+    getFee()
+  }, [primaryBridgeContract, getFee])
+
+  useEffect(() => {
+    getMinimum()
+  }, [primaryBridgeContract, getMinimum])
+
   const ConfirmContent = () => {
     return (
       <>
@@ -113,16 +126,18 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
                 <div>
-                  {calculateShuttleFee(Number(amount))} {currency.symbol}
+                  {/* {calculateShuttleFee(currency, Number(amount))} {currency.symbol} */}
+                  {shuttleFee} {currency.symbol}
+                  {console.log('minimum:', minimum)}
                 </div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Amount after transaction</div>
+              <div className="text-secondary-alternate">Amount after fees</div>
               <div>
                 <div>
-                  {amount} {currency.symbol}
+                  {Number(amount) - shuttleFee} {currency.symbol}
                 </div>
               </div>
             </div>
