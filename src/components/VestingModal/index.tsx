@@ -58,6 +58,10 @@ const StyledContent = styled.div`
   a {
     font-weight: 600;
   }
+
+  img {
+    margin: 0 auto;
+  }
 `
 
 const StyledExternalLink = styled(ExternalLink)`

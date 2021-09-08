@@ -12,7 +12,7 @@ import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 820px;
+  max-width: 1040px;
   width: 100%;
 `
 

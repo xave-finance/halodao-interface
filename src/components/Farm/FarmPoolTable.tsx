@@ -50,7 +50,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProp
                   <RowFixed width="18%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="13%">
+                  <RowFixed width="11%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="18%">
@@ -62,7 +62,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice }: FarmPoolTableProp
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="14%">
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="8%"></RowFixed>

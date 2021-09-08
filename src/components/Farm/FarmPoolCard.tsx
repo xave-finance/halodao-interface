@@ -49,7 +49,6 @@ import { ErrorText } from 'components/Alerts'
 import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
-import useHaloHalo from 'halo-hooks/useHaloHalo'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 
@@ -323,6 +322,11 @@ const Banner = styled(Card)`
   & img {
     width: 40px;
   }
+
+  a {
+    font-weight: 600;
+    color: #518cff;
+  }
 `
 
 const RewardsContainer = styled.div`
@@ -428,7 +432,6 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const history = useHistory()
-  const { haloHaloPrice } = useHaloHalo()
 
   const [showMore, setShowMore] = useState(false)
   const [stakeAmount, setStakeAmount] = useState('')
@@ -453,15 +456,12 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
   const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
   const bptStakedValue = bptStaked * lpTokenPrice
 
-  // Denotes how many rewards token in 1 HALO
-  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
-
   // Get user earned HALO
   const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid], rewardsVersion)
   let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
   const hasPendingRewardTokenError = unclaimedPoolRewards === PENDING_REWARD_FAILED
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
-  const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
+  const unclaimedHALO = unclaimedPoolRewards
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = chainId
@@ -686,7 +686,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="13%">
+          <StyledRowFixed width="11%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
@@ -704,13 +704,13 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="14%">
+          <StyledRowFixed width="16%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</u>
+                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</u>
               ) : (
-                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW</>
+                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
               )}
             </StyledTextForValue>
           </StyledRowFixed>
@@ -863,7 +863,17 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
 
             <BannerContainer>
               <Banner>
-                <Text>{t('tokenCardRewardDescription')}</Text>
+                <Text>
+                  {t('tokenCardRewardDescription')} Learn{' '}
+                  <a
+                    href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    more
+                  </a>{' '}
+                  about Vesting.
+                </Text>
                 <HideSmall>
                   <img src={BunnyMoon} alt="Bunny Moon" />
                 </HideSmall>
@@ -877,7 +887,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool, rewar
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
                 <Text className="balance">
-                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} RNBW
+                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW
                 </Text>
               </RewardsChild>
               <RewardsChild>
