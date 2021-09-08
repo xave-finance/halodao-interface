@@ -35,7 +35,7 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   }, [CurveContract, chainId, library])
 
   const getLiquidity = useCallback(async () => {
-    if (!library) return { total: 0, tokens: [0, 0] }
+    if (!library) return { total: 0, tokens: [0, 0], weights: [0, 0], rates: [0, 0] }
 
     const res = await CurveContract?.liquidity()
 
@@ -59,6 +59,7 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
 
     const token0Rate = Number(formatEther(rate0.mul(1e8)))
     const token1Rate = Number(formatEther(rate1.mul(1e8)))
+    console.log(`${address} rates:`, token0Rate, token1Rate)
 
     return {
       total: res.total_,

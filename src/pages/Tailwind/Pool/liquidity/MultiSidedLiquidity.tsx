@@ -7,6 +7,8 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
+import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
+import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 
 enum AddLiquidityState {
   NoAmount,
@@ -40,6 +42,7 @@ const MultiSidedLiquidity = ({
     pool.token0,
     pool.token1
   )
+  const { viewDeposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
   const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useApproveCallback(baseTokenAmount, pool.address)
@@ -59,6 +62,10 @@ const MultiSidedLiquidity = ({
       const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
       setQuoteInput(quoteAmount)
       onQuoteAmountChanged(quoteAmount)
+
+      const input0 = Number(val)
+      const input1 = (input0 / pool.rates.token1) * pool.rates.token0 * (pool.weights.token1 / pool.weights.token0)
+      console.log('quote calculated value: ', input1)
     } else {
       setQuoteInput('')
     }
@@ -75,6 +82,18 @@ const MultiSidedLiquidity = ({
       const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       setBaseInput(baseAmount)
       onBaseAmountChanged(baseAmount)
+
+      const input1 = Number(val)
+      const input0 = (input1 / pool.rates.token0) * pool.rates.token1 * (pool.weights.token0 / pool.weights.token1)
+      console.log('base calculated value: ', input0)
+
+      // const totalNumeraire =
+      //   input0 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1) +
+      //   input1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)
+      const totalNumeraire = input0 * (pool.rates.token0 * 100) + input1 * (pool.rates.token1 * 100)
+      console.log('calculated deposit amount: ', totalNumeraire)
+
+      await viewDeposit(parseEther(`${totalNumeraire}`))
     } else {
       setBaseInput('')
     }

@@ -2,13 +2,24 @@ import { useCallback } from 'react'
 import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import { BigNumber } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
+
+  const viewDeposit = useCallback(
+    async (amount: BigNumber) => {
+      const res = await CurveContract?.viewDeposit(amount)
+      // console.log('res:', res)
+      console.log('lp tokens:', formatEther(res[0]))
+      console.log('token 0:', formatUnits(res[1][0], token0.decimals))
+      console.log('token 1:', formatUnits(res[1][1], token1.decimals))
+    },
+    [CurveContract, token0, token1]
+  )
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
@@ -41,5 +52,5 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract, token0, token1, addTransaction]
   )
 
-  return { deposit, viewWithdraw, withdraw }
+  return { viewDeposit, deposit, viewWithdraw, withdraw }
 }
