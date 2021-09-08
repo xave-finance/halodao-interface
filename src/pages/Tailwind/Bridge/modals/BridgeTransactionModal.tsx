@@ -104,7 +104,7 @@ const ConfirmTransactionModal = ({
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2 font-bold">
-              <div className="hidden text-secondary-alternate">Gas fee (estimated)</div>
+              <div className="text-secondary-alternate">Gas fee (estimated)</div>
               <div>
                 {estimatedGas} {Currency.getNativeCurrencySymbol(originChainId)}{' '}
               </div>
@@ -200,7 +200,11 @@ const ConfirmTransactionModal = ({
             View on Chain Explorer
           </a>
         </div>
-        <div className="mt-12">
+        <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
+          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
+          update on {NETWORK_LABEL[destinationChainId]}
+        </div>
+        <div className="mt-2">
           <PrimaryButton
             title="Close"
             state={PrimaryButtonState.Enabled}

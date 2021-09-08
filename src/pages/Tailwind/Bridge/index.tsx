@@ -3,7 +3,7 @@ import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import BridgePanel from './BridgePanel'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
-import PageNotSupported from 'components/Tailwind/Layout/PageNotSupported'
+import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { NETWORK_SUPPORTED_FEATURES, NETWORK_LABEL } from '../../../constants/networks'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
@@ -14,7 +14,7 @@ const NotSupportedContent = () => {
   return (
     <div className="flex items-center bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
       <div className="w-full">
-        <PageNotSupported caption={caption} />
+        <PageWarning caption={caption} />
       </div>
     </div>
   )
@@ -22,13 +22,10 @@ const NotSupportedContent = () => {
 const CurrentPanelContent = () => {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
-  let content = <></>
   if (features?.bridge) {
-    content = <BridgePanel />
-  } else {
-    content = <NotSupportedContent />
+    return <BridgePanel />
   }
-  return content
+  return <NotSupportedContent />
 }
 const Bridge = () => {
   return (
@@ -47,9 +44,7 @@ const Bridge = () => {
       <div className="hidden md:flex items-start md:w-1/2">
         <InfoCard
           title="Bridge Info"
-          description={`Use HaloDAO bridge to move your tokens within any of the supported EVM compatible networks. A bridge fee of ${Number(
-            process.env.REACT_APP_SHUTTLE_FEE_PERCENTAGE
-          ) * 100}% goes to the HaloDAO treasury.`}
+          description="Use the HaloDAO bridge to move your tokens between any of the supported EVM compatible networks. The bridge takes a fixed fee that accrues to the Rainbow Pool."
         />
       </div>
     </PageWrapper>

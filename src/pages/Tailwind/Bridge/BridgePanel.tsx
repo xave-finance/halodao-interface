@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import ReactGA from 'react-ga'
 import ethers from 'ethers'
-import { formatEther, parseEther } from 'ethers/lib/utils'
-import { Contract } from '@ethersproject/contracts'
 import { ChainId } from '@sushiswap/sdk'
 import { HALO } from '../../../constants'
 import { useWeb3React } from '@web3-react/core'
@@ -15,14 +12,11 @@ import { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import BridgeTransactionModal from './modals/BridgeTransactionModal'
 import ArrowIcon from 'assets/svg/switch-icon.svg'
-import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
-import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
-import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
-import TOKEN_ABI from 'constants/abis/erc20.json'
-import { useTransactionAdder } from 'state/transactions/hooks'
+import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { useWalletModalToggle } from 'state/application/hooks'
-import { getContract, shortenAddress } from 'utils'
-import { toNumber } from 'utils/formatNumber'
+import { shortenAddress } from 'utils'
+import { Lock } from 'react-feather'
+import useBridge from 'halo-hooks/useBridge'
 
 export enum ButtonState {
   Default,
@@ -32,7 +26,8 @@ export enum ButtonState {
   Next,
   Confirming,
   InsufficientBalance,
-  Retry
+  Retry,
+  MaxCap
 }
 
 enum ConfirmTransactionModalState {
@@ -42,8 +37,7 @@ enum ConfirmTransactionModalState {
 }
 
 const BridgePanel = () => {
-  const addTransaction = useTransactionAdder()
-  const { account, error, chainId, library } = useWeb3React()
+  const { account, error, chainId } = useWeb3React()
   const [inputValue, setInputValue] = useState('')
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
@@ -51,16 +45,24 @@ const BridgePanel = () => {
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
   const [token, setToken] = useState<any>(HALO)
-  const [tokenContract, setTokenContract] = useState<Contract | null>(null)
-  const [destinationChainId, setDestinationChainId] = useState(ChainId.MATIC)
-  const [primaryBridgeContract, setPrimaryBridgeContract] = useState<Contract | null>(null)
-  const [secondaryBridgeContract, setSecondaryBridgeContract] = useState<Contract | null>(null)
-  const [allowance, setAllowance] = useState(0)
-  const [balance, setBalance] = useState(0)
-  const [estimatedGas, setEstimatedGas] = useState('')
-  const [successHash, setSuccessHash] = useState('')
+  const {
+    onTokenChange,
+    onChainIdChange,
+    onDestinationChainIdChange,
+    estimateDeposit,
+    estimateBurnWrappedToken,
+    approveAllowance,
+    deposit,
+    burn,
+    allowance,
+    destinationChainId,
+    setDestinationChainId,
+    balance,
+    estimatedGas,
+    successHash
+  } = useBridge({ setButtonState, setApproveState, setInputValue, token })
 
-  const setButtonStates = () => {
+  const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
@@ -72,249 +74,26 @@ const BridgePanel = () => {
       setApproveState(ApproveButtonState.NotApproved)
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
+    } else if (parseFloat(inputValue) > 10000) {
+      setButtonState(ButtonState.MaxCap)
     }
-  }
+  }, [inputValue, allowance, balance])
 
   useEffect(() => {
     setButtonStates()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputValue])
+  }, [setButtonStates])
 
   useEffect(() => {
-    if (!chainId) return
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-    setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
-    )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-      setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+    onTokenChange()
+  }, [onTokenChange])
 
   useEffect(() => {
-    if (!chainId) return
-    setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
-    )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-      setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
-      )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
-    } else {
-      setDestinationChainId(ChainId.MATIC)
-    }
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-    setButtonState(ButtonState.EnterAmount)
-    setApproveState(ApproveButtonState.NotApproved)
-    setInputValue('')
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+    onChainIdChange()
+  }, [onChainIdChange])
 
   useEffect(() => {
-    if (!chainId) return
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
-      setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destinationChainId])
-
-  const giveBridgeAllowance = useCallback(
-    async (amount: ethers.BigNumber) => {
-      try {
-        const tx = await tokenContract?.approve(primaryBridgeContract?.address, amount)
-        addTransaction(tx, { summary: 'Give bridge allowance' })
-        return tx
-      } catch (e) {
-        console.error(e)
-        setApproveState(ApproveButtonState.NotApproved)
-        setButtonState(ButtonState.Default)
-      }
-    },
-    [addTransaction, tokenContract, primaryBridgeContract]
-  )
-
-  const estimateDeposit = useCallback(
-    async (chainIdDestination: number) => {
-      const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(1, chainIdDestination)
-      setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
-    },
-    [primaryBridgeContract]
-  )
-
-  const depositToPrimaryBridge = useCallback(
-    async (amount: ethers.BigNumber, chainIdDestination: number) => {
-      try {
-        const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
-        addTransaction(tx, { summary: 'Deposit on bridge' })
-        setSuccessHash(tx.hash)
-        return tx
-      } catch (e) {
-        console.error(e)
-        setApproveState(ApproveButtonState.Approved)
-        setButtonState(ButtonState.Retry)
-      }
-    },
-    [addTransaction, primaryBridgeContract]
-  )
-
-  const giveSecondaryBridgeAllowance = useCallback(
-    async (amount: ethers.BigNumber) => {
-      try {
-        const tx = await tokenContract?.approve(secondaryBridgeContract?.address, amount)
-        addTransaction(tx, { summary: 'Give bridge allowance' })
-        return tx
-      } catch (e) {
-        console.error(e)
-        setApproveState(ApproveButtonState.NotApproved)
-        setButtonState(ButtonState.Default)
-      }
-    },
-    [addTransaction, tokenContract, secondaryBridgeContract]
-  )
-
-  const estimateBurnWrappedToken = useCallback(async () => {
-    const estimatedGas = await secondaryBridgeContract?.estimateGas.burn(1)
-    // setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber))
-    setEstimatedGas(toNumber(estimatedGas as ethers.BigNumber).toFixed(6))
-  }, [secondaryBridgeContract])
-
-  const burnWrappedTokens = useCallback(
-    async (amount: ethers.BigNumber) => {
-      try {
-        const tx = await secondaryBridgeContract?.burn(amount)
-        addTransaction(tx, { summary: 'Burn wrapped tokens' })
-        setSuccessHash(tx.hash)
-        return tx
-      } catch (e) {
-        console.error(e)
-        setApproveState(ApproveButtonState.Approved)
-        setButtonState(ButtonState.Retry)
-      }
-    },
-    [addTransaction, secondaryBridgeContract]
-  )
-
-  const approveAllowance = async (amount: ethers.BigNumber) => {
-    setApproveState(ApproveButtonState.Approving)
-    try {
-      let tx
-      if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-        tx = await giveSecondaryBridgeAllowance(amount)
-      } else {
-        tx = await giveBridgeAllowance(amount)
-      }
-      await tx.wait()
-      setApproveState(ApproveButtonState.Approved)
-      setButtonState(ButtonState.Next)
-      setAllowance(toNumber(amount))
-    } catch (e) {
-      console.error(e)
-    }
-    /** @todo Add logging to google analytics */
-  }
-
-  const fetchAllowance = useCallback(async () => {
-    if (!chainId) return
-    try {
-      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
-        setAllowance(
-          await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
-        )
-      } else {
-        setAllowance(
-          await tokenContract?.allowance(account, secondaryBridgeContract?.address).then((n: any) => toNumber(n))
-        )
-      }
-    } catch (e) {
-      console.error(e)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenContract])
-
-  const fetchBalance = useCallback(async () => {
-    try {
-      setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
-    } catch (e) {
-      console.error(e)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tokenContract])
-
-  useEffect(() => {
-    fetchAllowance()
-    fetchBalance()
-  }, [account, fetchAllowance, fetchBalance])
-
-  useEffect(() => {
-    setButtonStates()
-  }, [allowance, balance, setButtonStates])
-
-  const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
-    setButtonState(ButtonState.Confirming)
-    try {
-      const tx = await depositToPrimaryBridge(amount, chainId)
-      await tx.wait()
-      setApproveState(ApproveButtonState.NotApproved)
-      setButtonState(ButtonState.Default)
-      setAllowance(allowance - toNumber(amount))
-    } catch (e) {
-      console.error(e)
-      return false
-    }
-    /** Log deposit to google analytics */
-    ReactGA.event({
-      category: 'Bridge',
-      action: 'deposit',
-      label: token[chainId as ChainId].symbol,
-      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
-    })
-
-    return true
-  }
-
-  const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
-    setButtonState(ButtonState.Confirming)
-    try {
-      const tx = await burnWrappedTokens(amount)
-      await tx.wait()
-      setApproveState(ApproveButtonState.NotApproved)
-      setButtonState(ButtonState.Default)
-      setAllowance(allowance - toNumber(amount))
-    } catch (e) {
-      console.error(e)
-      return false
-    }
-    /** log burn to google analytics */
-    ReactGA.event({
-      category: 'Bridge',
-      action: 'burn',
-      label: token[destinationChainId].symbol,
-      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
-    })
-
-    return true
-  }
+    onDestinationChainIdChange()
+  }, [onDestinationChainIdChange])
 
   const NotApproveContent = () => {
     return (
@@ -327,7 +106,7 @@ const BridgePanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -344,9 +123,9 @@ const BridgePanel = () => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
               if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
-                estimateBurnWrappedToken()
+                estimateBurnWrappedToken(inputValue)
               } else {
-                estimateDeposit(destinationChainId)
+                estimateDeposit(destinationChainId, inputValue)
               }
               setModalState(ConfirmTransactionModalState.NotConfirmed)
               setShowModal(true)
@@ -361,16 +140,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton
-            title="Approving"
-            state={ApproveButtonState.Approving}
-            onClick={() => {
-              console.log('clicked')
-            }}
-          />
+          <ApproveButton title="Approving" state={ApproveButtonState.Approving} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -380,16 +153,10 @@ const BridgePanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.Approved}
-            onClick={() => {
-              console.log('clicked')
-            }}
-          />
+          <ApproveButton title="Approve" state={ApproveButtonState.Approved} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Next" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -398,12 +165,7 @@ const BridgePanel = () => {
   const ConfirmingContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Confirming"
-          state={PrimaryButtonState.InProgress}
-          onClick={() => console.log('clicked')}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Confirming" state={PrimaryButtonState.InProgress} />
       </div>
     )
   }
@@ -411,12 +173,7 @@ const BridgePanel = () => {
   const EnterAmountContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Enter an amount"
-          state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Enter an amount" state={PrimaryButtonState.Disabled} />
       </div>
     )
   }
@@ -428,7 +185,18 @@ const BridgePanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Insufficient Balance"
           state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
+        />
+      </div>
+    )
+  }
+
+  const MaxCapContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Input Greater than Maximum Cap"
+          state={PrimaryButtonState.Disabled}
         />
       </div>
     )
@@ -474,6 +242,9 @@ const BridgePanel = () => {
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
     }
+    if (buttonState === ButtonState.MaxCap) {
+      content = <MaxCapContent />
+    }
     return content
   }
 
@@ -489,7 +260,9 @@ const BridgePanel = () => {
     } else {
       return (
         <>
-          <p className="mt-2 font-semibold text-secondary-alternate">Destination Address</p>
+          <p className="flex flex-row mt-2 font-semibold text-secondary-alternate">
+            Destination Address <span className="pr-2" /> <Lock />
+          </p>
           <div className="mt-2">
             <p className="rounded-md p-2 w-full bg-primary-lightest"> {account && shortenAddress(account, 12)}</p>
           </div>
