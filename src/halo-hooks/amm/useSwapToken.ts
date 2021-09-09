@@ -49,7 +49,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   const getRouter = useCallback(async () => {
     if (!library || !account || !chainId) return
 
-    return getContract(routerAddress[chainId]!, ROUTER_ABI, library, true && account)
+    return getContract(routerAddress[chainId] as string, ROUTER_ABI, library, true && account)
   }, [account, chainId, library])
 
   const getPrice = useCallback(async () => {
@@ -57,13 +57,13 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
 
     try {
       const toTokenAssimilatorContract = getContract(
-        (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[toCurrency.symbol! as TokenSymbol],
+        (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[toCurrency.symbol as TokenSymbol],
         ASSIMILATOR_ABI,
         library
       )
 
       const fromTokenAssimilatorContract = getContract(
-        (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[fromCurrency.symbol! as TokenSymbol],
+        (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[fromCurrency.symbol as TokenSymbol],
         ASSIMILATOR_ABI,
         library
       )
@@ -133,7 +133,8 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   }, [account, fetchAllowance])
 
   const swapToken = useCallback(
-    async (amount: string, deadline?: number, slippage?: number) => {
+    // TODO: add slipage
+    async (amount: string, deadline?: number) => {
       if (!chainId || !library) return
 
       const CurveContract = await getRouter()

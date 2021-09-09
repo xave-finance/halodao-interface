@@ -1,10 +1,12 @@
 import React from 'react'
 
+/*
 interface OnOffToggleProps {
   didChangeValue: (newValue: string) => void
 }
+*/
 
-const OnOffToggle = ({ didChangeValue }: OnOffToggleProps) => {
+const OnOffToggle = () => {
   return (
     <>
       <div>

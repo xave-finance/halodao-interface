@@ -14,10 +14,12 @@ export default function SwapDetails({
   price,
   toCurrency,
   fromCurrency,
-  minimumReceived,
+  minimumReceived
+}: /*
   priceImpact,
   liqProviderFee
-}: SwapDetailsProps) {
+  */
+SwapDetailsProps) {
   return (
     <>
       <div className="flex flex-row justify-start mt-6 px-8 w-container text-sm font-bold">

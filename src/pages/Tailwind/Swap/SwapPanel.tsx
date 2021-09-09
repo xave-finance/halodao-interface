@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId, CurrencyAmount } from '@sushiswap/sdk'
+import { ChainId, CurrencyAmount, Token } from '@sushiswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -19,8 +19,8 @@ import { ButtonState, ModalState } from '../../../constants/buttonStates'
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
 
-  const [toCurrency, setToCurrency] = useState(haloTokenList[chainId as ChainId]![0])
-  const [fromCurrency, setFromCurrency] = useState(haloTokenList[chainId as ChainId]![1])
+  const [toCurrency, setToCurrency] = useState((haloTokenList[chainId as ChainId] as Token[])[0])
+  const [fromCurrency, setFromCurrency] = useState((haloTokenList[chainId as ChainId] as Token[])[1])
 
   const { getPrice, getMinimumAmount, price, minimumAmount, approve, allowance, swapToken } = useSwapToken(
     toCurrency,
@@ -75,8 +75,8 @@ const SwapPanel = () => {
   }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue, minimumAmount])
 
   useEffect(() => {
-    setToCurrency(haloTokenList[chainId as ChainId]![0])
-    setFromCurrency(haloTokenList[chainId as ChainId]![1])
+    setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
+    setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
   }, [chainId])
 
   useEffect(() => {
@@ -133,7 +133,7 @@ const SwapPanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton title="Approving" state={ApproveButtonState.Approving} onClick={() => {}} />
+          <ApproveButton title="Approving" state={ApproveButtonState.Approving} />
         </div>
         <div className="w-1/2">
           <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} />
@@ -333,7 +333,8 @@ const SwapPanel = () => {
         minimumAmount={minimumAmount || '0'}
         price={price || 0}
         onSwap={async () => {
-          const txn = await swapToken(fromInputValue, txDeadline, slippage)
+          // TODO: add slippage
+          const txn = await swapToken(fromInputValue, txDeadline)
           if (txn) {
             setSwapTransactionModalState(ModalState.Successful)
           }
