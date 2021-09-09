@@ -9,8 +9,8 @@ import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 
-export const useLPTokenAddresses = () => {
-  const rewardsContract = useHALORewardsContract()
+export const useLPTokenAddresses = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const [poolLength, setPoolLength] = useState(0)
   const [lpTokenAddresses, setLpTokenAddresses] = useState<string[]>([])
 
@@ -52,9 +52,9 @@ export const useLPTokenAddresses = () => {
   return lpTokenAddresses
 }
 
-export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number]: number } => {
+export const useUnclaimedRewardsPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const [unclaimedRewards, setUnclaimedRewards] = useState(() => {
     const rewards: { [poolId: number]: number } = {}
@@ -86,9 +86,9 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
   return unclaimedRewards
 }
 
-export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: number } => {
+export const useStakedBPTPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'userInfo', args)
@@ -110,9 +110,9 @@ export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: numb
   )
 }
 
-export const useDepositWithdrawHarvestCallback = () => {
+export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const addTransaction = useTransactionAdder()
 
   const deposit = useCallback(
@@ -151,8 +151,8 @@ export const useDepositWithdrawHarvestCallback = () => {
   return { deposit, withdraw, harvest }
 }
 
-export const useRewardTokenPerSecond = () => {
-  const rewardsContract = useHALORewardsContract()
+export const useRewardTokenPerSecond = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
 
   return useMemo<number>(() => {
@@ -160,8 +160,8 @@ export const useRewardTokenPerSecond = () => {
   }, [data])
 }
 
-export const useTotalAllocPoint = () => {
-  const rewardsContract = useHALORewardsContract()
+export const useTotalAllocPoint = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
 
   return useMemo<number>(() => {
@@ -169,8 +169,8 @@ export const useTotalAllocPoint = () => {
   }, [data])
 }
 
-export const useAllocPoints = (poolAddresses: string[]) => {
-  const rewardsContract = useHALORewardsContract()
+export const useAllocPoints = (poolAddresses: string[], rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const [allocPoint, setAllocPoint] = useState(() => {
     const initialPoints: { [pid: number]: number } = {}

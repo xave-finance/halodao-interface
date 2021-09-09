@@ -192,6 +192,19 @@ export const HALO_REWARDS_ADDRESS: ChainAddressMap = {
   [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_ADDRESS_MATIC_TESTNET || ZERO_ADDRESS
 }
 
+export const HALO_REWARDS_V1_ADDRESS: ChainAddressMap = {
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+}
+
 // HALO RewardsManager Addresses
 export const HALO_REWARDS_MANAGER_ADDRESS: ChainAddressMap = {
   // Mainnets
@@ -530,8 +543,12 @@ export const BLOCKED_ADDRESSES: string[] = [
 
 export const HALO_REWARDS_MESSAGE = {
   approving: 'Approving token spend',
-  staking: 'Staking token',
-  unstaking: 'Unstaking token',
+  staking: 'Staking LP token(s)',
+  unstaking: 'Unstaking LP token(s)',
+  stakingHLP: 'Staking HLP token(s)',
+  unstakingHLP: 'Unstaking HLP token(s)',
+  stakingUNI: 'Staking UNI-V2 token(s)',
+  unstakingUNI: 'Unstaking UNI-V2 token(s)',
   claiming: 'Claiming your rewards',
   unstakeAndClaim: 'Unstaking and claiming'
 }
