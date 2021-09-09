@@ -41,7 +41,7 @@ const CurrentPanelContent = () => {
 
   if (features?.bridge && account !== null) {
     return <BridgePanel />
-  } else if (account === null) {
+  } else if (!account) {
     return <NotConnected />
   }
   return <NotSupportedContent />
