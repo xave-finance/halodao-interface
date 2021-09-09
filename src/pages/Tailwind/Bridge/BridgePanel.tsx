@@ -44,7 +44,8 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [chainToken, setChainToken] = useState<any>(HALO)
+  const [chainToken, setChainToken] = useState(HALO)
+  const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
 
   const {
     onTokenChange,
@@ -61,7 +62,7 @@ const BridgePanel = () => {
     balance,
     estimatedGas,
     successHash
-  } = useBridge({ setButtonState, setApproveState, setInputValue, chainToken })
+  } = useBridge({ setButtonState, setApproveState, setInputValue, setChainToken, chainToken, setToken, token })
 
   const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
@@ -123,7 +124,8 @@ const BridgePanel = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
-              if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+
+              if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
                 estimateBurnWrappedToken(inputValue)
               } else {
                 estimateDeposit(destinationChainId, inputValue)
@@ -290,8 +292,8 @@ const BridgePanel = () => {
             <div className="flex space-x-4">
               <SelectedNetworkPanel
                 mode={NetworkModalMode.PrimaryBridge}
-                chainId={chainId as ChainId}
-                onChangeNetwork={() => console.log('disabled')}
+                chainId={chainId ?? ChainId.MAINNET}
+                onChangeNetwork={() => console.log('hello')}
               />
               <div className="mb-2 w-1/5 flex items-center justify-center">
                 <div className="p-2 bg-primary-lighter rounded">
@@ -302,7 +304,7 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={chainId ? chainToken[chainId as ChainId].address : chainToken[ChainId.MATIC]}
+                tokenAddress={token ? token.address : chainToken[ChainId.MATIC]?.address}
               />
             </div>
 
@@ -310,7 +312,7 @@ const BridgePanel = () => {
 
             <div className="mt-2">
               <CurrencyInput
-                currency={chainToken[chainId as ChainId]}
+                currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
@@ -330,11 +332,11 @@ const BridgePanel = () => {
 
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={chainToken ?? HALO[ChainId.MAINNET]!}
+        currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
+          if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ConfirmTransactionModalState.Successful)
               setButtonStates()
@@ -361,7 +363,7 @@ const BridgePanel = () => {
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        tokenSymbol={chainToken ? chainToken.symbol ?? '' : ''}
+        tokenSymbol={token ? token.symbol ?? '' : ''}
         wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}

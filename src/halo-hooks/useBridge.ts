@@ -18,10 +18,21 @@ interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
   setApproveState: (approveState: ApproveButtonState) => void
   setInputValue: (input: string) => void
+  setChainToken: (chainToken: any) => void
+  setToken: (token: any) => void
+  token: any
   chainToken: any
 }
 
-const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken }: BridgeProps) => {
+const useBridge = ({
+  setButtonState,
+  setApproveState,
+  setInputValue,
+  setChainToken,
+  chainToken,
+  setToken,
+  token
+}: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -35,83 +46,60 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken 
 
   const onTokenChange = useCallback(() => {
     if (!chainId || !library) return
-    setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+
+    const selectedToken = chainToken[chainId]
+    if (!selectedToken) return
+    setToken(selectedToken)
+
+    setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(
-        BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
-        PRIMARY_BRIDGE_ABI,
-        library,
-        account as string
-      )
+      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainToken, account, chainId, library])
-
-  useEffect(() => {
-    onTokenChange()
-  }, [chainToken, onTokenChange])
+  }, [chainToken, account, chainId, library, setToken])
 
   const onChainIdChange = useCallback(() => {
-    if (!chainId || !library || !setButtonState || !setInputValue || !setApproveState) return
+    if (!chainId || !token || !library) return
+
+    const selectedToken = chainToken[chainId]
+    if (!selectedToken) return
+    setToken(selectedToken)
+
     setPrimaryBridgeContract(
-      getContract(
-        BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
-        PRIMARY_BRIDGE_ABI,
-        library,
-        account as string
-      )
+      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address])
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
-    setTokenContract(getContract(chainToken[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-
+    setTokenContract(getContract(token.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
-  }, [chainId, chainToken, library, account, setApproveState, setButtonState, setInputValue])
-
-  useEffect(() => {
-    onChainIdChange()
-  }, [onChainIdChange])
+  }, [chainId, library, account, setApproveState, setButtonState, setInputValue, token, chainToken, setToken])
 
   const onDestinationChainIdChange = useCallback(() => {
-    if (!chainId || !library) return
-    if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== destinationChainId) {
+    if (!chainId || !destinationChainId || !library || !token) return
+
+    const selectedToken = chainToken[chainId]
+    if (!selectedToken) return
+    setToken(selectedToken)
+
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[chainToken[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainId, chainToken, library, account, destinationChainId])
-
-  useEffect(() => {
-    onDestinationChainIdChange()
-  }, [onDestinationChainIdChange])
+  }, [chainId, library, account, destinationChainId, token, chainToken, setToken])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
