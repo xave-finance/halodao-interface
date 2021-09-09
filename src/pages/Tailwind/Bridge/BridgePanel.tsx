@@ -198,7 +198,7 @@ const BridgePanel = () => {
       <div className="mt-4">
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
-          title="Input Greater than Maximum Cap"
+          title="Maximum amount reached"
           state={PrimaryButtonState.Disabled}
         />
       </div>

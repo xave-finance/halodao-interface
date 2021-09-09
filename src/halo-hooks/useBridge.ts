@@ -24,15 +24,7 @@ interface BridgeProps {
   chainToken: any
 }
 
-const useBridge = ({
-  setButtonState,
-  setApproveState,
-  setInputValue,
-  setChainToken,
-  chainToken,
-  setToken,
-  token
-}: BridgeProps) => {
+const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken, setToken, token }: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -188,7 +180,6 @@ const useBridge = ({
     } catch (e) {
       console.error(e)
     }
-    /** @todo Add logging to google analytics */
   }
 
   const fetchAllowance = useCallback(async () => {
