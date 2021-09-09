@@ -1,6 +1,7 @@
 import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
 import React from 'react'
 import Chart from 'react-google-charts'
+import { useHistory } from 'react-router'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { PoolData } from './models/PoolData'
 
@@ -9,8 +10,10 @@ interface PoolCardRightProps {
 }
 
 const PoolCardRight = ({ pool }: PoolCardRightProps) => {
+  const history = useHistory()
+
   const stake = () => {
-    console.log('@todo: stake')
+    history.push(`/farm/${pool.address}`)
   }
 
   const lpToken0Price = pool.weights.token0 * (1 / (pool.rates.token0 * 100))

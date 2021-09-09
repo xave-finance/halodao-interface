@@ -33,7 +33,7 @@ const PoolColumns = () => {
       <div className="col-3 text-gray-500 font-bold">Pooled (B) Tokens</div>
       <div className="col-4 text-gray-500 font-bold">Held HLP</div>
       <div className="col-5 text-gray-500 font-bold">Staked HLP</div>
-      <div className="col-6 text-gray-500 font-bold">xRNBW Earned</div>
+      <div className="col-6 text-gray-500 font-bold">Earned</div>
       <div className="col-7">&nbsp;</div>
     </Wrapper>
   )
