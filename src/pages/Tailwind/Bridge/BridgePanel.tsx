@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
 import { ChainId } from '@sushiswap/sdk'
-import { HALO } from '../../../constants'
+import { ChainTokenMap, HALO } from '../../../constants'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
@@ -44,7 +44,7 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
 
-  const [chainToken, setChainToken] = useState(HALO)
+  const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
 
   const {

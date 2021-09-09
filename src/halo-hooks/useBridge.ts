@@ -65,10 +65,6 @@ const useBridge = ({
   const onChainIdChange = useCallback(() => {
     if (!chainId || !token || !library) return
 
-    const selectedToken = chainToken[chainId]
-    if (!selectedToken) return
-    setToken(selectedToken)
-
     setPrimaryBridgeContract(
       getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
@@ -85,21 +81,17 @@ const useBridge = ({
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
-  }, [chainId, library, account, setApproveState, setButtonState, setInputValue, token, chainToken, setToken])
+  }, [chainId, library, account, setApproveState, setButtonState, setInputValue, token])
 
   const onDestinationChainIdChange = useCallback(() => {
     if (!chainId || !destinationChainId || !library || !token) return
-
-    const selectedToken = chainToken[chainId]
-    if (!selectedToken) return
-    setToken(selectedToken)
 
     if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
         getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainId, library, account, destinationChainId, token, chainToken, setToken])
+  }, [chainId, library, account, destinationChainId, token])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -166,7 +158,6 @@ const useBridge = ({
 
   const burnWrappedTokens = useCallback(
     async (amount: ethers.BigNumber) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await secondaryBridgeContract?.burn(amount)
         addTransaction(tx, { summary: 'Burn wrapped tokens' })
@@ -182,11 +173,10 @@ const useBridge = ({
   )
 
   const approveAllowance = async (amount: ethers.BigNumber) => {
-    if (!setApproveState || !setButtonState) return
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+      if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -202,9 +192,8 @@ const useBridge = ({
   }
 
   const fetchAllowance = useCallback(async () => {
-    if (!chainId) return
     try {
-      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address]) {
+      if (token && chainId === ORIGINAL_TOKEN_CHAIN_ID[token.address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -216,11 +205,11 @@ const useBridge = ({
     } catch (e) {
       console.error(e)
     }
-  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, chainToken])
+  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, token])
 
   const fetchBalance = useCallback(async () => {
     try {
-      setBalance(toNumber(await tokenContract?.balanceOf(account)))
+      setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
     } catch (e) {
       console.error(e)
     }
@@ -240,8 +229,6 @@ const useBridge = ({
   }, [account, fetchAllowance, fetchBalance, chainToken, allowance, primaryBridgeContract, secondaryBridgeContract])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
-    if (!setApproveState || !setButtonState) return false
-
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await depositToPrimaryBridge(amount, chainId)
@@ -253,11 +240,12 @@ const useBridge = ({
       console.error(e)
       return false
     }
+
     /** Log deposit to google analytics */
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: chainToken[chainId as ChainId].symbol,
+      label: token ? token.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -265,7 +253,6 @@ const useBridge = ({
   }
 
   const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
-    if (!setApproveState || !setButtonState) return false
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await burnWrappedTokens(amount)
@@ -277,12 +264,14 @@ const useBridge = ({
       console.error(e)
       return false
     }
+
     /** log burn to google analytics */
+    const targetToken = chainToken[destinationChainId]
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
-      label: chainToken[destinationChainId].symbol,
-      value: parseFloat(amount.toString())
+      label: targetToken ? targetToken.symbol : '',
+      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
     return true
