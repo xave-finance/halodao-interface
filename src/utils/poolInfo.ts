@@ -1,4 +1,10 @@
-import { BALANCER_POOLS_ADDRESSES, INACTIVE_POOLS, SUSHI_POOLS_ADDRESSES, UNI_POOLS_ADDRESSES } from 'constants/pools'
+import {
+  BALANCER_POOLS_ADDRESSES,
+  INACTIVE_POOLS,
+  LIQUIDITY_POOLS_ADDRESSES,
+  SUSHI_POOLS_ADDRESSES,
+  UNI_POOLS_ADDRESSES
+} from 'constants/pools'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
@@ -20,6 +26,10 @@ const isSushiPool = (address: string) => {
   return SUSHI_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
 
+const isHaloPool = (address: string) => {
+  return LIQUIDITY_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
+}
+
 const isInactivePool = (address: string) => {
   return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
 }
@@ -28,6 +38,7 @@ export const groupByPoolProvider = (addresses: string[]) => {
   const balancerPools: PoolIdLpTokenMap[] = []
   const uniPools: PoolIdLpTokenMap[] = []
   const sushiPools: PoolIdLpTokenMap[] = []
+  const haloPools: PoolIdLpTokenMap[] = []
 
   for (const [pid, address] of addresses.entries()) {
     if (address) {
@@ -37,6 +48,8 @@ export const groupByPoolProvider = (addresses: string[]) => {
         uniPools.push({ pid, lpToken: getAddress(address) })
       } else if (isSushiPool(address)) {
         sushiPools.push({ pid, lpToken: getAddress(address) })
+      } else if (isHaloPool(address)) {
+        haloPools.push({ pid, lpToken: getAddress(address) })
       }
     }
   }
@@ -44,7 +57,8 @@ export const groupByPoolProvider = (addresses: string[]) => {
   return {
     balancer: balancerPools,
     uni: uniPools,
-    sushi: sushiPools
+    sushi: sushiPools,
+    halo: haloPools
   }
 }
 

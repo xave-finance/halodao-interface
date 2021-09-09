@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { formatNumber } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
@@ -191,8 +191,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
           <div className="">{formatNumber(pool.staked)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
-          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">xRNBW Earned:</div>
-          <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
+          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Earned:</div>
+          <div className="">{formatNumber(pool.earned)} xRNBW</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />
