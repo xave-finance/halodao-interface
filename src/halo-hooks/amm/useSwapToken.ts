@@ -119,6 +119,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
 
     try {
       const tx = await tokenContract?.approve(CurveContract?.address, ethers.constants.MaxUint256)
+      await tx.wait()
 
       return addTransaction(tx, { summary: 'Approve' })
     } catch (e) {
@@ -151,7 +152,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
           0,
           deadline ? getFutureTime(deadline) : getFutureTime(60)
         )
-        tx.wait()
+        await tx.wait()
 
         addTransaction(tx, { summary: `Swap to ${toCurrency.name}` })
         return tx

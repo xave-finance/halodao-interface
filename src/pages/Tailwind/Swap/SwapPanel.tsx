@@ -14,17 +14,7 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
-
-export enum ButtonState {
-  Default,
-  EnterAmount,
-  Approving,
-  Approved,
-  Swap,
-  Confirming,
-  InsufficientBalance,
-  Retry
-}
+import { ButtonState, ModalState } from '../../../constants/buttonStates'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -44,21 +34,39 @@ const SwapPanel = () => {
   const [showModal, setShowModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
+  const [timeLeft, setTimeLeft] = useState(60)
+  const [isExpired, setIsExpired] = useState(false)
+  const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
 
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
-      const txHash = await approve()
+      const txHash: any = await approve()
 
       // user rejected tx or didn't go thru
-      // TODO: Not working properly
-      if (!txHash) {
+      if (txHash.code == 4001 || !txHash) {
         setApproveState(ApproveButtonState.NotApproved)
       }
     } catch (e) {
       console.log(e)
     }
   }, [approve, setApproveState])
+
+  const startTimer = () => {
+    let maxTime = timeLeft
+    const timer = setInterval(() => {
+      maxTime -= 1
+      setTimeLeft(maxTime)
+    }, 1000)
+
+    setTimeout(() => {
+      clearInterval(timer)
+      setTimeLeft(60)
+      getMinimumAmount(fromInputValue)
+      setIsExpired(true)
+      getPrice()
+    }, 60000)
+  }
 
   useEffect(() => {
     getPrice()
@@ -74,8 +82,6 @@ const SwapPanel = () => {
   useEffect(() => {
     if (allowance !== '' && Number(allowance) > 0) {
       //if (ApproveButtonState.Approving) return
-
-      console.log('Allowance: ', allowance)
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Swap)
     } else {
@@ -99,7 +105,7 @@ const SwapPanel = () => {
           />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -115,6 +121,7 @@ const SwapPanel = () => {
           onClick={() => {
             if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
               setButtonState(ButtonState.Confirming)
+              startTimer()
               setShowModal(true)
             }
           }}
@@ -130,7 +137,7 @@ const SwapPanel = () => {
           <ApproveButton title="Approving" state={ApproveButtonState.Approving} onClick={() => {}} />
         </div>
         <div className="w-1/2">
-          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
+          <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} />
         </div>
       </div>
     )
@@ -140,13 +147,7 @@ const SwapPanel = () => {
     return (
       <div className="mt-4 flex space-x-4">
         <div className="w-1/2">
-          <ApproveButton
-            title="Approve"
-            state={ApproveButtonState.Approved}
-            onClick={() => {
-              console.log('clicked')
-            }}
-          />
+          <ApproveButton title="Approve" state={ApproveButtonState.Approved} />
         </div>
         <div className="w-1/2">
           <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
@@ -158,12 +159,7 @@ const SwapPanel = () => {
   const ConfirmingContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Confirming"
-          state={PrimaryButtonState.InProgress}
-          onClick={() => console.log('clicked')}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Confirming" state={PrimaryButtonState.InProgress} />
       </div>
     )
   }
@@ -171,12 +167,7 @@ const SwapPanel = () => {
   const EnterAmountContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Enter an amount"
-          state={PrimaryButtonState.Disabled}
-          onClick={() => console.log('clicked')}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Enter an amount" state={PrimaryButtonState.Disabled} />
       </div>
     )
   }
@@ -188,7 +179,6 @@ const SwapPanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Insufficient Balance"
           state={PrimaryButtonState.Disabled}
-          onClick={() => {}}
         />
       </div>
     )
@@ -343,22 +333,25 @@ const SwapPanel = () => {
         toAmount={toInputValue}
         minimumAmount={minimumAmount || '0'}
         price={price || 0}
-        onSwap={async (): Promise<boolean> => {
-          const txn = swapToken(fromInputValue)
-          if (!!txn) {
-            return true
-          } else {
-            return false
+        onSwap={async () => {
+          if (await swapToken(fromInputValue)) {
+            setSwapTransactionModalState(ModalState.Successful)
           }
         }}
         onPriceUpdate={() => {
           getMinimumAmount(fromInputValue)
           getPrice()
+          startTimer()
         }}
         onDismiss={() => {
           setButtonState(ButtonState.Swap)
           setShowModal(false)
         }}
+        isExpired={isExpired}
+        setIsExpired={setIsExpired}
+        timeLeft={timeLeft}
+        swapTransactionModalState={swapTransactionModalState}
+        setSwapTransactionModalState={setSwapTransactionModalState}
       />
     </>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SwapDetails from '../SwapDetails'
@@ -9,6 +9,7 @@ import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import ArrowDownIcon from 'assets/svg/arrow-down-icon.svg'
 import WarningIcon from 'assets/svg/warning-icon-purple.svg'
 import { getExplorerLink } from '../../../../utils'
+import { ModalState } from 'constants/buttonStates'
 
 interface SwapTransactionModalProps {
   isVisible: boolean
@@ -18,15 +19,14 @@ interface SwapTransactionModalProps {
   toAmount: string
   minimumAmount: string
   price: number
-  onSwap: () => Promise<boolean>
+  onSwap: () => void
   onPriceUpdate: () => void
   onDismiss: () => void
-}
-
-enum SwapTransactionModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
+  isExpired: boolean
+  setIsExpired: (isExpired: boolean) => void
+  timeLeft: number
+  swapTransactionModalState: ModalState
+  setSwapTransactionModalState: (state: ModalState) => void
 }
 
 const SwapTransactionModal = ({
@@ -39,15 +39,15 @@ const SwapTransactionModal = ({
   price,
   onSwap,
   onPriceUpdate,
-  onDismiss
+  onDismiss,
+  isExpired,
+  setIsExpired,
+  timeLeft,
+  swapTransactionModalState,
+  setSwapTransactionModalState
 }: SwapTransactionModalProps) => {
-  const [state, setState] = useState(SwapTransactionModalState.NotConfirmed)
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [acceptedPrice, setAcceptedPrice] = useState(false)
-
   const dismissGracefully = () => {
-    setState(SwapTransactionModalState.NotConfirmed)
-    // setTxHash('')
+    setSwapTransactionModalState(ModalState.NotConfirmed)
     onDismiss()
   }
 
@@ -80,28 +80,17 @@ const SwapTransactionModal = ({
             <div className="flex flex-row space-x-2 pl-2 text-primary-hover w-3/4">
               <img src={WarningIcon} alt="warning" />
               <span className="text-sm font-bold">
-                {acceptedPrice ? `Price valid for ${timeLeft.toString()}s` : 'Price Update'}
+                {isExpired ? 'Price Update' : `Price valid for ${timeLeft.toString()}s`}
               </span>
             </div>
             <div className="w-1/4">
               <PrimaryButton
                 type={PrimaryButtonType.Gradient}
                 title="Accept"
-                state={acceptedPrice ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
+                state={isExpired ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
                 onClick={() => {
-                  let maxTime = timeLeft
-                  setAcceptedPrice(true)
-                  const timer = setInterval(() => {
-                    maxTime -= 1
-                    setTimeLeft(maxTime)
-                  }, 1000)
-
-                  setTimeout(() => {
-                    clearInterval(timer)
-                    setAcceptedPrice(false)
-                    setTimeLeft(60)
-                    onPriceUpdate()
-                  }, 60000)
+                  setIsExpired(false)
+                  onPriceUpdate()
                 }}
               />
             </div>
@@ -116,18 +105,16 @@ const SwapTransactionModal = ({
         <div className="bg-white p-4 pb-4">
           <PrimaryButton
             title="Confirm Swap"
-            state={acceptedPrice ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
+            state={isExpired ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
             onClick={async () => {
-              // TODO: Handle UX
-              const txn = await onSwap()
+              setSwapTransactionModalState(ModalState.InProgress)
 
-              if (txn) {
-                setState(SwapTransactionModalState.Successful)
-              } else {
-                setState(SwapTransactionModalState.NotConfirmed)
+              try {
+                await onSwap()
+              } catch (e) {
+                setSwapTransactionModalState(ModalState.NotConfirmed)
               }
-
-              setAcceptedPrice(false)
+              setIsExpired(false)
             }}
           />
         </div>
@@ -185,9 +172,9 @@ const SwapTransactionModal = ({
 
   return (
     <BaseModal isVisible={isVisible} onDismiss={dismissGracefully}>
-      {state === SwapTransactionModalState.NotConfirmed && <ConfirmContent />}
-      {state === SwapTransactionModalState.InProgress && <InProgressContent />}
-      {state === SwapTransactionModalState.Successful && <SuccessContent />}
+      {swapTransactionModalState === ModalState.NotConfirmed && <ConfirmContent />}
+      {swapTransactionModalState === ModalState.InProgress && <InProgressContent />}
+      {swapTransactionModalState === ModalState.Successful && <SuccessContent />}
     </BaseModal>
   )
 }

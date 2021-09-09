@@ -8,6 +8,7 @@ import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
 import { calculateShuttleFee } from 'utils/bridge'
+import { ModalState } from '../../../../constants/buttonStates'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -21,16 +22,10 @@ interface ConfirmTransactionModalProps {
   destinationChainId: ChainId
   tokenSymbol: string
   wrappedTokenSymbol: string
-  state: ConfirmTransactionModalState
-  setState: (state: ConfirmTransactionModalState) => void
+  state: ModalState
+  setState: (state: ModalState) => void
   successHash: string
   estimatedGas: string
-}
-
-enum ConfirmTransactionModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
 }
 
 interface InProgressContentProps {
@@ -130,12 +125,11 @@ const ConfirmTransactionModal = ({
             title="Confirm"
             state={PrimaryButtonState.Enabled}
             onClick={async () => {
-              setState(ConfirmTransactionModalState.InProgress)
+              setState(ModalState.InProgress)
               try {
                 await confirmLogic()
-                // setState(ConfirmTransactionModalState.Successful)
               } catch (e) {
-                setState(ConfirmTransactionModalState.NotConfirmed)
+                setState(ModalState.NotConfirmed)
               }
             }}
           />
@@ -200,7 +194,7 @@ const ConfirmTransactionModal = ({
             state={PrimaryButtonState.Enabled}
             onClick={() => {
               onSuccessConfirm()
-              setState(ConfirmTransactionModalState.NotConfirmed)
+              setState(ModalState.NotConfirmed)
             }}
           />
         </div>
@@ -212,17 +206,15 @@ const ConfirmTransactionModal = ({
     <BaseModal
       isVisible={isVisible}
       onDismiss={() => {
-        setState(ConfirmTransactionModalState.NotConfirmed)
+        setState(ModalState.NotConfirmed)
         onDismiss()
       }}
     >
-      {state === ConfirmTransactionModalState.NotConfirmed && <ConfirmContent />}
-      {state === ConfirmTransactionModalState.InProgress && (
+      {state === ModalState.NotConfirmed && <ConfirmContent />}
+      {state === ModalState.InProgress && (
         <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
       )}
-      {state === ConfirmTransactionModalState.Successful && (
-        <SuccessContent chainId={originChainId} successHash={successHash} />
-      )}
+      {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>
   )
 }

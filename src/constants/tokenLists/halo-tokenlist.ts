@@ -1,6 +1,6 @@
 import { ChainId, Token } from '@sushiswap/sdk'
 import { ethers } from 'ethers'
-import { USDC } from '../../constants'
+import { USDC, ZERO_ADDRESS } from '../../constants'
 
 export enum TokenSymbol {
   USDC = 'USDC',
@@ -26,10 +26,13 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 
 // Token Lists
 const mainNetTokenList: Token[] = [
-  //new Token(ChainId.MAINNET, process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS, 18, 'RNBW', 'RNBWToken'),
+  // new Token(ChainId.MAINNET, process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS, 18, 'RNBW', 'RNBWToken'),
   USDC,
-  new Token(ChainId.MAINNET, '0xdb25f211ab05b1c97d595516f45794528a807ad8', 2, 'EURS', 'EURS Stasis Coin'),
-  new Token(ChainId.MAINNET, '0xcadc0acd4b445166f12d2c07eac6e2544fbe2eef', 8, 'CADC', 'CAD Coin')
+  new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
+  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
+  new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
 ]
 
 const kovanTokenList: Token[] = [
@@ -61,11 +64,11 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.EURS]: '0x3Af71eC189cf9de106b7C4DAC269d6C6d3d37a97',
   [TokenSymbol.GBP]: '0x6500ACbaF819C520aDA1B5C91cc8aFe0cD91008f',
   [TokenSymbol.CHF]: '0xa6b02260754c506403E12e9b09211848F6BC9Cc0',
-  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
-  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
-  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
-  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.TUSD]: ZERO_ADDRESS,
+  [TokenSymbol.TAUD]: ZERO_ADDRESS,
+  [TokenSymbol.TCAD]: ZERO_ADDRESS,
+  [TokenSymbol.TGBP]: ZERO_ADDRESS,
+  [TokenSymbol.XSGD]: ZERO_ADDRESS
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {

@@ -17,24 +17,7 @@ import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
 import useBridge from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
-
-export enum ButtonState {
-  Default,
-  EnterAmount,
-  Approving,
-  Approved,
-  Next,
-  Confirming,
-  InsufficientBalance,
-  Retry,
-  MaxCap
-}
-
-enum ConfirmTransactionModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
-}
+import { ButtonState, ModalState } from '../../../constants/buttonStates'
 
 const BridgePanel = () => {
   const { account, error, chainId } = useActiveWeb3React()
@@ -42,7 +25,7 @@ const BridgePanel = () => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
-  const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
+  const [modalState, setModalState] = useState(ModalState.NotConfirmed)
 
   const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
@@ -130,7 +113,7 @@ const BridgePanel = () => {
               } else {
                 estimateDeposit(destinationChainId, inputValue)
               }
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setShowModal(true)
             }
           }}
@@ -338,27 +321,27 @@ const BridgePanel = () => {
         confirmLogic={async () => {
           if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
-              setModalState(ConfirmTransactionModalState.Successful)
+              setModalState(ModalState.Successful)
               setButtonStates()
             } else {
               setShowModal(false)
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
           } else {
             if (await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)) {
-              setModalState(ConfirmTransactionModalState.Successful)
+              setModalState(ModalState.Successful)
               setButtonStates()
             } else {
               setShowModal(false)
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
           }
         }}
         onDismiss={() => {
           setShowModal(false)
-          if (modalState === ConfirmTransactionModalState.NotConfirmed) setButtonState(ButtonState.Retry)
+          if (modalState === ModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
