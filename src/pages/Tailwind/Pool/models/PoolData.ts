@@ -1,7 +1,6 @@
 import { Token } from '@sushiswap/sdk'
-import { BigNumber } from 'ethers'
-
 export interface PoolData {
+  pid?: string
   address: string
   name: string
   token0: Token
@@ -22,4 +21,5 @@ export interface PoolData {
   held: number
   staked: number
   earned: number
+  totalSupply: number
 }

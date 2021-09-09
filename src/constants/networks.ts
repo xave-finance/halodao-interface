@@ -193,3 +193,97 @@ export const NETWORK_PARAMS: {
     }
     */
 }
+
+export const NETWORK_SUPPORTED_FEATURES: {
+  [chainId in ChainId]?: {
+    vest: boolean
+    farm: boolean
+    pool: boolean
+    swap: boolean
+    lend: boolean
+    borrow: boolean
+    bridge: boolean
+  }
+} = {
+  [ChainId.MAINNET]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: true
+  },
+  [ChainId.KOVAN]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.RINKEBY]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.GÖRLI]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.MATIC]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: true
+  },
+  [ChainId.MATIC_TESTNET]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.BSC]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.BSC_TESTNET]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  },
+  [ChainId.XDAI]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false
+  }
+}

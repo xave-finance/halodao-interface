@@ -5,7 +5,6 @@ import { useTokenBalances, useTokenTotalSuppliesWithLoadingIndicator } from 'sta
 import { PoolInfo } from './usePoolInfo'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useUnclaimedRewardsPerPool, useStakedBPTPerPool } from './useRewards'
-import useHaloHalo from './useHaloHalo'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { TokenPrice } from './useTokenPrice'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
@@ -13,7 +12,6 @@ import { PENDING_REWARD_FAILED } from 'constants/pools'
 const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
   // Get user balance for each pool
   const { account } = useActiveWeb3React()
-  const { haloHaloPrice } = useHaloHalo()
   const poolsAsTokens = poolsInfo.map(poolInfo => poolInfo.asToken)
   const balances = useTokenBalances(account ?? undefined, poolsAsTokens)
 
@@ -26,9 +24,6 @@ const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
 
   // Get user staked BPT per pool
   const stakedBPTs = useStakedBPTPerPool(poolIds)
-
-  // Denotes how many rewards token in 1 HALO
-  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
 
   /**
    * Main logic to calculate pool summary based on the inputs above
@@ -50,7 +45,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
       // Add unclaimed HALO per pool to totalHALOEarned
       let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
       unclaimedPoolRewards = unclaimedPoolRewards === PENDING_REWARD_FAILED ? 0 : unclaimedPoolRewards
-      totalHALOEarned += unclaimedPoolRewards * rewardsToHALOPrice
+      totalHALOEarned += unclaimedPoolRewards
 
       // Calculate LPToken price per pool
       // FORMULA: LPToken price = liquidity / totalSupply
@@ -79,7 +74,7 @@ const useFarmSummary = (poolsInfo: PoolInfo[], tokenPrice: TokenPrice) => {
       stakedValue: formatNumber(totalStakedValue, NumberFormat.usd),
       haloEarned: formatNumber(totalHALOEarned)
     }
-  }, [poolsInfo, balances, totalSupplies, unclaimedRewards, stakedBPTs, rewardsToHALOPrice, tokenPrice])
+  }, [poolsInfo, balances, totalSupplies, unclaimedRewards, stakedBPTs, tokenPrice])
 }
 
 export default useFarmSummary

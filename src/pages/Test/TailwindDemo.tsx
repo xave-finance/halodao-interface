@@ -291,7 +291,7 @@ const TailwindDemo = () => {
           <div className="flex-1">
             <p>Default</p>
             <CurrencyInput
-              currency={HALO[ChainId.MAINNET]!}
+              currency={HALO[ChainId.MAINNET]!} // eslint-disable-line
               value={inputValue}
               canSelectToken={false}
               didChangeValue={val => setInputValue(val)}
@@ -302,7 +302,7 @@ const TailwindDemo = () => {
           <div className="flex-1">
             <p>Hide balance & max</p>
             <CurrencyInput
-              currency={HALO[ChainId.MAINNET]!}
+              currency={HALO[ChainId.MAINNET]!} // eslint-disable-line
               value={inputValue}
               canSelectToken={false}
               didChangeValue={val => setInputValue(val)}

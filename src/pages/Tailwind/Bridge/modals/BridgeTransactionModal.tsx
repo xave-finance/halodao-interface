@@ -1,12 +1,13 @@
 import React from 'react'
-import BaseModal from 'components/Tailwind/Modals/BaseModal'
-import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { ChainId, Currency } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
+import BaseModal from 'components/Tailwind/Modals/BaseModal'
+import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
-import { shortenAddress, getExplorerLink } from '../../../../utils'
+import { shortenAddress, getExplorerLink } from 'utils'
+import { calculateShuttleFee } from 'utils/bridge'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -22,6 +23,8 @@ interface ConfirmTransactionModalProps {
   wrappedTokenSymbol: string
   state: ConfirmTransactionModalState
   setState: (state: ConfirmTransactionModalState) => void
+  successHash: string
+  estimatedGas: string
 }
 
 enum ConfirmTransactionModalState {
@@ -49,7 +52,9 @@ const ConfirmTransactionModal = ({
   tokenSymbol,
   wrappedTokenSymbol,
   state,
-  setState
+  setState,
+  successHash,
+  estimatedGas
 }: ConfirmTransactionModalProps) => {
   const ConfirmContent = () => {
     return (
@@ -78,8 +83,7 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
-              <span>{amount} </span>
-              <span>{currency.symbol}</span>
+              <span>{currency.name}</span>
             </div>
           </div>
           <div className="mt-4">
@@ -92,24 +96,24 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Destination Address</span>
             <div className="mt-1">
-              <span>{account && shortenAddress(account)} </span>
+              <span>{account && shortenAddress(account, 8)} </span>
             </div>
           </div>
         </div>
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Tax</div>
-              <div>0 {currency.symbol}</div>
-            </div>
-            <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Gas fee (estimated)</div>
-              <div>0 {currency.symbol}</div>
+              <div>
+                {estimatedGas} {Currency.getNativeCurrencySymbol(originChainId)}{' '}
+              </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
-                <div>0 {currency.symbol}</div>
+                <div>
+                  {calculateShuttleFee(Number(amount))} {currency.symbol}
+                </div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
@@ -163,7 +167,12 @@ const ConfirmTransactionModal = ({
     )
   }
 
-  const SuccessContent = () => {
+  interface SuccessContentProps {
+    chainId: ChainId
+    successHash: string
+  }
+
+  const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -171,17 +180,21 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="text-center">
+        <div className="text-center mb-2">
           <a
             className="font-semibold text-link"
-            href={getExplorerLink(ChainId.MAINNET, '', 'transaction')}
+            href={getExplorerLink(chainId, successHash, 'transaction')}
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on Etherscan
+            View on Chain Explorer
           </a>
         </div>
-        <div className="mt-12">
+        <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
+          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
+          update on {NETWORK_LABEL[destinationChainId]}
+        </div>
+        <div className="mt-2">
           <PrimaryButton
             title="Close"
             state={PrimaryButtonState.Enabled}
@@ -207,7 +220,9 @@ const ConfirmTransactionModal = ({
       {state === ConfirmTransactionModalState.InProgress && (
         <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
       )}
-      {state === ConfirmTransactionModalState.Successful && <SuccessContent />}
+      {state === ConfirmTransactionModalState.Successful && (
+        <SuccessContent chainId={originChainId} successHash={successHash} />
+      )}
     </BaseModal>
   )
 }

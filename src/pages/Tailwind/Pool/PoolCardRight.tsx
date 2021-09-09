@@ -1,6 +1,7 @@
 import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
 import React from 'react'
 import Chart from 'react-google-charts'
+import { useHistory } from 'react-router'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { PoolData } from './models/PoolData'
 
@@ -9,8 +10,10 @@ interface PoolCardRightProps {
 }
 
 const PoolCardRight = ({ pool }: PoolCardRightProps) => {
+  const history = useHistory()
+
   const stake = () => {
-    console.log('stake')
+    history.push(`/farm/${pool.address}`)
   }
 
   const lpToken0Price = pool.weights.token0 * (1 / (pool.rates.token0 * 100))
@@ -52,7 +55,7 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
       <div className="pt-4 flex flex-col md:flex-row">
         <div className="mb-4 flex-1 md:mb-0">
           <div className="font-bold">LP tokens for this pool</div>
-          <div className="font-fredoka text-4xl">{formatNumber(pool.held)} LPT</div>
+          <div className="font-fredoka text-4xl">{formatNumber(pool.held)} HLP</div>
         </div>
         <div className="flex items-end">
           <PoolBigButton title="Stake it" isEnabled={pool.held > 0} onClick={stake} />

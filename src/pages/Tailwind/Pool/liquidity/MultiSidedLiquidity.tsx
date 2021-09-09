@@ -35,7 +35,11 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcQuoteAmountGivenBase, calcBaseAmountGivenQuote } = useZap(pool.address, pool.token0, pool.token1)
+  const { calcMaxDepositAmountGivenBase, calcMaxDepositAmountGivenQuote } = useZap(
+    pool.address,
+    pool.token0,
+    pool.token1
+  )
 
   const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useApproveCallback(baseTokenAmount, pool.address)
@@ -52,9 +56,9 @@ const MultiSidedLiquidity = ({
     onBaseAmountChanged(val)
 
     if (val !== '') {
-      const [estimatedQuote] = await calcQuoteAmountGivenBase(val)
-      setQuoteInput(estimatedQuote)
-      onQuoteAmountChanged(estimatedQuote)
+      const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
+      setQuoteInput(quoteAmount)
+      onQuoteAmountChanged(quoteAmount)
     } else {
       setQuoteInput('')
     }
@@ -68,9 +72,9 @@ const MultiSidedLiquidity = ({
     onQuoteAmountChanged(val)
 
     if (val !== '') {
-      const [estimatedBase] = await calcBaseAmountGivenQuote(val)
-      setBaseInput(estimatedBase)
-      onBaseAmountChanged(estimatedBase)
+      const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
+      setBaseInput(baseAmount)
+      onBaseAmountChanged(baseAmount)
     } else {
       setBaseInput('')
     }

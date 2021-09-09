@@ -1,18 +1,16 @@
 import { Token } from '@sushiswap/sdk'
 import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { AppDispatch } from 'state'
-import { updatePools } from 'state/pool/actions'
-import { CachedPool } from 'state/pool/reducer'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
+import { useHaloPoolInfo } from './useHaloPoolInfo'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
 import { useUniPoolInfo } from './useUniPoolInfo'
 
 export enum PoolProvider {
   Balancer,
   Uni,
-  Sushi
+  Sushi,
+  Halo
 }
 
 export type PoolInfo = {
@@ -35,12 +33,11 @@ export type PoolTokenInfo = {
 }
 
 export const usePoolInfo = (lpTokenAddresses: string[]) => {
-  const { balancer, uni, sushi } = groupByPoolProvider(lpTokenAddresses)
+  const { balancer, uni, sushi, halo } = groupByPoolProvider(lpTokenAddresses)
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
-
-  const dispatch = useDispatch<AppDispatch>()
+  const fetchHaloPoolInfo = useHaloPoolInfo(halo)
 
   return useCallback(async () => {
     let poolsInfo: PoolInfo[] = []
@@ -64,16 +61,12 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
       tokenAddresses = [...tokenAddresses, ...uniResult.tokenAddresses]
     }
 
-    // Store pools info to app cache
-    const pools: CachedPool[] = []
-    for (const poolInfo of poolsInfo) {
-      pools.push({
-        pid: poolInfo.pid,
-        lpTokenAddress: poolInfo.address
-      })
+    if (halo.length) {
+      const haloResult = await fetchHaloPoolInfo()
+      poolsInfo = [...poolsInfo, ...haloResult.poolsInfo]
+      tokenAddresses = [...tokenAddresses, ...haloResult.tokenAddresses]
     }
-    dispatch(updatePools(pools))
 
     return { poolsInfo, tokenAddresses }
-  }, [balancer, uni, sushi, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, dispatch])
+  }, [balancer, uni, sushi, halo, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, fetchHaloPoolInfo])
 }
