@@ -2,19 +2,12 @@ import React, { useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import NumericalInput from 'components/NumericalInput'
-import OnOffToggle from 'components/Tailwind/Toggle/OnOffToggle'
 import { HelpCircle as QuestionIcon } from 'react-feather'
 
-enum SwapSettingsModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
-}
-
 interface SwapSettingsModalProps {
-  txDeadline: string
+  txDeadline: number
   isVisible: boolean
-  onSlippageChanged: (slippage: string) => void
+  onSlippageChanged: (slippage: number) => void
   onDismiss: () => void
   didChangeTxDeadline: (newValue: string) => void
 }
@@ -26,12 +19,9 @@ const SwapSettingsModal = ({
   onDismiss,
   didChangeTxDeadline
 }: SwapSettingsModalProps) => {
-  const [state, setState] = useState(SwapSettingsModalState.NotConfirmed)
-  const [slippage, setSlippage] = useState('0.1')
-  const [fromInputValue, setFromInputValue] = useState('')
+  const [slippage, setSlippage] = useState(0.0001)
 
   const dismissGracefully = () => {
-    setState(SwapSettingsModalState.NotConfirmed)
     onDismiss()
   }
 
@@ -41,10 +31,10 @@ const SwapSettingsModal = ({
         <div className="font-semibold text-lg">Transaction settings</div>
         <div className="mt-4">
           <SlippageTolerance
-            value={slippage}
+            value={String(slippage)}
             didChangeValue={(newSlippage: string) => {
-              setSlippage(newSlippage)
-              onSlippageChanged(newSlippage)
+              setSlippage(Number(newSlippage))
+              onSlippageChanged(Number(newSlippage))
             }}
           />
         </div>
@@ -64,6 +54,7 @@ const SwapSettingsModal = ({
           </div>
           <span>minutes</span>
         </div>
+        {/** 
         <div className="mt-4 font-semibold text-lg">Interface settings</div>
         <div className="flex justify-between items-center mt-4">
           <div className="flex items-center space-x-2 mb-2">
@@ -79,6 +70,7 @@ const SwapSettingsModal = ({
           </div>
           <OnOffToggle didChangeValue={val => setFromInputValue(val)} />
         </div>
+            */}
       </div>
     </BaseModal>
   )

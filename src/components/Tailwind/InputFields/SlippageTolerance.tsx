@@ -36,7 +36,7 @@ const SlippageTolerance = ({ value, didChangeValue }: SlippageToleranceProps) =>
   return (
     <div>
       <div className="flex items-center space-x-2 mb-2">
-        <span>Slippage tollerance:</span>
+        <span>Slippage tolerance:</span>
         <QuestionIcon size={16} />
       </div>
       <div className="flex space-x-4 mb-2">

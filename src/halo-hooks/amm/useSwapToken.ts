@@ -10,10 +10,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
-
-type ChainAddressMap = {
-  readonly [chainId in ChainId]?: string
-}
+import { ChainAddressMap } from '../../constants'
 
 const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '',
@@ -136,27 +133,32 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   }, [account, fetchAllowance])
 
   const swapToken = useCallback(
-    async (amount: string, deadline?: number) => {
+    async (amount: string, deadline?: number, slippage?: number) => {
       if (!chainId || !library) return
 
       const CurveContract = await getRouter()
 
       const quoteAmount = parseUnits(amount, fromCurrency.decimals)
+      // const minimumAmountSwap = Number(minimumAmount) * (1 - (slippage ? slippage / 100 : 0.0001))
 
       try {
+        console.log()
         const tx = await CurveContract?.originSwap(
           haloUSDC[chainId]?.address,
           fromCurrency.address,
           toCurrency.address,
           quoteAmount,
+          // parseUnits(minimumAmountSwap.toFixed(2), toCurrency.decimals).toNumber(),
           0,
-          deadline ? getFutureTime(deadline) : getFutureTime(60)
+          deadline ? getFutureTime(deadline * 60) : getFutureTime(60)
         )
+
         await tx.wait()
 
         addTransaction(tx, { summary: `Swap to ${toCurrency.name}` })
         return tx
       } catch (e) {
+        console.log(e)
         return null
       }
     },
@@ -166,12 +168,23 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
       fromCurrency.decimals,
       toCurrency.address,
       toCurrency.name,
+      // toCurrency.decimals,
       getFutureTime,
       chainId,
       getRouter,
       library
+      //minimumAmount
     ]
   )
 
-  return { getPrice, getMinimumAmount, price, minimumAmount, allowance, approve, swapToken, fetchAllowance }
+  return {
+    getPrice,
+    getMinimumAmount,
+    price,
+    minimumAmount,
+    allowance,
+    approve,
+    swapToken,
+    fetchAllowance
+  }
 }

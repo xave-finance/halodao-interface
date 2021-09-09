@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId, CurrencyAmount } from '@sushiswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -28,8 +28,8 @@ const SwapPanel = () => {
   )
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
-  const [txDeadline, setTxDeadline] = useState('')
-  const [slippage, setSlippage] = useState('')
+  const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
+  const [slippage, setSlippage] = useState(0.0001) // 1%
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -44,7 +44,7 @@ const SwapPanel = () => {
       const txHash: any = await approve()
 
       // user rejected tx or didn't go thru
-      if (txHash.code == 4001 || !txHash) {
+      if (txHash.code === 4001 || !txHash) {
         setApproveState(ApproveButtonState.NotApproved)
       }
     } catch (e) {
@@ -81,7 +81,6 @@ const SwapPanel = () => {
 
   useEffect(() => {
     if (allowance !== '' && Number(allowance) > 0) {
-      //if (ApproveButtonState.Approving) return
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Swap)
     } else {
@@ -273,8 +272,8 @@ const SwapPanel = () => {
                 setFromCurrency(token)
               }
             }}
-            isSufficientBalance={(isSufficient: boolean) => {
-              if (!isSufficient) {
+            isSufficientBalance={async (balance: CurrencyAmount) => {
+              if (balance.lessThan(fromInputValue)) {
                 setButtonState(ButtonState.InsufficientBalance)
               }
             }}
@@ -323,7 +322,7 @@ const SwapPanel = () => {
         isVisible={showSettingsModal}
         onSlippageChanged={setSlippage}
         onDismiss={() => setShowSettingsModal(false)}
-        didChangeTxDeadline={val => setTxDeadline(val)}
+        didChangeTxDeadline={val => setTxDeadline(Number(val))}
       />
       <SwapTransactionModal
         isVisible={showModal}
@@ -334,8 +333,13 @@ const SwapPanel = () => {
         minimumAmount={minimumAmount || '0'}
         price={price || 0}
         onSwap={async () => {
-          if (await swapToken(fromInputValue)) {
+          const txn = await swapToken(fromInputValue, txDeadline, slippage)
+          if (txn) {
             setSwapTransactionModalState(ModalState.Successful)
+          }
+
+          if (txn === 4001 || !txn) {
+            setSwapTransactionModalState(ModalState.NotConfirmed)
           }
         }}
         onPriceUpdate={() => {

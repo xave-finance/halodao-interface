@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Currency, Token } from '@sushiswap/sdk'
+import { Currency, CurrencyAmount, Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
@@ -17,7 +17,7 @@ interface TokenInputProps {
   showMax: boolean
   onSelectToken?: (token: Token) => void
   tokenList?: Token[]
-  isSufficientBalance?: (balanceCheck: boolean) => void
+  isSufficientBalance?: (balance: CurrencyAmount, val: string) => void
 }
 
 const TokenInput = ({
@@ -75,7 +75,8 @@ const TokenInput = ({
               className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
               value={value}
               onUserInput={val => {
-                console.log(Number(balance?.raw.toString()) >= Number(val))
+                if (isSufficientBalance && balance) isSufficientBalance(balance, val)
+
                 didChangeValue(val)
               }}
             />
