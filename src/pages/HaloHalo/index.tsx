@@ -229,8 +229,8 @@ export default function HaloHalo() {
                     </DessertPoolRow>
                     <TokenRewardsExplainer>
                       <RowBetween>
-                        This is where your Rainbow Candy (RNBW) rewards go. We saved you some gas and sent it straight
-                        to the Rainbow Pool to earn daily.
+                        This is where your RNBW vesting rewards will go. We saved you some gas and sent it straight to
+                        the Rainbow Pool to earn monthly vesting rewards and a share of network profits.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
