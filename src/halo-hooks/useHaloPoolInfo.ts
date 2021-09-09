@@ -24,16 +24,28 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       const poolAddress = getAddress(map.lpToken)
       const CurveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
 
-      const token0Address = await CurveContract?.derivatives(0)
-      const token1Address = await CurveContract?.derivatives(1)
+      const [token0Address, token1Address] = await Promise.all([
+        CurveContract?.derivatives(0),
+        CurveContract?.derivatives(1)
+      ])
       const Token0Contract = getContract(token0Address, ERC20_ABI, library)
       const Token1Contract = getContract(token1Address, ERC20_ABI, library)
-      const token0Symbol = await Token0Contract?.symbol()
-      const token1Symbol = await Token1Contract?.symbol()
-      const token0Decimals = await Token0Contract?.decimals()
-      const token1Decimals = await Token1Contract?.decimals()
-      const totalLiquidityValue = await CurveContract?.liquidity()
-      const curveDecimals = await CurveContract?.decimals()
+
+      const [
+        token0Symbol,
+        token1Symbol,
+        token0Decimals,
+        token1Decimals,
+        totalLiquidityValue,
+        curveDecimals
+      ] = await Promise.all([
+        Token0Contract?.symbol(),
+        Token1Contract?.symbol(),
+        Token0Contract?.decimals(),
+        Token1Contract?.decimals(),
+        CurveContract?.liquidity(),
+        CurveContract?.decimals()
+      ])
 
       poolsInfo.push({
         pid: map.pid,
