@@ -8,15 +8,15 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export { PRELOADED_PROPOSALS } from './proposals'
 
 // a list of tokens by chain
-type ChainTokenList = {
+export type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-type ChainTokenMap = {
+export type ChainTokenMap = {
   readonly [chainId in ChainId]?: Token
 }
 
-type ChainAddressMap = {
+export type ChainAddressMap = {
   readonly [chainId in ChainId]?: string
 }
 
