@@ -4,12 +4,14 @@ import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
 import ExpandablePoolRow from './ExpandablePoolRow'
-import { LIQUIDITY_POOLS_ADDRESSES } from 'constants/pools'
+import { LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { updatePools } from 'state/pool/actions'
 import { CachedPool } from 'state/pool/reducer'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import { useActiveWeb3React } from 'hooks'
+import { ChainId } from '@sushiswap/sdk'
 
 interface PoolAddressPidMap {
   address: string
@@ -21,9 +23,11 @@ const Pool = () => {
   const rewardPoolAddresses = useLPTokenAddresses()
   const [activeRow, setActiveRow] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
+  const { chainId } = useActiveWeb3React()
 
   const defaultPoolMap = () => {
-    return LIQUIDITY_POOLS_ADDRESSES.map<PoolAddressPidMap>(address => {
+    const addresses = chainId === ChainId.MATIC ? LIQUIDITY_POOLS_ADDRESSES_MATIC : LIQUIDITY_POOLS_ADDRESSES
+    return addresses.map<PoolAddressPidMap>(address => {
       return {
         address,
         pid: undefined
@@ -48,7 +52,7 @@ const Pool = () => {
     }
     dispatch(updatePools(pools))
     setPoolMap(map)
-  }, [rewardPoolAddresses]) //eslint-disable-line
+  }, [rewardPoolAddresses, chainId]) //eslint-disable-line
 
   return (
     <PageWrapper>
