@@ -4,12 +4,14 @@ import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
 import ExpandablePoolRow from './ExpandablePoolRow'
-import { LIQUIDITY_POOLS_ADDRESSES } from 'constants/pools'
+import { LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { updatePools } from 'state/pool/actions'
 import { CachedPool } from 'state/pool/reducer'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import { useActiveWeb3React } from 'hooks'
+import { ChainId } from '@sushiswap/sdk'
 
 interface PoolAddressPidMap {
   address: string
@@ -21,9 +23,11 @@ const Pool = () => {
   const rewardPoolAddresses = useLPTokenAddresses()
   const [activeRow, setActiveRow] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
+  const { chainId } = useActiveWeb3React()
 
   const defaultPoolMap = () => {
-    return LIQUIDITY_POOLS_ADDRESSES.map<PoolAddressPidMap>(address => {
+    const addresses = chainId === ChainId.MATIC ? LIQUIDITY_POOLS_ADDRESSES_MATIC : LIQUIDITY_POOLS_ADDRESSES
+    return addresses.map<PoolAddressPidMap>(address => {
       return {
         address,
         pid: undefined
@@ -36,19 +40,24 @@ const Pool = () => {
   useEffect(() => {
     const pools: CachedPool[] = []
     const map = defaultPoolMap()
+
     for (const [i, address] of rewardPoolAddresses.entries()) {
       pools.push({
         pid: i,
         lpTokenAddress: address
       })
       const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
-      if (filtered.length) {
+      if (filtered.length > 0) {
         filtered[0].pid = i
       }
     }
-    dispatch(updatePools(pools))
+
+    if (pools.length > 0) {
+      dispatch(updatePools(pools))
+    }
+
     setPoolMap(map)
-  }, [rewardPoolAddresses]) //eslint-disable-line
+  }, [rewardPoolAddresses, chainId]) //eslint-disable-line
 
   return (
     <PageWrapper>
@@ -57,7 +66,7 @@ const Pool = () => {
           <PageHeaderLeft
             subtitle="Add/Remove Liquidity"
             title="Pools"
-            caption="ERC721 token standard returns a immutable raiden network! VeChain should be a ERC20 token standard!"
+            caption="Provide liquidity to pools to get HLP tokens. Deposit your HLP tokens to the Farm to begin earning Rainbow Candies (RNBW). Each RNBW you earn is automatically staked as xRNBW in the Rainbow Pool to begin earning vesting rewards!"
             link={{ text: 'Learn about pool liquidity', url: 'https://docs.halodao.com' }}
           />
         </div>

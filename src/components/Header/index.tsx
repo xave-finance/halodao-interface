@@ -631,12 +631,12 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
   const { account, chainId } = useActiveWeb3React()
   const halo = chainId ? HALO[chainId] : undefined
   const haloBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, halo)
-  const countUpValue = haloBalance?.toFixed(0) ?? '0'
+  const countUpValue = haloBalance?.toFixed(2) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <>
-      {chainId && [1, 3, 4, 5, 42].includes(chainId) && (
+      {chainId && [1, 3, 4, 5, 42, 137].includes(chainId) && (
         <UNIWrapper onClick={onClickHandler}>
           <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && (

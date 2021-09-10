@@ -115,13 +115,13 @@ export const NETWORK_PARAMS: {
   },
   [ChainId.MATIC]: {
     chainId: '0x89',
-    chainName: 'Matic',
+    chainName: 'Matic(Polygon) Mainnet',
     nativeCurrency: {
       name: 'Matic',
       symbol: 'MATIC',
       decimals: 18
     },
-    rpcUrls: ['https://rpc-mainnet.maticvigil.com'], //['https://matic-mainnet.chainstacklabs.com/'],
+    rpcUrls: ['https://rpc-mainnet.matic.network'], //['https://matic-mainnet.chainstacklabs.com/'],
     blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
   },
   // [ChainId.HECO]: {
