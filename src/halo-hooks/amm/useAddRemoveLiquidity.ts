@@ -14,6 +14,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     async (amount: BigNumber) => {
       const res = await CurveContract?.viewDeposit(amount)
       // console.log('res:', res)
+      console.log('-----------')
+      console.log(`viewDeposit response: (amount: ${amount})`)
       console.log('lp tokens:', formatEther(res[0]))
       console.log('token 0:', formatUnits(res[1][0], token0.decimals))
       console.log('token 1:', formatUnits(res[1][1], token1.decimals))

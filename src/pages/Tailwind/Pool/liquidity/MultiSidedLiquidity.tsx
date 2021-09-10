@@ -71,6 +71,11 @@ const MultiSidedLiquidity = ({
     }
   }
 
+  useEffect(() => {
+    console.log('-----------')
+    console.log('pool detail: ', pool)
+  }, [])
+
   /**
    * Update base amount upon entering quote amount
    **/
@@ -78,13 +83,22 @@ const MultiSidedLiquidity = ({
     setQuoteInput(val)
     onQuoteAmountChanged(val)
 
+    console.log('-----------')
+    console.log('onQuoteInputUpdate')
+
     if (val !== '') {
-      const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
+      console.log('ZAP:')
+      const { maxDeposit, baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       setBaseInput(baseAmount)
       onBaseAmountChanged(baseAmount)
 
+      // await viewDeposit(parseEther(maxDeposit))
+
+      console.log('MANUAL:')
       const input1 = Number(val)
-      const input0 = (input1 / pool.rates.token0) * pool.rates.token1 * (pool.weights.token0 / pool.weights.token1)
+      //const input0 = (input1 / pool.rates.token0) * pool.rates.token1 * (pool.weights.token0 / pool.weights.token1)
+      const input0 = (input1 / pool.rates.token0) * pool.rates.token1
+      // base = (100 / 0.0118463) * 0.0100065745 * (0.47734119 / 0.5226588)
       console.log('base calculated value: ', input0)
 
       // const totalNumeraire =
