@@ -15,18 +15,17 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
 
-/**
- * TODO: change in bsc
- */
-
 interface BridgeProps {
-  setButtonState?: (buttonState: ButtonState) => void
-  setApproveState?: (approveState: ApproveButtonState) => void
-  setInputValue?: (input: string) => void
-  token?: any
+  setButtonState: (buttonState: ButtonState) => void
+  setApproveState: (approveState: ApproveButtonState) => void
+  setInputValue: (input: string) => void
+  setChainToken: (chainToken: any) => void
+  setToken: (token: any) => void
+  token: any
+  chainToken: any
 }
 
-const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: BridgeProps) => {
+const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken, setToken, token }: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -40,73 +39,52 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const onTokenChange = useCallback(() => {
     if (!chainId || !library) return
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
+
+    const selectedToken = chainToken[chainId]
+    if (!selectedToken) return
+    setToken(selectedToken)
+
+    setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [token, account, chainId, library])
-
-  useEffect(() => {
-    onTokenChange()
-  }, [token, onTokenChange])
+  }, [chainToken, account, chainId, library, setToken])
 
   const onChainIdChange = useCallback(() => {
-    if (!chainId || !library || !setButtonState || !setInputValue || !setApproveState) return
+    if (!chainId || !token || !library) return
+
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token[chainId as ChainId].address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
     )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address])
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
-    setTokenContract(getContract(token[chainId as ChainId].address, TOKEN_ABI, library, account as string))
-
+    setTokenContract(getContract(token.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
     setInputValue('')
-  }, [chainId, token, library, account, setApproveState, setButtonState, setInputValue])
-
-  useEffect(() => {
-    onChainIdChange()
-  }, [onChainIdChange])
+  }, [chainId, library, account, setApproveState, setButtonState, setInputValue, token])
 
   const onDestinationChainIdChange = useCallback(() => {
-    if (!chainId || !library) return
-    if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== destinationChainId) {
+    if (!chainId || !destinationChainId || !library || !token) return
+
+    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(
-          BRIDGE_CONTRACTS[token[chainId as ChainId].address],
-          SECONDARY_BRIDGE_ABI,
-          library,
-          account as string
-        )
+        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainId, token, library, account, destinationChainId])
-
-  useEffect(() => {
-    onDestinationChainIdChange()
-  }, [onDestinationChainIdChange])
+  }, [chainId, library, account, destinationChainId, token])
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -134,7 +112,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
@@ -151,7 +128,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const giveSecondaryBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await tokenContract?.approve(secondaryBridgeContract?.address, amount)
         addTransaction(tx, { summary: 'Give bridge allowance' })
@@ -175,7 +151,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const burnWrappedTokens = useCallback(
     async (amount: ethers.BigNumber) => {
-      if (!setButtonState || !setApproveState) return
       try {
         const tx = await secondaryBridgeContract?.burn(amount)
         addTransaction(tx, { summary: 'Burn wrapped tokens' })
@@ -191,11 +166,10 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   )
 
   const approveAllowance = async (amount: ethers.BigNumber) => {
-    if (!setApproveState || !setButtonState) return
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
+      if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -207,13 +181,11 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
     } catch (e) {
       console.error(e)
     }
-    /** @todo Add logging to google analytics */
   }
 
   const fetchAllowance = useCallback(async () => {
-    if (!chainId) return
     try {
-      if (chainId === ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address]) {
+      if (token && chainId === ORIGINAL_TOKEN_CHAIN_ID[token.address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -229,14 +201,14 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
 
   const fetchBalance = useCallback(async () => {
     try {
-      setBalance(toNumber(await tokenContract?.balanceOf(account)))
+      setBalance(await tokenContract?.balanceOf(account).then((n: any) => toNumber(n)))
     } catch (e) {
       console.error(e)
     }
   }, [tokenContract, account])
 
   useEffect(() => {
-    if (account && primaryBridgeContract && secondaryBridgeContract && token) {
+    if (account && primaryBridgeContract && secondaryBridgeContract && chainToken) {
       fetchAllowance()
       fetchBalance()
     }
@@ -246,11 +218,9 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
       fetchBalance()
     }, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, fetchAllowance, fetchBalance, token, allowance, primaryBridgeContract, secondaryBridgeContract])
+  }, [account, fetchAllowance, fetchBalance, chainToken, allowance, primaryBridgeContract, secondaryBridgeContract])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
-    if (!setApproveState || !setButtonState) return false
-
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await depositToPrimaryBridge(amount, chainId)
@@ -262,11 +232,12 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
       console.error(e)
       return false
     }
+
     /** Log deposit to google analytics */
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: token[chainId as ChainId].symbol,
+      label: token ? token.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -274,7 +245,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
   }
 
   const burn = async (amount: ethers.BigNumber): Promise<boolean> => {
-    if (!setApproveState || !setButtonState) return false
     setButtonState(ButtonState.Confirming)
     try {
       const tx = await burnWrappedTokens(amount)
@@ -286,12 +256,14 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, token }: Br
       console.error(e)
       return false
     }
+
     /** log burn to google analytics */
+    const targetToken = chainToken[destinationChainId]
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
-      label: token[destinationChainId].symbol,
-      value: parseFloat(amount.toString())
+      label: targetToken ? targetToken.symbol : '',
+      value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
     return true

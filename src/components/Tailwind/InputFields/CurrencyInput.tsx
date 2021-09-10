@@ -16,6 +16,7 @@ interface TokenInputProps {
   showBalance: boolean
   showMax: boolean
   onSelectToken?: (token: Token) => void
+  tokenList?: Token[]
 }
 
 const TokenInput = ({
@@ -25,7 +26,8 @@ const TokenInput = ({
   didChangeValue,
   showBalance,
   showMax,
-  onSelectToken
+  onSelectToken,
+  tokenList
 }: TokenInputProps) => {
   const { account } = useActiveWeb3React()
   const balance = useCurrencyBalance(account ?? undefined, currency)
@@ -60,7 +62,7 @@ const TokenInput = ({
     <>
       <div className="flex flex-col md:flex-row">
         {showSelectedCurrency()}
-        <div className="mb-2 md:mb-0 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
+        <div className="mb-2 md:mb-0 md:ml-4 md:w-3/4 flex items-center p-4 rounded-card bg-primary-lightest h-tokenInput">
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
@@ -78,13 +80,15 @@ const TokenInput = ({
           <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
         </div>
       </div>
+
       <TokenSelectModal
         isVisible={showModal}
         onDismiss={() => setShowModal(false)}
-        onSelect={(token: Token) => {
+        onSelect={token => {
           if (onSelectToken) onSelectToken(token)
           setShowModal(false)
         }}
+        tokenList={tokenList}
       />
     </>
   )
