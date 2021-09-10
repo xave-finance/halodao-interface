@@ -37,6 +37,7 @@ const SwapPanel = () => {
   const [timeLeft, setTimeLeft] = useState(60)
   const [isExpired, setIsExpired] = useState(false)
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
+  const [txhash, setTxhash] = useState('')
 
   const handleApprove = useCallback(async () => {
     try {
@@ -273,7 +274,13 @@ const SwapPanel = () => {
               }
             }}
             isSufficientBalance={async (balance: CurrencyAmount) => {
-              if (balance.lessThan(fromInputValue)) {
+              if (
+                balance.lessThan(
+                  fromInputValue.indexOf('.') !== -1
+                    ? fromInputValue
+                    : fromInputValue.substring(0, fromInputValue.length - 1)
+                )
+              ) {
                 setButtonState(ButtonState.InsufficientBalance)
               }
             }}
@@ -333,9 +340,9 @@ const SwapPanel = () => {
         minimumAmount={minimumAmount || '0'}
         price={price || 0}
         onSwap={async () => {
-          // TODO: add slippage
-          const txn = await swapToken(fromInputValue, txDeadline)
+          const txn = await swapToken(fromInputValue, txDeadline, slippage)
           if (txn) {
+            setTxhash(txn.hash)
             setSwapTransactionModalState(ModalState.Successful)
           }
 
@@ -357,6 +364,8 @@ const SwapPanel = () => {
         timeLeft={timeLeft}
         swapTransactionModalState={swapTransactionModalState}
         setSwapTransactionModalState={setSwapTransactionModalState}
+        txnHash={txhash}
+        chainId={chainId as number}
       />
     </>
   )

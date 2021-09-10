@@ -84,15 +84,15 @@ const kovanAssimilators: AssimilatorAddressMap = {
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0x20a590c339a5A6EA0bd6817b832847067377ecfb',
+  [TokenSymbol.USDC]: '0xbf7455b83fd4c6dcF4f544e68DD38670b4Ff07D6',
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
   [TokenSymbol.CHF]: ethers.constants.AddressZero,
-  [TokenSymbol.TUSD]: '0xc33745C6cD00C4097faE924CB7e2594FfF4b7d7E',
-  [TokenSymbol.TAUD]: '0x6360a8Adb883CA076e7F2c6d2fF37531A771e414',
-  [TokenSymbol.TCAD]: '0xf5b0b3b50328B2595BC6a31A526A8A3568CEa42d',
-  [TokenSymbol.TGBP]: '0xB9f4E777491bb848578B6FBa5c8A744A40d11128',
-  [TokenSymbol.XSGD]: '0x4159d4279BAc010ef4E4c1a7e085f6103956a95a'
+  [TokenSymbol.TUSD]: '0x7aBF5B0183631fb7537523c6627D8016408e1509',
+  [TokenSymbol.TAUD]: '0x1bF0990fDB4CABF88aB7f3D412691cE2B425F2Ef',
+  [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
+  [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
+  [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
 }
 
 export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } = {

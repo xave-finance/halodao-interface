@@ -11,11 +11,12 @@ import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { ChainAddressMap } from '../../constants'
+import { toFixed } from 'utils/formatNumber'
 
 const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '',
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
-  [ChainId.MATIC]: '0x41752aB22C4885F9CBBCB8081f9775C3988DdaFB'
+  [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
 }
 
 export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
@@ -83,7 +84,11 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
 
       if (!CurveContract || !chainId) return
 
-      const quoteAmount = parseUnits(amount, fromCurrency.decimals)
+      const quoteAmount = parseUnits(
+        amount.charAt(amount.length - 1) ? amount : amount.substring(0, amount.length - 1),
+        fromCurrency.decimals
+      )
+
       const res = await CurveContract?.viewOriginSwap(
         haloUSDC[chainId]?.address,
         fromCurrency.address,
@@ -102,7 +107,6 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
 
       try {
         const allowance = await tokenContract?.allowance(account, CurveContract?.address)
-        console.log('Allowance: ', formatUnits(allowance))
         setAllowance(String(allowance))
       } catch {
         setAllowance('0')
@@ -133,24 +137,23 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   }, [account, fetchAllowance])
 
   const swapToken = useCallback(
-    // TODO: add slipage
-    async (amount: string, deadline?: number) => {
+    async (amount: string, deadline?: number, slippage?: number) => {
       if (!chainId || !library) return
 
       const CurveContract = await getRouter()
 
       const quoteAmount = parseUnits(amount, fromCurrency.decimals)
-      // const minimumAmountSwap = Number(minimumAmount) * (1 - (slippage ? slippage / 100 : 0.0001))
+
+      const minimumAmountSwap = Number(minimumAmount) * (1 - (slippage ? slippage / 100 : 0.01))
+      const parsedMinimumAmountSwap = parseUnits(toFixed(minimumAmountSwap, toCurrency.decimals), toCurrency.decimals)
 
       try {
-        console.log()
         const tx = await CurveContract?.originSwap(
           haloUSDC[chainId]?.address,
           fromCurrency.address,
           toCurrency.address,
           quoteAmount,
-          // parseUnits(minimumAmountSwap.toFixed(2), toCurrency.decimals).toNumber(),
-          0,
+          parsedMinimumAmountSwap,
           deadline ? getFutureTime(deadline * 60) : getFutureTime(60)
         )
 
@@ -169,12 +172,12 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
       fromCurrency.decimals,
       toCurrency.address,
       toCurrency.name,
-      // toCurrency.decimals,
+      toCurrency.decimals,
       getFutureTime,
       chainId,
       getRouter,
-      library
-      //minimumAmount
+      library,
+      minimumAmount
     ]
   )
 

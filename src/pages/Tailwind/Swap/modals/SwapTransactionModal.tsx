@@ -27,6 +27,8 @@ interface SwapTransactionModalProps {
   timeLeft: number
   swapTransactionModalState: ModalState
   setSwapTransactionModalState: (state: ModalState) => void
+  txnHash: string
+  chainId: ChainId
 }
 
 const SwapTransactionModal = ({
@@ -44,7 +46,9 @@ const SwapTransactionModal = ({
   setIsExpired,
   timeLeft,
   swapTransactionModalState,
-  setSwapTransactionModalState
+  setSwapTransactionModalState,
+  txnHash,
+  chainId
 }: SwapTransactionModalProps) => {
   const dismissGracefully = () => {
     setSwapTransactionModalState(ModalState.NotConfirmed)
@@ -156,7 +160,7 @@ const SwapTransactionModal = ({
         <div className="text-center">
           <a
             className="font-semibold text-link"
-            href={getExplorerLink(ChainId.MAINNET, '', 'transaction')}
+            href={getExplorerLink(chainId, txnHash, 'transaction')}
             target="_blank"
             rel="noopener noreferrer"
           >
