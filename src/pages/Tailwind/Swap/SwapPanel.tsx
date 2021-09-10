@@ -15,12 +15,18 @@ import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
 import { ButtonState, ModalState } from '../../../constants/buttonStates'
+import { HALO } from '../../../constants'
+import PageWarning from 'components/Tailwind/Layout/PageWarning'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
 
-  const [toCurrency, setToCurrency] = useState((haloTokenList[chainId as ChainId] as Token[])[0])
-  const [fromCurrency, setFromCurrency] = useState((haloTokenList[chainId as ChainId] as Token[])[1])
+  const [toCurrency, setToCurrency] = useState(
+    chainId ? (haloTokenList[chainId as ChainId] as Token[])[0] : (HALO[ChainId.MAINNET] as Token)
+  )
+  const [fromCurrency, setFromCurrency] = useState(
+    chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
+  )
 
   const { getPrice, getMinimumAmount, price, minimumAmount, approve, allowance, swapToken } = useSwapToken(
     toCurrency,
@@ -76,8 +82,10 @@ const SwapPanel = () => {
   }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue, minimumAmount])
 
   useEffect(() => {
-    setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
-    setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
+    if (chainId) {
+      setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
+      setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
+    }
   }, [chainId])
 
   useEffect(() => {
@@ -248,80 +256,86 @@ const SwapPanel = () => {
   return (
     <>
       <div className="w-full">
-        <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
-          <div className="w-1/2 flex justify-start">
-            <p className="font-semibold text-secondary-alternate">From</p>
-          </div>
-          <div className="w-1/2 flex justify-end cursor-pointer">
-            <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} />
-          </div>
-        </div>
+        {account ? (
+          <>
+            <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
+              <div className="w-1/2 flex justify-start">
+                <p className="font-semibold text-secondary-alternate">From</p>
+              </div>
+              <div className="w-1/2 flex justify-end cursor-pointer">
+                <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} />
+              </div>
+            </div>
 
-        <div className="mt-2">
-          <CurrencyInput
-            currency={fromCurrency}
-            value={fromInputValue}
-            canSelectToken={true}
-            didChangeValue={val => {
-              setFromInputValue(val)
-            }}
-            showBalance={true}
-            showMax={true}
-            tokenList={haloTokenList[chainId as ChainId] || []}
-            onSelectToken={token => {
-              if (token !== toCurrency) {
-                setFromCurrency(token)
-              }
-            }}
-            isSufficientBalance={async (balance: CurrencyAmount) => {
-              if (
-                balance.lessThan(
-                  fromInputValue.indexOf('.') !== -1
-                    ? fromInputValue
-                    : fromInputValue.substring(0, fromInputValue.length - 1)
-                )
-              ) {
-                setButtonState(ButtonState.InsufficientBalance)
-              }
-            }}
-          />
-        </div>
+            <div className="mt-2">
+              <CurrencyInput
+                currency={fromCurrency}
+                value={fromInputValue}
+                canSelectToken={true}
+                didChangeValue={val => {
+                  setFromInputValue(val)
+                }}
+                showBalance={true}
+                showMax={true}
+                tokenList={haloTokenList[chainId as ChainId] || []}
+                onSelectToken={token => {
+                  if (token !== toCurrency) {
+                    setFromCurrency(token)
+                  }
+                }}
+                isSufficientBalance={async (balance: CurrencyAmount) => {
+                  if (
+                    balance.lessThan(
+                      fromInputValue.indexOf('.') !== -1
+                        ? fromInputValue
+                        : fromInputValue.substring(0, fromInputValue.length - 1)
+                    )
+                  ) {
+                    setButtonState(ButtonState.InsufficientBalance)
+                  }
+                }}
+              />
+            </div>
 
-        <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
-          <div className="w-1/2 flex justify-start">
-            <p className="mt-2 font-semibold text-secondary-alternate">Swap to</p>
-          </div>
-          <div
-            className="w-1/2 flex justify-end cursor-pointer"
-            onClick={() => {
-              const prevToInputValue = toInputValue
-              const prevToCurrency = toCurrency
-              setToInputValue(fromInputValue)
-              setFromInputValue(prevToInputValue)
-              setToCurrency(fromCurrency)
-              setFromCurrency(prevToCurrency)
-            }}
-          >
-            <img src={SwitchIcon} alt="Switch" />
-          </div>
-        </div>
+            <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
+              <div className="w-1/2 flex justify-start">
+                <p className="mt-2 font-semibold text-secondary-alternate">Swap to</p>
+              </div>
+              <div
+                className="w-1/2 flex justify-end cursor-pointer"
+                onClick={() => {
+                  const prevToInputValue = toInputValue
+                  const prevToCurrency = toCurrency
+                  setToInputValue(fromInputValue)
+                  setFromInputValue(prevToInputValue)
+                  setToCurrency(fromCurrency)
+                  setFromCurrency(prevToCurrency)
+                }}
+              >
+                <img src={SwitchIcon} alt="Switch" />
+              </div>
+            </div>
 
-        <div className="mt-2">
-          <CurrencyInput
-            currency={toCurrency}
-            value={toInputValue}
-            canSelectToken={true}
-            didChangeValue={val => setToInputValue(val)}
-            showBalance={false}
-            showMax={false}
-            tokenList={haloTokenList[chainId as ChainId] || []}
-            onSelectToken={token => {
-              if (token !== fromCurrency) {
-                setToCurrency(token)
-              }
-            }}
-          />
-        </div>
+            <div className="mt-2">
+              <CurrencyInput
+                currency={toCurrency}
+                value={toInputValue}
+                canSelectToken={true}
+                didChangeValue={val => setToInputValue(val)}
+                showBalance={false}
+                showMax={false}
+                tokenList={haloTokenList[chainId as ChainId] || []}
+                onSelectToken={token => {
+                  if (token !== fromCurrency) {
+                    setToCurrency(token)
+                  }
+                }}
+              />
+            </div>
+          </>
+        ) : (
+          <PageWarning caption={'Connect your wallet to swap your tokens!'} />
+        )}
         <MainContent />
       </div>
       <SwapSettingsModal
