@@ -66,7 +66,7 @@ const Pool = () => {
           <PageHeaderLeft
             subtitle="Add/Remove Liquidity"
             title="Pools"
-            caption="ERC721 token standard returns a immutable raiden network! VeChain should be a ERC20 token standard!"
+            caption="Provide liquidity to pools to get HLP tokens. Deposit your HLP tokens to the Farm to begin earning Rainbow Candies (RNBW). Each RNBW you earn is automatically staked as xRNBW in the Rainbow Pool to begin earning vesting rewards!"
             link={{ text: 'Learn about pool liquidity', url: 'https://docs.halodao.com' }}
           />
         </div>
