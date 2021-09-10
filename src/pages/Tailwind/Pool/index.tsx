@@ -40,17 +40,22 @@ const Pool = () => {
   useEffect(() => {
     const pools: CachedPool[] = []
     const map = defaultPoolMap()
+
     for (const [i, address] of rewardPoolAddresses.entries()) {
       pools.push({
         pid: i,
         lpTokenAddress: address
       })
       const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
-      if (filtered.length) {
+      if (filtered.length > 0) {
         filtered[0].pid = i
       }
     }
-    dispatch(updatePools(pools))
+
+    if (pools.length > 0) {
+      dispatch(updatePools(pools))
+    }
+
     setPoolMap(map)
   }, [rewardPoolAddresses, chainId]) //eslint-disable-line
 
