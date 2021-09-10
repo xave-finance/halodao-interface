@@ -79,7 +79,7 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {/* {poolMap.map((pool, i) => (
+      {poolMap.map((pool, i) => (
         <ExpandablePoolRow
           key={pool.address}
           poolAddress={pool.address}
@@ -94,7 +94,7 @@ const Pool = () => {
             }
           }}
         />
-      ))} */}
+      ))}
     </PageWrapper>
   )
 }
