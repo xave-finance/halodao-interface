@@ -631,7 +631,7 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
   const { account, chainId } = useActiveWeb3React()
   const halo = chainId ? HALO[chainId] : undefined
   const haloBalance: TokenAmount | undefined = useTokenBalance(account ?? undefined, halo)
-  const countUpValue = haloBalance?.toFixed(0) ?? '0'
+  const countUpValue = haloBalance?.toFixed(2) ?? '0'
   const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
