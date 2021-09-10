@@ -8,7 +8,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
-import { HALO_REWARDS_ADDRESS } from '../../constants'
+import { HALO_REWARDS_V1_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
 import Fraction from 'constants/Fraction'
 
@@ -16,7 +16,7 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const { account, library, chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
   console.log('CurveContract', CurveContract)
-  const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
+  const RewardsContract = useContract(chainId ? HALO_REWARDS_V1_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
   console.log('RewardsContract', RewardsContract)
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []
