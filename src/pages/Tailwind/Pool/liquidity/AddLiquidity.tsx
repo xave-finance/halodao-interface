@@ -24,6 +24,8 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
   const balances = [tokenBalances[pool.token0.address], tokenBalances[pool.token1.address]]
 
+  const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
+
   return (
     <div>
       <div className="flex items-center justify-end">
@@ -33,6 +35,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
         <SegmentControl
           segments={['Two-sided', 'Single-sided']}
           activeSegment={activeSegment}
+          disabledSegments={disabledSegments}
           didChangeSegment={i => setActiveSegment(i)}
         />
       </div>

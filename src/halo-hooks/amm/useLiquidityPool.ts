@@ -19,14 +19,20 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []
 
-    const token0Address = await CurveContract?.derivatives(0)
-    const token1Address = await CurveContract?.derivatives(1)
+    const [token0Address, token1Address] = await Promise.all([
+      CurveContract?.derivatives(0),
+      CurveContract?.derivatives(1)
+    ])
+
     const Token0Contract = getContract(token0Address, ERC20_ABI, library)
     const Token1Contract = getContract(token1Address, ERC20_ABI, library)
-    const token0Symbol = await Token0Contract?.symbol()
-    const token1Symbol = await Token1Contract?.symbol()
-    const token0Decimals = await Token0Contract?.decimals()
-    const token1Decimals = await Token1Contract?.decimals()
+
+    const [token0Symbol, token1Symbol, token0Decimals, token1Decimals] = await Promise.all([
+      Token0Contract?.symbol(),
+      Token1Contract?.symbol(),
+      Token0Contract?.decimals(),
+      Token1Contract?.decimals()
+    ])
 
     return [
       new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol),
@@ -39,14 +45,20 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
 
     const res = await CurveContract?.liquidity()
 
-    const derivatives0 = await CurveContract?.derivatives(0)
-    const derivatives1 = await CurveContract?.derivatives(1)
-    const assimialtor0Address = await CurveContract?.assimilator(derivatives0)
-    const assimialtor1Address = await CurveContract?.assimilator(derivatives1)
+    const [derivatives0, derivatives1] = await Promise.all([
+      CurveContract?.derivatives(0),
+      CurveContract?.derivatives(1)
+    ])
+
+    const [assimialtor0Address, assimialtor1Address] = await Promise.all([
+      CurveContract?.assimilator(derivatives0),
+      CurveContract?.assimilator(derivatives1)
+    ])
+
     const Assimilator0Contract = getContract(assimialtor0Address, ASSIMILATOR_ABI, library)
     const Assimilator1Contract = getContract(assimialtor1Address, ASSIMILATOR_ABI, library)
-    const rate0 = await Assimilator0Contract.getRate()
-    const rate1 = await Assimilator1Contract.getRate()
+
+    const [rate0, rate1] = await Promise.all([Assimilator0Contract.getRate(), Assimilator1Contract.getRate()])
 
     const token0Numeraire = res.individual_[0]
     const token0Value = token0Numeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
