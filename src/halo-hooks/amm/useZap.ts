@@ -126,12 +126,22 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     [ZapContract, curveAddress, token0, token1, addTransaction]
   )
 
+  const calcMaxBaseForDeposit = useCallback(
+    async (amount: string) => {
+      const quoteAmount = parseUnits(amount, token1.decimals)
+      const res = await ZapContract?.calcMaxBaseForDeposit(curveAddress, quoteAmount)
+      return res
+    },
+    [ZapContract, curveAddress, token0, token1]
+  )
+
   return {
     calcMaxDepositAmountGivenBase,
     calcMaxDepositAmountGivenQuote,
     calcSwapAmountForZapFromBase,
     calcSwapAmountForZapFromQuote,
     zapFromBase,
-    zapFromQuote
+    zapFromQuote,
+    calcMaxBaseForDeposit
   }
 }
