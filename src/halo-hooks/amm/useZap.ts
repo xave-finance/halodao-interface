@@ -23,10 +23,18 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     async (amount: string) => {
       const baseAmount = parseUnits(amount, token0.decimals)
       const res = await ZapContract?.calcMaxDepositAmountGivenBase(curveAddress, baseAmount)
+      // console.log(
+      //   'calcMaxDepositAmountGivenBase res:',
+      //   formatEther(res[0]),
+      //   formatEther(res[1]),
+      //   formatUnits(res[2][0], token0.decimals),
+      //   formatUnits(res[2][1], token1.decimals)
+      // )
 
       return {
         maxDeposit: formatEther(res[0]),
         lpAmount: formatEther(res[1]),
+        baseAmount: formatUnits(res[2][0], token0.decimals),
         quoteAmount: formatUnits(res[2][1], token1.decimals)
       }
     },
@@ -47,11 +55,19 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     async (amount: string) => {
       const quoteAmount = parseUnits(amount, token1.decimals)
       const res = await ZapContract?.calcMaxDepositAmountGivenQuote(curveAddress, quoteAmount)
+      // console.log(
+      //   'calcMaxDepositAmountGivenQuote res:',
+      //   formatEther(res[0]),
+      //   formatEther(res[1]),
+      //   formatUnits(res[2][0], token0.decimals),
+      //   formatUnits(res[2][1], token1.decimals)
+      // )
 
       return {
         maxDeposit: formatEther(res[0]),
         lpAmount: formatEther(res[1]),
-        baseAmount: formatUnits(res[2][0], token0.decimals)
+        baseAmount: formatUnits(res[2][0], token0.decimals),
+        quoteAmount: formatUnits(res[2][1], token1.decimals)
       }
     },
     [ZapContract, curveAddress, token0, token1]

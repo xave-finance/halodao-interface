@@ -25,7 +25,7 @@ interface SingleSidedLiquidityProps {
   pool: PoolData
   balances: Array<TokenAmount | undefined>
   onZapAmountChanged: (amount: string) => void
-  onZapFromBaseChanged: (fromBase: boolean) => void
+  onIsGivenBaseChanged: (isGivenBase: boolean) => void
   onSlippageChanged: (slippage: string) => void
   onDeposit: () => void
 }
@@ -34,7 +34,7 @@ const SingleSidedLiquidity = ({
   pool,
   balances,
   onZapAmountChanged,
-  onZapFromBaseChanged,
+  onIsGivenBaseChanged,
   onSlippageChanged,
   onDeposit
 }: SingleSidedLiquidityProps) => {
@@ -118,7 +118,7 @@ const SingleSidedLiquidity = ({
           tokenList={[pool.token0, pool.token1]}
           onSelectToken={token => {
             setSelectedToken(token)
-            onZapFromBaseChanged(token === pool.token0)
+            onIsGivenBaseChanged(token === pool.token0)
             onBaseInputUpdate(zapInput)
           }}
         />

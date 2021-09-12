@@ -61,8 +61,8 @@ const Pool = () => {
 
   return (
     <PageWrapper>
-      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-16 md:items-center">
-        <div className="md:w-1/2">
+      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:items-center">
+        <div className="md:w-1/2 md:pr-16">
           <PageHeaderLeft
             subtitle="Add/Remove Liquidity"
             title="Pools"
