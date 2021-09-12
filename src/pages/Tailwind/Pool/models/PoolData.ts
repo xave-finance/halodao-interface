@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@sushiswap/sdk'
 export interface PoolData {
   pid?: string
@@ -19,6 +20,7 @@ export interface PoolData {
     token1: number
   }
   held: number
+  heldBN: BigNumber
   staked: number
   earned: number
   totalSupply: number
