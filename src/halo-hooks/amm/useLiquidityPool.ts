@@ -4,7 +4,7 @@ import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
-import { formatEther } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
@@ -43,8 +43,6 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const getLiquidity = useCallback(async () => {
     if (!library) return { total: 0, tokens: [0, 0], weights: [0, 0], rates: [0, 0] }
 
-    const res = await CurveContract?.liquidity()
-
     const [derivatives0, derivatives1] = await Promise.all([
       CurveContract?.derivatives(0),
       CurveContract?.derivatives(1)
@@ -58,26 +56,29 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
     const Assimilator0Contract = getContract(assimialtor0Address, ASSIMILATOR_ABI, library)
     const Assimilator1Contract = getContract(assimialtor1Address, ASSIMILATOR_ABI, library)
 
-    const [rate0, rate1] = await Promise.all([Assimilator0Contract.getRate(), Assimilator1Contract.getRate()])
+    const [liquidity, rate0, rate1] = await Promise.all([
+      CurveContract?.liquidity(),
+      Assimilator0Contract.getRate(),
+      Assimilator1Contract.getRate()
+    ])
 
-    const token0Numeraire = res.individual_[0]
-    const token0Value = token0Numeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
-
-    const token1Numeraire = res.individual_[1]
+    const token0Numeraire = liquidity.individual_[0]
+    const token0Value = token0Numeraire.mul(1e8).div(rate0)
+    const token1Numeraire = liquidity.individual_[1]
     const token1Value = token1Numeraire.mul(1e8).div(rate1)
 
-    const token0Weight = Fraction.from(token0Numeraire, res.total_).toString()
-    const token1Weight = Fraction.from(token1Numeraire, res.total_).toString()
+    const token0Weight = Fraction.from(token0Numeraire, liquidity.total_).toString()
+    const token1Weight = Fraction.from(token1Numeraire, liquidity.total_).toString()
 
-    const token0Rate = Number(formatEther(rate0.mul(1e8)))
-    const token1Rate = Number(formatEther(rate1.mul(1e8)))
-    console.log(`${address} rates:`, token0Rate, token1Rate)
+    const token0Rate = Number(formatUnits(rate0, 8))
+    const token1Rate = Number(formatUnits(rate1, 8))
 
     return {
-      total: res.total_,
+      total: liquidity.total_,
       tokens: [token0Value, token1Value],
       weights: [Number(token0Weight), Number(token1Weight)],
-      rates: [token0Rate, token1Rate]
+      rates: [token0Rate, token1Rate],
+      assimilators: [assimialtor0Address, assimialtor1Address]
     }
   }, [CurveContract, library])
 

@@ -17,7 +17,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [zapAmount, setZapAmount] = useState('')
-  const [zapFromBase, setZapFromBase] = useState(false)
+  const [isGivenBase, setIsGivenBase] = useState(false)
   const [slippage, setSlippage] = useState('')
 
   const { account } = useActiveWeb3React()
@@ -47,13 +47,14 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           onBaseAmountChanged={setBaseAmount}
           onQuoteAmountChanged={setQuoteAmount}
           onDeposit={() => setShowModal(true)}
+          onIsGivenBaseChanged={setIsGivenBase}
         />
       ) : (
         <SingleSidedLiquidity
           pool={pool}
           balances={balances}
           onZapAmountChanged={setZapAmount}
-          onZapFromBaseChanged={setZapFromBase}
+          onIsGivenBaseChanged={setIsGivenBase}
           onSlippageChanged={setSlippage}
           onDeposit={() => setShowModal(true)}
         />
@@ -68,7 +69,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
         zapAmount={zapAmount}
         slippage={slippage}
         isMultisided={activeSegment === 0}
-        isZappingFromBase={zapFromBase}
+        isGivenBase={isGivenBase}
       />
     </div>
   )

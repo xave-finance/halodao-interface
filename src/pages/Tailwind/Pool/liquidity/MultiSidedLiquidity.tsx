@@ -7,7 +7,6 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
-import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 
 enum AddLiquidityState {
@@ -24,6 +23,7 @@ interface MultiSidedLiquidityProps {
   onBaseAmountChanged: (baseAmount: string) => void
   onQuoteAmountChanged: (quoteAmount: string) => void
   onDeposit: () => void
+  onIsGivenBaseChanged: (isGivenBase: boolean) => void
 }
 
 const MultiSidedLiquidity = ({
@@ -31,22 +31,15 @@ const MultiSidedLiquidity = ({
   balances,
   onBaseAmountChanged,
   onQuoteAmountChanged,
-  onDeposit
+  onDeposit,
+  onIsGivenBaseChanged
 }: MultiSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcMaxDepositAmountGivenBase, calcMaxDepositAmountGivenQuote } = useZap(
-    pool.address,
-    pool.token0,
-    pool.token1
-  )
-  const { viewDeposit, previewDepositGivenQuote, previewDepositGivenBase } = useAddRemoveLiquidity(
-    pool.address,
-    pool.token0,
-    pool.token1
-  )
+  const { calcMaxDepositAmountGivenBase } = useZap(pool.address, pool.token0, pool.token1)
+  const { previewDepositGivenQuote } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
   const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useApproveCallback(baseTokenAmount, pool.address)
@@ -61,27 +54,20 @@ const MultiSidedLiquidity = ({
   const onBaseInputUpdate = async (val: string) => {
     setBaseInput(val)
     onBaseAmountChanged(val)
+    onIsGivenBaseChanged(true)
 
     if (val !== '') {
-      // const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
-      // setQuoteInput(quoteAmount)
-      // onQuoteAmountChanged(quoteAmount)
+      const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
+      setQuoteInput(quoteAmount)
+      onQuoteAmountChanged(quoteAmount)
 
-      // const input0 = Number(val)
-      // const input1 = (input0 / pool.rates.token1) * pool.rates.token0 * (pool.weights.token1 / pool.weights.token0)
-      // console.log('quote calculated value: ', input1)
-      const { quote } = await previewDepositGivenBase(val, pool.rates.token0)
-      setQuoteInput(quote)
-      onQuoteAmountChanged(quote)
+      // const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+      // setQuoteInput(quote)
+      // onQuoteAmountChanged(quote)
     } else {
       setQuoteInput('')
     }
   }
-
-  useEffect(() => {
-    console.log('-----------')
-    console.log('pool detail: ', pool)
-  }, [])
 
   /**
    * Update base amount upon entering quote amount
@@ -89,44 +75,14 @@ const MultiSidedLiquidity = ({
   const onQuoteInputUpdate = async (val: string) => {
     setQuoteInput(val)
     onQuoteAmountChanged(val)
-
-    console.log('-----------')
-    console.log('onQuoteInputUpdate')
+    onIsGivenBaseChanged(false)
 
     if (val !== '') {
-      // console.log('ZAP:')
-      // const quoteAmount = Number(val) * (100 * pool.rates.token1)
-      // console.log('quote input: ', val)
-      // console.log('quoteAmount: ', quoteAmount)
-      // const { maxDeposit, baseAmount } = await calcMaxDepositAmountGivenQuote(`${quoteAmount.toFixed(6)}`)
+      // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       // setBaseInput(baseAmount)
       // onBaseAmountChanged(baseAmount)
 
-      // await viewDeposit(parseEther(maxDeposit))
-
-      // console.log('MANUAL:')
-      // const input1 = Number(val)
-      // console.log('input1 as string: ', val)
-      // console.log('input1 as Number: ', input1)
-      // // const input0 = (input1 / pool.rates.token0) * pool.rates.token1 * (pool.weights.token0 / pool.weights.token1)
-      // const input0 = ((pool.weights.token0 / pool.weights.token1) * input1 * pool.rates.token1) / pool.rates.token0
-      // // base = (100 / 0.0118463) * 0.0100065745 * (0.47734119 / 0.5226588)
-      // console.log('base calculated value: ', input0)
-
-      // // const totalNumeraire =
-      // //   input0 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1) +
-      // //   input1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)
-      // // const totalNumeraire = input0 * (pool.rates.token0 * 100) + input1 * (pool.rates.token1 * 100)
-      // const totalNumeraire = input1 * (pool.rates.token1 * 100) * ((pool.weights.token0 / pool.weights.token1) * 2)
-      // console.log('calculated deposit amount: ', totalNumeraire)
-
-      // await viewDeposit(parseEther(`${totalNumeraire}`))
-
-      // const totalNumeraire2 = input1 * 2
-      // console.log('calculated deposit amount2: ', totalNumeraire2)
-      // await viewDeposit(parseEther(`${totalNumeraire2}`))
-
-      const { base } = await previewDepositGivenQuote(val, pool.rates.token1, pool.rates.token0)
+      const { base } = await previewDepositGivenQuote(val)
       setBaseInput(base)
       onBaseAmountChanged(base)
     } else {
