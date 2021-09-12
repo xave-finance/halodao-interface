@@ -203,7 +203,10 @@ const AddLiquityModal = ({
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
-      setErrorMessage(t('error-liquidity-zap-reverted'))
+
+      if ((err as any).code === -32016) {
+        setErrorMessage(t('error-liquidity-zap-reverted'))
+      }
     }
   }
 
