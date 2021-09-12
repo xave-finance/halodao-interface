@@ -7,6 +7,7 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
+import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 
 enum AddLiquidityState {
   NoAmount,
@@ -22,6 +23,7 @@ interface MultiSidedLiquidityProps {
   onBaseAmountChanged: (baseAmount: string) => void
   onQuoteAmountChanged: (quoteAmount: string) => void
   onDeposit: () => void
+  onIsGivenBaseChanged: (isGivenBase: boolean) => void
 }
 
 const MultiSidedLiquidity = ({
@@ -29,13 +31,15 @@ const MultiSidedLiquidity = ({
   balances,
   onBaseAmountChanged,
   onQuoteAmountChanged,
-  onDeposit
+  onDeposit,
+  onIsGivenBaseChanged
 }: MultiSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcMaxDepositAmountGivenBase, calcMaxDepositAmountGivenQuote } = useZap(
+  const { calcMaxDepositAmountGivenBase } = useZap(pool.address, pool.token0, pool.token1)
+  const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
     pool.token0,
     pool.token1
@@ -54,11 +58,19 @@ const MultiSidedLiquidity = ({
   const onBaseInputUpdate = async (val: string) => {
     setBaseInput(val)
     onBaseAmountChanged(val)
+    onIsGivenBaseChanged(true)
 
     if (val !== '') {
-      const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
-      setQuoteInput(quoteAmount)
-      onQuoteAmountChanged(quoteAmount)
+      let estimatedQuote = ''
+      if (pool.pooled.total > 0) {
+        const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
+        estimatedQuote = quoteAmount
+      } else {
+        const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+        estimatedQuote = quote
+      }
+      setQuoteInput(estimatedQuote)
+      onQuoteAmountChanged(estimatedQuote)
     } else {
       setQuoteInput('')
     }
@@ -70,11 +82,16 @@ const MultiSidedLiquidity = ({
   const onQuoteInputUpdate = async (val: string) => {
     setQuoteInput(val)
     onQuoteAmountChanged(val)
+    onIsGivenBaseChanged(false)
 
     if (val !== '') {
-      const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
-      setBaseInput(baseAmount)
-      onBaseAmountChanged(baseAmount)
+      // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
+      // setBaseInput(baseAmount)
+      // onBaseAmountChanged(baseAmount)
+
+      const { base } = await previewDepositGivenQuote(val)
+      setBaseInput(base)
+      onBaseAmountChanged(base)
     } else {
       setBaseInput('')
     }

@@ -16,8 +16,8 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
     history.push(`/farm/${pool.address}`)
   }
 
-  const lpToken0Price = pool.weights.token0 * (1 / (pool.rates.token0 * 100))
-  const lpToken1Price = pool.weights.token1 * (1 / (pool.rates.token1 * 100))
+  const lpToken0Price = pool.weights.token0 * (1 / pool.rates.token0)
+  const lpToken1Price = pool.weights.token1 * (1 / pool.rates.token1)
 
   return (
     <div className="p-4 text-white bg-primary-hover rounded-tr-card rounded-tl-card md:rounded-br-card md:rounded-bl-card">

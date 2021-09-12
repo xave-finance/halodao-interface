@@ -78,7 +78,13 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
     Promise.all(promises)
       .then(results => {
         const tokens: Token[] = results[0]
-        const liquidity: { total: BigNumber; tokens: BigNumber[]; weights: number[]; rates: number[] } = results[1]
+        const liquidity: {
+          total: BigNumber
+          tokens: BigNumber[]
+          weights: number[]
+          rates: number[]
+          assimilators: string[]
+        } = results[1]
         const balance: BigNumber = results[2]
         const staked: BigNumber = results[3]
         const rewards: BigNumber = results[4]
@@ -105,7 +111,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
           held: Number(formatEther(balance)),
           staked: Number(formatEther(staked)),
           earned: Number(formatEther(rewards)),
-          totalSupply: Number(formatEther(totalSupply))
+          totalSupply: Number(formatEther(totalSupply)),
+          assimilators: liquidity.assimilators
         })
       })
       .catch(e => {
