@@ -64,7 +64,11 @@ const AddLiquityModal = ({
     zapFromQuote
   } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
-  const { deposit, previewDepositGivenQuote } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+  const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
+    pool.address,
+    pool.token0,
+    pool.token1
+  )
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -99,14 +103,19 @@ const AddLiquityModal = ({
     let basePrice = 0
     let quotePrice = 0
 
-    if (isGivenBase) {
+    if (isGivenBase && pool.pooled.total > 0) {
       const res = await calcMaxDepositAmountGivenBase(`${baseTokenAmount}`)
       maxDeposit = res.maxDeposit
       lpAmount = res.lpAmount
       basePrice = Number(res.quoteAmount) / Number(res.baseAmount)
       quotePrice = Number(res.baseAmount) / Number(res.quoteAmount)
     } else {
-      const res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+      let res: any
+      if (isGivenBase) {
+        res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+      } else {
+        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+      }
       maxDeposit = `${res.deposit}`
       lpAmount = res.lpToken
       basePrice = Number(res.quote) / Number(res.base)

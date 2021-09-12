@@ -90,7 +90,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
       const baseNumeraire = Number(baseAmount) * baseRate
-      const totalNumeraire = baseNumeraire * (1 / baseWeight)
+      const totalNumeraire = baseNumeraire * (baseWeight > 0 ? 1 / baseWeight : 2)
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
         deposit: totalNumeraire,
