@@ -125,5 +125,6 @@
   "staking disabled": "Staking Disabled",
   "inactive pools": "Inactive Pools",
   "inactive": "Inactive",
-  "bridge": "Bridge"
+  "bridge": "Bridge",
+  "error-liquidity-zap-reverted": "The transaction has reverted. You may increase the slippage tolerance and try again."
 }
