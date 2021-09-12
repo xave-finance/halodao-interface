@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import CurrencyLogo from 'components/CurrencyLogo'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { PoolData } from '../models/PoolData'
@@ -76,14 +76,14 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       <div className="mt-4">You will receive</div>
       <div className="mt-2 py-2 md:px-8 border-t border-b border-gray-200">
         <div className="flex justify-between">
-          <div>{formatNumber(token0Amount)}</div>
+          <div>{formatNumber(token0Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={pool.token0} />
             <span>{pool.token0.symbol}</span>
           </div>
         </div>
         <div className="flex justify-between mt-2">
-          <div>{formatNumber(token1Amount)}</div>
+          <div>{formatNumber(token1Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={pool.token1} />
             <span>{pool.token1.symbol}</span>
