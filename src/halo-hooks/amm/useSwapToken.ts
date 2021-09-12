@@ -4,7 +4,7 @@ import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { ethers } from 'ethers'
 import { getContract } from 'utils'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, CurrencyAmount, Token } from '@sushiswap/sdk'
 import { AssimilatorAddressMap, haloAssimilators, haloUSDC, TokenSymbol } from 'constants/tokenLists/halo-tokenlist'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
@@ -19,6 +19,11 @@ const routerAddress: ChainAddressMap = {
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
 }
 
+export enum CurrencySide {
+  TO_CURRENCY = 'toCurrency',
+  FROM_CURRENCY = 'fromCurrency'
+}
+
 export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
@@ -26,6 +31,21 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
   const [minimumAmount, setMinimumAmount] = useState<string | undefined>()
   const [allowance, setAllowance] = useState('0')
   const addTransaction = useTransactionAdder()
+
+  const toSafeValue = useCallback(
+    (value: string) => {
+      if (value.charAt(value.length - 1) === '.') {
+        return value.substring(0, value.length - 1)
+      } else {
+        return toFixed(Number(value), fromCurrency.decimals)
+      }
+    },
+    [fromCurrency.decimals]
+  )
+
+  const toSafeCurrencyValue = (value: CurrencyAmount, currencySide: CurrencySide) => {
+    return value.toFixed(currencySide === CurrencySide.FROM_CURRENCY ? fromCurrency.decimals : toCurrency.decimals)
+  }
 
   const getFutureTime = useCallback(
     (addMinutes: number) => {
@@ -84,10 +104,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
 
       if (!CurveContract || !chainId) return
 
-      const quoteAmount = parseUnits(
-        amount.charAt(amount.length - 1) ? amount : amount.substring(0, amount.length - 1),
-        fromCurrency.decimals
-      )
+      const quoteAmount = parseUnits(toSafeValue(amount), fromCurrency.decimals)
 
       const res = await CurveContract?.viewOriginSwap(
         haloUSDC[chainId]?.address,
@@ -97,7 +114,15 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
       )
       setMinimumAmount(formatUnits(res, toCurrency.decimals))
     },
-    [fromCurrency.address, fromCurrency.decimals, toCurrency.address, toCurrency.decimals, chainId, getRouter]
+    [
+      fromCurrency.address,
+      fromCurrency.decimals,
+      toCurrency.address,
+      toCurrency.decimals,
+      chainId,
+      getRouter,
+      toSafeValue
+    ]
   )
 
   const fetchAllowance = useCallback(async () => {
@@ -189,6 +214,8 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
     allowance,
     approve,
     swapToken,
-    fetchAllowance
+    fetchAllowance,
+    toSafeValue,
+    toSafeCurrencyValue
   }
 }

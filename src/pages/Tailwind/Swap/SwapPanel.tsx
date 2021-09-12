@@ -9,7 +9,7 @@ import SwapDetails from './SwapDetails'
 import SwitchIcon from 'assets/svg/switch-swap-icon.svg'
 import SettingsIcon from 'assets/svg/cog-icon.svg'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { useSwapToken } from 'halo-hooks/amm/useSwapToken'
+import { CurrencySide, useSwapToken } from 'halo-hooks/amm/useSwapToken'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
@@ -28,10 +28,16 @@ const SwapPanel = () => {
     chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
   )
 
-  const { getPrice, getMinimumAmount, price, minimumAmount, approve, allowance, swapToken } = useSwapToken(
-    toCurrency,
-    fromCurrency
-  )
+  const {
+    getPrice,
+    getMinimumAmount,
+    price,
+    minimumAmount,
+    approve,
+    allowance,
+    swapToken,
+    toSafeCurrencyValue
+  } = useSwapToken(toCurrency, fromCurrency)
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
   const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
@@ -284,13 +290,7 @@ const SwapPanel = () => {
                   }
                 }}
                 isSufficientBalance={async (balance: CurrencyAmount) => {
-                  if (
-                    balance.lessThan(
-                      fromInputValue.indexOf('.') !== -1
-                        ? fromInputValue
-                        : fromInputValue.substring(0, fromInputValue.length - 1)
-                    )
-                  ) {
+                  if (Number(toSafeCurrencyValue(balance, CurrencySide.FROM_CURRENCY)) <= Number(fromInputValue)) {
                     setButtonState(ButtonState.InsufficientBalance)
                   }
                 }}
