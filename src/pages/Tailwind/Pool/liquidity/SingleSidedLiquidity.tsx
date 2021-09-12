@@ -43,7 +43,7 @@ const SingleSidedLiquidity = ({
   const [zapInput, setZapInput] = useState('')
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
-  const [slippage, setSlippage] = useState('0.1')
+  const [slippage, setSlippage] = useState('0.5')
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
