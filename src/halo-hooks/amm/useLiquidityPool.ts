@@ -1,21 +1,20 @@
 import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { useContract } from 'hooks/useContract'
+import { useContract, useHALORewardsContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
-import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
 import { formatUnits } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
-import { HALO_REWARDS_V1_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
 import Fraction from 'constants/Fraction'
 
 export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const { account, library, chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
-  const RewardsContract = useContract(chainId ? HALO_REWARDS_V1_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
+  const RewardsContract = useHALORewardsContract()
+
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []
 
@@ -93,14 +92,14 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   }, [CurveContract])
 
   const getStakedLPToken = useCallback(async () => {
-    if (!pid) return BigNumber.from(0)
+    if (pid === undefined) return BigNumber.from(0)
 
     const res = await RewardsContract?.userInfo(pid, account)
     return res.amount
   }, [RewardsContract, account, pid])
 
   const getPendingRewards = useCallback(async () => {
-    if (!pid) return BigNumber.from(0)
+    if (pid === undefined) return BigNumber.from(0)
 
     const res = await RewardsContract?.pendingRewardToken(pid, account)
     return res
