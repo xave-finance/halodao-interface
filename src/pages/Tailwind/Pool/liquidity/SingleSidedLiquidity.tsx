@@ -44,6 +44,7 @@ const SingleSidedLiquidity = ({
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [slippage, setSlippage] = useState('0.5')
+  const [isGivenBase, setIsGivenBase] = useState(true)
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
@@ -89,7 +90,7 @@ const SingleSidedLiquidity = ({
       const baseBalance = balances[0] ? Number(balances[0].toExact()) : 0
       const quoteBalance = balances[1] ? Number(balances[1]?.toExact()) : 0
 
-      if (baseBalance < Number(baseAmount) || quoteBalance < Number(quoteAmount)) {
+      if ((isGivenBase && baseBalance < Number(baseAmount)) || (!isGivenBase && quoteBalance < Number(quoteAmount))) {
         setMainState(AddLiquidityState.InsufficientBalance)
       } else if (!baseZapApproved || !quoteZapApproved) {
         setMainState(AddLiquidityState.NotApproved)
@@ -101,7 +102,11 @@ const SingleSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage])
+  }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage, isGivenBase])
+
+  useEffect(() => {
+    onIsGivenBaseChanged(isGivenBase)
+  }, [isGivenBase])
 
   return (
     <>
@@ -118,7 +123,7 @@ const SingleSidedLiquidity = ({
           tokenList={[pool.token0, pool.token1]}
           onSelectToken={token => {
             setSelectedToken(token)
-            onIsGivenBaseChanged(token === pool.token0)
+            setIsGivenBase(token === pool.token0)
             onBaseInputUpdate(zapInput)
           }}
         />
