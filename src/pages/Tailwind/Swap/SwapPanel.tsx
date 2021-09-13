@@ -69,19 +69,13 @@ const SwapPanel = () => {
   }, [approve, setApproveState])
 
   useEffect(() => {
-    // exit early when we reach 0
     if (!timeLeft) return
 
-    // save intervalId to clear the interval when the
-    // component re-renders
     const intervalId = setInterval(() => {
       setTimeLeft(timeLeft - 1)
     }, 1000)
 
-    // clear interval on re-render to avoid memory leaks
     return () => clearInterval(intervalId)
-    // add timeLeft as a dependency to re-rerun the effect
-    // when we update it
   }, [timeLeft])
 
   const updateBalances = useCallback(async () => {
@@ -95,25 +89,27 @@ const SwapPanel = () => {
 
   useEffect(() => {
     setToInputValue(toMinimumAmount || '0.0')
-  }, [toMinimumAmount, setToInputValue])
+  }, [toMinimumAmount])
 
   useEffect(() => {
     setFromInputValue(fromMinimumAmount || '0.0')
-  }, [fromMinimumAmount, setFromInputValue])
+  }, [fromMinimumAmount])
 
   useEffect(() => {
     if (chainId) {
       setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
       setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
-      updateBalances()
+      setToInputValue('0.0')
+      setFromInputValue('0.0')
     }
-  }, [chainId, updateBalances])
+  }, [chainId])
 
   useEffect(() => {
     updateBalances()
   }, [setToCurrency, setFromCurrency, updateBalances])
 
   useEffect(() => {
+    console.log(allowance)
     if (allowance && Number(allowance) > 0) {
       setApproveState(ApproveButtonState.Approved)
       setButtonState(SwapButtonState.Swap)
@@ -239,14 +235,15 @@ const SwapPanel = () => {
   }
 
   const CurrentButtonContent = () => {
-    if (approveState === ApproveButtonState.NotApproved && buttonState === SwapButtonState.EnterAmount) {
+    if (approveState === ApproveButtonState.NotApproved) {
       if (!fromInputValue || !toInputValue || parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
         return <EnterAmountContent />
       } else if (fromInputValue && parseFloat(fromInputValue) > 0 && toInputValue && parseFloat(toInputValue) > 0) {
         return <NotApproveContent />
+      } else if (buttonState === SwapButtonState.InsufficientLiquidity) {
+        return <InsufficientLiquidityContent />
       }
-    }
-    if (approveState === ApproveButtonState.Approving) {
+    } else if (approveState === ApproveButtonState.Approving) {
       return <ApprovingContent />
     } else if (approveState === ApproveButtonState.Approved) {
       if (buttonState === SwapButtonState.Default) {
@@ -312,11 +309,12 @@ const SwapPanel = () => {
                 didChangeValue={async val => {
                   if (approveState === ApproveButtonState.Approved && Number(fromAmountBalance) >= Number(val)) {
                     setButtonState(SwapButtonState.Swap)
-                  } else if (Number(fromAmountBalance) < Number(val)) {
+                  } else if (approveState === ApproveButtonState.Approved && Number(fromAmountBalance) < Number(val)) {
                     setButtonState(SwapButtonState.InsufficientBalance)
                   }
 
                   getMinimumAmount(val, CurrencySide.TO_CURRENCY)
+
                   setFromInputValue(val)
                 }}
                 showBalance={true}
@@ -360,8 +358,8 @@ const SwapPanel = () => {
                   if (approveState === ApproveButtonState.Approved) {
                     setButtonState(SwapButtonState.Swap)
                   }
-                  setToInputValue(val)
                   getMinimumAmount(val, CurrencySide.FROM_CURRENCY)
+                  setToInputValue(val)
                 }}
                 showBalance={true}
                 showMax={true}
