@@ -121,7 +121,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Amount after transaction</div>
               <div>
                 <div>
-                  {amount} {currency.symbol}
+                  {Number(Number(amount) - calculateShuttleFee(currency.symbol as string))} {currency.symbol}
                 </div>
               </div>
             </div>
@@ -156,11 +156,12 @@ const ConfirmTransactionModal = ({
           <b>
             {amount} {tokenSymbol}
           </b>{' '}
-          for{' '}
+          {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
+          {/* for{' '}
           <b>
             {' '}
             {amount} {wrappedTokenSymbol}{' '}
-          </b>
+          </b> */}
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
       </div>
