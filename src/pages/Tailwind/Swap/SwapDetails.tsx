@@ -32,6 +32,7 @@ SwapDetailsProps) {
         <div className="w-1/2 text-secondary-alternate">Minimum Received</div>
         <div className="w-1/2 flex justify-end">{minimumReceived ? `${minimumReceived} ${toCurrency}` : '--'}</div>
       </div>
+
       {/*
       <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
         <div className="w-1/2 text-secondary-alternate">Price Impact</div>
@@ -41,6 +42,7 @@ SwapDetailsProps) {
         <div className="w-1/2 text-secondary-alternate">Liquidity Provider Fee</div>
         <div className="w-1/2 flex justify-end">Price</div>
       </div>
+      
       */}
     </>
   )

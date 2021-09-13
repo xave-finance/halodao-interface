@@ -9,10 +9,10 @@ import { AssimilatorAddressMap, haloAssimilators, haloUSDC, TokenSymbol } from '
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
-import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { ChainAddressMap } from '../../constants'
 import { toFixed } from 'utils/formatNumber'
 import { ButtonState } from 'constants/buttonStates'
+import { useTime } from 'halo-hooks/useTime'
 
 const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '',
@@ -28,36 +28,31 @@ export enum CurrencySide {
 export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonState: (state: ButtonState) => void) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
-  const currentBlockTime = useCurrentBlockTimestamp()
-  const [minimumAmount, setMinimumAmount] = useState<string | undefined>()
+  const { getFutureTime } = useTime()
+  const [toAmountBalance, setToAmountBalance] = useState('0')
+  const [fromAmountBalance, setFromAmountBalance] = useState('0')
+  const [toMinimumAmount, setToMinimumAmount] = useState<string | undefined>()
+  const [fromMinimumAmount, setFromMinimumAmount] = useState<string | undefined>()
   const [allowance, setAllowance] = useState('0')
   const addTransaction = useTransactionAdder()
 
   const toSafeValue = useCallback(
-    (value: string) => {
+    (value: string, currencySide: CurrencySide) => {
       if (value.charAt(value.length - 1) === '.') {
         return value.substring(0, value.length - 1)
       } else {
-        return toFixed(Number(value), fromCurrency.decimals)
+        return toFixed(
+          Number(value),
+          currencySide === CurrencySide.TO_CURRENCY ? fromCurrency.decimals : toCurrency.decimals
+        )
       }
     },
-    [fromCurrency.decimals]
+    [fromCurrency.decimals, toCurrency.decimals]
   )
 
   const toSafeCurrencyValue = (value: CurrencyAmount, currencySide: CurrencySide) => {
     return value.toFixed(currencySide === CurrencySide.FROM_CURRENCY ? fromCurrency.decimals : toCurrency.decimals)
   }
-
-  const getFutureTime = useCallback(
-    (addMinutes: number) => {
-      if (currentBlockTime) {
-        return currentBlockTime.add(addMinutes).toNumber()
-      } else {
-        return new Date().getTime() + addMinutes
-      }
-    },
-    [currentBlockTime]
-  )
 
   const getCurrencyContract = useCallback(
     async (address: string) => {
@@ -66,6 +61,36 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
       return getContract(address, ERC20_ABI, library, true && account)
     },
     [library, account]
+  )
+
+  const getTokenBalance = useCallback(
+    async (currencySide: CurrencySide) => {
+      const currencyContract = await getCurrencyContract(
+        currencySide === CurrencySide.TO_CURRENCY ? toCurrency.address : fromCurrency.address
+      )
+
+      if (!account || !toCurrency || !fromCurrency) {
+        setToAmountBalance('0.0')
+        setFromAmountBalance('0.0')
+        return
+      }
+
+      if (currencySide === CurrencySide.TO_CURRENCY) {
+        setToAmountBalance(formatUnits(await currencyContract?.balanceOf(account), toCurrency.decimals))
+      } else {
+        setFromAmountBalance(formatUnits(await currencyContract?.balanceOf(account), fromCurrency.decimals))
+      }
+    },
+    [
+      account,
+      fromCurrency.address,
+      fromCurrency.decimals,
+      getCurrencyContract,
+      toCurrency.address,
+      toCurrency.decimals,
+      fromCurrency,
+      toCurrency
+    ]
   )
 
   const getRouter = useCallback(async () => {
@@ -99,24 +124,40 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
     }
   }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
 
+  // currencySide is the unknown
   const getMinimumAmount = useCallback(
-    async (amount: string) => {
+    async (amount: string, currencySide: CurrencySide) => {
       const CurveContract = await getRouter()
 
       if (!CurveContract || !chainId) return
 
-      const quoteAmount = parseUnits(toSafeValue(amount), fromCurrency.decimals)
+      const quoteAmount = parseUnits(
+        toSafeValue(amount, currencySide),
+        currencySide === CurrencySide.TO_CURRENCY ? fromCurrency.decimals : toCurrency.decimals
+      )
       try {
-        const res = await CurveContract?.viewOriginSwap(
-          haloUSDC[chainId]?.address,
-          fromCurrency.address,
-          toCurrency.address,
-          quoteAmount
-        )
-        return formatUnits(res, toCurrency.decimals)
+        const res =
+          currencySide === CurrencySide.TO_CURRENCY
+            ? await CurveContract?.viewOriginSwap(
+                haloUSDC[chainId]?.address,
+                fromCurrency.address,
+                toCurrency.address,
+                quoteAmount
+              )
+            : await CurveContract?.viewTargetSwap(
+                haloUSDC[chainId]?.address,
+                fromCurrency.address,
+                toCurrency.address,
+                quoteAmount
+              )
+        currencySide === CurrencySide.TO_CURRENCY
+          ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
+          : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
+
+        console.log(res)
       } catch (e) {
+        console.log(e)
         setButtonState(ButtonState.InsufficientLiquidity)
-        return
       }
     },
     [
@@ -175,7 +216,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
 
       const quoteAmount = parseUnits(amount, fromCurrency.decimals)
 
-      const minimumAmountSwap = Number(minimumAmount) * (1 - (slippage ? slippage / 100 : 0.01))
+      const minimumAmountSwap = Number(toMinimumAmount) * (1 - (slippage ? slippage / 100 : 0.01))
       const parsedMinimumAmountSwap = parseUnits(toFixed(minimumAmountSwap, toCurrency.decimals), toCurrency.decimals)
 
       try {
@@ -191,6 +232,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
         await tx.wait()
 
         addTransaction(tx, { summary: `Swap to ${toCurrency.name}` })
+
         return tx
       } catch (e) {
         console.log(e)
@@ -208,7 +250,7 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
       chainId,
       getRouter,
       library,
-      minimumAmount
+      toMinimumAmount
     ]
   )
 
@@ -216,12 +258,16 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
     getPrice,
     getMinimumAmount,
     price,
-    minimumAmount,
+    toMinimumAmount,
+    fromMinimumAmount,
     allowance,
     approve,
     swapToken,
     fetchAllowance,
     toSafeValue,
-    toSafeCurrencyValue
+    toSafeCurrencyValue,
+    getTokenBalance,
+    toAmountBalance,
+    fromAmountBalance
   }
 }

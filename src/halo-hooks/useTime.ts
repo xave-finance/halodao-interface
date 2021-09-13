@@ -8,9 +8,8 @@ export const useTime = () => {
     (addMinutes = 60) => {
       if (currentBlockTime) {
         return currentBlockTime.add(addMinutes).toNumber()
-      } else {
-        return new Date().getTime() + addMinutes
       }
+      return new Date().getTime() + addMinutes
     },
     [currentBlockTime]
   )

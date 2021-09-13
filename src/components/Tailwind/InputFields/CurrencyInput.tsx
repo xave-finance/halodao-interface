@@ -5,8 +5,7 @@ import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
 import NumericalInput from 'components/NumericalInput'
 import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
-import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useActiveWeb3React } from 'hooks'
+import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 
 interface TokenInputProps {
   currency: Currency
@@ -17,7 +16,7 @@ interface TokenInputProps {
   showMax: boolean
   onSelectToken?: (token: Token) => void
   tokenList?: Token[]
-  isSufficientBalance?: (balance: CurrencyAmount, val: string) => void
+  balance?: string
 }
 
 const TokenInput = ({
@@ -29,15 +28,13 @@ const TokenInput = ({
   showMax,
   onSelectToken,
   tokenList,
-  isSufficientBalance
+  balance
 }: TokenInputProps) => {
-  const { account } = useActiveWeb3React()
-  const balance = useCurrencyBalance(account ?? undefined, currency)
   const [showModal, setShowModal] = useState(false)
 
   const onMax = () => {
     if (balance) {
-      didChangeValue(balance.toExact())
+      didChangeValue(balance)
     }
   }
 
@@ -68,15 +65,13 @@ const TokenInput = ({
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
-                Balance: {balance ? balance.toSignificant(6) : '-'}
+                Balance: {balance ? formatNumber(Number(balance), NumberFormat.long) : '-'}
               </div>
             )}
             <NumericalInput
               className="text-2xl font-semibold bg-transparent w-full focus:outline-none"
               value={value}
               onUserInput={val => {
-                if (isSufficientBalance && balance) isSufficientBalance(balance, val)
-
                 didChangeValue(val)
               }}
             />
