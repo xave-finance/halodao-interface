@@ -13,6 +13,7 @@ import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
+import { useTranslation } from 'react-i18next'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -55,6 +56,8 @@ const AddLiquityModal = ({
   })
   const [poolShare, setPoolShare] = useState(0)
   const [depositAmount, setDepositAmount] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const { t } = useTranslation()
 
   const {
     calcSwapAmountForZapFromBase,
@@ -148,6 +151,7 @@ const AddLiquityModal = ({
       min: 0
     })
     setPoolShare(0)
+    setErrorMessage(undefined)
     onDismiss()
   }
 
@@ -165,6 +169,7 @@ const AddLiquityModal = ({
    **/
   const confirmDeposit = async () => {
     setState(AddLiquityModalState.InProgress)
+
     try {
       const deadline = getFutureTime()
       const tx = await deposit(parseEther(depositAmount), deadline)
@@ -184,6 +189,8 @@ const AddLiquityModal = ({
    **/
   const confirmZap = async () => {
     setState(AddLiquityModalState.InProgress)
+    setErrorMessage(undefined)
+
     try {
       const deadline = getFutureTime()
       const func = isGivenBase ? zapFromBase : zapFromQuote
@@ -196,6 +203,10 @@ const AddLiquityModal = ({
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
+
+      if ((err as any).code === -32016) {
+        setErrorMessage(t('error-liquidity-zap-reverted'))
+      }
     }
   }
 
@@ -253,6 +264,7 @@ const AddLiquityModal = ({
               isMultisided ? confirmDeposit() : confirmZap()
             }}
           />
+          {errorMessage && <div className="mt-4 text-red-600 text-center text-sm">{errorMessage}</div>}
         </div>
       </>
     )
