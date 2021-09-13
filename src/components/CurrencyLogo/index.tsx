@@ -13,8 +13,14 @@ import { WrappedTokenInfo } from '../../state/lists/hooks'
 import Logo from '../Logo'
 import { useActiveWeb3React } from '../../hooks'
 
-const getTokenLogoURL = (address: string) =>
-  `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+const getTokenLogoURL = (address: string, chainId: ChainId | undefined) => {
+  let chain = 'ethereum'
+  if (chainId === ChainId.MATIC) {
+    chain = 'polygon'
+  }
+
+  return `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/${chain}/assets/${address}/logo.png`
+}
 
 const StyledNativeCurrencyLogo = styled.img<{ size: string }>`
   width: ${({ size }) => size};
@@ -60,13 +66,13 @@ export default function CurrencyLogo({
 
     if (currency instanceof Token) {
       if (currency instanceof WrappedTokenInfo) {
-        return [...uriLocations, getTokenLogoURL(currency.address)]
+        return [...uriLocations, getTokenLogoURL(currency.address, chainId)]
       }
 
-      return [getTokenLogoURL(currency.address)]
+      return [getTokenLogoURL(currency.address, chainId)]
     }
     return []
-  }, [currency, uriLocations])
+  }, [currency, uriLocations, chainId])
 
   if (currency === ETHER && chainId) {
     return <StyledNativeCurrencyLogo src={logo[chainId]} size={size} style={style} />
