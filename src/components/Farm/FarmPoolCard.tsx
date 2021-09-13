@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import ReactGA from 'react-ga'
-import { ChainId } from '@sushiswap/sdk'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -28,7 +27,6 @@ import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
 import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE, HALO_REWARDS_V1_ADDRESS } from '../../constants/index'
-import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -638,21 +636,18 @@ export default function FarmPoolCard({
    * Handles the user clicking "Harvest" button
    */
   const handleClaim = async () => {
-    const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
-    if (features?.vest) {
-      setIsTxInProgress(true)
-      setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
+    setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
-      // Claim/withdraw rewards
-      try {
-        const tx = await harvest(poolInfo.pid)
-        await tx.wait()
-        setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
-      } catch (e) {
-        console.error('Claim error: ', e)
-        setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
-        return
-      }
+    // Claim/withdraw rewards
+    try {
+      const tx = await harvest(poolInfo.pid)
+      await tx.wait()
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+    } catch (e) {
+      console.error('Claim error: ', e)
+      setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
+      return
     }
     /** log harvest in GA
      */
