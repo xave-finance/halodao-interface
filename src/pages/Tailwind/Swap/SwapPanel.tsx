@@ -27,17 +27,6 @@ const SwapPanel = () => {
   const [fromCurrency, setFromCurrency] = useState(
     chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
   )
-
-  const {
-    getPrice,
-    getMinimumAmount,
-    price,
-    minimumAmount,
-    approve,
-    allowance,
-    swapToken,
-    toSafeCurrencyValue
-  } = useSwapToken(toCurrency, fromCurrency)
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
   const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
@@ -50,6 +39,17 @@ const SwapPanel = () => {
   const [isExpired, setIsExpired] = useState(false)
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
+
+  const {
+    getPrice,
+    getMinimumAmount,
+    price,
+    minimumAmount,
+    approve,
+    allowance,
+    swapToken,
+    toSafeCurrencyValue
+  } = useSwapToken(toCurrency, fromCurrency, setButtonState)
 
   const handleApprove = useCallback(async () => {
     try {
@@ -83,8 +83,8 @@ const SwapPanel = () => {
 
   useEffect(() => {
     getPrice()
-    getMinimumAmount(fromInputValue ? fromInputValue : '0')
-    setToInputValue(minimumAmount || '0')
+    //getMinimumAmount(fromInputValue ? fromInputValue : '0')
+    // setToInputValue(minimumAmount || '0')
   }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue, minimumAmount])
 
   useEffect(() => {
@@ -198,6 +198,18 @@ const SwapPanel = () => {
     )
   }
 
+  const InsufficientLiquidityContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title="Insufficient Pool Liquidity"
+          state={PrimaryButtonState.Disabled}
+        />
+      </div>
+    )
+  }
+
   const RetryContent = () => {
     return (
       <div className="mt-4">
@@ -232,6 +244,11 @@ const SwapPanel = () => {
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientBalance) {
       return <InsufficientBalanceContent />
     }
+
+    if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.InsufficientLiquidity) {
+      return <InsufficientLiquidityContent />
+    }
+
     return <></>
   }
 
@@ -278,8 +295,17 @@ const SwapPanel = () => {
                 currency={fromCurrency}
                 value={fromInputValue}
                 canSelectToken={true}
-                didChangeValue={val => {
+                didChangeValue={async val => {
+                  /*
+                  if (approveState === ApproveButtonState.Approved) {
+                    setButtonState(ButtonState.Swap)
+                  }
+
+                  const currentMinimumAmount = await getMinimumAmount(val)
+
+                  */
                   setFromInputValue(val)
+                  // setToInputValue(currentMinimumAmount ? currentMinimumAmount : '0')
                 }}
                 showBalance={true}
                 showMax={true}
@@ -321,9 +347,13 @@ const SwapPanel = () => {
                 currency={toCurrency}
                 value={toInputValue}
                 canSelectToken={true}
-                didChangeValue={val => setToInputValue(val)}
-                showBalance={false}
-                showMax={false}
+                didChangeValue={async val => {
+                  const currentMinimumAmount = await getMinimumAmount(val)
+                  setToInputValue(val)
+                  //  setFromInputValue(currentMinimumAmount ? currentMinimumAmount : '0')
+                }}
+                showBalance={true}
+                showMax={true}
                 tokenList={haloTokenList[chainId as ChainId] || []}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
