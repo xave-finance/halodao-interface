@@ -280,11 +280,11 @@ const AddLiquityModal = ({
         <div className="text-center font-bold mb-2">
           Adding{' '}
           <b>
-            {formatNumber(Number(baseAmount))} {pool.token0.symbol}
+            {formatNumber(isMultisided ? Number(baseAmount) : tokenAmounts[0])} {pool.token0.symbol}
           </b>{' '}
           and{' '}
           <b>
-            {formatNumber(Number(quoteAmount))} {pool.token1.symbol}
+            {formatNumber(isMultisided ? Number(quoteAmount) : tokenAmounts[1])} {pool.token1.symbol}
           </b>
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
