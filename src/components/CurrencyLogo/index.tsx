@@ -72,7 +72,7 @@ export default function CurrencyLogo({
       return [getTokenLogoURL(currency.address, chainId)]
     }
     return []
-  }, [currency, uriLocations])
+  }, [currency, uriLocations, chainId])
 
   if (currency === ETHER && chainId) {
     return <StyledNativeCurrencyLogo src={logo[chainId]} size={size} style={style} />
