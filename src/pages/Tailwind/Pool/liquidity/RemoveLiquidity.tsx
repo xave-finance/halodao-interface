@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import CurrencyLogo from 'components/CurrencyLogo'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { PoolData } from '../models/PoolData'
@@ -14,7 +14,7 @@ interface RemoveLiquidityProps {
 }
 
 const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
-  const [amount, setAmount] = useState(0)
+  const [amountPercentage, setAmountPercentage] = useState(0)
   const [token0Amount, setToken0Amount] = useState(0)
   const [token1Amount, setToken1Amount] = useState(0)
   const { getFutureTime } = useTime()
@@ -22,15 +22,16 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
   const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
-  const updateAmount = async (amt: number) => {
-    setAmount(amt)
+  const updateAmountPercentage = async (percentage: number) => {
+    setAmountPercentage(percentage)
 
-    const lpAmount = pool.held * (amt * 0.01)
-    const tokenAmounts = await viewWithdraw(parseEther(`${lpAmount}`))
+    const lpAmount = pool.held * (percentage * 0.01)
+    const withdrawAmount = percentage === 100 ? pool.heldBN : parseEther(`${lpAmount}`)
+    const tokenAmounts = await viewWithdraw(withdrawAmount)
     setToken0Amount(Number(tokenAmounts[0]))
     setToken1Amount(Number(tokenAmounts[1]))
 
-    if (amt > 0) {
+    if (percentage > 0) {
       setRemoveButtonState(PrimaryButtonState.Enabled)
     } else {
       setRemoveButtonState(PrimaryButtonState.Disabled)
@@ -41,12 +42,13 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     setRemoveButtonState(PrimaryButtonState.InProgress)
 
     try {
-      const lpAmount = pool.held * (Number(amount) * 0.01)
+      const lpAmount = pool.held * (Number(amountPercentage) * 0.01)
+      const withdrawAmount = amountPercentage === 100 ? pool.heldBN : parseEther(`${lpAmount}`)
       const deadline = getFutureTime()
-      const tx = await withdraw(parseEther(`${lpAmount}`), deadline)
+      const tx = await withdraw(withdrawAmount, deadline)
       await tx.wait()
 
-      setAmount(0)
+      setAmountPercentage(0)
       setToken0Amount(0)
       setToken1Amount(0)
       setRemoveButtonState(PrimaryButtonState.Disabled)
@@ -69,19 +71,19 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     <div className="mt-2">
       <div className="">Amount</div>
       <div className="my-4 md:mx-8">
-        <AmountSlider amount={amount} didChangeAmount={updateAmount} />
+        <AmountSlider amount={amountPercentage} didChangeAmount={updateAmountPercentage} />
       </div>
       <div className="mt-4">You will receive</div>
       <div className="mt-2 py-2 md:px-8 border-t border-b border-gray-200">
         <div className="flex justify-between">
-          <div>{formatNumber(token0Amount)}</div>
+          <div>{formatNumber(token0Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={pool.token0} />
             <span>{pool.token0.symbol}</span>
           </div>
         </div>
         <div className="flex justify-between mt-2">
-          <div>{formatNumber(token1Amount)}</div>
+          <div>{formatNumber(token1Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={pool.token1} />
             <span>{pool.token1.symbol}</span>

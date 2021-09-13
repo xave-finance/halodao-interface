@@ -109,6 +109,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
             token1: liquidity.rates[1]
           },
           held: Number(formatEther(balance)),
+          heldBN: balance,
           staked: Number(formatEther(staked)),
           earned: Number(formatEther(rewards)),
           totalSupply: Number(formatEther(totalSupply)),
