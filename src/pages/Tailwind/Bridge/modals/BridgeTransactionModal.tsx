@@ -112,7 +112,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
               <div>
                 <div>
-                  {calculateShuttleFee(Number(amount))} {currency.symbol}
+                  {calculateShuttleFee(currency.symbol as string)} {currency.symbol}
                 </div>
               </div>
             </div>
