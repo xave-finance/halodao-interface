@@ -638,21 +638,18 @@ export default function FarmPoolCard({
    * Handles the user clicking "Harvest" button
    */
   const handleClaim = async () => {
-    const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
-    if (features?.vest) {
-      setIsTxInProgress(true)
-      setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
+    setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
-      // Claim/withdraw rewards
-      try {
-        const tx = await harvest(poolInfo.pid)
-        await tx.wait()
-        setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
-      } catch (e) {
-        console.error('Claim error: ', e)
-        setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
-        return
-      }
+    // Claim/withdraw rewards
+    try {
+      const tx = await harvest(poolInfo.pid)
+      await tx.wait()
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+    } catch (e) {
+      console.error('Claim error: ', e)
+      setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
+      return
     }
     /** log harvest in GA
      */
