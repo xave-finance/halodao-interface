@@ -14,11 +14,12 @@ import Logo from '../Logo'
 import { useActiveWeb3React } from '../../hooks'
 
 const getTokenLogoURL = (address: string, chainId: ChainId | undefined) => {
+  let chain = 'ethereum'
   if (chainId === ChainId.MATIC) {
-    return `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/polygon/assets/${address}/logo.png`
+    chain = 'polygon'
   }
 
-  return `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+  return `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/${chain}/assets/${address}/logo.png`
 }
 
 const StyledNativeCurrencyLogo = styled.img<{ size: string }>`
