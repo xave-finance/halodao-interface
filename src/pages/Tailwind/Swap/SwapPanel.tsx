@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId, CurrencyAmount, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@sushiswap/sdk'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -51,8 +51,7 @@ const SwapPanel = () => {
     fromMinimumAmount,
     approve,
     allowance,
-    swapToken,
-    toSafeCurrencyValue
+    swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
 
   const handleApprove = useCallback(async () => {
@@ -115,7 +114,7 @@ const SwapPanel = () => {
   }, [setToCurrency, setFromCurrency, updateBalances])
 
   useEffect(() => {
-    if (allowance !== '' && Number(allowance) > 0) {
+    if (allowance && Number(allowance) > 0) {
       setApproveState(ApproveButtonState.Approved)
       setButtonState(ButtonState.Swap)
     } else {
@@ -276,19 +275,18 @@ const SwapPanel = () => {
           <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
         </div>
       )
-    } else {
-      return (
-        <>
-          <CurrentButtonContent />
-          <SwapDetails
-            price={price}
-            toCurrency={toCurrency.symbol}
-            fromCurrency={fromCurrency.symbol}
-            minimumReceived={toMinimumAmount}
-          />
-        </>
-      )
     }
+    return (
+      <>
+        <CurrentButtonContent />
+        <SwapDetails
+          price={price}
+          toCurrency={toCurrency.symbol}
+          fromCurrency={fromCurrency.symbol}
+          minimumReceived={toMinimumAmount}
+        />
+      </>
+    )
   }
 
   return (

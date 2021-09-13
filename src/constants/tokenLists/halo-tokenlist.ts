@@ -1,7 +1,8 @@
 import { ChainId, Token } from '@sushiswap/sdk'
 import { ethers } from 'ethers'
-import { USDC, ZERO_ADDRESS } from '../../constants'
+import { ChainAddressMap, USDC, ZERO_ADDRESS } from '../../constants'
 
+// Supported token symbols
 export enum TokenSymbol {
   USDC = 'USDC',
   EURS = 'EURS',
@@ -17,7 +18,14 @@ export enum TokenSymbol {
 export type AssimilatorAddressMap = {
   [token in TokenSymbol]: string
 }
+// Router addresses
+export const routerAddress: ChainAddressMap = {
+  [ChainId.MAINNET]: '0x6aa83895c0159B1D6Ab2722712bb5F1adF881B06',
+  [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
+  [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
+}
 
+// USDC in between chains
 export const haloUSDC: { [chainId in ChainId]?: Token } = {
   [ChainId.MAINNET]: USDC,
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17ae75af37d9eb21124f98b04705be906', 6, 'USDC', 'USDC'),
@@ -25,8 +33,8 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 }
 
 // Token Lists
+// Add tokens here to support, divided into different networks
 const mainNetTokenList: Token[] = [
-  // new Token(ChainId.MAINNET, process.env.REACT_APP_HALO_TOKEN_ADDRESS_MAINNET || ZERO_ADDRESS, 18, 'RNBW', 'RNBWToken'),
   USDC,
   new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
@@ -51,6 +59,7 @@ const polygonTokenList: Token[] = [
   new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD')
 ]
 
+// allows switch of token list when changing networks
 export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
   [ChainId.MAINNET]: mainNetTokenList,
   [ChainId.KOVAN]: kovanTokenList,
@@ -58,17 +67,17 @@ export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
 }
 
 // Assimilators
-// TODO: to change
+// Add assimilators here to support. These are arranged per base currency per network
 const mainNetAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0x4a6EF0be792F8C2Ff2f3477Fb9354d0Dbc7797f9',
-  [TokenSymbol.EURS]: '0x3Af71eC189cf9de106b7C4DAC269d6C6d3d37a97',
-  [TokenSymbol.GBP]: '0x6500ACbaF819C520aDA1B5C91cc8aFe0cD91008f',
-  [TokenSymbol.CHF]: '0xa6b02260754c506403E12e9b09211848F6BC9Cc0',
+  [TokenSymbol.USDC]: ZERO_ADDRESS,
+  [TokenSymbol.EURS]: ZERO_ADDRESS,
+  [TokenSymbol.GBP]: ZERO_ADDRESS,
+  [TokenSymbol.CHF]: ZERO_ADDRESS,
   [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: ZERO_ADDRESS,
-  [TokenSymbol.TCAD]: ZERO_ADDRESS,
-  [TokenSymbol.TGBP]: ZERO_ADDRESS,
-  [TokenSymbol.XSGD]: ZERO_ADDRESS
+  [TokenSymbol.TAUD]: '0x972127aFf8e6464e50eFc0a2aD344063355AE424',
+  [TokenSymbol.TCAD]: '0xc104e54803abA12f7a171a49DDC333Da39f47193',
+  [TokenSymbol.TGBP]: '0xbcB66eD6419857b49Fa5947af58865538F8fba2C',
+  [TokenSymbol.XSGD]: '0xde29585a4134752632a07f09BCA0f02F72a33B8d'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -95,6 +104,7 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
 }
 
+// Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
 export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } = {
   [ChainId.MAINNET]: mainNetAssimilators,
   [ChainId.KOVAN]: kovanAssimilators,

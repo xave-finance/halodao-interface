@@ -11,7 +11,7 @@ const Swap = () => {
         <PageHeaderLeft
           subtitle=""
           title="Swap"
-          caption="Swap your ERC-20 tokens."
+          caption="Swap between various stablecoins here at accurate prices."
           link={{ text: 'Learn about swap', url: 'https://docs.halodao.com/get-started/how-to-swap' }}
         />
       </div>
@@ -23,7 +23,10 @@ const Swap = () => {
         </div>
       </div>
       <div className="hidden md:flex items-start md:w-1/2">
-        <InfoCard title="Swap Info" description="Swap between various stablecoins here at accurate prices" />
+        <InfoCard
+          title="Swap Info"
+          description="Deposit your HLP tokens into the Farm to begin earning Rainbow Candies (RNBW). Each RNBW you earn is automatically staked as xRNBW in the Rainbow Pool to begin earning vesting rewards!"
+        />
       </div>
     </PageWrapper>
   )

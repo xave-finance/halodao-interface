@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { Currency, CurrencyAmount, Token } from '@sushiswap/sdk'
+import { Currency, Token } from '@sushiswap/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
 import NumericalInput from 'components/NumericalInput'
 import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
-import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
 interface TokenInputProps {
   currency: Currency

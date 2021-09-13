@@ -5,20 +5,19 @@ import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { ethers } from 'ethers'
 import { getContract } from 'utils'
 import { ChainId, CurrencyAmount, Token } from '@sushiswap/sdk'
-import { AssimilatorAddressMap, haloAssimilators, haloUSDC, TokenSymbol } from 'constants/tokenLists/halo-tokenlist'
+import {
+  AssimilatorAddressMap,
+  haloAssimilators,
+  haloUSDC,
+  routerAddress,
+  TokenSymbol
+} from 'constants/tokenLists/halo-tokenlist'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
-import { ChainAddressMap } from '../../constants'
 import { toFixed } from 'utils/formatNumber'
 import { ButtonState } from 'constants/buttonStates'
 import { useTime } from 'halo-hooks/useTime'
-
-const routerAddress: ChainAddressMap = {
-  [ChainId.MAINNET]: '',
-  [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
-  [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
-}
 
 export enum CurrencySide {
   TO_CURRENCY = 'toCurrency',
@@ -75,22 +74,17 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
         return
       }
 
-      if (currencySide === CurrencySide.TO_CURRENCY) {
-        setToAmountBalance(formatUnits(await currencyContract?.balanceOf(account), toCurrency.decimals))
-      } else {
-        setFromAmountBalance(formatUnits(await currencyContract?.balanceOf(account), fromCurrency.decimals))
+      try {
+        if (currencySide === CurrencySide.TO_CURRENCY) {
+          setToAmountBalance(formatUnits(await currencyContract?.balanceOf(account), toCurrency.decimals))
+        } else {
+          setFromAmountBalance(formatUnits(await currencyContract?.balanceOf(account), fromCurrency.decimals))
+        }
+      } catch (e) {
+        console.log(e)
       }
     },
-    [
-      account,
-      fromCurrency.address,
-      fromCurrency.decimals,
-      getCurrencyContract,
-      toCurrency.address,
-      toCurrency.decimals,
-      fromCurrency,
-      toCurrency
-    ]
+    [account, getCurrencyContract, fromCurrency, toCurrency]
   )
 
   const getRouter = useCallback(async () => {
@@ -124,9 +118,9 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
     }
   }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
 
-  // currencySide is the unknown
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
+      // currencySide is the unknown
       const CurveContract = await getRouter()
 
       if (!CurveContract || !chainId) return

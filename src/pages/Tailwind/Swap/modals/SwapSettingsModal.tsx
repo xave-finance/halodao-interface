@@ -54,23 +54,6 @@ const SwapSettingsModal = ({
           </div>
           <span>minutes</span>
         </div>
-        {/** 
-        <div className="mt-4 font-semibold text-lg">Interface settings</div>
-        <div className="flex justify-between items-center mt-4">
-          <div className="flex items-center space-x-2 mb-2">
-            <span>Transaction deadline</span>
-            <QuestionIcon size={16} />
-          </div>
-          <OnOffToggle didChangeValue={val => setFromInputValue(val)} />
-        </div>
-        <div className="flex justify-between items-center mt-2">
-          <div className="flex items-center space-x-2 mb-2">
-            <span>Disable Multihops</span>
-            <QuestionIcon size={16} />
-          </div>
-          <OnOffToggle didChangeValue={val => setFromInputValue(val)} />
-        </div>
-            */}
       </div>
     </BaseModal>
   )
