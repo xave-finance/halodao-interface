@@ -22,7 +22,7 @@ enum AddLiquityModalState {
 
 interface AddLiquityModalProps {
   isMultisided: boolean
-  isZappingFromBase?: boolean
+  isGivenBase?: boolean
   pool: PoolData
   baseAmount?: string
   quoteAmount?: string
@@ -34,7 +34,7 @@ interface AddLiquityModalProps {
 
 const AddLiquityModal = ({
   isMultisided,
-  isZappingFromBase,
+  isGivenBase,
   pool,
   baseAmount,
   quoteAmount,
@@ -59,12 +59,16 @@ const AddLiquityModal = ({
   const {
     calcSwapAmountForZapFromBase,
     calcSwapAmountForZapFromQuote,
-    calcMaxDepositAmountGivenQuote,
+    calcMaxDepositAmountGivenBase,
     zapFromBase,
     zapFromQuote
   } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
-  const { deposit } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+  const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
+    pool.address,
+    pool.token0,
+    pool.token1
+  )
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -81,7 +85,7 @@ const AddLiquityModal = ({
       baseTokenAmount = Number(baseAmount)
       quoteTokenAmount = Number(quoteAmount)
     } else {
-      if (isZappingFromBase) {
+      if (isGivenBase) {
         const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
         quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
         baseTokenAmount = Number(zapAmount) - Number(swapAmount)
@@ -94,19 +98,38 @@ const AddLiquityModal = ({
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
 
-    const { maxDeposit, lpAmount } = await calcMaxDepositAmountGivenQuote(`${quoteTokenAmount}`)
+    let maxDeposit = '0'
+    let lpAmount = '0'
+    let basePrice = 0
+    let quotePrice = 0
+
+    if (isGivenBase && pool.pooled.total > 0) {
+      const res = await calcMaxDepositAmountGivenBase(`${baseTokenAmount}`)
+      maxDeposit = res.maxDeposit
+      lpAmount = res.lpAmount
+      basePrice = Number(res.quoteAmount) / Number(res.baseAmount)
+      quotePrice = Number(res.baseAmount) / Number(res.quoteAmount)
+    } else {
+      let res: any
+      if (isGivenBase) {
+        res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+      } else {
+        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+      }
+      maxDeposit = `${res.deposit}`
+      lpAmount = res.lpToken
+      basePrice = Number(res.quote) / Number(res.base)
+      quotePrice = Number(res.base) / Number(res.quote)
+    }
+
     setDepositAmount(maxDeposit)
+    setTokenPrices([basePrice, quotePrice])
 
     const maxLpAmount = Number(lpAmount)
     setLpAmount({
       target: maxLpAmount,
       min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
     })
-
-    const basePrice = 1 * (pool.rates.token0 * 100) * (pool.weights.token0 / pool.weights.token1)
-    const quotePrice =
-      (1 * (pool.rates.token1 * 100) * (pool.weights.token1 / pool.weights.token0)) / (pool.rates.token0 * 100)
-    setTokenPrices([basePrice, quotePrice])
 
     setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
   }
@@ -163,7 +186,7 @@ const AddLiquityModal = ({
     setState(AddLiquityModalState.InProgress)
     try {
       const deadline = getFutureTime()
-      const func = isZappingFromBase ? zapFromBase : zapFromQuote
+      const func = isGivenBase ? zapFromBase : zapFromQuote
       const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`)) // eslint-disable-line
       setTxHash(tx.hash)
       await tx.wait()
@@ -245,11 +268,11 @@ const AddLiquityModal = ({
         <div className="text-center font-bold mb-2">
           Adding{' '}
           <b>
-            {formatNumber(Number(baseAmount))} {pool.token0.symbol}
+            {formatNumber(isMultisided ? Number(baseAmount) : tokenAmounts[0])} {pool.token0.symbol}
           </b>{' '}
           and{' '}
           <b>
-            {formatNumber(Number(quoteAmount))} {pool.token1.symbol}
+            {formatNumber(isMultisided ? Number(quoteAmount) : tokenAmounts[1])} {pool.token1.symbol}
           </b>
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
