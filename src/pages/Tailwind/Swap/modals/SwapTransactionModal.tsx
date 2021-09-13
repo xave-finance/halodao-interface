@@ -52,6 +52,7 @@ const SwapTransactionModal = ({
 }: SwapTransactionModalProps) => {
   const dismissGracefully = () => {
     setSwapTransactionModalState(ModalState.NotConfirmed)
+    setIsExpired(true)
     onDismiss()
   }
 

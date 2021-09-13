@@ -4,7 +4,7 @@ import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { ethers } from 'ethers'
 import { getContract } from 'utils'
-import { ChainId, CurrencyAmount, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@sushiswap/sdk'
 import {
   AssimilatorAddressMap,
   haloAssimilators,
@@ -16,7 +16,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { toFixed } from 'utils/formatNumber'
-import { ButtonState } from 'constants/buttonStates'
+import { SwapButtonState } from 'constants/buttonStates'
 import { useTime } from 'halo-hooks/useTime'
 
 export enum CurrencySide {
@@ -24,7 +24,11 @@ export enum CurrencySide {
   FROM_CURRENCY = 'fromCurrency'
 }
 
-export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonState: (state: ButtonState) => void) => {
+export const useSwapToken = (
+  toCurrency: Token,
+  fromCurrency: Token,
+  setButtonState: (state: SwapButtonState) => void
+) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
   const { getFutureTime } = useTime()
@@ -48,10 +52,6 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
     },
     [fromCurrency.decimals, toCurrency.decimals]
   )
-
-  const toSafeCurrencyValue = (value: CurrencyAmount, currencySide: CurrencySide) => {
-    return value.toFixed(currencySide === CurrencySide.FROM_CURRENCY ? fromCurrency.decimals : toCurrency.decimals)
-  }
 
   const getCurrencyContract = useCallback(
     async (address: string) => {
@@ -147,11 +147,8 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
         currencySide === CurrencySide.TO_CURRENCY
           ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
           : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
-
-        console.log(res)
       } catch (e) {
-        console.log(e)
-        setButtonState(ButtonState.InsufficientLiquidity)
+        setButtonState(SwapButtonState.InsufficientLiquidity)
       }
     },
     [
@@ -259,7 +256,6 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonSt
     swapToken,
     fetchAllowance,
     toSafeValue,
-    toSafeCurrencyValue,
     getTokenBalance,
     toAmountBalance,
     fromAmountBalance

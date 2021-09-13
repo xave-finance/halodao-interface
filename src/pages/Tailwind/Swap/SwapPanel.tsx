@@ -14,7 +14,7 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
-import { ButtonState, ModalState } from '../../../constants/buttonStates'
+import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 
@@ -34,7 +34,7 @@ const SwapPanel = () => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
-  const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
+  const [buttonState, setButtonState] = useState(SwapButtonState.EnterAmount)
   const [timeLeft, setTimeLeft] = useState(60)
   const [isExpired, setIsExpired] = useState(false)
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
@@ -68,21 +68,21 @@ const SwapPanel = () => {
     }
   }, [approve, setApproveState])
 
-  const startTimer = () => {
-    let maxTime = timeLeft
-    const timer = setInterval(() => {
-      maxTime -= 1
-      setTimeLeft(maxTime)
+  useEffect(() => {
+    // exit early when we reach 0
+    if (!timeLeft) return
+
+    // save intervalId to clear the interval when the
+    // component re-renders
+    const intervalId = setInterval(() => {
+      setTimeLeft(timeLeft - 1)
     }, 1000)
 
-    setTimeout(() => {
-      clearInterval(timer)
-      setTimeLeft(60)
-      getMinimumAmount(fromInputValue, CurrencySide.FROM_CURRENCY)
-      setIsExpired(true)
-      getPrice()
-    }, 60000)
-  }
+    // clear interval on re-render to avoid memory leaks
+    return () => clearInterval(intervalId)
+    // add timeLeft as a dependency to re-rerun the effect
+    // when we update it
+  }, [timeLeft])
 
   const updateBalances = useCallback(async () => {
     await getTokenBalance(CurrencySide.TO_CURRENCY)
@@ -116,10 +116,10 @@ const SwapPanel = () => {
   useEffect(() => {
     if (allowance && Number(allowance) > 0) {
       setApproveState(ApproveButtonState.Approved)
-      setButtonState(ButtonState.Swap)
+      setButtonState(SwapButtonState.Swap)
     } else {
       setApproveState(ApproveButtonState.NotApproved)
-      setButtonState(ButtonState.EnterAmount)
+      setButtonState(SwapButtonState.EnterAmount)
     }
   }, [allowance])
 
@@ -152,9 +152,10 @@ const SwapPanel = () => {
           title="Swap"
           state={PrimaryButtonState.Enabled}
           onClick={() => {
+            setTimeLeft(60)
+            setIsExpired(false)
             if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
-              setButtonState(ButtonState.Confirming)
-              startTimer()
+              setButtonState(SwapButtonState.Confirming)
               setShowModal(true)
             }
           }}
@@ -238,7 +239,7 @@ const SwapPanel = () => {
   }
 
   const CurrentButtonContent = () => {
-    if (approveState === ApproveButtonState.NotApproved && buttonState === ButtonState.EnterAmount) {
+    if (approveState === ApproveButtonState.NotApproved && buttonState === SwapButtonState.EnterAmount) {
       if (!fromInputValue || !toInputValue || parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
         return <EnterAmountContent />
       } else if (fromInputValue && parseFloat(fromInputValue) > 0 && toInputValue && parseFloat(toInputValue) > 0) {
@@ -248,17 +249,17 @@ const SwapPanel = () => {
     if (approveState === ApproveButtonState.Approving) {
       return <ApprovingContent />
     } else if (approveState === ApproveButtonState.Approved) {
-      if (buttonState === ButtonState.Default) {
+      if (buttonState === SwapButtonState.Default) {
         return <ApprovedContent />
-      } else if (buttonState === ButtonState.Swap) {
+      } else if (buttonState === SwapButtonState.Swap) {
         return <SwapContent />
-      } else if (buttonState === ButtonState.Confirming) {
+      } else if (buttonState === SwapButtonState.Confirming) {
         return <ConfirmingContent />
-      } else if (buttonState === ButtonState.Retry) {
+      } else if (buttonState === SwapButtonState.Retry) {
         return <RetryContent />
-      } else if (buttonState === ButtonState.InsufficientBalance) {
+      } else if (buttonState === SwapButtonState.InsufficientBalance) {
         return <InsufficientBalanceContent />
-      } else if (buttonState === ButtonState.InsufficientLiquidity) {
+      } else if (buttonState === SwapButtonState.InsufficientLiquidity) {
         return <InsufficientLiquidityContent />
       }
     }
@@ -310,9 +311,9 @@ const SwapPanel = () => {
                 canSelectToken={true}
                 didChangeValue={async val => {
                   if (approveState === ApproveButtonState.Approved && Number(fromAmountBalance) >= Number(val)) {
-                    setButtonState(ButtonState.Swap)
+                    setButtonState(SwapButtonState.Swap)
                   } else if (Number(fromAmountBalance) < Number(val)) {
-                    setButtonState(ButtonState.InsufficientBalance)
+                    setButtonState(SwapButtonState.InsufficientBalance)
                   }
 
                   getMinimumAmount(val, CurrencySide.TO_CURRENCY)
@@ -357,7 +358,7 @@ const SwapPanel = () => {
                 canSelectToken={true}
                 didChangeValue={val => {
                   if (approveState === ApproveButtonState.Approved) {
-                    setButtonState(ButtonState.Swap)
+                    setButtonState(SwapButtonState.Swap)
                   }
                   setToInputValue(val)
                   getMinimumAmount(val, CurrencySide.FROM_CURRENCY)
@@ -406,12 +407,12 @@ const SwapPanel = () => {
           }
         }}
         onPriceUpdate={() => {
+          setTimeLeft(60)
           getMinimumAmount(fromInputValue, CurrencySide.FROM_CURRENCY)
           getPrice()
-          startTimer()
         }}
         onDismiss={() => {
-          setButtonState(ButtonState.Swap)
+          setButtonState(SwapButtonState.Swap)
           setShowModal(false)
         }}
         isExpired={isExpired}

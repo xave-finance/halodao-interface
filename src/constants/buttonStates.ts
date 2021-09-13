@@ -17,3 +17,17 @@ export enum ButtonState {
   Swap,
   InsufficientLiquidity
 }
+
+export enum SwapButtonState {
+  Default,
+  EnterAmount,
+  Approving,
+  Approved,
+  Next,
+  Confirming,
+  Retry,
+  MaxCap,
+  Swap,
+  InsufficientLiquidity,
+  InsufficientBalance
+}
