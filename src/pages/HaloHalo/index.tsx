@@ -270,18 +270,18 @@ export default function HaloHalo() {
                     <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
                   </div>
                 )}
-                {features?.vest && (
-                  <RowBetweenHaloPair>
-                    <RowBetween>
-                      <HaloPairCenterContainer>
-                        <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
-                        <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                        <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-                        <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
-                      </HaloPairCenterContainer>
-                    </RowBetween>
-                  </RowBetweenHaloPair>
-                )}
+                <RowBetweenHaloPair>
+                  <RowBetween>
+                    <HaloPairCenterContainer>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">
+                        RNBW = x{haloHaloPrice} {!features?.vest && ` (Ethereum mainnet)`}
+                      </HaloHaloPairText>
+                    </HaloPairCenterContainer>
+                  </RowBetween>
+                </RowBetweenHaloPair>
               </AutoColumn>
             </AutoColumnDeposit>
           </Wrapper>
