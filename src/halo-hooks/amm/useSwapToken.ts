@@ -12,6 +12,7 @@ import { ERC20_ABI } from 'constants/abis/erc20'
 import useCurrentBlockTimestamp from 'hooks/useCurrentBlockTimestamp'
 import { ChainAddressMap } from '../../constants'
 import { toFixed } from 'utils/formatNumber'
+import { ButtonState } from 'constants/buttonStates'
 
 const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '',
@@ -24,7 +25,7 @@ export enum CurrencySide {
   FROM_CURRENCY = 'fromCurrency'
 }
 
-export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
+export const useSwapToken = (toCurrency: Token, fromCurrency: Token, setButtonState: (state: ButtonState) => void) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
   const currentBlockTime = useCurrentBlockTimestamp()
@@ -105,14 +106,18 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
       if (!CurveContract || !chainId) return
 
       const quoteAmount = parseUnits(toSafeValue(amount), fromCurrency.decimals)
-
-      const res = await CurveContract?.viewOriginSwap(
-        haloUSDC[chainId]?.address,
-        fromCurrency.address,
-        toCurrency.address,
-        quoteAmount
-      )
-      setMinimumAmount(formatUnits(res, toCurrency.decimals))
+      try {
+        const res = await CurveContract?.viewOriginSwap(
+          haloUSDC[chainId]?.address,
+          fromCurrency.address,
+          toCurrency.address,
+          quoteAmount
+        )
+        return formatUnits(res, toCurrency.decimals)
+      } catch (e) {
+        setButtonState(ButtonState.InsufficientLiquidity)
+        return
+      }
     },
     [
       fromCurrency.address,
@@ -121,7 +126,8 @@ export const useSwapToken = (toCurrency: Token, fromCurrency: Token) => {
       toCurrency.decimals,
       chainId,
       getRouter,
-      toSafeValue
+      toSafeValue,
+      setButtonState
     ]
   )
 
