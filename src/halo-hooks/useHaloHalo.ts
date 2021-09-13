@@ -2,6 +2,9 @@ import { useCallback, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from '../hooks'
+import { useWeb3React } from '@web3-react/core'
+import { NetworkContextName } from '../constants'
+import { network } from '../connectors'
 
 import Fraction from '../constants/Fraction'
 import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
@@ -9,6 +12,7 @@ import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS, HALO_REWARDS_MANAGER_ADDRESS } from '../constants'
 import { formatNumber } from 'utils/formatNumber'
+import { ChainId } from '@sushiswap/sdk'
 
 const { BigNumber } = ethers
 
@@ -16,12 +20,15 @@ const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
 
-  const haloHaloAddress = chainId ? HALOHALO_ADDRESS[chainId] : undefined
-  const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[chainId] : undefined
-
-  const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[chainId] : undefined || '') // withSigner
+  const contractChainId = chainId && chainId === ChainId.MATIC ? ChainId.MAINNET : chainId
+  console.log('contractChainId', contractChainId)
+  const haloHaloAddress = chainId ? HALOHALO_ADDRESS[contractChainId as ChainId] : undefined
+  const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[contractChainId as ChainId] : undefined
+  console.log('rewardsManagerAddress', rewardsManagerAddress)
+  const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[contractChainId as ChainId] : undefined || '') // withSigner
   const halohaloContract = useContract(haloHaloAddress || '', HALOHALO_ABI) // withSigner
-
+  console.log('haloContract', haloContract)
+  console.log('halohaloContract', halohaloContract)
   const [allowance, setAllowance] = useState('0')
   const [haloHaloAPY, setHaloHaloAPY] = useState(0)
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')
@@ -29,12 +36,16 @@ const useHaloHalo = () => {
   // gets the current APY from the haloHalo contract
   const getAPY = useCallback(async () => {
     if (!rewardsManagerAddress || !haloContract || !halohaloContract) return
+    try {
+      const bal = await haloContract?.balanceOf(rewardsManagerAddress)
+      const supply = await halohaloContract?.totalSupply()
+      const apy = Number(Fraction.from(bal, supply).toString()) * 12
 
-    const bal = await haloContract?.balanceOf(rewardsManagerAddress)
-    const supply = await halohaloContract?.totalSupply()
-    const apy = Number(Fraction.from(bal, supply).toString()) * 12
-
-    setHaloHaloAPY(apy)
+      setHaloHaloAPY(apy)
+    } catch (e) {
+      console.log('error in getAPY')
+      return e
+    }
   }, [haloContract, halohaloContract, rewardsManagerAddress])
 
   const getHaloHaloPrice = useCallback(async () => {
