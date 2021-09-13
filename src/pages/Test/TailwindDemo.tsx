@@ -88,9 +88,9 @@ const TailwindDemo = () => {
       {/* ================================ */}
       <PageWrapper className="mb-8">
         <div className="text-xl font-bold">Page header (filled)</div>
-        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-16 md:items-center">
+        <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:items-center">
           {/* Left side */}
-          <div className="md:w-1/2">
+          <div className="md:w-1/2 md:pr-16">
             <PageHeaderLeft
               subtitle="Add/Remove Liquidity"
               title="Pools"
