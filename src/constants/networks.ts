@@ -121,8 +121,8 @@ export const NETWORK_PARAMS: {
       symbol: 'MATIC',
       decimals: 18
     },
-    rpcUrls: ['https://rpc-mainnet.matic.network'], //['https://matic-mainnet.chainstacklabs.com/'],
-    blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
+    rpcUrls: ['https://polygon-rpc.com/'], // see https://docs.matic.network/docs/develop/network-details/network/
+    blockExplorerUrls: ['https://polygonscan.com/']
   },
   // [ChainId.HECO]: {
   //   chainId: '0x80',

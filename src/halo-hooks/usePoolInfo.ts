@@ -1,4 +1,5 @@
 import { Token } from '@sushiswap/sdk'
+import { useActiveWeb3React } from 'hooks'
 import { useCallback } from 'react'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
@@ -33,7 +34,8 @@ export type PoolTokenInfo = {
 }
 
 export const usePoolInfo = (lpTokenAddresses: string[]) => {
-  const { balancer, uni, sushi, halo } = groupByPoolProvider(lpTokenAddresses)
+  const { chainId } = useActiveWeb3React()
+  const { balancer, uni, sushi, halo } = groupByPoolProvider(lpTokenAddresses, chainId)
   const fetchBalancerPoolInfo = useBalancerPoolInfo(balancer)
   const fetchSushiPoolInfo = useSushiPoolInfo(sushi)
   const fetchUniPoolInfo = useUniPoolInfo(uni)
