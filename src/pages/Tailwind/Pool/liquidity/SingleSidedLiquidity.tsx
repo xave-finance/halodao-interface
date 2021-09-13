@@ -104,10 +104,6 @@ const SingleSidedLiquidity = ({
     }
   }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage, isGivenBase])
 
-  useEffect(() => {
-    onIsGivenBaseChanged(isGivenBase)
-  }, [isGivenBase])
-
   return (
     <>
       <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">Swaps will be carried out for you</div>
@@ -123,8 +119,10 @@ const SingleSidedLiquidity = ({
           tokenList={[pool.token0, pool.token1]}
           onSelectToken={token => {
             setSelectedToken(token)
-            setIsGivenBase(token === pool.token0)
             onBaseInputUpdate(zapInput)
+            const isTokenBase = token === pool.token0
+            setIsGivenBase(isTokenBase)
+            onIsGivenBaseChanged(isTokenBase)
           }}
         />
       </div>
