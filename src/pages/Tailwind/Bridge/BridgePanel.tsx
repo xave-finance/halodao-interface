@@ -81,7 +81,7 @@ const BridgePanel = () => {
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
     }
-  }, [inputValue, allowance, balance])
+  }, [inputValue, allowance, balance, features])
 
   useEffect(() => {
     setButtonStates()

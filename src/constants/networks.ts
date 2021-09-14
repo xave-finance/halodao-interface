@@ -214,7 +214,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: true,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.KOVAN]: {
     vest: true,
@@ -224,7 +224,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.RINKEBY]: {
     vest: true,
@@ -234,7 +234,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.GÖRLI]: {
     vest: true,
@@ -244,7 +244,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.MATIC]: {
     vest: false,
@@ -254,7 +254,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: true,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.MATIC_TESTNET]: {
     vest: false,
@@ -264,7 +264,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.BSC]: {
     vest: true,
@@ -274,7 +274,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.BSC_TESTNET]: {
     vest: true,
@@ -284,7 +284,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   },
   [ChainId.XDAI]: {
     vest: true,
@@ -294,6 +294,6 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
+    bridgeCap: JSON.parse(process.env.REACT_APP_BRIDGE_CAP as string)
   }
 }
