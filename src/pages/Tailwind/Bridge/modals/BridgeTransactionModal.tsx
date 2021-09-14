@@ -157,11 +157,6 @@ const ConfirmTransactionModal = ({
             {amount} {tokenSymbol}
           </b>{' '}
           {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
-          {/* for{' '}
-          <b>
-            {' '}
-            {amount} {wrappedTokenSymbol}{' '}
-          </b> */}
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
       </div>
