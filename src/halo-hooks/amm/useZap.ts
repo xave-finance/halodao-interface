@@ -55,13 +55,10 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     async (amount: string) => {
       const quoteAmount = parseUnits(amount, token1.decimals)
       const res = await ZapContract?.calcMaxDepositAmountGivenQuote(curveAddress, quoteAmount)
-      // console.log(
-      //   'calcMaxDepositAmountGivenQuote res:',
-      //   formatEther(res[0]),
-      //   formatEther(res[1]),
-      //   formatUnits(res[2][0], token0.decimals),
-      //   formatUnits(res[2][1], token1.decimals)
-      // )
+      console.log('calcMaxDepositAmountGivenQuote maxDeposit:', formatEther(res[0]))
+      console.log('calcMaxDepositAmountGivenQuote lpAmount:', formatEther(res[1]))
+      console.log('calcMaxDepositAmountGivenQuote baseAmount:', formatUnits(res[2][0], token0.decimals))
+      console.log('calcMaxDepositAmountGivenQuote quoteAmount:', formatUnits(res[2][1], token1.decimals))
 
       return {
         maxDeposit: formatEther(res[0]),

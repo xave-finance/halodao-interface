@@ -8,6 +8,7 @@ import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
 
 enum AddLiquidityState {
   NoAmount,
@@ -38,7 +39,11 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcMaxDepositAmountGivenBase } = useZap(pool.address, pool.token0, pool.token1)
+  const { calcMaxDepositAmountGivenBase, calcMaxDepositAmountGivenQuote } = useZap(
+    pool.address,
+    pool.token0,
+    pool.token1
+  )
   const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
     pool.token0,
@@ -62,11 +67,15 @@ const MultiSidedLiquidity = ({
 
     if (val !== '') {
       let estimatedQuote = ''
-      if (pool.pooled.total > 0) {
+      if (pool.pooled.total < 1) {
         const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
         estimatedQuote = quoteAmount
       } else {
-        const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+        const { deposit, lpToken, base, quote } = await previewDepositGivenBase(
+          val,
+          pool.rates.token0,
+          pool.weights.token0
+        )
         estimatedQuote = quote
       }
       setQuoteInput(estimatedQuote)
@@ -85,11 +94,10 @@ const MultiSidedLiquidity = ({
     onIsGivenBaseChanged(false)
 
     if (val !== '') {
-      // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
-      // setBaseInput(baseAmount)
-      // onBaseAmountChanged(baseAmount)
+      console.log('onQuoteInputUpdate ', val)
 
-      const { base } = await previewDepositGivenQuote(val)
+      const { deposit, lpToken, base, quote } = await previewDepositGivenQuote(val)
+      console.log('onQuoteInputUpdate: base ', base, ', quote ', quote)
       setBaseInput(base)
       onBaseAmountChanged(base)
     } else {

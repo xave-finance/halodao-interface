@@ -20,8 +20,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       // console.log('token 1:', formatUnits(res[1][1], token1.decimals))
       return {
         lpToken: formatEther(res[0]),
-        base: formatUnits(res[1][0], token0.decimals),
-        quote: formatUnits(res[1][1], token1.decimals)
+        base: formatUnits(res[1][0].div(2), token0.decimals),
+        quote: formatUnits(res[1][1].div(2), token1.decimals)
       }
     },
     [CurveContract, token0, token1]
@@ -76,7 +76,9 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     async (quoteAmount: string) => {
       const quoteNumeraire = Number(quoteAmount)
       const totalNumeraire = quoteNumeraire * 2
+      console.log('totalNumeraire ', totalNumeraire)
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
+      console.log('previewDepositGivenQuote: base ', base, ', quote ', quote)
       return {
         deposit: totalNumeraire,
         lpToken,
