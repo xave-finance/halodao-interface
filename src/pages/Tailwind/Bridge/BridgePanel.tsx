@@ -71,8 +71,6 @@ const BridgePanel = () => {
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
-    } else if (parseFloat(inputValue) > 10000) {
-      setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
       setApproveState(ApproveButtonState.NotApproved)
