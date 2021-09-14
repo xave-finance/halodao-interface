@@ -17,6 +17,7 @@ import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
 import useBridge from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
+import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
 
 export enum ButtonState {
   Default,
@@ -26,6 +27,7 @@ export enum ButtonState {
   Next,
   Confirming,
   InsufficientBalance,
+  NotMinimum,
   Retry,
   MaxCap
 }
@@ -46,6 +48,7 @@ const BridgePanel = () => {
 
   const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   const {
     onTokenChange,
@@ -68,10 +71,13 @@ const BridgePanel = () => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
+    } else if (parseFloat(inputValue) < 20) {
+      setButtonState(ButtonState.NotMinimum)
+      setApproveState(ApproveButtonState.NotApproved)
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
-    } else if (parseFloat(inputValue) > 10000) {
+    } else if (features?.isBridgeCapped && parseFloat(inputValue) > 10000) {
       setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
@@ -79,7 +85,7 @@ const BridgePanel = () => {
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
     }
-  }, [inputValue, allowance, balance])
+  }, [inputValue, allowance, balance, features])
 
   useEffect(() => {
     setButtonStates()
@@ -193,6 +199,18 @@ const BridgePanel = () => {
     )
   }
 
+  const NotMinimumContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title={`Minimum amount 20 ${token?.symbol}`}
+          state={PrimaryButtonState.Disabled}
+        />
+      </div>
+    )
+  }
+
   const MaxCapContent = () => {
     return (
       <div className="mt-4">
@@ -241,6 +259,9 @@ const BridgePanel = () => {
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
+    }
+    if (buttonState === ButtonState.NotMinimum) {
+      content = <NotMinimumContent />
     }
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />

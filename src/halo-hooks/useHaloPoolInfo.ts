@@ -51,7 +51,7 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         pid: map.pid,
         pair: `${token0Symbol}/${token1Symbol}`,
         address: poolAddress,
-        addLiquidityUrl: `https://app.halodao.comm/#/pool`,
+        addLiquidityUrl: `https://app.halodao.com/#/pool`,
         liquidity: +formatEther(totalLiquidityValue.total_),
         tokens: [
           {
