@@ -54,7 +54,7 @@ const Bridge = () => {
           subtitle=""
           title="Bridge"
           caption="Move your ERC-20 token from EVM bridge to EVM bridge."
-          link={{ text: 'Learn about bridge', url: 'https://docs.halodao.com' }}
+          link={{ text: 'Learn about bridge', url: 'https://docs.halodao.com/get-started/how-to-use-bridge' }}
         />
       </div>
       <div className="md:float-right md:w-1/2">
