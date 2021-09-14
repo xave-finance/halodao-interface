@@ -194,6 +194,8 @@ export const NETWORK_PARAMS: {
     */
 }
 
+const isBridgeCapped = process.env.REACT_APP_IS_BRIDGE_CAPPED || true
+
 export const NETWORK_SUPPORTED_FEATURES: {
   [chainId in ChainId]?: {
     vest: boolean
@@ -214,7 +216,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: true,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.KOVAN]: {
     vest: true,
@@ -224,7 +226,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.RINKEBY]: {
     vest: true,
@@ -234,7 +236,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.GÖRLI]: {
     vest: true,
@@ -244,7 +246,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.MATIC]: {
     vest: false,
@@ -254,7 +256,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: true,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.MATIC_TESTNET]: {
     vest: false,
@@ -264,7 +266,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.BSC]: {
     vest: true,
@@ -274,7 +276,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.BSC_TESTNET]: {
     vest: true,
@@ -284,7 +286,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.XDAI]: {
     vest: true,
@@ -294,6 +296,6 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
-    isBridgeCapped: process.env.REACT_APP_IS_BRIDGE_CAPPED === 'true'
+    isBridgeCapped: isBridgeCapped === 'true'
   }
 }
