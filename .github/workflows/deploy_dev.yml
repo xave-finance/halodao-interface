@@ -76,6 +76,7 @@ jobs:
           REACT_APP_SHUTTLE_FEE_PERCENTAGE: ${{ secrets.REACT_APP_SHUTTLE_FEE_PERCENTAGE }}
           REACT_APP_SHOW_DEMO: ${{ secrets.REACT_APP_SHOW_DEMO }}
           SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
+          BRIDGE_CAP: ${{ secrets.BRIDGE_CAP }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
