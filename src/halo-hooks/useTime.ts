@@ -5,7 +5,7 @@ export const useTime = () => {
   const currentBlockTime = useCurrentBlockTimestamp()
 
   const getFutureTime = useCallback(
-    (addMinutes = 60) => {
+    (addMinutes = 300) => {
       if (currentBlockTime) {
         return currentBlockTime.add(addMinutes).toNumber()
       } else {

@@ -52,7 +52,7 @@ const TailwindDemo = () => {
   const [inputValue, setInputValue] = useState('')
   const [amount, setAmount] = useState(100)
   const [showModal, setShowModal] = useState(false)
-  const [slippage, setSlippage] = useState('0.1')
+  const [slippage, setSlippage] = useState('3')
 
   return (
     <>
