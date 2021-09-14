@@ -106,7 +106,7 @@ const SwapPanel = () => {
 
   useEffect(() => {
     updateBalances()
-  }, [setToCurrency, setFromCurrency, updateBalances])
+  }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances])
 
   useEffect(() => {
     console.log(allowance)
@@ -115,7 +115,6 @@ const SwapPanel = () => {
       setButtonState(SwapButtonState.Swap)
     } else {
       setApproveState(ApproveButtonState.NotApproved)
-      setButtonState(SwapButtonState.EnterAmount)
     }
   }, [allowance])
 
@@ -234,12 +233,36 @@ const SwapPanel = () => {
     )
   }
 
+  const setButtonStates = useCallback(() => {
+    if (!allowance || Number(allowance) === 0) {
+      if (fromInputValue && parseFloat(fromInputValue) > 0 && toInputValue && parseFloat(toInputValue) > 0) {
+        setButtonState(SwapButtonState.Default)
+        setApproveState(ApproveButtonState.NotApproved)
+      } else if (parseFloat(fromInputValue) >= parseFloat(fromAmountBalance)) {
+        setButtonState(SwapButtonState.InsufficientBalance)
+        setApproveState(ApproveButtonState.NotApproved)
+      } else {
+        setButtonState(SwapButtonState.Default)
+      }
+    } else if (Number(allowance) > 0) {
+      if (parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
+        setButtonState(SwapButtonState.Swap)
+      }
+    }
+  }, [allowance, fromInputValue, fromAmountBalance, toInputValue])
+
+  useEffect(() => {
+    setButtonStates()
+  }, [setButtonStates])
+
   const CurrentButtonContent = () => {
     if (approveState === ApproveButtonState.NotApproved) {
-      if (!fromInputValue || !toInputValue || parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
-        return <EnterAmountContent />
-      } else if (fromInputValue && parseFloat(fromInputValue) > 0 && toInputValue && parseFloat(toInputValue) > 0) {
+      if (buttonState === SwapButtonState.Default) {
         return <NotApproveContent />
+      } else if (buttonState === SwapButtonState.InsufficientBalance) {
+        return <InsufficientBalanceContent />
+      } else if (parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
+        return <EnterAmountContent />
       } else if (buttonState === SwapButtonState.InsufficientLiquidity) {
         return <InsufficientLiquidityContent />
       }
@@ -307,14 +330,14 @@ const SwapPanel = () => {
                 value={fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
-                  if (approveState === ApproveButtonState.Approved && Number(fromAmountBalance) >= Number(val)) {
-                    setButtonState(SwapButtonState.Swap)
-                  } else if (approveState === ApproveButtonState.Approved && Number(fromAmountBalance) < Number(val)) {
-                    setButtonState(SwapButtonState.InsufficientBalance)
+                  if (approveState === ApproveButtonState.Approved) {
+                    if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
+                      setButtonState(SwapButtonState.Swap)
+                    } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
+                      setButtonState(SwapButtonState.InsufficientBalance)
+                    }
+                    getMinimumAmount(val, CurrencySide.TO_CURRENCY)
                   }
-
-                  getMinimumAmount(val, CurrencySide.TO_CURRENCY)
-
                   setFromInputValue(val)
                 }}
                 showBalance={true}
@@ -324,6 +347,8 @@ const SwapPanel = () => {
                 onSelectToken={token => {
                   if (token !== toCurrency) {
                     setFromCurrency(token)
+                    setToInputValue('0.0')
+                    setFromInputValue('0.0')
                     updateBalances()
                   }
                 }}
@@ -343,6 +368,8 @@ const SwapPanel = () => {
                   setFromInputValue(prevToInputValue)
                   setToCurrency(fromCurrency)
                   setFromCurrency(prevToCurrency)
+                  updateBalances()
+                  getMinimumAmount(prevToInputValue, CurrencySide.TO_CURRENCY)
                 }}
               >
                 <img src={SwitchIcon} alt="Switch" />
@@ -367,6 +394,8 @@ const SwapPanel = () => {
                 balance={toAmountBalance}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
+                    setToInputValue('0.0')
+                    setFromInputValue('0.0')
                     setToCurrency(token)
                   }
                 }}
