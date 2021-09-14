@@ -129,8 +129,7 @@ export const useSwapToken = (
 
       if (!lastUpdated) {
         setLastUpdated(getCurrentTimestamp())
-      } else if (lastUpdated && getCurrentTimestamp() - lastUpdated > 550) {
-        console.log('updating minimum amount ')
+      } else if (lastUpdated && getCurrentTimestamp() - lastUpdated > 500) {
         const CurveContract = await getRouter()
 
         if (!CurveContract || !chainId) return
