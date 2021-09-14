@@ -203,6 +203,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: boolean
     borrow: boolean
     bridge: boolean
+    bridgeCap: boolean
   }
 } = {
   [ChainId.MAINNET]: {
@@ -212,7 +213,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: true
+    bridge: true,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.KOVAN]: {
     vest: true,
@@ -221,7 +223,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.RINKEBY]: {
     vest: true,
@@ -230,7 +233,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.GÖRLI]: {
     vest: true,
@@ -239,7 +243,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.MATIC]: {
     vest: false,
@@ -248,7 +253,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: true
+    bridge: true,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.MATIC_TESTNET]: {
     vest: false,
@@ -257,7 +263,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.BSC]: {
     vest: true,
@@ -266,7 +273,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.BSC_TESTNET]: {
     vest: true,
@@ -275,7 +283,8 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   },
   [ChainId.XDAI]: {
     vest: true,
@@ -284,6 +293,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     swap: true,
     lend: true,
     borrow: true,
-    bridge: false
+    bridge: false,
+    bridgeCap: Boolean(process.env.BRIDGE_CAP as string) || true
   }
 }

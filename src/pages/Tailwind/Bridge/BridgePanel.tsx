@@ -17,6 +17,7 @@ import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
 import useBridge from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
+import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
 
 export enum ButtonState {
   Default,
@@ -46,6 +47,7 @@ const BridgePanel = () => {
 
   const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   const {
     onTokenChange,
@@ -71,6 +73,8 @@ const BridgePanel = () => {
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
+    } else if (features?.bridgeCap && parseFloat(inputValue) > 10000) {
+      setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
       setApproveState(ApproveButtonState.NotApproved)
