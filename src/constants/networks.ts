@@ -194,7 +194,7 @@ export const NETWORK_PARAMS: {
     */
 }
 
-const isBridgeCapped = process.env.REACT_APP_IS_BRIDGE_CAPPED || true
+const isBridgeCapped = process.env.REACT_APP_IS_BRIDGE_CAPPED || 'true'
 
 export const NETWORK_SUPPORTED_FEATURES: {
   [chainId in ChainId]?: {
