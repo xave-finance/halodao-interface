@@ -8,7 +8,12 @@ const Swap = () => {
   return (
     <PageWrapper className="mb-8">
       <div className="md:float-left md:w-1/2">
-        <PageHeaderLeft subtitle="" title="Swap" caption="" link={{ text: 'Learn about swap', url: '' }} />
+        <PageHeaderLeft
+          subtitle=""
+          title="Swap"
+          caption=""
+          link={{ text: 'Learn about swap', url: 'https://docs.halodao.com/get-started/how-to-swap' }}
+        />
       </div>
       <div className="md:float-right md:w-1/2">
         <div className="flex items-start bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
