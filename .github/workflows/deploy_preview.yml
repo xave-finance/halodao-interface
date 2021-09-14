@@ -73,8 +73,8 @@ jobs:
           REACT_APP_TGBP_MATIC_BRIDGE_CONTRACT_ADDRESS: ${{ secrets.REACT_APP_TGBP_MATIC_BRIDGE_CONTRACT_ADDRESS }}
           REACT_APP_SHUTTLE_FEE_PERCENTAGE: ${{ secrets.REACT_APP_SHUTTLE_FEE_PERCENTAGE }}
           REACT_APP_SHOW_DEMO: ${{ secrets.REACT_APP_SHOW_DEMO }}
-          SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
           REACT_APP_BRIDGE_CAP: ${{ secrets.REACT_APP_BRIDGE_CAP }}
+          SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
