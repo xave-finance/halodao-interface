@@ -62,6 +62,10 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
       //   formatUnits(res[2][0], token0.decimals),
       //   formatUnits(res[2][1], token1.decimals)
       // )
+      console.log('calcMaxDepositAmountGivenQuote maxDeposit:', formatEther(res[0]))
+      console.log('calcMaxDepositAmountGivenQuote lpAmount:', formatEther(res[1]))
+      console.log('calcMaxDepositAmountGivenQuote baseAmount:', formatUnits(res[2][0], token0.decimals))
+      console.log('calcMaxDepositAmountGivenQuote quoteAmount:', formatUnits(res[2][1], token1.decimals))
 
       return {
         maxDeposit: formatEther(res[0]),
