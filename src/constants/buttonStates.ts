@@ -15,7 +15,8 @@ export enum ButtonState {
   Retry,
   MaxCap,
   Swap,
-  InsufficientLiquidity
+  InsufficientLiquidity,
+  NotMinimum
 }
 
 export enum SwapButtonState {
