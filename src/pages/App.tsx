@@ -7,12 +7,15 @@ import Polling from '../components/Header/Polling'
 import URLWarning from '../components/Header/URLWarning'
 import Popups from '../components/Popups'
 import Web3ReactManager from '../components/Web3ReactManager'
-import DarkModeQueryParamReader from '../theme/DarkModeQueryParamReader'
 import { RedirectPathToFarmOnly } from './Swap/redirects'
 import Farm from './Farm'
 import HaloHalo from './HaloHalo'
 import DisclaimerAlert from 'components/Header/DisclaimerAlert'
 import Demo from './Test/Demo'
+import TailwindDemo from './Test/TailwindDemo'
+import Pool from './Tailwind/Pool'
+import Bridge from './Tailwind/Bridge'
+import Swap from './Tailwind/Swap'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -38,7 +41,7 @@ const BodyWrapper = styled.div`
   overflow-x: hidden;
   z-index: 10;
 
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+  ${({ theme }) => theme.mediaWidth.upToLarge`
     padding: 16px;
     padding-top: 1rem;
   `};
@@ -54,7 +57,6 @@ export default function App() {
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
-      <Route component={DarkModeQueryParamReader} />
       <AppWrapper>
         <URLWarning />
         <DisclaimerAlert />
@@ -68,7 +70,16 @@ export default function App() {
             <Switch>
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
-              {process.env.NODE_ENV === 'development' && <Route exact strict path="/demo" component={Demo} />}
+              <Route path="/farm/:address" component={Farm} />
+              <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/bridge" component={Bridge} />
+              <Route exact strict path="/swap" component={Swap} />
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                <Route exact strict path="/demo" component={Demo} />
+              )}
+              {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                <Route exact strict path="/tw-demo" component={TailwindDemo} />
+              )}
               <Route component={RedirectPathToFarmOnly} />
             </Switch>
           </Web3ReactManager>

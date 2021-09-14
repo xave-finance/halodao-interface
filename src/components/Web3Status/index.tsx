@@ -148,7 +148,11 @@ function StatusIcon({ connector }: { connector: AbstractConnector }) {
   return null
 }
 
-function Web3StatusInner() {
+interface Web3StatusProps {
+  shorten?: boolean
+}
+
+function Web3StatusInner({ shorten }: Web3StatusProps) {
   const { t } = useTranslation()
   const { account, connector, error } = useWeb3React()
 
@@ -193,13 +197,13 @@ function Web3StatusInner() {
   } else {
     return (
       <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-        <Text>{t('Connect to a wallet')}</Text>
+        <Text>{shorten ? t('Connect') : t('Connect to a wallet')}</Text>
       </Web3StatusConnect>
     )
   }
 }
 
-export default function Web3Status() {
+export default function Web3Status({ shorten = false }: Web3StatusProps) {
   const { active, account } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
 
@@ -221,7 +225,7 @@ export default function Web3Status() {
 
   return (
     <>
-      <Web3StatusInner />
+      <Web3StatusInner shorten={shorten} />
       <WalletModal ENSName={ENSName ?? undefined} pendingTransactions={pending} confirmedTransactions={confirmed} />
     </>
   )

@@ -9,58 +9,52 @@ import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 
-/**
- * Internal Methods
- */
+export const useLPTokenAddresses = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
+  const [poolLength, setPoolLength] = useState(0)
+  const [lpTokenAddresses, setLpTokenAddresses] = useState<string[]>([])
 
-const usePoolLength = () => {
-  const rewardsContract = useHALORewardsContract()
-  const data = useSingleCallResult(rewardsContract, 'poolLength')
-
-  return useMemo<number>(() => {
-    return data.result ? data.result[0].toNumber() : 0
-  }, [data])
-}
-
-const useLpToken = (poolLength: number): string[] => {
-  const rewardsContract = useHALORewardsContract()
-
-  const args = useMemo(() => {
-    const pids: string[][] = []
-    for (let i = 0; i < poolLength; i++) {
-      pids.push([`${i}`])
+  const fetchPoolLength = useCallback(async () => {
+    try {
+      const result = await rewardsContract?.poolLength()
+      setPoolLength(result ? result.toNumber() : 0)
+    } catch (err) {
+      console.error(`Error fetching poolLength: `, err)
     }
-    return pids
-  }, [poolLength])
+  }, [rewardsContract])
 
-  const results = useSingleContractMultipleData(rewardsContract, 'lpToken', args)
+  const fetchLpToken = useCallback(async () => {
+    const promises = []
+    for (let pid = 0; pid < poolLength; pid++) {
+      promises.push(rewardsContract?.lpToken(`${pid}`))
+    }
 
-  return useMemo<string[]>(() => {
-    const addresses: string[] = []
-    for (let i = 0; i < poolLength; i++) {
-      const address = results[i].result
-      if (address) {
-        addresses.push(`${address}`)
+    try {
+      const results = await Promise.all(promises)
+      const addresses: string[] = []
+      for (const result of results) {
+        addresses.push(result)
       }
+      setLpTokenAddresses(addresses)
+    } catch (err) {
+      console.error(`Error fetching lpToken: `, err)
     }
-    return addresses
-  }, [poolLength, results])
+  }, [rewardsContract, poolLength])
+
+  useEffect(() => {
+    fetchPoolLength()
+  }, [rewardsContract, fetchPoolLength])
+
+  useEffect(() => {
+    fetchLpToken()
+  }, [poolLength, fetchLpToken])
+
+  return lpTokenAddresses
 }
 
-/**
- * Public Methods
- */
-
-export const useLPTokenAddresses = () => {
-  const length = usePoolLength()
-  const addresses = useLpToken(length)
-
-  return useMemo(() => addresses, [addresses])
-}
-
-export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number]: number } => {
+export const useUnclaimedRewardsPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const [unclaimedRewards, setUnclaimedRewards] = useState(() => {
     const rewards: { [poolId: number]: number } = {}
@@ -75,7 +69,7 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
     for (const pid of poolIds) {
       try {
         const result = await rewardsContract?.pendingRewardToken(`${pid}`, account)
-        newUnclaimedRewards[pid] = parseFloat(formatEther(result.toString()))
+        newUnclaimedRewards[pid] = result ? parseFloat(formatEther(result.toString())) : 0
       } catch (err) {
         console.error(`Error fetching pending rewards for pid[${pid}]: `, err)
         newUnclaimedRewards[pid] = PENDING_REWARD_FAILED
@@ -92,9 +86,9 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[]): { [poolId: number
   return unclaimedRewards
 }
 
-export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: number } => {
+export const useStakedBPTPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const args = useMemo(() => poolIds.map(poolId => [`${poolId}`, account ?? ZERO_ADDRESS]), [poolIds, account])
   const results = useSingleContractMultipleData(rewardsContract, 'userInfo', args)
@@ -116,9 +110,9 @@ export const useStakedBPTPerPool = (poolIds: number[]): { [poolId: number]: numb
   )
 }
 
-export const useDepositWithdrawHarvestCallback = () => {
+export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
   const { account } = useActiveWeb3React()
-  const rewardsContract = useHALORewardsContract()
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const addTransaction = useTransactionAdder()
 
   const deposit = useCallback(
@@ -157,8 +151,8 @@ export const useDepositWithdrawHarvestCallback = () => {
   return { deposit, withdraw, harvest }
 }
 
-export const useRewardTokenPerSecond = () => {
-  const rewardsContract = useHALORewardsContract()
+export const useRewardTokenPerSecond = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
 
   return useMemo<number>(() => {
@@ -166,8 +160,8 @@ export const useRewardTokenPerSecond = () => {
   }, [data])
 }
 
-export const useTotalAllocPoint = () => {
-  const rewardsContract = useHALORewardsContract()
+export const useTotalAllocPoint = (rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
 
   return useMemo<number>(() => {
@@ -175,12 +169,38 @@ export const useTotalAllocPoint = () => {
   }, [data])
 }
 
-export const useAllocPoints = (poolAddresses: string[]) => {
-  const rewardsContract = useHALORewardsContract()
-  const args = useMemo(() => poolAddresses.map((_, i) => [i]), [poolAddresses])
-  const results = useSingleContractMultipleData(rewardsContract, 'poolInfo', args)
+export const useAllocPoints = (poolAddresses: string[], rewardsVersion = 1) => {
+  const rewardsContract = useHALORewardsContract(rewardsVersion)
 
-  return useMemo<number[]>(() => {
-    return results.map(v => (v.result ? v.result['allocPoint'].toNumber() : 0))
-  }, [results])
+  const [allocPoint, setAllocPoint] = useState(() => {
+    const initialPoints: { [pid: number]: number } = {}
+    for (let i = 0; i < poolAddresses.length; i++) {
+      initialPoints[i] = 0
+    }
+    return initialPoints
+  })
+
+  const fetchAllocPoint = useCallback(async () => {
+    const promises = []
+    for (let pid = 0; pid < poolAddresses.length; pid++) {
+      promises.push(rewardsContract?.poolInfo(`${pid}`))
+    }
+
+    try {
+      const results = await Promise.all(promises)
+      const newPoints: { [pid: number]: number } = {}
+      for (const [pid, result] of results.entries()) {
+        newPoints[pid] = result ? result['allocPoint'].toNumber() : 0
+      }
+      setAllocPoint(newPoints)
+    } catch (err) {
+      console.error(`Error fetching lpToken: `, err)
+    }
+  }, [poolAddresses, rewardsContract])
+
+  useEffect(() => {
+    fetchAllocPoint()
+  }, [poolAddresses, fetchAllocPoint])
+
+  return allocPoint
 }

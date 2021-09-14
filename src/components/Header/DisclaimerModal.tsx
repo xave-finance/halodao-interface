@@ -7,7 +7,7 @@ import { RowFixed } from 'components/Row'
 
 const StyledModal = styled.div`
   width: 100%;
-  z-index: 3;
+  z-index: 4;
   background: white;
   position: absolute;
 `
@@ -15,7 +15,7 @@ const StyledModal = styled.div`
 const StyledWrapper = styled.div`
   width: 1080px;
   max-width: 80%;
-  margin: 50px auto;
+  margin: 3rem auto;
   color: ${({ theme }) => theme.text4};
 
   div {
@@ -31,6 +31,10 @@ const StyledWrapper = styled.div`
     margin-top: 40px;
   }
 
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    margin: calc(65px + 1rem) auto 1rem;
+  `};
+
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 90%;
     max-width: 90%;
@@ -40,6 +44,20 @@ const StyledWrapper = styled.div`
       font-weight: 500;
     }
   `};
+
+  ol,
+  ul {
+    list-style: auto;
+    margin-left: 2rem;
+  }
+
+  ol.alpha-sml {
+    list-style: lower-alpha;
+  }
+
+  ol.alpha-cap {
+    list-style: upper-alpha;
+  }
 
   li {
     margin-bottom: 1rem;
@@ -193,7 +211,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>Prohibited Uses of the Site.</b>
               <br />
               <br />
-              <ol type="a">
+              <ol className="alpha-sml">
                 <li>
                   As a condition of your use of the Site, you hereby represent and warrant that you will not use the
                   Site for any purpose that is unlawful or prohibited (including, without limitation, the prohibitions
@@ -293,7 +311,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>Linking to the Site and Reference Sites.</b>
               <br />
               <br />
-              <ol type="a">
+              <ol className="alpha-sml">
                 <li>
                   Linking to the Site. You are not permitted to link directly to any image hosted on the Site, such as
                   using an “in-line” linking method to cause the image hosted on the Site to be displayed on another
@@ -380,7 +398,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>DISCLAIMERS; NO WARRANTIES.</b>
               <br />
               <br />
-              <ol type="A">
+              <ol className="alpha-cap">
                 <li>
                   ACKNOWLEDGMENT. YOU EXPRESSLY ACKNOWLEDGE THAT AS USED IN THIS SECTION 14, AND SECTIONS 15 AND 16
                   BELOW, THE TERM HALODAO INCLUDES EACH OF ITS OFFICERS, DIRECTORS, EMPLOYEES, SHAREHOLDERS, MEMBERS,
@@ -420,7 +438,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>LIMITATION OF LIABILITY AND DAMAGES.</b>
               <br />
               <br />
-              <ol type="A">
+              <ol className="alpha-cap">
                 <li>
                   LIMITATION OF LIABILITY. UNDER NO CIRCUMSTANCES, AND UNDER NO LEGAL THEORY, INCLUDING, BUT NOT LIMITED
                   TO, NEGLIGENCE, SHALL HALODAO OR ITS THIRD PARTY COLLABORATORS, LICENSORS OR SUPPLIERS, BE LIABLE FOR
@@ -442,7 +460,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>LIMITATIONS BY APPLICABLE LAW; BASIS OF THE BARGAIN.</b>
               <br />
               <br />
-              <ol type="A">
+              <ol className="alpha-cap">
                 <li>
                   LIMITATIONS BY APPLICABLE LAW. CERTAIN JURISDICTIONS DO NOT ALLOW LIMITATIONS ON IMPLIED WARRANTIES OR
                   THE EXCLUSION OR LIMITATION OF CERTAIN DAMAGES. IF YOU RESIDE IN SUCH A JURISDICTION, SOME OR ALL OF
@@ -466,7 +484,7 @@ const DisclaimerModal = ({ onDismiss }: DisclaimerModalProps) => {
               <b>Miscellaneous.</b>
               <br />
               <br />
-              <ol type="a">
+              <ol className="alpha-sml">
                 <li>
                   Notice. HaloDAO may provide you with notices, including those regarding changes to these Terms, by
                   postings on the Site. You may provide HaloDAO with notices only by email at{' '}

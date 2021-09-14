@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { TYPE, ExternalLink, LinkIcon, HideLarge } from '../../theme'
+import { TYPE, ExternalLink, LinkIcon } from '../../theme'
 import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
-import { useLPTokenAddresses } from 'halo-hooks/useRewards'
+import { useLPTokenAddresses, useAllocPoints } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { useParams } from 'react-router'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 820px;
+  max-width: 1040px;
   width: 100%;
 `
 
@@ -33,7 +34,7 @@ const HeaderRow = styled(RowBetween)`
   `};
   flex-direction: column;
   width: 60%;
-  padding-right: 0.5rem;
+  padding-right: 2rem;
 `
 
 const TitleRow = styled(RowBetween)`
@@ -42,7 +43,15 @@ const TitleRow = styled(RowBetween)`
 `
 
 const StyledExternalLink = styled(ExternalLink)`
-  ${({ theme }) => theme.mediaWidth.upToSmall` 
+  color: #518cff;
+  text-decoration-line: underline;
+  line-height: 130%;
+
+  .link-icon {
+    display: none;
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     border: 1px solid #518CFF;
     box-sizing: border-box;
     border-radius: 20px; 
@@ -51,26 +60,67 @@ const StyledExternalLink = styled(ExternalLink)`
     margin-bottom: 0.5rem;
     text-align: center;
     text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .link-icon {
+      display: inline;
+    }
   `};
-  color: #518cff;
-  text-decoration-line: underline;
-  line-height: 130%;
 `
 
 const Farm = () => {
+  const { address } = useParams<{ address: string | undefined }>()
+  const [selectedPoolAddress, setSelectedPoolAddress] = useState<string | undefined>(undefined)
+
+  const v0LpTokenAddresses = useLPTokenAddresses(0)
+  const fetchV0PoolInfo = usePoolInfo(v0LpTokenAddresses)
+  const [v0PoolsInfo, setV0PoolsInfo] = useState<PoolInfo[]>([])
+  const v0AllocPoints = useAllocPoints(v0LpTokenAddresses, 0)
+
   const lpTokenAddresses = useLPTokenAddresses()
   const fetchPoolInfo = usePoolInfo(lpTokenAddresses)
-  const { t } = useTranslation()
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
-  const [tokenAddresses, setTokenAddresses] = useState<string[]>([])
-  const tokenPrice = useTokenPrice(tokenAddresses)
+  const allocPoints = useAllocPoints(lpTokenAddresses)
+
+  const { t } = useTranslation()
+  const [allTokenAddresses, setAllTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(allTokenAddresses)
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
       setPoolsInfo(result.poolsInfo)
-      setTokenAddresses(result.tokenAddresses)
+      setAllTokenAddresses(prev => [...prev, ...result.tokenAddresses])
     })
-  }, [lpTokenAddresses]) // eslint-disable-line
+  }, [lpTokenAddresses]) //eslint-disable-line
+
+  useEffect(() => {
+    fetchV0PoolInfo().then(result => {
+      setV0PoolsInfo(result.poolsInfo)
+      setAllTokenAddresses(prev => [...prev, ...result.tokenAddresses])
+    })
+  }, [v0LpTokenAddresses]) //eslint-disable-line
+
+  useEffect(() => {
+    const newPoolsInfo = poolsInfo
+    newPoolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = allocPoints[poolInfo.pid]
+    })
+    setPoolsInfo(newPoolsInfo)
+  }, [poolsInfo, allocPoints])
+
+  useEffect(() => {
+    const newPoolsInfo = v0PoolsInfo
+    newPoolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = v0AllocPoints[poolInfo.pid]
+    })
+    setV0PoolsInfo(newPoolsInfo)
+  }, [v0PoolsInfo, v0AllocPoints])
+
+  useEffect(() => {
+    setSelectedPoolAddress(address?.toLowerCase())
+  }, [address])
 
   return (
     <>
@@ -90,9 +140,7 @@ const Farm = () => {
             <Row>
               <StyledExternalLink href="https://docs.halodao.com/v0-guide/how-to-farm" style={{ fontSize: '16px' }}>
                 {t('learnAboutStaking')}
-                <HideLarge>
-                  <LinkIcon></LinkIcon>
-                </HideLarge>
+                <LinkIcon className="link-icon"></LinkIcon>
               </StyledExternalLink>
             </Row>
           </HeaderRow>
@@ -101,7 +149,12 @@ const Farm = () => {
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
-        <FarmPoolTable poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
+        <FarmPoolTable
+          poolsInfo={poolsInfo}
+          v0PoolsInfo={v0PoolsInfo}
+          tokenPrice={tokenPrice}
+          selectedPool={selectedPoolAddress}
+        />
       </PageWrapper>
     </>
   )

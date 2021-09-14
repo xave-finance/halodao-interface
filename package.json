@@ -47,6 +47,7 @@
     "@web3-react/walletconnect-connector": "^6.1.9",
     "@web3-react/walletlink-connector": "^6.1.9",
     "ajv": "^6.12.3",
+    "autoprefixer": "^9",
     "cids": "^1.0.0",
     "copy-to-clipboard": "^3.2.0",
     "cross-env": "^7.0.2",
@@ -72,6 +73,7 @@
     "multihashes": "^3.0.1",
     "node-vibrant": "^3.1.5",
     "polished": "^3.3.2",
+    "postcss": "^7",
     "prettier": "^1.17.0",
     "qs": "^6.9.4",
     "react": "^16.13.1",
@@ -95,6 +97,7 @@
     "serve": "^11.3.0",
     "start-server-and-test": "^1.11.0",
     "styled-components": "^4.2.0",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat",
     "typescript": "^3.8.3",
     "use-count-up": "^2.2.5",
     "wcag-contrast": "^3.0.0"
@@ -103,9 +106,9 @@
     "@walletconnect/web3-provider": "1.1.1-alpha.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "CI= GENERATE_SOURCEMAP=false react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "start": "craco start",
+    "build": "CI= GENERATE_SOURCEMAP=false craco build",
+    "test": "craco test --env=jsdom",
     "eject": "react-scripts eject",
     "integration-test": "start-server-and-test 'serve build -l 3000' http://localhost:3000 'cypress run'",
     "build-serve": "yarn build && serve build -l 3000",
@@ -135,8 +138,13 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@craco/craco": "5.8.0",
     "@types/numeral": "^2.0.1",
+    "@types/react-transition-group": "1.x",
+    "install": "^0.13.0",
     "json-to-graphql-query": "^2.0.0",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "react-google-charts": "^3.0.15",
+    "react-transition-group": "1.x"
   }
 }
