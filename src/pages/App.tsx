@@ -68,6 +68,7 @@ export default function App() {
           <Polling />
           <Web3ReactManager>
             <Switch>
+              <Route exact strict path="/swap" component={Swap} />
               <Route exact strict path="/vesting" component={HaloHalo} />
               <Route exact strict path="/farm" component={Farm} />
               <Route path="/farm/:address" component={Farm} />

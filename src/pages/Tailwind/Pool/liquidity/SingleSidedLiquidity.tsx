@@ -18,7 +18,8 @@ enum AddLiquidityState {
   NotConfigured,
   NotApproved,
   Approved,
-  Depositing
+  Depositing,
+  Disabled
 }
 
 interface SingleSidedLiquidityProps {
@@ -28,6 +29,7 @@ interface SingleSidedLiquidityProps {
   onIsGivenBaseChanged: (isGivenBase: boolean) => void
   onSlippageChanged: (slippage: string) => void
   onDeposit: () => void
+  isAddLiquidityEnabled: boolean
 }
 
 const SingleSidedLiquidity = ({
@@ -36,7 +38,8 @@ const SingleSidedLiquidity = ({
   onZapAmountChanged,
   onIsGivenBaseChanged,
   onSlippageChanged,
-  onDeposit
+  onDeposit,
+  isAddLiquidityEnabled
 }: SingleSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [selectedToken, setSelectedToken] = useState(pool.token0)
@@ -86,7 +89,9 @@ const SingleSidedLiquidity = ({
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
-    if (zapInput !== '') {
+    if (!isAddLiquidityEnabled) {
+      setMainState(AddLiquidityState.Disabled)
+    } else if (zapInput !== '') {
       const baseBalance = balances[0] ? Number(balances[0].toExact()) : 0
       const quoteBalance = balances[1] ? Number(balances[1]?.toExact()) : 0
 
@@ -102,7 +107,17 @@ const SingleSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage, isGivenBase])
+  }, [
+    isAddLiquidityEnabled,
+    zapInput,
+    baseZapApproved,
+    quoteZapApproved,
+    balances,
+    baseAmount,
+    quoteAmount,
+    slippage,
+    isGivenBase
+  ])
 
   return (
     <>
@@ -137,7 +152,7 @@ const SingleSidedLiquidity = ({
         />
       </div>
 
-      {(!baseZapApproved || !quoteZapApproved) && (
+      {(!baseZapApproved || !quoteZapApproved) && isAddLiquidityEnabled && (
         <div className="mt-4 flex flex-col md:flex-row md:space-x-4">
           {!baseZapApproved && (
             <div className={!quoteZapApproved ? 'w-1/2' : 'flex-1'}>
@@ -180,7 +195,9 @@ const SingleSidedLiquidity = ({
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title={
-            mainState === AddLiquidityState.NoAmount
+            mainState === AddLiquidityState.Disabled
+              ? 'Add Liquidity Disabled'
+              : mainState === AddLiquidityState.NoAmount
               ? 'Enter an amount'
               : mainState === AddLiquidityState.NotConfigured
               ? 'Configure slippage'
@@ -189,7 +206,9 @@ const SingleSidedLiquidity = ({
               : 'Supply'
           }
           state={
-            mainState === AddLiquidityState.Approved
+            mainState === AddLiquidityState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
               ? PrimaryButtonState.Enabled
               : mainState === AddLiquidityState.Depositing
               ? PrimaryButtonState.InProgress

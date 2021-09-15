@@ -3,8 +3,7 @@ import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
-import ExpandablePoolRow from './ExpandablePoolRow'
-import { LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
+import { INACTIVE_POOLS, LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { updatePools } from 'state/pool/actions'
 import { CachedPool } from 'state/pool/reducer'
@@ -12,22 +11,37 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { useActiveWeb3React } from 'hooks'
 import { ChainId } from '@sushiswap/sdk'
+import { useTranslation } from 'react-i18next'
+import PoolTable from './PoolTable'
 
-interface PoolAddressPidMap {
+export interface PoolAddressPidMap {
   address: string
   pid: number | undefined
+}
+
+enum PoolFilter {
+  active,
+  inactive,
+  all
 }
 
 const Pool = () => {
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
-  const [activeRow, setActiveRow] = useState(0)
-  const [isExpanded, setIsExpanded] = useState(false)
-  const { chainId } = useActiveWeb3React()
 
-  const defaultPoolMap = () => {
+  const { chainId } = useActiveWeb3React()
+  const { t } = useTranslation()
+
+  const defaultPoolMap = (filter: PoolFilter) => {
     const addresses = chainId === ChainId.MATIC ? LIQUIDITY_POOLS_ADDRESSES_MATIC : LIQUIDITY_POOLS_ADDRESSES
-    return addresses.map<PoolAddressPidMap>(address => {
+
+    const whitelisted = addresses.filter(address => {
+      if (filter === PoolFilter.all) return address
+      const isInactive = INACTIVE_POOLS.filter(p => p.toLowerCase() === address.toLowerCase()).length > 0
+      return filter === PoolFilter.active ? !isInactive : isInactive
+    })
+
+    return whitelisted.map<PoolAddressPidMap>(address => {
       return {
         address,
         pid: undefined
@@ -35,20 +49,31 @@ const Pool = () => {
     })
   }
 
-  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap)
+  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.active))
+  const [inactivePoolMap, setInactivePoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.inactive))
 
   useEffect(() => {
     const pools: CachedPool[] = []
-    const map = defaultPoolMap()
+    const allMap = defaultPoolMap(PoolFilter.all)
+    const activeMap = defaultPoolMap(PoolFilter.active)
+    const inactiveMap = defaultPoolMap(PoolFilter.inactive)
 
     for (const [i, address] of rewardPoolAddresses.entries()) {
       pools.push({
         pid: i,
         lpTokenAddress: address
       })
-      const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
-      if (filtered.length > 0) {
-        filtered[0].pid = i
+      const filteredAll = allMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredAll.length > 0) {
+        filteredAll[0].pid = i
+      }
+      const filteredActive = activeMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredActive.length > 0) {
+        filteredActive[0].pid = i
+      }
+      const filteredInactive = inactiveMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredInactive.length > 0) {
+        filteredInactive[0].pid = i
       }
     }
 
@@ -56,7 +81,8 @@ const Pool = () => {
       dispatch(updatePools(pools))
     }
 
-    setPoolMap(map)
+    setPoolMap(activeMap)
+    setInactivePoolMap(inactiveMap)
   }, [rewardPoolAddresses, chainId]) //eslint-disable-line
 
   return (
@@ -82,22 +108,14 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {poolMap.map((pool, i) => (
-        <ExpandablePoolRow
-          key={pool.address}
-          poolAddress={pool.address}
-          pid={pool.pid}
-          isExpanded={activeRow === i ? isExpanded : false}
-          onClick={() => {
-            if (activeRow === i) {
-              setIsExpanded(!isExpanded)
-            } else {
-              setIsExpanded(true)
-              setActiveRow(i)
-            }
-          }}
-        />
-      ))}
+      <PoolTable poolMap={poolMap} isActivePools={true} />
+
+      {inactivePoolMap.length > 0 && (
+        <>
+          <div className="mt-8 mb-4">{t('inactive pools')}</div>
+          <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
+        </>
+      )}
     </PageWrapper>
   )
 }

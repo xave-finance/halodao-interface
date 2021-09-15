@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { isDoubleEstimatePool } from 'utils/poolInfo'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const CurveContract = useContract(address, CURVE_ABI, true)
@@ -75,7 +76,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const previewDepositGivenQuote = useCallback(
     async (quoteAmount: string) => {
       const quoteNumeraire = Number(quoteAmount)
-      const totalNumeraire = quoteNumeraire * 2
+      const multiplier = isDoubleEstimatePool(address) ? 1 : 2
+      const totalNumeraire = quoteNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
         deposit: totalNumeraire,
@@ -84,13 +86,14 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         quote
       }
     },
-    [viewDeposit]
+    [viewDeposit, address]
   )
 
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
       const baseNumeraire = Number(baseAmount) * baseRate
-      const totalNumeraire = baseNumeraire * (baseWeight > 0 ? 1 / baseWeight : 2)
+      const multiplier = isDoubleEstimatePool(address) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
+      const totalNumeraire = baseNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
         deposit: totalNumeraire,
@@ -99,7 +102,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         quote
       }
     },
-    [viewDeposit]
+    [viewDeposit, address]
   )
 
   return { viewDeposit, deposit, viewWithdraw, withdraw, previewDepositGivenBase, previewDepositGivenQuote }
