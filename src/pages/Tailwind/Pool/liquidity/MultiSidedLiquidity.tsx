@@ -52,59 +52,64 @@ const MultiSidedLiquidity = ({
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
 
+  // move this somewhere better in the state
+  const shouldLog = false
+
   const inputIsZero = async (val: string) => {
     let zeroStr = 0,
       valIsZero = false
     try {
       zeroStr = parseFloat(val)
-      console.log('zeroStr ', zeroStr)
+      if (shouldLog) console.log('zeroStr ', zeroStr)
       if (zeroStr == 0) valIsZero = true
     } catch (err) {
-      console.log('zero check failed')
+      if (shouldLog) console.log('zero check failed')
     }
 
     return valIsZero
   }
 
   const adjustBaseOrQuoteForEstimationErr = async (val: string, base: string, quote: string, valIsBase: boolean) => {
-    console.log('adjustBaseOrQuoteForEstimationErr ', adjustBaseOrQuoteForEstimationErr)
+    if (shouldLog) console.log('adjustBaseOrQuoteForEstimationErr ', adjustBaseOrQuoteForEstimationErr)
     let estimated = ''
 
     if (valIsBase) {
       try {
         const numberVal = parseFloat(val)
-        console.log('numberVal ', numberVal)
+        if (shouldLog) console.log('numberVal ', numberVal)
         const numberBase = parseFloat(base)
-        console.log('numberBase ', numberBase)
+        if (shouldLog) console.log('numberBase ', numberBase)
         const numberQuote = parseFloat(quote)
         const rateOfErr = numberVal / numberBase
-        console.log('rateOfErr ', rateOfErr)
+        if (shouldLog) console.log('rateOfErr ', rateOfErr)
         const quoteAdjustedForErr = numberQuote * rateOfErr
-        console.log('quoteAdjustedForErr ', quoteAdjustedForErr)
+        if (shouldLog) console.log('quoteAdjustedForErr ', quoteAdjustedForErr)
         estimated = quoteAdjustedForErr.toString()
-        console.log('estimatedQuote adjusted for err ', estimated)
+        if (shouldLog) console.log('estimatedQuote adjusted for err ', estimated)
       } catch (err) {
-        console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
+        if (shouldLog)
+          console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
         estimated = quote
-        console.log('estimatedQuote NOT adjusted for err ', estimated)
+        if (shouldLog) console.log('estimatedQuote NOT adjusted for err ', estimated)
       }
     } else {
       try {
         const numberVal = parseFloat(val)
-        console.log('numberVal ', numberVal)
+        if (shouldLog) console.log('numberVal ', numberVal)
         const numberQuote = parseFloat(quote)
-        console.log('numberQuote ', numberQuote)
+        if (shouldLog) console.log('numberQuote ', numberQuote)
         const numberBase = parseFloat(base)
         const rateOfErr = numberVal / numberQuote
-        console.log('rateOfErr ', rateOfErr)
+        if (shouldLog) console.log('rateOfErr ', rateOfErr)
         const baseAdjustedForErr = numberBase * rateOfErr
-        console.log('baseAdjustedForErr ', baseAdjustedForErr)
+        if (shouldLog) console.log('baseAdjustedForErr ', baseAdjustedForErr)
         estimated = baseAdjustedForErr.toString()
-        console.log('estimatedBase adjusted for err ', estimated)
+        if (shouldLog) console.log('estimatedBase adjusted for err ', estimated)
       } catch (err) {
-        console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
+        if (shouldLog)
+          console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
         estimated = base
-        console.log('estimatedBase NOT adjusted for err ', estimated)
+        if (shouldLog) console.log('estimatedBase NOT adjusted for err ', estimated)
       }
     }
 
@@ -115,21 +120,21 @@ const MultiSidedLiquidity = ({
    * Update quote amount upon entering base amount
    **/
   const onBaseInputUpdate = async (val: string) => {
-    console.log('onBaseInputUpdate ', val)
+    if (shouldLog) console.log('onBaseInputUpdate ', val)
     setBaseInput(val)
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
 
     const inputZero = await inputIsZero(val)
-    console.log('inputIsZero ', inputZero)
+    if (shouldLog) console.log('inputIsZero ', inputZero)
     if (val !== '' && !inputZero) {
       let estimatedQuote = ''
       if (pool.pooled.total <= 1) {
-        console.log('liquidity is < 1')
+        if (shouldLog) console.log('liquidity is < 1')
         const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
         estimatedQuote = quoteAmount
       } else {
-        console.log('liquidity is > 1')
+        if (shouldLog) console.log('liquidity is > 1')
         const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
         estimatedQuote = await adjustBaseOrQuoteForEstimationErr(val, base, quote, true)
       }
@@ -149,7 +154,7 @@ const MultiSidedLiquidity = ({
     onIsGivenBaseChanged(false)
 
     const inputZero = await inputIsZero(val)
-    console.log('inputIsZero ', inputZero)
+    if (shouldLog) console.log('inputIsZero ', inputZero)
     if (val !== '' && !inputZero) {
       // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       // setBaseInput(baseAmount)
