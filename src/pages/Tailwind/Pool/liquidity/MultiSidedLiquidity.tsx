@@ -52,15 +52,7 @@ const MultiSidedLiquidity = ({
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
 
-  /**
-   * Update quote amount upon entering base amount
-   **/
-  const onBaseInputUpdate = async (val: string) => {
-    console.log('onBaseInputUpdate ', val)
-    setBaseInput(val)
-    onBaseAmountChanged(val)
-    onIsGivenBaseChanged(true)
-
+  const inputIsZero = async (val: string) => {
     let zeroStr = 0,
       valIsZero = false
     try {
@@ -71,7 +63,19 @@ const MultiSidedLiquidity = ({
       console.log('zero check failed')
     }
 
-    if (val !== '' && !valIsZero) {
+    return valIsZero
+  }
+
+  /**
+   * Update quote amount upon entering base amount
+   **/
+  const onBaseInputUpdate = async (val: string) => {
+    console.log('onBaseInputUpdate ', val)
+    setBaseInput(val)
+    onBaseAmountChanged(val)
+    onIsGivenBaseChanged(true)
+
+    if (val !== '' && !inputIsZero(val)) {
       let estimatedQuote = ''
       if (pool.pooled.total <= 1) {
         console.log('liquidity is < 1')
@@ -113,17 +117,7 @@ const MultiSidedLiquidity = ({
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
 
-    let zeroStr = 0,
-      valIsZero = false
-    try {
-      zeroStr = parseFloat(val)
-      console.log('zeroStr ', zeroStr)
-      if (zeroStr == 0) valIsZero = true
-    } catch (err) {
-      console.log('zero check failed')
-    }
-
-    if (val !== '' && !valIsZero) {
+    if (val !== '' && !inputIsZero(val)) {
       // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       // setBaseInput(baseAmount)
       // onBaseAmountChanged(baseAmount)
