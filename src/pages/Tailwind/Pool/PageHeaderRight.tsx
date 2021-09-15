@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { CachedPool } from 'state/pool/reducer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import xRNBWLogo from '../../../assets/images/xrnbw-token.png'
 
 const PageHeaderRight = () => {
   const [stakeableValue, setStakeableValue] = useState(0)
@@ -46,7 +47,9 @@ const PageHeaderRight = () => {
         </div>
       </div>
       <div className="flex-auto bg-primary-light py-4 px-6 rounded-card flex flex-col">
-        <div className="flex-1"></div>
+        <div className="mb-2">
+          <img width={'85px'} src={xRNBWLogo} alt="xRNBW" />
+        </div>
         <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Unclaimed xRNBW Earned</div>
         <div className="text-2xl font-semibold">{formatNumber(rewardsEarned)}</div>
       </div>

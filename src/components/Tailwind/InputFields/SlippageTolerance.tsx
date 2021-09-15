@@ -36,13 +36,12 @@ const SlippageTolerance = ({ value, didChangeValue }: SlippageToleranceProps) =>
   return (
     <div>
       <div className="flex items-center space-x-2 mb-2">
-        <span>Slippage tollerance:</span>
+        <span>Slippage tolerance:</span>
         <QuestionIcon size={16} />
       </div>
       <div className="flex space-x-4 mb-2">
-        <SlippageButton title="0.1%" onClick={() => didChangeValue('0.1')} highlighted={value === '0.1'} />
         <SlippageButton title="0.5%" onClick={() => didChangeValue('0.5')} highlighted={value === '0.5'} />
-        <SlippageButton title="1%" onClick={() => didChangeValue('1')} highlighted={value === '1'} />
+        <SlippageButton title="3%" onClick={() => didChangeValue('3')} highlighted={value === '3'} />
         <div className="w-20">
           <NumericalInput
             className="text-sm font-bold text-primary-hover py-1 px-3 border border-solid border-primary rounded-button w-full"

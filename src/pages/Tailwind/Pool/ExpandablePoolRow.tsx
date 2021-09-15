@@ -49,9 +49,10 @@ interface ExpandablePoolRowProps {
   pid?: number
   isExpanded: boolean
   onClick: () => void
+  isActivePool?: boolean
 }
 
-const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
@@ -78,7 +79,13 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
     Promise.all(promises)
       .then(results => {
         const tokens: Token[] = results[0]
-        const liquidity: { total: BigNumber; tokens: BigNumber[]; weights: number[]; rates: number[] } = results[1]
+        const liquidity: {
+          total: BigNumber
+          tokens: BigNumber[]
+          weights: number[]
+          rates: number[]
+          assimilators: string[]
+        } = results[1]
         const balance: BigNumber = results[2]
         const staked: BigNumber = results[3]
         const rewards: BigNumber = results[4]
@@ -103,9 +110,11 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
             token1: liquidity.rates[1]
           },
           held: Number(formatEther(balance)),
+          heldBN: balance,
           staked: Number(formatEther(staked)),
           earned: Number(formatEther(rewards)),
-          totalSupply: Number(formatEther(totalSupply))
+          totalSupply: Number(formatEther(totalSupply)),
+          assimilators: liquidity.assimilators
         })
       })
       .catch(e => {
@@ -204,7 +213,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
         <div className="mt-2">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="mb-4 md:w-1/2 md:mb-0">
-              <PoolCardLeft pool={pool} />
+              <PoolCardLeft pool={pool} isActivePool={isActivePool} />
             </div>
             <div className="md:w-1/2">
               <PoolCardRight pool={pool} />

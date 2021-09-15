@@ -8,12 +8,13 @@ import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { getContract } from 'utils'
 import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID, ORIGINAL_TOKEN_CHAIN_ADDRESS } from 'constants/bridge'
-import { ButtonState } from 'pages/Tailwind/Bridge/BridgePanel'
 import { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
+import { ButtonState } from '../constants/buttonStates'
+import { getGasRangeEstimation, GasModes } from 'utils/ethGasEstimator'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
@@ -296,18 +297,23 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 }
 
 export const useShuttleFee = (primaryBridgeContract: Contract) => {
-  const [shuttleFee, setShuttleFee] = useState(0)
+  const [lowerBoundFee, setLowerBoundFee] = useState(0)
+  const [upperBoundFee, setUpperBoundFee] = useState(0)
 
   const getFee = useCallback(async () => {
     const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
-    getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
-      const flatFee = Number(process.env.REACT_APP_SHUTTLE_FLAT_FEE_USD) / prices[originalTokenAddress]
-      setShuttleFee(Number(flatFee.toFixed(2)))
-    })
+    const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    const estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
+    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
+    const lowerBoundFeeInToken = estimatedGasRange.lowerBound.usd * tokensPerUSD
+    const upperBoundFeeInToken = estimatedGasRange.upperBound.usd * tokensPerUSD
+
+    setLowerBoundFee(lowerBoundFeeInToken)
+    setUpperBoundFee(upperBoundFeeInToken)
   }, [primaryBridgeContract])
 
-  return { getFee, shuttleFee }
+  return { lowerBoundFee, upperBoundFee, getFee }
 }
 
 export const useMinimumAmount = (primaryBridgeContract: Contract) => {

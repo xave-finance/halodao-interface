@@ -3,27 +3,45 @@ import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
-import ExpandablePoolRow from './ExpandablePoolRow'
-import { LIQUIDITY_POOLS_ADDRESSES } from 'constants/pools'
+import { INACTIVE_POOLS, LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { updatePools } from 'state/pool/actions'
 import { CachedPool } from 'state/pool/reducer'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
+import { useActiveWeb3React } from 'hooks'
+import { ChainId } from '@sushiswap/sdk'
+import { useTranslation } from 'react-i18next'
+import PoolTable from './PoolTable'
 
-interface PoolAddressPidMap {
+export interface PoolAddressPidMap {
   address: string
   pid: number | undefined
+}
+
+enum PoolFilter {
+  active,
+  inactive,
+  all
 }
 
 const Pool = () => {
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
-  const [activeRow, setActiveRow] = useState(0)
-  const [isExpanded, setIsExpanded] = useState(false)
 
-  const defaultPoolMap = () => {
-    return LIQUIDITY_POOLS_ADDRESSES.map<PoolAddressPidMap>(address => {
+  const { chainId } = useActiveWeb3React()
+  const { t } = useTranslation()
+
+  const defaultPoolMap = (filter: PoolFilter) => {
+    const addresses = chainId === ChainId.MATIC ? LIQUIDITY_POOLS_ADDRESSES_MATIC : LIQUIDITY_POOLS_ADDRESSES
+
+    const whitelisted = addresses.filter(address => {
+      if (filter === PoolFilter.all) return address
+      const isInactive = INACTIVE_POOLS.filter(p => p.toLowerCase() === address.toLowerCase()).length > 0
+      return filter === PoolFilter.active ? !isInactive : isInactive
+    })
+
+    return whitelisted.map<PoolAddressPidMap>(address => {
       return {
         address,
         pid: undefined
@@ -31,34 +49,54 @@ const Pool = () => {
     })
   }
 
-  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap)
+  const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.active))
+  const [inactivePoolMap, setInactivePoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.inactive))
 
   useEffect(() => {
     const pools: CachedPool[] = []
-    const map = defaultPoolMap()
+    const allMap = defaultPoolMap(PoolFilter.all)
+    const activeMap = defaultPoolMap(PoolFilter.active)
+    const inactiveMap = defaultPoolMap(PoolFilter.inactive)
+
     for (const [i, address] of rewardPoolAddresses.entries()) {
       pools.push({
         pid: i,
         lpTokenAddress: address
       })
-      const filtered = map.filter(m => m.address.toLowerCase() === address.toLowerCase())
-      if (filtered.length) {
-        filtered[0].pid = i
+      const filteredAll = allMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredAll.length > 0) {
+        filteredAll[0].pid = i
+      }
+      const filteredActive = activeMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredActive.length > 0) {
+        filteredActive[0].pid = i
+      }
+      const filteredInactive = inactiveMap.filter(m => m.address.toLowerCase() === address.toLowerCase())
+      if (filteredInactive.length > 0) {
+        filteredInactive[0].pid = i
       }
     }
-    dispatch(updatePools(pools))
-    setPoolMap(map)
-  }, [rewardPoolAddresses]) //eslint-disable-line
+
+    if (pools.length > 0) {
+      dispatch(updatePools(pools))
+    }
+
+    setPoolMap(activeMap)
+    setInactivePoolMap(inactiveMap)
+  }, [rewardPoolAddresses, chainId]) //eslint-disable-line
 
   return (
     <PageWrapper>
-      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-16 md:items-center">
-        <div className="md:w-1/2">
+      <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:items-center">
+        <div className="md:w-1/2 md:pr-16">
           <PageHeaderLeft
             subtitle="Add/Remove Liquidity"
             title="Pools"
-            caption="ERC721 token standard returns a immutable raiden network! VeChain should be a ERC20 token standard!"
-            link={{ text: 'Learn about pool liquidity', url: 'https://docs.halodao.com' }}
+            caption="Provide liquidity to pools to get HLP tokens. Deposit your HLP tokens to the Farm to begin earning Rainbow Candies (RNBW). Each RNBW you earn is automatically staked as xRNBW in the Rainbow Pool to begin earning vesting rewards!"
+            link={{
+              text: 'Learn about pool liquidity',
+              url: 'https://docs.halodao.com/get-started/how-to-supply-liquidity'
+            }}
           />
         </div>
         <div className="md:w-1/2">
@@ -70,22 +108,14 @@ const Pool = () => {
         <PoolColumns />
       </div>
 
-      {poolMap.map((pool, i) => (
-        <ExpandablePoolRow
-          key={pool.address}
-          poolAddress={pool.address}
-          pid={pool.pid}
-          isExpanded={activeRow === i ? isExpanded : false}
-          onClick={() => {
-            if (activeRow === i) {
-              setIsExpanded(!isExpanded)
-            } else {
-              setIsExpanded(true)
-              setActiveRow(i)
-            }
-          }}
-        />
-      ))}
+      <PoolTable poolMap={poolMap} isActivePools={true} />
+
+      {inactivePoolMap.length > 0 && (
+        <>
+          <div className="mt-8 mb-4">{t('inactive pools')}</div>
+          <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
+        </>
+      )}
     </PageWrapper>
   )
 }

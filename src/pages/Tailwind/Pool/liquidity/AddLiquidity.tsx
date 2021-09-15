@@ -9,20 +9,23 @@ import AddLiquityModal from './AddLiquityModal'
 
 interface AddLiquidityProps {
   pool: PoolData
+  isEnabled: boolean
 }
 
-const AddLiquidity = ({ pool }: AddLiquidityProps) => {
+const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [zapAmount, setZapAmount] = useState('')
-  const [zapFromBase, setZapFromBase] = useState(false)
-  const [slippage, setSlippage] = useState('')
+  const [isGivenBase, setIsGivenBase] = useState(false)
+  const [slippage, setSlippage] = useState('3')
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
   const balances = [tokenBalances[pool.token0.address], tokenBalances[pool.token1.address]]
+
+  const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
 
   return (
     <div>
@@ -33,6 +36,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
         <SegmentControl
           segments={['Two-sided', 'Single-sided']}
           activeSegment={activeSegment}
+          disabledSegments={disabledSegments}
           didChangeSegment={i => setActiveSegment(i)}
         />
       </div>
@@ -44,15 +48,18 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           onBaseAmountChanged={setBaseAmount}
           onQuoteAmountChanged={setQuoteAmount}
           onDeposit={() => setShowModal(true)}
+          onIsGivenBaseChanged={setIsGivenBase}
+          isAddLiquidityEnabled={isEnabled}
         />
       ) : (
         <SingleSidedLiquidity
           pool={pool}
           balances={balances}
           onZapAmountChanged={setZapAmount}
-          onZapFromBaseChanged={setZapFromBase}
+          onIsGivenBaseChanged={setIsGivenBase}
           onSlippageChanged={setSlippage}
           onDeposit={() => setShowModal(true)}
+          isAddLiquidityEnabled={isEnabled}
         />
       )}
 
@@ -65,7 +72,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
         zapAmount={zapAmount}
         slippage={slippage}
         isMultisided={activeSegment === 0}
-        isZappingFromBase={zapFromBase}
+        isGivenBase={isGivenBase}
       />
     </div>
   )

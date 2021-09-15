@@ -4,16 +4,17 @@ import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
-import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
+import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 
 enum AddLiquidityState {
   NoAmount,
   InsufficientBalance,
   NotApproved,
   Approved,
-  Depositing
+  Depositing,
+  Disabled
 }
 
 interface MultiSidedLiquidityProps {
@@ -22,6 +23,8 @@ interface MultiSidedLiquidityProps {
   onBaseAmountChanged: (baseAmount: string) => void
   onQuoteAmountChanged: (quoteAmount: string) => void
   onDeposit: () => void
+  onIsGivenBaseChanged: (isGivenBase: boolean) => void
+  isAddLiquidityEnabled: boolean
 }
 
 const MultiSidedLiquidity = ({
@@ -29,13 +32,15 @@ const MultiSidedLiquidity = ({
   balances,
   onBaseAmountChanged,
   onQuoteAmountChanged,
-  onDeposit
+  onDeposit,
+  onIsGivenBaseChanged,
+  isAddLiquidityEnabled
 }: MultiSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcMaxDepositAmountGivenBase, calcMaxDepositAmountGivenQuote } = useZap(
+  const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
     pool.token0,
     pool.token1
@@ -54,11 +59,12 @@ const MultiSidedLiquidity = ({
   const onBaseInputUpdate = async (val: string) => {
     setBaseInput(val)
     onBaseAmountChanged(val)
+    onIsGivenBaseChanged(true)
 
     if (val !== '') {
-      const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
-      setQuoteInput(quoteAmount)
-      onQuoteAmountChanged(quoteAmount)
+      const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+      setQuoteInput(quote)
+      onQuoteAmountChanged(quote)
     } else {
       setQuoteInput('')
     }
@@ -70,11 +76,12 @@ const MultiSidedLiquidity = ({
   const onQuoteInputUpdate = async (val: string) => {
     setQuoteInput(val)
     onQuoteAmountChanged(val)
+    onIsGivenBaseChanged(false)
 
     if (val !== '') {
-      const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
-      setBaseInput(baseAmount)
-      onBaseAmountChanged(baseAmount)
+      const { base } = await previewDepositGivenQuote(val)
+      setBaseInput(base)
+      onBaseAmountChanged(base)
     } else {
       setBaseInput('')
     }
@@ -84,7 +91,9 @@ const MultiSidedLiquidity = ({
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
-    if (baseInput !== '' && quoteInput !== '') {
+    if (!isAddLiquidityEnabled) {
+      setMainState(AddLiquidityState.Disabled)
+    } else if (baseInput !== '' && quoteInput !== '') {
       const baseBalance = balances[0] ? Number(balances[0].toExact()) : 0
       const quoteBalance = balances[1] ? Number(balances[1]?.toExact()) : 0
 
@@ -98,7 +107,7 @@ const MultiSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [baseInput, quoteInput, baseApproved, quoteApproved, balances])
+  }, [isAddLiquidityEnabled, baseInput, quoteInput, baseApproved, quoteApproved, balances])
 
   return (
     <>
@@ -123,7 +132,7 @@ const MultiSidedLiquidity = ({
         />
       </div>
 
-      {(!baseApproved || !quoteApproved) && (
+      {(!baseApproved || !quoteApproved) && isAddLiquidityEnabled && (
         <div className="mt-4 flex space-x-4">
           {!baseApproved && (
             <div className={!quoteApproved ? 'w-1/2' : 'flex-1'}>
@@ -166,14 +175,18 @@ const MultiSidedLiquidity = ({
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title={
-            mainState === AddLiquidityState.NoAmount
+            mainState === AddLiquidityState.Disabled
+              ? 'Add Liquidity Disabled'
+              : mainState === AddLiquidityState.NoAmount
               ? 'Enter an amount'
               : mainState === AddLiquidityState.InsufficientBalance
               ? 'Insufficient Balance'
               : 'Supply'
           }
           state={
-            mainState === AddLiquidityState.Approved
+            mainState === AddLiquidityState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
               ? PrimaryButtonState.Enabled
               : mainState === AddLiquidityState.Depositing
               ? PrimaryButtonState.InProgress

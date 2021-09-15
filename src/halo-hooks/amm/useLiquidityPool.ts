@@ -1,33 +1,37 @@
 import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
-import { useContract } from 'hooks/useContract'
+import { useContract, useHALORewardsContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
-import REWARDS_ABI from 'constants/haloAbis/Rewards.json'
-import { formatEther } from 'ethers/lib/utils'
+import { formatUnits } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
-import { HALO_REWARDS_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
 import Fraction from 'constants/Fraction'
 
 export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const { account, library, chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
-  const RewardsContract = useContract(chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined, REWARDS_ABI, true)
+  const RewardsContract = useHALORewardsContract()
 
   const getTokens = useCallback(async () => {
     if (!chainId || !library) return []
 
-    const token0Address = await CurveContract?.derivatives(0)
-    const token1Address = await CurveContract?.derivatives(1)
+    const [token0Address, token1Address] = await Promise.all([
+      CurveContract?.derivatives(0),
+      CurveContract?.derivatives(1)
+    ])
+
     const Token0Contract = getContract(token0Address, ERC20_ABI, library)
     const Token1Contract = getContract(token1Address, ERC20_ABI, library)
-    const token0Symbol = await Token0Contract?.symbol()
-    const token1Symbol = await Token1Contract?.symbol()
-    const token0Decimals = await Token0Contract?.decimals()
-    const token1Decimals = await Token1Contract?.decimals()
+
+    const [token0Symbol, token1Symbol, token0Decimals, token1Decimals] = await Promise.all([
+      Token0Contract?.symbol(),
+      Token1Contract?.symbol(),
+      Token0Contract?.decimals(),
+      Token1Contract?.decimals()
+    ])
 
     return [
       new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol),
@@ -36,36 +40,44 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   }, [CurveContract, chainId, library])
 
   const getLiquidity = useCallback(async () => {
-    if (!library) return { total: 0, tokens: [0, 0] }
+    if (!library) return { total: 0, tokens: [0, 0], weights: [0, 0], rates: [0, 0] }
 
-    const res = await CurveContract?.liquidity()
+    const [derivatives0, derivatives1] = await Promise.all([
+      CurveContract?.derivatives(0),
+      CurveContract?.derivatives(1)
+    ])
 
-    const derivatives0 = await CurveContract?.derivatives(0)
-    const derivatives1 = await CurveContract?.derivatives(1)
-    const assimialtor0Address = await CurveContract?.assimilator(derivatives0)
-    const assimialtor1Address = await CurveContract?.assimilator(derivatives1)
+    const [assimialtor0Address, assimialtor1Address] = await Promise.all([
+      CurveContract?.assimilator(derivatives0),
+      CurveContract?.assimilator(derivatives1)
+    ])
+
     const Assimilator0Contract = getContract(assimialtor0Address, ASSIMILATOR_ABI, library)
     const Assimilator1Contract = getContract(assimialtor1Address, ASSIMILATOR_ABI, library)
-    const rate0 = await Assimilator0Contract.getRate()
-    const rate1 = await Assimilator1Contract.getRate()
 
-    const token0Numeraire = res.individual_[0]
-    const token0Value = token0Numeraire.mul(1e8).div(rate0) // based on Assimilator's viewRawAmount()
+    const [liquidity, rate0, rate1] = await Promise.all([
+      CurveContract?.liquidity(),
+      Assimilator0Contract.getRate(),
+      Assimilator1Contract.getRate()
+    ])
 
-    const token1Numeraire = res.individual_[1]
+    const token0Numeraire = liquidity.individual_[0]
+    const token0Value = token0Numeraire.mul(1e8).div(rate0)
+    const token1Numeraire = liquidity.individual_[1]
     const token1Value = token1Numeraire.mul(1e8).div(rate1)
 
-    const token0Weight = Fraction.from(token0Numeraire, res.total_).toString()
-    const token1Weight = Fraction.from(token1Numeraire, res.total_).toString()
+    const token0Weight = Fraction.from(token0Numeraire, liquidity.total_).toString()
+    const token1Weight = Fraction.from(token1Numeraire, liquidity.total_).toString()
 
-    const token0Rate = Number(formatEther(rate0.mul(1e8)))
-    const token1Rate = Number(formatEther(rate1.mul(1e8)))
+    const token0Rate = Number(formatUnits(rate0, 8))
+    const token1Rate = Number(formatUnits(rate1, 8))
 
     return {
-      total: res.total_,
+      total: liquidity.total_,
       tokens: [token0Value, token1Value],
       weights: [Number(token0Weight), Number(token1Weight)],
-      rates: [token0Rate, token1Rate]
+      rates: [token0Rate, token1Rate],
+      assimilators: [assimialtor0Address, assimialtor1Address]
     }
   }, [CurveContract, library])
 
@@ -80,14 +92,14 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
   }, [CurveContract])
 
   const getStakedLPToken = useCallback(async () => {
-    if (!pid) return BigNumber.from(0)
+    if (pid === undefined) return BigNumber.from(0)
 
     const res = await RewardsContract?.userInfo(pid, account)
     return res.amount
   }, [RewardsContract, account, pid])
 
   const getPendingRewards = useCallback(async () => {
-    if (!pid) return BigNumber.from(0)
+    if (pid === undefined) return BigNumber.from(0)
 
     const res = await RewardsContract?.pendingRewardToken(pid, account)
     return res

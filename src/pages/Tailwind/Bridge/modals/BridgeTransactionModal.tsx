@@ -9,6 +9,7 @@ import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
 import { useShuttleFee } from 'halo-hooks/useBridge'
 import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
+import { ModalState } from '../../../../constants/buttonStates'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -22,17 +23,11 @@ interface ConfirmTransactionModalProps {
   destinationChainId: ChainId
   tokenSymbol: string
   wrappedTokenSymbol: string
-  state: ConfirmTransactionModalState
-  setState: (state: ConfirmTransactionModalState) => void
+  state: ModalState
+  setState: (state: ModalState) => void
   successHash: string
   estimatedGas: string
   primaryBridgeContract: any
-}
-
-enum ConfirmTransactionModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
 }
 
 interface InProgressContentProps {
@@ -59,7 +54,7 @@ const ConfirmTransactionModal = ({
   estimatedGas,
   primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
-  const { shuttleFee, getFee } = useShuttleFee(primaryBridgeContract)
+  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(primaryBridgeContract)
 
   useEffect(() => {
     getFee()
@@ -118,11 +113,18 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
+              <div className="text-secondary-alternate">Estimated Lower Bound Shuttle fee</div>
               <div>
                 <div>
-                  {/* {calculateShuttleFee(currency, Number(amount))} {currency.symbol} */}
-                  {shuttleFee} {currency.symbol}
+                  {lowerBoundFee.toFixed(2)} {currency.symbol}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between mb-2 font-bold">
+              <div className="text-secondary-alternate">Estimated Upper Bound Shuttle fee</div>
+              <div>
+                <div>
+                  {upperBoundFee.toFixed(2)} {currency.symbol}
                 </div>
               </div>
             </div>
@@ -131,7 +133,8 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Amount after fees</div>
               <div>
                 <div>
-                  {Number(amount) - shuttleFee} {currency.symbol}
+                  {(Number(amount) - lowerBoundFee).toFixed(2)} ~ {(Number(amount) - upperBoundFee).toFixed(2)}{' '}
+                  {currency.symbol}
                 </div>
               </div>
             </div>
@@ -140,12 +143,11 @@ const ConfirmTransactionModal = ({
             title="Confirm"
             state={PrimaryButtonState.Enabled}
             onClick={async () => {
-              setState(ConfirmTransactionModalState.InProgress)
+              setState(ModalState.InProgress)
               try {
                 await confirmLogic()
-                // setState(ConfirmTransactionModalState.Successful)
               } catch (e) {
-                setState(ConfirmTransactionModalState.NotConfirmed)
+                setState(ModalState.NotConfirmed)
               }
             }}
           />
@@ -166,11 +168,7 @@ const ConfirmTransactionModal = ({
           <b>
             {amount} {tokenSymbol}
           </b>{' '}
-          for{' '}
-          <b>
-            {' '}
-            {amount} {wrappedTokenSymbol}{' '}
-          </b>
+          {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
       </div>
@@ -219,7 +217,7 @@ const ConfirmTransactionModal = ({
             state={PrimaryButtonState.Enabled}
             onClick={() => {
               onSuccessConfirm()
-              setState(ConfirmTransactionModalState.NotConfirmed)
+              setState(ModalState.NotConfirmed)
             }}
           />
         </div>
@@ -231,17 +229,15 @@ const ConfirmTransactionModal = ({
     <BaseModal
       isVisible={isVisible}
       onDismiss={() => {
-        setState(ConfirmTransactionModalState.NotConfirmed)
+        setState(ModalState.NotConfirmed)
         onDismiss()
       }}
     >
-      {state === ConfirmTransactionModalState.NotConfirmed && <ConfirmContent />}
-      {state === ConfirmTransactionModalState.InProgress && (
+      {state === ModalState.NotConfirmed && <ConfirmContent />}
+      {state === ModalState.InProgress && (
         <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
       )}
-      {state === ConfirmTransactionModalState.Successful && (
-        <SuccessContent chainId={originChainId} successHash={successHash} />
-      )}
+      {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>
   )
 }

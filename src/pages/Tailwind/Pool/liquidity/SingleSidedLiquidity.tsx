@@ -18,32 +18,36 @@ enum AddLiquidityState {
   NotConfigured,
   NotApproved,
   Approved,
-  Depositing
+  Depositing,
+  Disabled
 }
 
 interface SingleSidedLiquidityProps {
   pool: PoolData
   balances: Array<TokenAmount | undefined>
   onZapAmountChanged: (amount: string) => void
-  onZapFromBaseChanged: (fromBase: boolean) => void
+  onIsGivenBaseChanged: (isGivenBase: boolean) => void
   onSlippageChanged: (slippage: string) => void
   onDeposit: () => void
+  isAddLiquidityEnabled: boolean
 }
 
 const SingleSidedLiquidity = ({
   pool,
   balances,
   onZapAmountChanged,
-  onZapFromBaseChanged,
+  onIsGivenBaseChanged,
   onSlippageChanged,
-  onDeposit
+  onDeposit,
+  isAddLiquidityEnabled
 }: SingleSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [selectedToken, setSelectedToken] = useState(pool.token0)
   const [zapInput, setZapInput] = useState('')
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
-  const [slippage, setSlippage] = useState('0.1')
+  const [slippage, setSlippage] = useState('3')
+  const [isGivenBase, setIsGivenBase] = useState(true)
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote } = useZap(pool.address, pool.token0, pool.token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
@@ -85,11 +89,13 @@ const SingleSidedLiquidity = ({
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
-    if (zapInput !== '') {
+    if (!isAddLiquidityEnabled) {
+      setMainState(AddLiquidityState.Disabled)
+    } else if (zapInput !== '') {
       const baseBalance = balances[0] ? Number(balances[0].toExact()) : 0
       const quoteBalance = balances[1] ? Number(balances[1]?.toExact()) : 0
 
-      if (baseBalance < Number(baseAmount) || quoteBalance < Number(quoteAmount)) {
+      if ((isGivenBase && baseBalance < Number(baseAmount)) || (!isGivenBase && quoteBalance < Number(quoteAmount))) {
         setMainState(AddLiquidityState.InsufficientBalance)
       } else if (!baseZapApproved || !quoteZapApproved) {
         setMainState(AddLiquidityState.NotApproved)
@@ -101,7 +107,17 @@ const SingleSidedLiquidity = ({
     } else {
       setMainState(AddLiquidityState.NoAmount)
     }
-  }, [zapInput, baseZapApproved, quoteZapApproved, balances, baseAmount, quoteAmount, slippage])
+  }, [
+    isAddLiquidityEnabled,
+    zapInput,
+    baseZapApproved,
+    quoteZapApproved,
+    balances,
+    baseAmount,
+    quoteAmount,
+    slippage,
+    isGivenBase
+  ])
 
   return (
     <>
@@ -118,8 +134,10 @@ const SingleSidedLiquidity = ({
           tokenList={[pool.token0, pool.token1]}
           onSelectToken={token => {
             setSelectedToken(token)
-            onZapFromBaseChanged(token === pool.token0)
             onBaseInputUpdate(zapInput)
+            const isTokenBase = token === pool.token0
+            setIsGivenBase(isTokenBase)
+            onIsGivenBaseChanged(isTokenBase)
           }}
         />
       </div>
@@ -134,7 +152,7 @@ const SingleSidedLiquidity = ({
         />
       </div>
 
-      {(!baseZapApproved || !quoteZapApproved) && (
+      {(!baseZapApproved || !quoteZapApproved) && isAddLiquidityEnabled && (
         <div className="mt-4 flex flex-col md:flex-row md:space-x-4">
           {!baseZapApproved && (
             <div className={!quoteZapApproved ? 'w-1/2' : 'flex-1'}>
@@ -177,7 +195,9 @@ const SingleSidedLiquidity = ({
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title={
-            mainState === AddLiquidityState.NoAmount
+            mainState === AddLiquidityState.Disabled
+              ? 'Add Liquidity Disabled'
+              : mainState === AddLiquidityState.NoAmount
               ? 'Enter an amount'
               : mainState === AddLiquidityState.NotConfigured
               ? 'Configure slippage'
@@ -186,7 +206,9 @@ const SingleSidedLiquidity = ({
               : 'Supply'
           }
           state={
-            mainState === AddLiquidityState.Approved
+            mainState === AddLiquidityState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
               ? PrimaryButtonState.Enabled
               : mainState === AddLiquidityState.Depositing
               ? PrimaryButtonState.InProgress

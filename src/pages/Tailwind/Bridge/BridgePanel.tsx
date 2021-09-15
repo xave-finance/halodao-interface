@@ -17,25 +17,8 @@ import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
 import useBridge, { useMinimumAmount } from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
-
-export enum ButtonState {
-  Default,
-  EnterAmount,
-  Approving,
-  Approved,
-  Next,
-  Confirming,
-  InsufficientBalance,
-  Retry,
-  MaxCap,
-  Minimum
-}
-
-enum ConfirmTransactionModalState {
-  NotConfirmed,
-  InProgress,
-  Successful
-}
+import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
+import { ButtonState, ModalState } from '../../../constants/buttonStates'
 
 const BridgePanel = () => {
   const { account, error, chainId } = useActiveWeb3React()
@@ -43,10 +26,11 @@ const BridgePanel = () => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
-  const [modalState, setModalState] = useState(ConfirmTransactionModalState.NotConfirmed)
+  const [modalState, setModalState] = useState(ModalState.NotConfirmed)
 
   const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   const {
     onTokenChange,
@@ -77,12 +61,12 @@ const BridgePanel = () => {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
     } else if (Number(inputValue) < minimum) {
-      setButtonState(ButtonState.Minimum)
+      setButtonState(ButtonState.NotMinimum)
       setApproveState(ApproveButtonState.NotApproved)
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
       setButtonState(ButtonState.Next)
       setApproveState(ApproveButtonState.Approved)
-    } else if (parseFloat(inputValue) > 10000) {
+    } else if (features?.isBridgeCapped && parseFloat(inputValue) > 10000) {
       setButtonState(ButtonState.MaxCap)
     } else if (parseFloat(inputValue) <= balance && Number(inputValue) > 0 && allowance < parseFloat(inputValue)) {
       setButtonState(ButtonState.Default)
@@ -90,7 +74,7 @@ const BridgePanel = () => {
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
     }
-  }, [inputValue, allowance, minimum, balance])
+  }, [inputValue, allowance, minimum, balance, features])
 
   useEffect(() => {
     setButtonStates()
@@ -141,7 +125,7 @@ const BridgePanel = () => {
               } else {
                 estimateDeposit(destinationChainId, inputValue)
               }
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setShowModal(true)
             }
           }}
@@ -198,6 +182,18 @@ const BridgePanel = () => {
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title="Insufficient Balance"
+          state={PrimaryButtonState.Disabled}
+        />
+      </div>
+    )
+  }
+
+  const NotMinimumContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title={`Minimum amount 20 ${token?.symbol}`}
           state={PrimaryButtonState.Disabled}
         />
       </div>
@@ -265,13 +261,16 @@ const BridgePanel = () => {
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
     }
+    if (buttonState === ButtonState.NotMinimum) {
+      content = <NotMinimumContent />
+    }
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
     }
     if (buttonState === ButtonState.MaxCap) {
       content = <MaxCapContent />
     }
-    if (buttonState === ButtonState.Minimum) {
+    if (buttonState === ButtonState.NotMinimum) {
       content = <BelowMinimumContent />
     }
     return content
@@ -349,6 +348,7 @@ const BridgePanel = () => {
                     setChainToken({ [chainId]: selectedToken })
                   }
                 }}
+                balance={String(balance)}
               />
             </div>
             <MainContent />
@@ -364,27 +364,27 @@ const BridgePanel = () => {
         confirmLogic={async () => {
           if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
-              setModalState(ConfirmTransactionModalState.Successful)
+              setModalState(ModalState.Successful)
               setButtonStates()
             } else {
               setShowModal(false)
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
           } else {
             if (await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)) {
-              setModalState(ConfirmTransactionModalState.Successful)
+              setModalState(ModalState.Successful)
               setButtonStates()
             } else {
               setShowModal(false)
-              setModalState(ConfirmTransactionModalState.NotConfirmed)
+              setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
           }
         }}
         onDismiss={() => {
           setShowModal(false)
-          if (modalState === ConfirmTransactionModalState.NotConfirmed) setButtonState(ButtonState.Retry)
+          if (modalState === ModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}

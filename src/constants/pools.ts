@@ -31,10 +31,15 @@ const sushiPoolsAddresses = sushiPools !== '' ? sushiPools.split(',').map(a => a
 const liquidityPools = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES || ''
 const liquidityPoolsAddresses = liquidityPools !== '' ? liquidityPools.split(',').map(a => a.toLowerCase()) : []
 
+const liquidityPoolsMatic = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_MATIC || ''
+const liquidityPoolsMaticAddresses =
+  liquidityPoolsMatic !== '' ? liquidityPoolsMatic.split(',').map(a => a.toLowerCase()) : []
+
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const UNI_POOLS_ADDRESSES = uniPoolsAddresses
 export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
 export const LIQUIDITY_POOLS_ADDRESSES = liquidityPoolsAddresses
+export const LIQUIDITY_POOLS_ADDRESSES_MATIC = liquidityPoolsMaticAddresses
 
 /**
  * Balancer lpToken -> poolAddress mapping
@@ -67,3 +72,11 @@ export const PENDING_REWARD_FAILED = -99999
 
 const inactivePoolsRaw = process.env.REACT_APP_INACTIVE_POOLS || ''
 export const INACTIVE_POOLS = inactivePoolsRaw.split(',').map(a => a.toLowerCase())
+
+/**
+ * Double estimate pools
+ * Curves that produce double estimates on viewDeposit()
+ */
+
+const doubleEstimatePoolsRaw = process.env.REACT_APP_DOUBLE_ESTIMATE_POOLS || ''
+export const DOUBLE_ESTIMATE_POOLS = doubleEstimatePoolsRaw.split(',').map(a => a.toLowerCase())
