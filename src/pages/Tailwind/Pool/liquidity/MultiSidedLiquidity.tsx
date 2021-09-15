@@ -66,6 +66,51 @@ const MultiSidedLiquidity = ({
     return valIsZero
   }
 
+  const adjustBaseOrQuoteForEstimationErr = async (val: string, base: string, quote: string, valIsBase: boolean) => {
+    console.log('adjustBaseOrQuoteForEstimationErr ', adjustBaseOrQuoteForEstimationErr)
+    let estimated = ''
+
+    if (valIsBase) {
+      try {
+        const numberVal = parseFloat(val)
+        console.log('numberVal ', numberVal)
+        const numberBase = parseFloat(base)
+        console.log('numberBase ', numberBase)
+        const numberQuote = parseFloat(quote)
+        const rateOfErr = numberVal / numberBase
+        console.log('rateOfErr ', rateOfErr)
+        const quoteAdjustedForErr = numberQuote * rateOfErr
+        console.log('quoteAdjustedForErr ', quoteAdjustedForErr)
+        estimated = quoteAdjustedForErr.toString()
+        console.log('estimatedQuote adjusted for err ', estimated)
+      } catch (err) {
+        console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
+        estimated = quote
+        console.log('estimatedQuote NOT adjusted for err ', estimated)
+      }
+    } else {
+      try {
+        const numberVal = parseFloat(val)
+        console.log('numberVal ', numberVal)
+        const numberQuote = parseFloat(quote)
+        console.log('numberQuote ', numberQuote)
+        const numberBase = parseFloat(base)
+        const rateOfErr = numberVal / numberQuote
+        console.log('rateOfErr ', rateOfErr)
+        const baseAdjustedForErr = numberBase * rateOfErr
+        console.log('baseAdjustedForErr ', baseAdjustedForErr)
+        estimated = baseAdjustedForErr.toString()
+        console.log('estimatedBase adjusted for err ', estimated)
+      } catch (err) {
+        console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
+        estimated = base
+        console.log('estimatedBase NOT adjusted for err ', estimated)
+      }
+    }
+
+    return estimated
+  }
+
   /**
    * Update quote amount upon entering base amount
    **/
@@ -75,7 +120,9 @@ const MultiSidedLiquidity = ({
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
 
-    if (val !== '' && !inputIsZero(val)) {
+    const inputZero = await inputIsZero(val)
+    console.log('inputIsZero ', inputZero)
+    if (val !== '' && !inputZero) {
       let estimatedQuote = ''
       if (pool.pooled.total <= 1) {
         console.log('liquidity is < 1')
@@ -84,23 +131,7 @@ const MultiSidedLiquidity = ({
       } else {
         console.log('liquidity is > 1')
         const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-        try {
-          const numberVal = parseFloat(val)
-          console.log('numberVal ', numberVal)
-          const numberBase = parseFloat(base)
-          console.log('numberBase ', numberBase)
-          const numberQuote = parseFloat(quote)
-          const rateOfErr = numberVal / numberBase
-          console.log('rateOfErr ', rateOfErr)
-          const quoteAdjustedForErr = numberQuote * rateOfErr
-          console.log('quoteAdjustedForErr ', quoteAdjustedForErr)
-          estimatedQuote = quoteAdjustedForErr.toString()
-          console.log('estimatedQuote adjusted for err ', estimatedQuote)
-        } catch (err) {
-          console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
-          estimatedQuote = quote
-          console.log('estimatedQuote NOT adjusted for err ', estimatedQuote)
-        }
+        estimatedQuote = await adjustBaseOrQuoteForEstimationErr(val, base, quote, true)
       }
       setQuoteInput(estimatedQuote)
       onQuoteAmountChanged(estimatedQuote)
@@ -117,32 +148,15 @@ const MultiSidedLiquidity = ({
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
 
-    if (val !== '' && !inputIsZero(val)) {
+    const inputZero = await inputIsZero(val)
+    console.log('inputIsZero ', inputZero)
+    if (val !== '' && !inputZero) {
       // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       // setBaseInput(baseAmount)
       // onBaseAmountChanged(baseAmount)
 
       const { base, quote } = await previewDepositGivenQuote(val)
-
-      let estimatedBase = ''
-
-      try {
-        const numberVal = parseFloat(val)
-        console.log('numberVal ', numberVal)
-        const numberQuote = parseFloat(quote)
-        console.log('numberQuote ', numberQuote)
-        const numberBase = parseFloat(base)
-        const rateOfErr = numberVal / numberQuote
-        console.log('rateOfErr ', rateOfErr)
-        const baseAdjustedForErr = numberBase * rateOfErr
-        console.log('baseAdjustedForErr ', baseAdjustedForErr)
-        estimatedBase = baseAdjustedForErr.toString()
-        console.log('estimatedBase adjusted for err ', estimatedBase)
-      } catch (err) {
-        console.log('onBaseInputUpdate: quote normalization failed, not changing quote returned by viewDeposit')
-        estimatedBase = base
-        console.log('estimatedBase NOT adjusted for err ', estimatedBase)
-      }
+      const estimatedBase = await adjustBaseOrQuoteForEstimationErr(val, base, quote, false)
 
       setBaseInput(estimatedBase)
       onBaseAmountChanged(estimatedBase)
