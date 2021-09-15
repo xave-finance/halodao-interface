@@ -9,16 +9,17 @@ import AddLiquityModal from './AddLiquityModal'
 
 interface AddLiquidityProps {
   pool: PoolData
+  isEnabled: boolean
 }
 
-const AddLiquidity = ({ pool }: AddLiquidityProps) => {
+const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [activeSegment, setActiveSegment] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [zapAmount, setZapAmount] = useState('')
   const [isGivenBase, setIsGivenBase] = useState(false)
-  const [slippage, setSlippage] = useState('')
+  const [slippage, setSlippage] = useState('3')
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
@@ -48,6 +49,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           onQuoteAmountChanged={setQuoteAmount}
           onDeposit={() => setShowModal(true)}
           onIsGivenBaseChanged={setIsGivenBase}
+          isAddLiquidityEnabled={isEnabled}
         />
       ) : (
         <SingleSidedLiquidity
@@ -57,6 +59,7 @@ const AddLiquidity = ({ pool }: AddLiquidityProps) => {
           onIsGivenBaseChanged={setIsGivenBase}
           onSlippageChanged={setSlippage}
           onDeposit={() => setShowModal(true)}
+          isAddLiquidityEnabled={isEnabled}
         />
       )}
 
