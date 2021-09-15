@@ -6,9 +6,10 @@ import { PoolData } from './models/PoolData'
 
 interface PoolCardLeftProps {
   pool: PoolData
+  isActivePool: boolean
 }
 
-const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
+const PoolCardLeft = ({ pool, isActivePool }: PoolCardLeftProps) => {
   const [activeTab, setActiveTab] = useState(0)
   const [disabledTabs, setDisabledTabs] = useState<number[]>([])
 
@@ -36,7 +37,7 @@ const PoolCardLeft = ({ pool }: PoolCardLeftProps) => {
       />
 
       <div className="mt-2">
-        {activeTab === 0 && <AddLiquidity pool={pool} />}
+        {activeTab === 0 && <AddLiquidity pool={pool} isEnabled={isActivePool} />}
         {activeTab === 1 && <RemoveLiquidity pool={pool} />}
       </div>
     </div>
