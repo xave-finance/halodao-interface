@@ -8,11 +8,11 @@ import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { getContract } from 'utils'
 import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
-import { ButtonState } from 'pages/Tailwind/Bridge/BridgePanel'
 import { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import ReactGA from 'react-ga'
+import { ButtonState } from '../constants/buttonStates'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
