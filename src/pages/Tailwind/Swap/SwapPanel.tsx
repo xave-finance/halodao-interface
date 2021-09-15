@@ -93,19 +93,19 @@ const SwapPanel = () => {
   }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue])
 
   useEffect(() => {
-    setToInputValue(toMinimumAmount || '0.0')
+    setToInputValue(toMinimumAmount || '')
   }, [toMinimumAmount])
 
   useEffect(() => {
-    setFromInputValue(fromMinimumAmount || '0.0')
+    setFromInputValue(fromMinimumAmount || '')
   }, [fromMinimumAmount])
 
   useEffect(() => {
     if (chainId) {
       setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
       setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
-      setToInputValue('0.0')
-      setFromInputValue('0.0')
+      setToInputValue('')
+      setFromInputValue('')
     }
   }, [chainId])
 
@@ -353,8 +353,8 @@ const SwapPanel = () => {
                 onSelectToken={token => {
                   if (token !== toCurrency) {
                     setFromCurrency(token)
-                    setToInputValue('0.0')
-                    setFromInputValue('0.0')
+                    setToInputValue('')
+                    setFromInputValue('')
                     updateBalances()
                   }
                 }}
@@ -400,8 +400,8 @@ const SwapPanel = () => {
                 balance={toAmountBalance}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
-                    setToInputValue('0.0')
-                    setFromInputValue('0.0')
+                    setToInputValue('')
+                    setFromInputValue('')
                     setToCurrency(token)
                   }
                 }}
