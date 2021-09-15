@@ -59,13 +59,11 @@ const AddLiquityModal = ({
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const { t } = useTranslation()
 
-  const {
-    calcSwapAmountForZapFromBase,
-    calcSwapAmountForZapFromQuote,
-    calcMaxDepositAmountGivenBase,
-    zapFromBase,
-    zapFromQuote
-  } = useZap(pool.address, pool.token0, pool.token1)
+  const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
+    pool.address,
+    pool.token0,
+    pool.token1
+  )
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
   const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
@@ -101,29 +99,16 @@ const AddLiquityModal = ({
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
 
-    let maxDeposit = '0'
-    let lpAmount = '0'
-    let basePrice = 0
-    let quotePrice = 0
-
-    if (isGivenBase && pool.pooled.total > 0) {
-      const res = await calcMaxDepositAmountGivenBase(`${baseTokenAmount}`)
-      maxDeposit = res.maxDeposit
-      lpAmount = res.lpAmount
-      basePrice = Number(res.quoteAmount) / Number(res.baseAmount)
-      quotePrice = Number(res.baseAmount) / Number(res.quoteAmount)
+    let res: any
+    if (isGivenBase) {
+      res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
     } else {
-      let res: any
-      if (isGivenBase) {
-        res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
-      } else {
-        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
-      }
-      maxDeposit = `${res.deposit}`
-      lpAmount = res.lpToken
-      basePrice = Number(res.quote) / Number(res.base)
-      quotePrice = Number(res.base) / Number(res.quote)
+      res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
     }
+    const maxDeposit = `${res.deposit}`
+    const lpAmount = res.lpToken
+    const basePrice = Number(res.quote) / Number(res.base)
+    const quotePrice = Number(res.base) / Number(res.quote)
 
     setDepositAmount(maxDeposit)
     setTokenPrices([basePrice, quotePrice])
