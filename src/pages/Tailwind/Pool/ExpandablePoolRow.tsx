@@ -49,9 +49,10 @@ interface ExpandablePoolRowProps {
   pid?: number
   isExpanded: boolean
   onClick: () => void
+  isActivePool?: boolean
 }
 
-const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
@@ -212,7 +213,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick }: Expandable
         <div className="mt-2">
           <div className="flex flex-col md:flex-row md:space-x-4">
             <div className="mb-4 md:w-1/2 md:mb-0">
-              <PoolCardLeft pool={pool} />
+              <PoolCardLeft pool={pool} isActivePool={isActivePool} />
             </div>
             <div className="md:w-1/2">
               <PoolCardRight pool={pool} />

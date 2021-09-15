@@ -1,5 +1,6 @@
 import {
   BALANCER_POOLS_ADDRESSES,
+  DOUBLE_ESTIMATE_POOLS,
   INACTIVE_POOLS,
   LIQUIDITY_POOLS_ADDRESSES,
   LIQUIDITY_POOLS_ADDRESSES_MATIC,
@@ -119,4 +120,8 @@ export const groupPoolsInfo = (poolInfos: PoolInfo[]) => {
     activePools,
     inactivePools
   }
+}
+
+export const isDoubleEstimatePool = (address: string) => {
+  return DOUBLE_ESTIMATE_POOLS.includes(address.toLocaleLowerCase())
 }
