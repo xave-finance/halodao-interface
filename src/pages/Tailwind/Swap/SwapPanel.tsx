@@ -72,7 +72,12 @@ const SwapPanel = () => {
     if (!timeLeft) return
 
     const intervalId = setInterval(() => {
-      setTimeLeft(timeLeft - 1)
+      const decreaseTime = timeLeft - 1
+
+      setTimeLeft(decreaseTime)
+      if (decreaseTime === 0) {
+        setIsExpired(true)
+      }
     }, 1000)
 
     return () => clearInterval(intervalId)
