@@ -441,7 +441,7 @@ const SwapPanel = () => {
         }}
         onPriceUpdate={() => {
           setTimeLeft(60)
-          getMinimumAmount(fromInputValue, CurrencySide.FROM_CURRENCY)
+          getMinimumAmount(fromInputValue, CurrencySide.TO_CURRENCY)
           getPrice()
         }}
         onDismiss={() => {
