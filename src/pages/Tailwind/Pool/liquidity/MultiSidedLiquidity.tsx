@@ -61,7 +61,17 @@ const MultiSidedLiquidity = ({
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
 
-    if (val !== '') {
+    let zeroStr = 0,
+      valIsZero = false
+    try {
+      zeroStr = parseFloat(val)
+      console.log('zeroStr ', zeroStr)
+      if (zeroStr == 0) valIsZero = true
+    } catch (err) {
+      console.log('zero check failed')
+    }
+
+    if (val !== '' && !valIsZero) {
       let estimatedQuote = ''
       if (pool.pooled.total <= 1) {
         console.log('liquidity is < 1')
@@ -103,7 +113,17 @@ const MultiSidedLiquidity = ({
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
 
-    if (val !== '') {
+    let zeroStr = 0,
+      valIsZero = false
+    try {
+      zeroStr = parseFloat(val)
+      console.log('zeroStr ', zeroStr)
+      if (zeroStr == 0) valIsZero = true
+    } catch (err) {
+      console.log('zero check failed')
+    }
+
+    if (val !== '' && !valIsZero) {
       // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
       // setBaseInput(baseAmount)
       // onBaseAmountChanged(baseAmount)
