@@ -328,7 +328,7 @@ const SwapPanel = () => {
               <CurrencyInput
                 currency={fromCurrency}
                 value={fromInputValue}
-                canSelectToken={true}
+                canSelectToken={false}
                 didChangeValue={async val => {
                   if (approveState === ApproveButtonState.Approved) {
                     if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
@@ -381,7 +381,7 @@ const SwapPanel = () => {
               <CurrencyInput
                 currency={toCurrency}
                 value={toInputValue}
-                canSelectToken={true}
+                canSelectToken={false}
                 didChangeValue={val => {
                   if (approveState === ApproveButtonState.Approved) {
                     setButtonState(SwapButtonState.Swap)

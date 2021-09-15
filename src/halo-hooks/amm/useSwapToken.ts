@@ -37,7 +37,6 @@ export const useSwapToken = (
   const [toMinimumAmount, setToMinimumAmount] = useState<string | undefined>()
   const [fromMinimumAmount, setFromMinimumAmount] = useState<string | undefined>()
   const [allowance, setAllowance] = useState('0')
-  const [lastUpdated, setLastUpdated] = useState<number>()
   const addTransaction = useTransactionAdder()
 
   const toSafeValue = useCallback(
@@ -119,47 +118,38 @@ export const useSwapToken = (
     }
   }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
 
-  const getCurrentTimestamp = () => {
-    return Date.now()
-  }
-
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
       // currencySide is the unknown
 
-      if (!lastUpdated) {
-        setLastUpdated(getCurrentTimestamp())
-      } else if (lastUpdated && getCurrentTimestamp() - lastUpdated > 500) {
-        const CurveContract = await getRouter()
+      const CurveContract = await getRouter()
 
-        if (!CurveContract || !chainId) return
+      if (!CurveContract || !chainId) return
 
-        const quoteAmount = parseUnits(
-          toSafeValue(amount, currencySide),
-          currencySide === CurrencySide.TO_CURRENCY ? fromCurrency.decimals : toCurrency.decimals
-        )
-        try {
-          const res =
-            currencySide === CurrencySide.TO_CURRENCY
-              ? await CurveContract?.viewOriginSwap(
-                  haloUSDC[chainId]?.address,
-                  fromCurrency.address,
-                  toCurrency.address,
-                  quoteAmount
-                )
-              : await CurveContract?.viewTargetSwap(
-                  haloUSDC[chainId]?.address,
-                  fromCurrency.address,
-                  toCurrency.address,
-                  quoteAmount
-                )
+      const quoteAmount = parseUnits(
+        toSafeValue(amount, currencySide),
+        currencySide === CurrencySide.TO_CURRENCY ? fromCurrency.decimals : toCurrency.decimals
+      )
+      try {
+        const res =
           currencySide === CurrencySide.TO_CURRENCY
-            ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
-            : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
-          setLastUpdated(getCurrentTimestamp())
-        } catch (e) {
-          setButtonState(SwapButtonState.InsufficientLiquidity)
-        }
+            ? await CurveContract?.viewOriginSwap(
+                haloUSDC[chainId]?.address,
+                fromCurrency.address,
+                toCurrency.address,
+                quoteAmount
+              )
+            : await CurveContract?.viewTargetSwap(
+                haloUSDC[chainId]?.address,
+                fromCurrency.address,
+                toCurrency.address,
+                quoteAmount
+              )
+        currencySide === CurrencySide.TO_CURRENCY
+          ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
+          : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
+      } catch (e) {
+        setButtonState(SwapButtonState.InsufficientLiquidity)
       }
     },
     [
@@ -170,8 +160,7 @@ export const useSwapToken = (
       chainId,
       getRouter,
       toSafeValue,
-      setButtonState,
-      lastUpdated
+      setButtonState
     ]
   )
 

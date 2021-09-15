@@ -31,10 +31,11 @@ const SwapSettingsModal = ({
         <div className="font-semibold text-lg">Transaction settings</div>
         <div className="mt-4">
           <SlippageTolerance
-            value={String(slippage)}
+            value={String(slippage * 100)}
             didChangeValue={(newSlippage: string) => {
-              setSlippage(Number(newSlippage))
-              onSlippageChanged(Number(newSlippage))
+              const convertedNewSlippage = Number(newSlippage) / 100
+              setSlippage(convertedNewSlippage)
+              onSlippageChanged(convertedNewSlippage)
             }}
           />
         </div>
