@@ -30,7 +30,7 @@ const SwapPanel = () => {
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
   const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
-  const [slippage, setSlippage] = useState(0.0001) // 1%
+  const [slippage, setSlippage] = useState(0.03) // 3%
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
   const [showModal, setShowModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -338,6 +338,7 @@ const SwapPanel = () => {
                     }
                     getMinimumAmount(val, CurrencySide.TO_CURRENCY)
                   }
+
                   setFromInputValue(val)
                 }}
                 showBalance={true}

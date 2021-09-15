@@ -19,7 +19,7 @@ const SwapSettingsModal = ({
   onDismiss,
   didChangeTxDeadline
 }: SwapSettingsModalProps) => {
-  const [slippage, setSlippage] = useState(0.0001)
+  const [slippage, setSlippage] = useState(0.03)
 
   const dismissGracefully = () => {
     onDismiss()

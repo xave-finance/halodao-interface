@@ -20,7 +20,7 @@ export type AssimilatorAddressMap = {
 }
 // Router addresses
 export const routerAddress: ChainAddressMap = {
-  [ChainId.MAINNET]: '0x6aa83895c0159B1D6Ab2722712bb5F1adF881B06',
+  [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
 }
@@ -36,11 +36,11 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 // Add tokens here to support, divided into different networks
 const mainNetTokenList: Token[] = [
   USDC,
-  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
-  new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
-  new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
-  new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
+  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD')
+  // new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
+  // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
+  // new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
+  // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
 ]
 
 const kovanTokenList: Token[] = [
@@ -52,11 +52,11 @@ const kovanTokenList: Token[] = [
 
 const polygonTokenList: Token[] = [
   haloUSDC[ChainId.MATIC] as Token,
-  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD'),
-  new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
-  new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
-  new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
-  new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
+  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD')
+  // new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
+  // new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
+  // new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
+  // new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
 ]
 
 // allows switch of token list when changing networks
@@ -74,10 +74,10 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.GBP]: ZERO_ADDRESS,
   [TokenSymbol.CHF]: ZERO_ADDRESS,
   [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: '0x972127aFf8e6464e50eFc0a2aD344063355AE424',
-  [TokenSymbol.TCAD]: '0xc104e54803abA12f7a171a49DDC333Da39f47193',
-  [TokenSymbol.TGBP]: '0xbcB66eD6419857b49Fa5947af58865538F8fba2C',
-  [TokenSymbol.XSGD]: '0xde29585a4134752632a07f09BCA0f02F72a33B8d'
+  [TokenSymbol.TAUD]: '0x17c3A12F68C95c637055ea65aA90D72813F430d4',
+  [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
+  [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
+  [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
