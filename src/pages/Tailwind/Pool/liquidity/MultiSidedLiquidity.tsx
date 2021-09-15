@@ -4,7 +4,6 @@ import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
-import { useZap } from 'halo-hooks/amm/useZap'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
@@ -38,7 +37,6 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
 
-  const { calcMaxDepositAmountGivenBase } = useZap(pool.address, pool.token0, pool.token1)
   const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
     pool.token0,
@@ -61,16 +59,9 @@ const MultiSidedLiquidity = ({
     onIsGivenBaseChanged(true)
 
     if (val !== '') {
-      let estimatedQuote = ''
-      if (pool.pooled.total > 0) {
-        const { quoteAmount } = await calcMaxDepositAmountGivenBase(val)
-        estimatedQuote = quoteAmount
-      } else {
-        const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-        estimatedQuote = quote
-      }
-      setQuoteInput(estimatedQuote)
-      onQuoteAmountChanged(estimatedQuote)
+      const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+      setQuoteInput(quote)
+      onQuoteAmountChanged(quote)
     } else {
       setQuoteInput('')
     }
@@ -85,10 +76,6 @@ const MultiSidedLiquidity = ({
     onIsGivenBaseChanged(false)
 
     if (val !== '') {
-      // const { baseAmount } = await calcMaxDepositAmountGivenQuote(val)
-      // setBaseInput(baseAmount)
-      // onBaseAmountChanged(baseAmount)
-
       const { base } = await previewDepositGivenQuote(val)
       setBaseInput(base)
       onBaseAmountChanged(base)

@@ -72,3 +72,11 @@ export const PENDING_REWARD_FAILED = -99999
 
 const inactivePoolsRaw = process.env.REACT_APP_INACTIVE_POOLS || ''
 export const INACTIVE_POOLS = inactivePoolsRaw.split(',').map(a => a.toLowerCase())
+
+/**
+ * Double estimate pools
+ * Curves that produce double estimates on viewDeposit()
+ */
+
+const doubleEstimatePoolsRaw = process.env.REACT_APP_DOUBLE_ESTIMATE_POOLS || ''
+export const DOUBLE_ESTIMATE_POOLS = doubleEstimatePoolsRaw.split(',').map(a => a.toLowerCase())
