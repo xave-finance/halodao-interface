@@ -326,6 +326,7 @@ const BridgePanel = () => {
                     setChainToken({ [chainId]: selectedToken })
                   }
                 }}
+                balance={String(balance)}
               />
             </div>
             <MainContent />
