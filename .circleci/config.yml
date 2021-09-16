@@ -1,12 +1,19 @@
 version: 2.1
-
 orbs:
   node: circleci/node@4.7.0
-
+jobs:
+  test:
+    executor:
+      name: node/default
+      tag: '13'
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn run test
+          name: Run YARN tests
 workflows:
-    example-workflow:
-      jobs:
-        - node/test:
-            pkg-manager: yarn
-            override-ci-command: yarn install 
-            cache-version: v1
+  test_my_app:
+    jobs:
+      - test
