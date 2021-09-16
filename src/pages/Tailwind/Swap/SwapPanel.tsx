@@ -154,10 +154,10 @@ const SwapPanel = () => {
           onClick={() => {
             setTimeLeft(60)
             setIsExpired(false)
-            if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
-              setButtonState(SwapButtonState.Confirming)
-              setShowModal(true)
-            }
+            // if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
+            setButtonState(SwapButtonState.Confirming)
+            setShowModal(true)
+            // }
           }}
         />
       </div>

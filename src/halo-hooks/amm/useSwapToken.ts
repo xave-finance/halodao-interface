@@ -218,7 +218,7 @@ export const useSwapToken = (
           toCurrency.address,
           quoteAmount,
           parsedMinimumAmountSwap,
-          deadline ? getFutureTime(deadline * 60) : getFutureTime(60)
+          Date.now() + 1
         )
 
         await tx.wait()
@@ -227,7 +227,6 @@ export const useSwapToken = (
 
         return tx
       } catch (e) {
-        console.log(e)
         return null
       }
     },
