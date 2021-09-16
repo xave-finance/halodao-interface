@@ -8,3 +8,5 @@ workflows:
       jobs:
         - node/test:
             pkg-manager: yarn
+            override-ci-command: yarn install 
+            cache-version: v1
