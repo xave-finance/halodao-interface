@@ -30,6 +30,7 @@ const TokenInput = ({
   showMax,
   onSelectToken,
   tokenList,
+
   balance
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)
@@ -37,7 +38,8 @@ const TokenInput = ({
   const currencyBalance = useCurrencyBalance(account ?? undefined, currency)
 
   const onMax = () => {
-    if (balance) {
+    balance = balance ? balance : currencyBalance?.toSignificant(6)
+    if (balance && Number(balance) > 0) {
       didChangeValue(balance)
     }
   }
