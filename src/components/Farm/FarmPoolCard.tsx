@@ -456,11 +456,13 @@ export default function FarmPoolCard({
   const stakedBPTs = useStakedBPTPerPool([poolInfo.pid], rewardsVersion)
   const bptStaked = stakedBPTs[poolInfo.pid] ?? 0
 
+  // Pool liquidity
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-  const liquidity = getPoolLiquidity(poolInfo, tokenPrice)
-  const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
+  const lpTokenPrice = totalSupply > 0 && poolLiquidity > 0 ? poolLiquidity / totalSupply : 0
   const bptStakedValue = bptStaked * lpTokenPrice
 
   // Get user earned HALO
@@ -481,10 +483,6 @@ export default function FarmPoolCard({
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
-
-  // Pool Liquidity
-  const poolLiquidity =
-    poolInfo.provider === PoolProvider.Halo ? poolInfo.liquidity : getPoolLiquidity(poolInfo, tokenPrice)
 
   /**
    * APY computation

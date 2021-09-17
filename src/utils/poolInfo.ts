@@ -7,7 +7,7 @@ import {
   SUSHI_POOLS_ADDRESSES,
   UNI_POOLS_ADDRESSES
 } from 'constants/pools'
-import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
 import { ChainId } from '@sushiswap/sdk'
@@ -81,6 +81,11 @@ export const tokenSymbolForPool = (address: string) => {
 }
 
 export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {
+  // No need to compute for $ liquidity if a HALO pool
+  if (poolInfo.provider === PoolProvider.Halo) {
+    return poolInfo.liquidity
+  }
+
   let sumWeight = 0
   let sumValue = 0
   // console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
