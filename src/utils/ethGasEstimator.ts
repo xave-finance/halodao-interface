@@ -36,6 +36,9 @@ export const getGasEstimation = async (mode: GasModes): Promise<GasModeData> => 
 
 export const getGasRangeEstimation = async (lowerBound: GasModes, upperBound: GasModes): Promise<GasModeRangeData> => {
   const queryResult = await _queryETHGasWatchAPI()
+  if (queryResult[lowerBound].usd > queryResult[upperBound].usd) {
+    queryResult[upperBound].usd = queryResult[lowerBound].usd + 1
+  }
   return {
     lowerBound: queryResult[lowerBound],
     upperBound: queryResult[upperBound]

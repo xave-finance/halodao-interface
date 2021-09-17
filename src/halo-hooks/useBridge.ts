@@ -47,11 +47,11 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, PRIMARY_BRIDGE_ABI, library, account as string)
     )
     if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
   }, [chainToken, account, chainId, library, setToken])
@@ -60,11 +60,11 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     if (!chainId || !token || !library) return
 
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token.address] as string, PRIMARY_BRIDGE_ABI, library, account as string)
     )
     if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[token.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
       setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
     } else {
@@ -82,7 +82,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 
     if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[token.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
   }, [chainId, library, account, destinationChainId, token])

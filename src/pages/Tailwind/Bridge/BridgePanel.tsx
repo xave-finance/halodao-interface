@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
 import { ChainId } from '@sushiswap/sdk'
-import { ChainTokenMap, HALO } from '../../../constants'
+import { ChainTokenMap, HALO, MOCK_TOKEN } from '../../../constants'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
@@ -28,7 +28,9 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ModalState.NotConfirmed)
 
-  const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
+  const [chainToken, setChainToken] = useState<ChainTokenMap>(
+    process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO
+  )
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
