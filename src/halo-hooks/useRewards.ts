@@ -111,7 +111,7 @@ export const useStakedBPTPerPool = (poolIds: number[], rewardsVersion = 1): { [p
 }
 
 export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
-  const { account } = useActiveWeb3React()
+  const { account, chainId } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract(rewardsVersion)
   const addTransaction = useTransactionAdder()
 
@@ -119,22 +119,22 @@ export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.deposit(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Stake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
+        summary: `Stake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress, chainId)
       })
       return tx
     },
-    [rewardsContract, addTransaction, account]
+    [rewardsContract, addTransaction, account, chainId]
   )
 
   const withdraw = useCallback(
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.withdraw(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Unstake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
+        summary: `Unstake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress, chainId)
       })
       return tx
     },
-    [rewardsContract, addTransaction, account]
+    [rewardsContract, addTransaction, account, chainId]
   )
 
   const harvest = useCallback(

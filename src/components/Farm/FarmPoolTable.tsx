@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useWeb3React } from '@web3-react/core'
 import { TYPE, HideSmall } from '../../theme'
 import { RowBetween, RowFixed } from '../Row'
 import { AutoColumn } from '../Column'
@@ -10,6 +9,7 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { groupPoolsInfo } from 'utils/poolInfo'
 import styled from 'styled-components'
+import { useActiveWeb3React } from 'hooks'
 
 const InactivePools = styled.div`
   margin-top: 1rem;
@@ -28,8 +28,8 @@ interface FarmPoolTableProps {
 
 const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice, selectedPool }: FarmPoolTableProps) => {
   const { t } = useTranslation()
-  const { account } = useWeb3React()
-  const { inactivePools, activePools } = groupPoolsInfo(poolsInfo)
+  const { account, chainId } = useActiveWeb3React()
+  const { inactivePools, activePools } = groupPoolsInfo(poolsInfo, chainId)
 
   /**
    * Automatically scroll to a pool card if address is provided

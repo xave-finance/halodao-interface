@@ -6,8 +6,10 @@ import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
+import { useActiveWeb3React } from 'hooks'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
+  const { chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
 
@@ -76,7 +78,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const previewDepositGivenQuote = useCallback(
     async (quoteAmount: string) => {
       const quoteNumeraire = Number(quoteAmount)
-      const multiplier = isDoubleEstimatePool(address) ? 1 : 2
+      const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
       const totalNumeraire = quoteNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
@@ -86,13 +88,13 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         quote
       }
     },
-    [viewDeposit, address]
+    [viewDeposit, address, chainId]
   )
 
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
       const baseNumeraire = Number(baseAmount) * baseRate
-      const multiplier = isDoubleEstimatePool(address) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
+      const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
       const totalNumeraire = baseNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
@@ -102,7 +104,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         quote
       }
     },
-    [viewDeposit, address]
+    [viewDeposit, address, chainId]
   )
 
   return { viewDeposit, deposit, viewWithdraw, withdraw, previewDepositGivenBase, previewDepositGivenQuote }
