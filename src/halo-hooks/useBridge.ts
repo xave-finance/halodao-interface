@@ -14,7 +14,7 @@ import { formatEther, parseEther } from 'ethers/lib/utils'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
 import { ButtonState } from '../constants/buttonStates'
-import { getGasRangeEstimation, GasModes } from 'utils/ethGasEstimator'
+import { getGasRangeEstimation, GasModes, GasModeRangeData } from 'utils/ethGasEstimator'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
@@ -114,6 +114,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
       try {
+        console.log('chainIdDestination', chainIdDestination)
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
         setSuccessHash(tx.hash)
@@ -296,7 +297,23 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   }
 }
 
-export const useShuttleFee = (primaryBridgeContract: Contract) => {
+export const useFlatFee = (primaryBridgeContract: Contract, chainId: ChainId) => {
+  const [flatFee, setFlatFee] = useState(0)
+
+  const getFlatFee = useCallback(async () => {
+    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
+    const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
+    const fee = Number(process.env.REACT_APP_SHUTTLE_FLAT_FEE_USD) * tokensPerUSD
+
+    setFlatFee(fee)
+  }, [primaryBridgeContract])
+
+  return { flatFee, getFlatFee }
+}
+
+export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainId: ChainId) => {
   const [lowerBoundFee, setLowerBoundFee] = useState(0)
   const [upperBoundFee, setUpperBoundFee] = useState(0)
 
@@ -304,14 +321,26 @@ export const useShuttleFee = (primaryBridgeContract: Contract) => {
     const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
     const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
-    const estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
-    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
-    const lowerBoundFeeInToken = estimatedGasRange.lowerBound.usd * tokensPerUSD
-    const upperBoundFeeInToken = estimatedGasRange.upperBound.usd * tokensPerUSD
 
-    setLowerBoundFee(lowerBoundFeeInToken)
-    setUpperBoundFee(upperBoundFeeInToken)
-  }, [primaryBridgeContract])
+    let estimatedGasRange: GasModeRangeData
+
+    switch (destinationChainId) {
+      case ChainId.MAINNET:
+        estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
+        break
+      case ChainId.MATIC:
+        estimatedGasRange = { floor: { usd: 0.5 }, ceiling: { usd: 1 } }
+        break
+      default:
+        throw new Error('Invalid destination chain.')
+    }
+    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
+    const floorFeeInToken = estimatedGasRange.floor.usd * tokensPerUSD
+    const ceilingFeeInToken = estimatedGasRange.ceiling.usd * tokensPerUSD
+
+    setLowerBoundFee(floorFeeInToken)
+    setUpperBoundFee(ceilingFeeInToken)
+  }, [primaryBridgeContract, destinationChainId])
 
   return { lowerBoundFee, upperBoundFee, getFee }
 }
@@ -320,7 +349,12 @@ export const useMinimumAmount = (primaryBridgeContract: Contract) => {
   const [minimum, setMinimum] = useState(0)
 
   const getMinimum = useCallback(async () => {
-    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
+    let bridgeTokenAddress
+    try {
+      bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
+    } catch (ContractError) {
+      setMinimum(100)
+    }
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
     getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
       const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]

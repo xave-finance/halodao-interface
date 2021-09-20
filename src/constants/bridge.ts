@@ -37,7 +37,6 @@ export const BRIDGE_CONTRACTS = {
     [process.env.REACT_APP_MOCK_TOKEN_MATIC as string]: process.env.REACT_APP_MOCK_MATIC_BRIDGE_CONTRACT_ADDRESS
   })
 }
-console.log('BRIDGE_CONTRACTS:', BRIDGE_CONTRACTS)
 
 export const ORIGINAL_TOKEN_CHAIN_ID = {
   // RNBW

@@ -54,7 +54,7 @@ const ConfirmTransactionModal = ({
   estimatedGas,
   primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
-  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(primaryBridgeContract)
+  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(primaryBridgeContract, destinationChainId)
 
   useEffect(() => {
     getFee()
@@ -133,7 +133,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Amount after fees</div>
               <div>
                 <div>
-                  {(Number(amount) - lowerBoundFee).toFixed(2)} ~ {(Number(amount) - upperBoundFee).toFixed(2)}{' '}
+                  {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
                   {currency.symbol}
                 </div>
               </div>
@@ -168,7 +168,6 @@ const ConfirmTransactionModal = ({
           <b>
             {amount} {tokenSymbol}
           </b>{' '}
-          {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
       </div>

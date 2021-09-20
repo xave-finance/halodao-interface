@@ -1,11 +1,11 @@
 type GasModeData = {
-  gwei: number
+  gwei?: number
   usd: number
 }
 
-type GasModeRangeData = {
-  lowerBound: GasModeData
-  upperBound: GasModeData
+export type GasModeRangeData = {
+  floor: GasModeData
+  ceiling: GasModeData
 }
 
 export enum GasModes {
@@ -25,22 +25,18 @@ const _queryETHGasWatchAPI = async () => {
   return fetch(url).then(response => response.json())
 }
 
-export const getGasEstimation = async (mode: GasModes): Promise<GasModeData> => {
-  /**
-   * @info
-   * https://docs.ethgas.watch/api
-   */
+export const getGasRangeEstimation = async (floor: GasModes, ceiling: GasModes): Promise<GasModeRangeData> => {
   const queryResult = await _queryETHGasWatchAPI()
-  return queryResult[mode]
-}
 
-export const getGasRangeEstimation = async (lowerBound: GasModes, upperBound: GasModes): Promise<GasModeRangeData> => {
-  const queryResult = await _queryETHGasWatchAPI()
-  if (queryResult[lowerBound].usd > queryResult[upperBound].usd) {
-    queryResult[upperBound].usd = queryResult[lowerBound].usd + 1
+  if (queryResult['normal'].usd > queryResult[floor].usd) {
+    queryResult[floor].usd = queryResult['normal'].usd + 1
   }
+  if (queryResult[floor].usd > queryResult[ceiling].usd) {
+    queryResult[ceiling].usd = queryResult[floor].usd + 1
+  }
+
   return {
-    lowerBound: queryResult[lowerBound],
-    upperBound: queryResult[upperBound]
+    floor: queryResult[floor],
+    ceiling: queryResult[ceiling]
   }
 }
