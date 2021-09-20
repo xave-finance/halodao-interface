@@ -19,7 +19,7 @@ export const getBalancerPoolAddress = (lpTokenAddress: string, chainId: ChainId 
   const lpTokenPoolMap = chainId === ChainId.KOVAN ? BALANCER_LPTOKEN_POOL_MAP_KOVAN : BALANCER_LPTOKEN_POOL_MAP
   const matchingKeys = Object.keys(lpTokenPoolMap).filter(a => a === lpTokenAddress.toLowerCase())
   if (matchingKeys.length) {
-    return BALANCER_LPTOKEN_POOL_MAP[matchingKeys[0]]
+    return lpTokenPoolMap[matchingKeys[0]]
   } else {
     // if balancer pool address is not found, return lpTokenAddress
     return lpTokenAddress
@@ -31,7 +31,7 @@ export const getBalancerLPTokenAddress = (poolAddress: string, chainId: ChainId 
   const lpTokenPoolMap = chainId === ChainId.KOVAN ? BALANCER_LPTOKEN_POOL_MAP_KOVAN : BALANCER_LPTOKEN_POOL_MAP
   const lpTokens = Object.keys(lpTokenPoolMap)
   for (const lpToken of lpTokens) {
-    if (BALANCER_LPTOKEN_POOL_MAP[lpToken] === poolAddress.toLowerCase()) {
+    if (lpTokenPoolMap[lpToken] === poolAddress.toLowerCase()) {
       lpTokenAddress = lpToken
       break
     }
