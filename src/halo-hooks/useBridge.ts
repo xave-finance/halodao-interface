@@ -329,7 +329,10 @@ export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainI
         estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
         break
       case ChainId.MATIC:
-        estimatedGasRange = { floor: { usd: 0.5 }, ceiling: { usd: 1 } }
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
         break
       default:
         throw new Error('Invalid destination chain.')
