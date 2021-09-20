@@ -348,22 +348,16 @@ export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainI
   return { lowerBoundFee, upperBoundFee, getFee }
 }
 
-export const useMinimumAmount = (primaryBridgeContract: Contract) => {
+export const useMinimumAmount = (tokenAddress: string) => {
   const [minimum, setMinimum] = useState(0)
 
   const getMinimum = useCallback(async () => {
-    let bridgeTokenAddress
-    try {
-      bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
-    } catch (ContractError) {
-      setMinimum(100)
-    }
-    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
     getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
       const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
       setMinimum(Number(flatFee.toFixed(2)))
     })
-  }, [primaryBridgeContract])
+  }, [tokenAddress])
 
   return { minimum, getMinimum }
 }

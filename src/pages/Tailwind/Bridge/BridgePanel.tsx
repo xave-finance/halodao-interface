@@ -52,7 +52,7 @@ const BridgePanel = () => {
     primaryBridgeContract
   } = useBridge({ setButtonState, setApproveState, setInputValue, setChainToken, chainToken, setToken, token })
 
-  const { minimum, getMinimum } = useMinimumAmount(primaryBridgeContract as ethers.Contract)
+  const { minimum, getMinimum } = useMinimumAmount(token?.address as string)
 
   useEffect(() => {
     getMinimum()
