@@ -35,7 +35,7 @@ const useErrorMessage = () => {
     (errorObject: ErrorMessageObject) => {
       switch (errorObject.message) {
         case CurveError.curveReentered:
-          setMessage('curveDefaultErrorMessage')
+          setMessage(t('curveDefaultErrorMessage'))
           break
         case CurveError.allowanceDecreaseUnderflow:
           setMessage(t('curveAllowanceErrorMessage'))

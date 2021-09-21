@@ -149,7 +149,7 @@ export const useSwapToken = (
           ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
           : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
       } catch (e) {
-        setButtonState(SwapButtonState.InsufficientLiquidity)
+        //setButtonState(SwapButtonState.InsufficientLiquidity)
       }
     },
     [

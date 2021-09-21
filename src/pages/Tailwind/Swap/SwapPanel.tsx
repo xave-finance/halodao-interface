@@ -338,7 +338,7 @@ const SwapPanel = () => {
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
                     setButtonState(SwapButtonState.Swap)
                   } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
-                    setButtonState(SwapButtonState.InsufficientBalance)
+                    // setButtonState(SwapButtonState.InsufficientBalance)
                   }
                   getMinimumAmount(val, CurrencySide.TO_CURRENCY)
 

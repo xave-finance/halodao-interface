@@ -6,10 +6,12 @@ import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
 import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
+import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
+  const { getErrorMessage } = useErrorMessage()
 
   const viewDeposit = useCallback(
     async (amount: BigNumber) => {
@@ -30,11 +32,16 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
-      const tx = await CurveContract?.deposit(amount, deadline)
-      addTransaction(tx, {
-        summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
-      })
-      return tx
+      try {
+        const tx = await CurveContract?.deposit(amount, deadline)
+        addTransaction(tx, {
+          summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
+        })
+        return tx
+      } catch (e) {
+        console.log(e)
+        console.log(getErrorMessage(e as ErrorMessageObject))
+      }
     },
     [CurveContract, token0, token1, addTransaction]
   )
