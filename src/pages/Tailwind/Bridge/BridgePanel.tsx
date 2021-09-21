@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId, Token } from '@sushiswap/sdk'
 import { ChainTokenMap, HALO, MOCK_TOKEN } from '../../../constants'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -388,10 +388,10 @@ const BridgePanel = () => {
           setShowModal(false)
           if (modalState === ModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
+        token={token as Token}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        tokenSymbol={token ? token.symbol ?? '' : ''}
         wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}

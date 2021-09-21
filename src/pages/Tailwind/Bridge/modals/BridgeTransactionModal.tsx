@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ChainId, Currency } from '@sushiswap/sdk'
+import { ChainId, Currency, Token } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -21,7 +21,7 @@ interface ConfirmTransactionModalProps {
   onSuccessConfirm: () => void
   originChainId: ChainId
   destinationChainId: ChainId
-  tokenSymbol: string
+  token: Token
   wrappedTokenSymbol: string
   state: ModalState
   setState: (state: ModalState) => void
@@ -46,7 +46,7 @@ const ConfirmTransactionModal = ({
   onSuccessConfirm,
   originChainId,
   destinationChainId,
-  tokenSymbol,
+  token,
   wrappedTokenSymbol,
   state,
   setState,
@@ -54,7 +54,7 @@ const ConfirmTransactionModal = ({
   estimatedGas,
   primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
-  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(primaryBridgeContract, destinationChainId)
+  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(token.address, destinationChainId)
 
   useEffect(() => {
     getFee()
@@ -156,7 +156,7 @@ const ConfirmTransactionModal = ({
     )
   }
 
-  const InProgressContent = ({ amount, tokenSymbol, wrappedTokenSymbol }: InProgressContentProps) => {
+  const InProgressContent = ({ amount, tokenSymbol }: InProgressContentProps) => {
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -234,7 +234,11 @@ const ConfirmTransactionModal = ({
     >
       {state === ModalState.NotConfirmed && <ConfirmContent />}
       {state === ModalState.InProgress && (
-        <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
+        <InProgressContent
+          amount={amount}
+          tokenSymbol={token.symbol as string}
+          wrappedTokenSymbol={wrappedTokenSymbol}
+        />
       )}
       {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>

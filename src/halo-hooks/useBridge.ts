@@ -297,29 +297,12 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   }
 }
 
-export const useFlatFee = (primaryBridgeContract: Contract, chainId: ChainId) => {
-  const [flatFee, setFlatFee] = useState(0)
-
-  const getFlatFee = useCallback(async () => {
-    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
-    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
-    const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
-    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
-    const fee = Number(process.env.REACT_APP_SHUTTLE_FLAT_FEE_USD) * tokensPerUSD
-
-    setFlatFee(fee)
-  }, [primaryBridgeContract])
-
-  return { flatFee, getFlatFee }
-}
-
-export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainId: ChainId) => {
+export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId) => {
   const [lowerBoundFee, setLowerBoundFee] = useState(0)
   const [upperBoundFee, setUpperBoundFee] = useState(0)
 
   const getFee = useCallback(async () => {
-    const bridgeTokenAddress = await primaryBridgeContract?.bridgeToken()
-    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[bridgeTokenAddress] as string
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
     const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
 
     let estimatedGasRange: GasModeRangeData
@@ -334,6 +317,12 @@ export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainI
           ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
         }
         break
+      case ChainId.XDAI:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
       default:
         throw new Error('Invalid destination chain.')
     }
@@ -343,7 +332,7 @@ export const useShuttleFee = (primaryBridgeContract: Contract, destinationChainI
 
     setLowerBoundFee(floorFeeInToken)
     setUpperBoundFee(ceilingFeeInToken)
-  }, [primaryBridgeContract, destinationChainId])
+  }, [tokenAddress, destinationChainId])
 
   return { lowerBoundFee, upperBoundFee, getFee }
 }
