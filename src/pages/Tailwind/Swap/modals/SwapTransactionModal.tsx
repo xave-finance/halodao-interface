@@ -165,7 +165,7 @@ const SwapTransactionModal = ({
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on Etherscan
+            View on {chainId === ChainId.MATIC ? 'Chain Explorer' : 'Etherscan'}
           </a>
         </div>
         <div className="mt-12">

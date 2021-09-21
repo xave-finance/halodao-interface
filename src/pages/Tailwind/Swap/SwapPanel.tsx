@@ -335,14 +335,12 @@ const SwapPanel = () => {
                 value={fromInputValue}
                 canSelectToken={false}
                 didChangeValue={async val => {
-                  if (approveState === ApproveButtonState.Approved) {
-                    if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
-                      setButtonState(SwapButtonState.Swap)
-                    } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
-                      setButtonState(SwapButtonState.InsufficientBalance)
-                    }
-                    getMinimumAmount(val, CurrencySide.TO_CURRENCY)
+                  if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
+                    setButtonState(SwapButtonState.Swap)
+                  } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
+                    setButtonState(SwapButtonState.InsufficientBalance)
                   }
+                  getMinimumAmount(val, CurrencySide.TO_CURRENCY)
 
                   setFromInputValue(val)
                 }}
