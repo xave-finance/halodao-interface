@@ -247,10 +247,15 @@ export const AMM_ZAP_ADDRESS: ChainAddressMap = {
 }
 
 // Balancer URLs
-export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'https://pools.balancer.exchange/#/pool'
-export const BALANCER_SUBGRAPH_URL =
-  process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
-  'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
+export const BALANCER_POOL_URL = {
+  [ChainId.MAINNET]: process.env.REACT_APP_BALANCER_POOL_URL,
+  [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_POOL_URL_KOVAN
+}
+
+export const BALANCER_SUBGRAPH_URL = {
+  [ChainId.MAINNET]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL,
+  [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL_KOVAN
+}
 
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'

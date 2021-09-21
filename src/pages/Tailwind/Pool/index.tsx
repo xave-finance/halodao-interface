@@ -3,7 +3,11 @@ import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
-import { INACTIVE_POOLS, LIQUIDITY_POOLS_ADDRESSES, LIQUIDITY_POOLS_ADDRESSES_MATIC } from 'constants/pools'
+import {
+  LIQUIDITY_POOLS_ADDRESSES,
+  LIQUIDITY_POOLS_ADDRESSES_KOVAN,
+  LIQUIDITY_POOLS_ADDRESSES_MATIC
+} from 'constants/pools'
 import { useLPTokenAddresses } from 'halo-hooks/useRewards'
 import { updatePools } from 'state/pool/actions'
 import { CachedPool } from 'state/pool/reducer'
@@ -13,6 +17,7 @@ import { useActiveWeb3React } from 'hooks'
 import { ChainId } from '@sushiswap/sdk'
 import { useTranslation } from 'react-i18next'
 import PoolTable from './PoolTable'
+import { isInactivePool } from 'utils/poolInfo'
 
 export interface PoolAddressPidMap {
   address: string
@@ -33,11 +38,16 @@ const Pool = () => {
   const { t } = useTranslation()
 
   const defaultPoolMap = (filter: PoolFilter) => {
-    const addresses = chainId === ChainId.MATIC ? LIQUIDITY_POOLS_ADDRESSES_MATIC : LIQUIDITY_POOLS_ADDRESSES
+    const addresses =
+      chainId === ChainId.MATIC
+        ? LIQUIDITY_POOLS_ADDRESSES_MATIC
+        : chainId === ChainId.KOVAN
+        ? LIQUIDITY_POOLS_ADDRESSES_KOVAN
+        : LIQUIDITY_POOLS_ADDRESSES
 
     const whitelisted = addresses.filter(address => {
       if (filter === PoolFilter.all) return address
-      const isInactive = INACTIVE_POOLS.filter(p => p.toLowerCase() === address.toLowerCase()).length > 0
+      const isInactive = isInactivePool(address, chainId)
       return filter === PoolFilter.active ? !isInactive : isInactive
     })
 
