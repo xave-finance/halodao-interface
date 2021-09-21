@@ -7,6 +7,7 @@ import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
 import { useActiveWeb3React } from 'hooks'
+import { consoleLog } from 'utils/simpleLogger'
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const { chainId } = useActiveWeb3React()
@@ -15,12 +16,13 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const viewDeposit = useCallback(
     async (amount: BigNumber) => {
+      consoleLog('-----------')
+      consoleLog('viewDeposit params: ', formatEther(amount))
       const res = await CurveContract?.viewDeposit(amount)
-      // console.log('-----------')
-      // console.log(`viewDeposit response: (amount: ${amount})`)
-      // console.log('lp tokens:', formatEther(res[0]))
-      // console.log('token 0:', formatUnits(res[1][0], token0.decimals))
-      // console.log('token 1:', formatUnits(res[1][1], token1.decimals))
+      consoleLog('viewDeposit response >>')
+      consoleLog('lp tokens:', formatEther(res[0]))
+      consoleLog('token 0:', formatUnits(res[1][0], token0.decimals))
+      consoleLog('token 1:', formatUnits(res[1][1], token1.decimals))
       return {
         lpToken: formatEther(res[0]),
         base: formatUnits(res[1][0], token0.decimals),
@@ -79,6 +81,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     async (quoteAmount: string) => {
       const quoteNumeraire = Number(quoteAmount)
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
+      consoleLog('quoteNumeraire, multiplier: ', quoteNumeraire, multiplier)
       const totalNumeraire = quoteNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
@@ -93,8 +96,11 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
+      consoleLog('baseRate, baseWeight: ', baseRate, baseWeight)
       const baseNumeraire = Number(baseAmount) * baseRate
+      //const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
+      consoleLog('baseNumeraire, multiplier: ', baseNumeraire, multiplier)
       const totalNumeraire = baseNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {

@@ -7,6 +7,7 @@ import { useActiveWeb3React } from 'hooks'
 import { AMM_ZAP_ADDRESS } from '../../constants'
 import { BigNumber } from 'ethers'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { consoleLog } from 'utils/simpleLogger'
 
 export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   const { chainId } = useActiveWeb3React()
@@ -23,7 +24,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     async (amount: string) => {
       const baseAmount = parseUnits(amount, token0.decimals)
       const res = await ZapContract?.calcMaxDepositAmountGivenBase(curveAddress, baseAmount)
-      // console.log(
+      // consoleLog(
       //   'calcMaxDepositAmountGivenBase res:',
       //   formatEther(res[0]),
       //   formatEther(res[1]),
@@ -55,7 +56,7 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
     async (amount: string) => {
       const quoteAmount = parseUnits(amount, token1.decimals)
       const res = await ZapContract?.calcMaxDepositAmountGivenQuote(curveAddress, quoteAmount)
-      // console.log(
+      // consoleLog(
       //   'calcMaxDepositAmountGivenQuote res:',
       //   formatEther(res[0]),
       //   formatEther(res[1]),
@@ -79,7 +80,9 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   const calcSwapAmountForZapFromBase = useCallback(
     async (amount: string) => {
       const baseAmount = parseUnits(amount, token0.decimals)
+      consoleLog('calcSwapAmountForZapFromBase params: ', curveAddress, formatUnits(baseAmount, token0.decimals))
       const swapAmount = await ZapContract?.calcSwapAmountForZapFromBase(curveAddress, baseAmount)
+      consoleLog('calcSwapAmountForZapFromBase result: ', formatUnits(swapAmount, token0.decimals))
       return formatUnits(swapAmount, token0.decimals)
     },
     [ZapContract, curveAddress, token0]
@@ -91,7 +94,9 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   const calcSwapAmountForZapFromQuote = useCallback(
     async (amount: string) => {
       const quoteAmount = parseUnits(amount, token1.decimals)
+      consoleLog('calcSwapAmountForZapFromQuote params: ', curveAddress, formatUnits(quoteAmount, token1.decimals))
       const swapAmount = await ZapContract?.calcSwapAmountForZapFromQuote(curveAddress, quoteAmount)
+      consoleLog('calcSwapAmountForZapFromQuote result: ', formatUnits(swapAmount, token1.decimals))
       return formatUnits(swapAmount, token1.decimals)
     },
     [ZapContract, curveAddress, token1]
@@ -100,6 +105,13 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   const zapFromBase = useCallback(
     async (amount: string, deadline: number, minLp: BigNumber) => {
       const zapAmount = parseUnits(amount, token0.decimals)
+      consoleLog(
+        'zapFromBase params: ',
+        curveAddress,
+        formatUnits(zapAmount, token0.decimals),
+        deadline,
+        formatEther(minLp)
+      )
       const tx = await ZapContract?.zapFromBase(curveAddress, zapAmount, deadline, minLp)
 
       addTransaction(tx, {
@@ -114,6 +126,13 @@ export const useZap = (curveAddress: string, token0: Token, token1: Token) => {
   const zapFromQuote = useCallback(
     async (amount: string, deadline: number, minLp: BigNumber) => {
       const zapAmount = parseUnits(amount, token1.decimals)
+      consoleLog(
+        'zapFromQuote params: ',
+        curveAddress,
+        formatUnits(zapAmount, token1.decimals),
+        deadline,
+        formatEther(minLp)
+      )
       const tx = await ZapContract?.zapFromQuote(curveAddress, zapAmount, deadline, minLp)
 
       addTransaction(tx, {
