@@ -63,25 +63,10 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract, token0, token1, addTransaction]
   )
 
-  // const previewDepositGivenQuote = useCallback(
-  //   async (quoteAmount: string, quoteRate: number, quoteWeight: number) => {
-  //     const quoteNumeraire = Number(quoteAmount) * quoteRate
-  //     const totalNumeraire = quoteNumeraire * (1 / quoteWeight)
-  //     const { base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
-  //     return {
-  //       deposit: totalNumeraire,
-  //       base,
-  //       quote
-  //     }
-  //   },
-  //   [CurveContract, token0, token1]
-  // )
-
   const previewDepositGivenQuote = useCallback(
     async (quoteAmount: string) => {
       const quoteNumeraire = Number(quoteAmount)
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
-      consoleLog('quoteNumeraire, multiplier: ', quoteNumeraire, multiplier)
       const totalNumeraire = quoteNumeraire * multiplier
       const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
       return {
@@ -96,15 +81,32 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
-      consoleLog('baseRate, baseWeight: ', baseRate, baseWeight)
-      const baseNumeraire = Number(baseAmount) * baseRate
-      //const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
+      const baseAmountVal = Number(baseAmount)
+      const baseNumeraire = baseAmountVal * baseRate
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
-      consoleLog('baseNumeraire, multiplier: ', baseNumeraire, multiplier)
       const totalNumeraire = baseNumeraire * multiplier
-      const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
+      const preview = await viewDeposit(parseEther(`${totalNumeraire}`))
+
+      // Get "input base/estimated base" rate of error to determine if we need to adjust total numeraire
+      const rateOfError = baseAmountVal / Number(preview.base)
+      consoleLog('rateOfError: ', rateOfError)
+
+      // Looks good, no need to adjust
+      if (rateOfError >= 1) {
+        return {
+          deposit: totalNumeraire,
+          lpToken: preview.lpToken,
+          base: preview.base,
+          quote: preview.quote
+        }
+      }
+
+      // Adjust total numeraire & call viewDeposit again
+      const adjustedNumeraire = baseAmountVal * rateOfError
+      const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
+
       return {
-        deposit: totalNumeraire,
+        deposit: adjustedNumeraire,
         lpToken,
         base,
         quote

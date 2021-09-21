@@ -87,7 +87,6 @@ const AddLiquityModal = ({
       baseTokenAmount = Number(baseAmount)
       quoteTokenAmount = Number(quoteAmount)
     } else {
-      console.log('zapAmount: ', zapAmount)
       if (isGivenBase) {
         const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
         quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
@@ -100,8 +99,6 @@ const AddLiquityModal = ({
     }
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
-    console.log('baseTokenAmount: ', baseTokenAmount)
-    console.log('quoteTokenAmount: ', quoteTokenAmount)
 
     let res: any
     if (isGivenBase) {
