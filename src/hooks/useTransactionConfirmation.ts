@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from './index'
 import useInterval from 'hooks/useInterval'
@@ -21,7 +21,7 @@ const CHAIN_REQUIRED_CONFIRMATIONS: ChainConfirmationList = {
 export default function useTransactionConfirmation(txHash: string): GetTransactionCall {
   const { library, chainId } = useActiveWeb3React()
 
-  const [confirmations, setConfirmations] = useState(0)
+  const [confirmations, setConfirmations] = useState(20)
   const requiredConfirmations = CHAIN_REQUIRED_CONFIRMATIONS[chainId as ChainId] as number
   const [done, setDone] = useState(false)
   const fetchTransactionReceipt = useCallback(async () => {
