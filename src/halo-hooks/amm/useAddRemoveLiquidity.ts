@@ -9,6 +9,8 @@ import { isDoubleEstimatePool } from 'utils/poolInfo'
 import { useActiveWeb3React } from 'hooks'
 import { consoleLog } from 'utils/simpleLogger'
 
+const THRESHOLD = 0.00001
+
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const { chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
@@ -63,17 +65,20 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract, token0, token1, addTransaction]
   )
 
-  const adjustViewDeposit = async (inputAmount: number, estimatedAmount: number, totalNumeraire: number) => {
-    const rateOfError = inputAmount / estimatedAmount
-    const adjustedNumeraire = totalNumeraire * rateOfError
-    const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
-    return {
-      deposit: adjustedNumeraire,
-      lpToken,
-      base,
-      quote
-    }
-  }
+  const adjustViewDeposit = useCallback(
+    async (inputAmount: number, estimatedAmount: number, totalNumeraire: number) => {
+      const rateOfError = inputAmount / estimatedAmount
+      const adjustedNumeraire = totalNumeraire * rateOfError
+      const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
+      return {
+        deposit: adjustedNumeraire,
+        lpToken,
+        base,
+        quote
+      }
+    },
+    [viewDeposit]
+  )
 
   const previewDepositGivenQuote = useCallback(
     async (quoteAmount: string) => {
@@ -92,12 +97,12 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
       let estimatedQuoteVal = Number(estimate.quote)
       if (estimatedQuoteVal < quoteAmountVal) {
-        while (estimatedQuoteVal - quoteAmountVal < -0.00001) {
+        while (estimatedQuoteVal - quoteAmountVal < -THRESHOLD) {
           depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
           estimatedQuoteVal = Number(depositPreview.quote)
         }
       } else {
-        while (estimatedQuoteVal - quoteAmountVal > 0.00001) {
+        while (estimatedQuoteVal - quoteAmountVal > THRESHOLD) {
           depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
           estimatedQuoteVal = Number(depositPreview.quote)
         }
@@ -105,7 +110,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
       return depositPreview
     },
-    [viewDeposit, address, chainId]
+    [viewDeposit, address, chainId, adjustViewDeposit]
   )
 
   const previewDepositGivenBase = useCallback(
@@ -125,12 +130,12 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
       let estimatedBaseVal = Number(estimate.base)
       if (estimatedBaseVal < baseAmountVal) {
-        while (estimatedBaseVal - baseAmountVal < -0.00000001) {
+        while (estimatedBaseVal - baseAmountVal < -THRESHOLD) {
           depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
           estimatedBaseVal = Number(depositPreview.base)
         }
       } else {
-        while (estimatedBaseVal - baseAmountVal > 0.00000001) {
+        while (estimatedBaseVal - baseAmountVal > THRESHOLD) {
           depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
           estimatedBaseVal = Number(depositPreview.base)
         }
@@ -138,7 +143,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
       return depositPreview
     },
-    [viewDeposit, address, chainId]
+    [viewDeposit, address, chainId, adjustViewDeposit]
   )
 
   return { viewDeposit, deposit, viewWithdraw, withdraw, previewDepositGivenBase, previewDepositGivenQuote }
