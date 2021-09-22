@@ -63,6 +63,18 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract, token0, token1, addTransaction]
   )
 
+  const adjustViewDeposit = async (inputAmount: number, estimatedAmount: number, totalNumeraire: number) => {
+    const rateOfError = inputAmount / estimatedAmount
+    const adjustedNumeraire = totalNumeraire * rateOfError
+    const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
+    return {
+      deposit: adjustedNumeraire,
+      lpToken,
+      base,
+      quote
+    }
+  }
+
   const previewDepositGivenQuote = useCallback(
     async (quoteAmount: string) => {
       const quoteAmountVal = Number(quoteAmount)
@@ -71,42 +83,27 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const totalNumeraire = quoteNumeraire * multiplier
       const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
 
-      let depositAmount = totalNumeraire
-      let estimatedLpToken = estimate.lpToken
-      let estimatedBase = estimate.base
-      let estimatedQuote = estimate.quote
+      let depositPreview = {
+        deposit: totalNumeraire,
+        lpToken: estimate.lpToken,
+        base: estimate.base,
+        quote: estimate.quote
+      }
 
       let estimatedQuoteVal = Number(estimate.quote)
       if (estimatedQuoteVal < quoteAmountVal) {
         while (estimatedQuoteVal - quoteAmountVal < -0.00001) {
-          const rateOfError = quoteAmountVal / estimatedQuoteVal
-          const adjustedNumeraire = totalNumeraire * rateOfError
-          const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
-          depositAmount = adjustedNumeraire
-          estimatedLpToken = lpToken
-          estimatedBase = base
-          estimatedQuote = quote
-          estimatedQuoteVal = Number(quote)
+          depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
+          estimatedQuoteVal = Number(depositPreview.quote)
         }
       } else {
         while (estimatedQuoteVal - quoteAmountVal > 0.00001) {
-          const rateOfError = quoteAmountVal / estimatedQuoteVal
-          const adjustedNumeraire = totalNumeraire * rateOfError
-          const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
-          depositAmount = adjustedNumeraire
-          estimatedLpToken = lpToken
-          estimatedBase = base
-          estimatedQuote = quote
-          estimatedQuoteVal = Number(quote)
+          depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
+          estimatedQuoteVal = Number(depositPreview.quote)
         }
       }
 
-      return {
-        deposit: depositAmount,
-        lpToken: estimatedLpToken,
-        base: estimatedBase,
-        quote: estimatedQuote
-      }
+      return depositPreview
     },
     [viewDeposit, address, chainId]
   )
@@ -119,42 +116,27 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const totalNumeraire = baseNumeraire * multiplier
       const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
 
-      let depositAmount = totalNumeraire
-      let estimatedLpToken = estimate.lpToken
-      let estimatedBase = estimate.base
-      let estimatedQuote = estimate.quote
+      let depositPreview = {
+        deposit: totalNumeraire,
+        lpToken: estimate.lpToken,
+        base: estimate.base,
+        quote: estimate.quote
+      }
 
       let estimatedBaseVal = Number(estimate.base)
       if (estimatedBaseVal < baseAmountVal) {
         while (estimatedBaseVal - baseAmountVal < -0.00000001) {
-          const rateOfError = baseAmountVal / estimatedBaseVal
-          const adjustedNumeraire = totalNumeraire * rateOfError
-          const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
-          depositAmount = adjustedNumeraire
-          estimatedLpToken = lpToken
-          estimatedBase = base
-          estimatedQuote = quote
-          estimatedBaseVal = Number(base)
+          depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
+          estimatedBaseVal = Number(depositPreview.base)
         }
       } else {
         while (estimatedBaseVal - baseAmountVal > 0.00000001) {
-          const rateOfError = baseAmountVal / estimatedBaseVal
-          const adjustedNumeraire = totalNumeraire * rateOfError
-          const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
-          depositAmount = adjustedNumeraire
-          estimatedLpToken = lpToken
-          estimatedBase = base
-          estimatedQuote = quote
-          estimatedBaseVal = Number(base)
+          depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
+          estimatedBaseVal = Number(depositPreview.base)
         }
       }
 
-      return {
-        deposit: depositAmount,
-        lpToken: estimatedLpToken,
-        base: estimatedBase,
-        quote: estimatedQuote
-      }
+      return depositPreview
     },
     [viewDeposit, address, chainId]
   )
