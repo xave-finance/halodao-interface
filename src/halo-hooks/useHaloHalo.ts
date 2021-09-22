@@ -2,9 +2,6 @@ import { useCallback, useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { useActiveWeb3React } from '../hooks'
-import { useWeb3React } from '@web3-react/core'
-import { NetworkContextName } from '../constants'
-import { network } from '../connectors'
 
 import Fraction from '../constants/Fraction'
 import { BalanceProps } from '../sushi-hooks/queries/useTokenBalance'
@@ -19,16 +16,16 @@ const { BigNumber } = ethers
 const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-
+  const overrideCurrentProvider = chainId && chainId === ChainId.MATIC ? true : false // user RPCProvider to connect to mainnet if user is in MATIC
   const contractChainId = chainId && chainId === ChainId.MATIC ? ChainId.MAINNET : chainId
-  console.log('contractChainId', contractChainId)
   const haloHaloAddress = chainId ? HALOHALO_ADDRESS[contractChainId as ChainId] : undefined
   const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[contractChainId as ChainId] : undefined
-  console.log('rewardsManagerAddress', rewardsManagerAddress)
-  const haloContract = useTokenContract(chainId ? HALO_TOKEN_ADDRESS[contractChainId as ChainId] : undefined || '') // withSigner
-  const halohaloContract = useContract(haloHaloAddress || '', HALOHALO_ABI) // withSigner
-  console.log('haloContract', haloContract)
-  console.log('halohaloContract', halohaloContract)
+  const haloContract = useTokenContract(
+    chainId ? HALO_TOKEN_ADDRESS[contractChainId as ChainId] : undefined || '',
+    true,
+    overrideCurrentProvider
+  ) // withSigner
+  const halohaloContract = useContract(haloHaloAddress || '', HALOHALO_ABI, true, overrideCurrentProvider) // withSigner
   const [allowance, setAllowance] = useState('0')
   const [haloHaloAPY, setHaloHaloAPY] = useState(0)
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')

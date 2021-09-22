@@ -276,12 +276,15 @@ export default function HaloHalo() {
                       <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
                       <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
                       <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">
-                        RNBW = x{haloHaloPrice} {!features?.vest && ` (Ethereum mainnet)`}
-                      </HaloHaloPairText>
+                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice}</HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
+                {!features?.vest && (
+                  <HaloPairCenterContainer>
+                    <HaloHaloPairText>(Ethereum mainnet)</HaloHaloPairText>
+                  </HaloPairCenterContainer>
+                )}
               </AutoColumn>
             </AutoColumnDeposit>
           </Wrapper>
