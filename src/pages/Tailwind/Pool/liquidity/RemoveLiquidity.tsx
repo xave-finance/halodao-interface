@@ -59,8 +59,6 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
         label: pool.name,
         value: lpAmount
       })
-
-      window.location.reload()
     } catch (err) {
       console.error(err)
       setRemoveButtonState(PrimaryButtonState.Enabled)

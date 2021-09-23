@@ -322,9 +322,7 @@ const AddLiquityModal = ({
           <PrimaryButton
             title="Close"
             state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              window.location.reload()
-            }}
+            onClick={dismissGracefully}
           />
         </div>
       </div>
@@ -334,13 +332,7 @@ const AddLiquityModal = ({
   return (
     <BaseModal
       isVisible={isVisible}
-      onDismiss={() => {
-        if (state === AddLiquityModalState.Successful) {
-          window.location.reload()
-        } else {
-          dismissGracefully()
-        }
-      }}
+      onDismiss={dismissGracefully}
     >
       {state === AddLiquityModalState.NotConfirmed && <ConfirmContent />}
       {state === AddLiquityModalState.InProgress && <InProgressContent />}
