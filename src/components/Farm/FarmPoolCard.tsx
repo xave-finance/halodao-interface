@@ -707,7 +707,7 @@ export default function FarmPoolCard({
           <StyledRowFixed width="13%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>
-              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
@@ -750,12 +750,12 @@ export default function FarmPoolCard({
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
                   <GetBPTButton href={poolInfo.addLiquidityUrl}>
-                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address))}
+                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>
                 </RowFlat>
@@ -824,7 +824,7 @@ export default function FarmPoolCard({
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address)}
+                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <HideSmallFullWidth>
