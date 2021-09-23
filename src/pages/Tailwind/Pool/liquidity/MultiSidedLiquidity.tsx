@@ -7,6 +7,7 @@ import { PoolData } from '../models/PoolData'
 import { TokenAmount, JSBI } from '@sushiswap/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
+import { useTranslation } from 'react-i18next'
 
 enum AddLiquidityState {
   NoAmount,
@@ -36,9 +37,11 @@ const MultiSidedLiquidity = ({
   onIsGivenBaseChanged,
   isAddLiquidityEnabled
 }: MultiSidedLiquidityProps) => {
+  const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
   const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
@@ -60,11 +63,16 @@ const MultiSidedLiquidity = ({
     setBaseInput(val)
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
+    setErrorMessage(undefined)
 
     if (val !== '') {
-      const { quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+      const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
       setQuoteInput(quote)
       onQuoteAmountChanged(quote)
+
+      if (Number(base) > Number(val)) {
+        setErrorMessage(t('error-liquidity-estimates-changed'))
+      }
     } else {
       setQuoteInput('')
     }
@@ -77,11 +85,16 @@ const MultiSidedLiquidity = ({
     setQuoteInput(val)
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
+    setErrorMessage(undefined)
 
     if (val !== '') {
-      const { base } = await previewDepositGivenQuote(val)
+      const { base, quote } = await previewDepositGivenQuote(val)
       setBaseInput(base)
       onBaseAmountChanged(base)
+
+      if (Number(quote) > Number(val)) {
+        setErrorMessage(t('error-liquidity-estimates-changed'))
+      }
     } else {
       setBaseInput('')
     }
@@ -184,7 +197,9 @@ const MultiSidedLiquidity = ({
               : 'Supply'
           }
           state={
-            mainState === AddLiquidityState.Disabled
+            errorMessage !== undefined
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Disabled
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Approved
               ? PrimaryButtonState.Enabled
@@ -195,6 +210,8 @@ const MultiSidedLiquidity = ({
           onClick={onDeposit}
         />
       </div>
+
+      {errorMessage && <div className="mt-2 text-red-600 text-center text-sm">{errorMessage}</div>}
     </>
   )
 }

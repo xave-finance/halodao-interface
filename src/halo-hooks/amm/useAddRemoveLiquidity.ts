@@ -7,6 +7,9 @@ import { Token } from '@sushiswap/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
 import { useActiveWeb3React } from 'hooks'
+import { consoleLog } from 'utils/simpleLogger'
+
+const THRESHOLD = 0.00001
 
 export const useAddRemoveLiquidity = (address: string, token0: Token, token1: Token) => {
   const { chainId } = useActiveWeb3React()
@@ -15,12 +18,13 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const viewDeposit = useCallback(
     async (amount: BigNumber) => {
+      consoleLog('-----------')
+      consoleLog('viewDeposit params: ', formatEther(amount))
       const res = await CurveContract?.viewDeposit(amount)
-      // console.log('-----------')
-      // console.log(`viewDeposit response: (amount: ${amount})`)
-      // console.log('lp tokens:', formatEther(res[0]))
-      // console.log('token 0:', formatUnits(res[1][0], token0.decimals))
-      // console.log('token 1:', formatUnits(res[1][1], token1.decimals))
+      consoleLog('viewDeposit response >>')
+      consoleLog('lp tokens:', formatEther(res[0]))
+      consoleLog('token 0:', formatUnits(res[1][0], token0.decimals))
+      consoleLog('token 1:', formatUnits(res[1][1], token1.decimals))
       return {
         lpToken: formatEther(res[0]),
         base: formatUnits(res[1][0], token0.decimals),
@@ -61,50 +65,85 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     [CurveContract, token0, token1, addTransaction]
   )
 
-  // const previewDepositGivenQuote = useCallback(
-  //   async (quoteAmount: string, quoteRate: number, quoteWeight: number) => {
-  //     const quoteNumeraire = Number(quoteAmount) * quoteRate
-  //     const totalNumeraire = quoteNumeraire * (1 / quoteWeight)
-  //     const { base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
-  //     return {
-  //       deposit: totalNumeraire,
-  //       base,
-  //       quote
-  //     }
-  //   },
-  //   [CurveContract, token0, token1]
-  // )
-
-  const previewDepositGivenQuote = useCallback(
-    async (quoteAmount: string) => {
-      const quoteNumeraire = Number(quoteAmount)
-      const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
-      const totalNumeraire = quoteNumeraire * multiplier
-      const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
+  const adjustViewDeposit = useCallback(
+    async (inputAmount: number, estimatedAmount: number, totalNumeraire: number) => {
+      const rateOfError = inputAmount / estimatedAmount
+      const adjustedNumeraire = totalNumeraire * rateOfError
+      const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
       return {
-        deposit: totalNumeraire,
+        deposit: adjustedNumeraire,
         lpToken,
         base,
         quote
       }
     },
-    [viewDeposit, address, chainId]
+    [viewDeposit]
+  )
+
+  const previewDepositGivenQuote = useCallback(
+    async (quoteAmount: string) => {
+      const quoteAmountVal = Number(quoteAmount)
+      const quoteNumeraire = quoteAmountVal // no need to convert, quote (USDC) is numeraire
+      const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
+      const totalNumeraire = quoteNumeraire * multiplier
+      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+
+      let depositPreview = {
+        deposit: totalNumeraire,
+        lpToken: estimate.lpToken,
+        base: estimate.base,
+        quote: estimate.quote
+      }
+
+      let estimatedQuoteVal = Number(estimate.quote)
+      if (estimatedQuoteVal < quoteAmountVal) {
+        while (estimatedQuoteVal - quoteAmountVal < -THRESHOLD) {
+          depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
+          estimatedQuoteVal = Number(depositPreview.quote)
+        }
+      } else {
+        while (estimatedQuoteVal - quoteAmountVal > THRESHOLD) {
+          depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
+          estimatedQuoteVal = Number(depositPreview.quote)
+        }
+      }
+
+      return depositPreview
+    },
+    [viewDeposit, address, chainId, adjustViewDeposit]
   )
 
   const previewDepositGivenBase = useCallback(
     async (baseAmount: string, baseRate: number, baseWeight: number) => {
-      const baseNumeraire = Number(baseAmount) * baseRate
+      const baseAmountVal = Number(baseAmount)
+      const baseNumeraire = baseAmountVal * baseRate
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
       const totalNumeraire = baseNumeraire * multiplier
-      const { lpToken, base, quote } = await viewDeposit(parseEther(`${totalNumeraire}`))
-      return {
+      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+
+      let depositPreview = {
         deposit: totalNumeraire,
-        lpToken,
-        base,
-        quote
+        lpToken: estimate.lpToken,
+        base: estimate.base,
+        quote: estimate.quote
       }
+
+      let estimatedBaseVal = Number(estimate.base)
+      if (estimatedBaseVal < baseAmountVal) {
+        while (estimatedBaseVal - baseAmountVal < -THRESHOLD) {
+          depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
+          estimatedBaseVal = Number(depositPreview.base)
+        }
+      } else {
+        while (estimatedBaseVal - baseAmountVal > THRESHOLD) {
+          depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
+          estimatedBaseVal = Number(depositPreview.base)
+        }
+      }
+
+      return depositPreview
     },
-    [viewDeposit, address, chainId]
+    [viewDeposit, address, chainId, adjustViewDeposit]
   )
 
   return { viewDeposit, deposit, viewWithdraw, withdraw, previewDepositGivenBase, previewDepositGivenQuote }
