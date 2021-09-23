@@ -306,7 +306,6 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
     const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
 
     let estimatedGasRange: GasModeRangeData
-    console.log('REACT_APP_ETHGAS_API_HOST:', process.env.REACT_APP_ETHGAS_API_HOST)
 
     switch (destinationChainId) {
       case ChainId.MAINNET:
@@ -337,10 +336,9 @@ export const useMinimumAmount = (tokenAddress: string) => {
 
   const getMinimum = useCallback(async () => {
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
-    getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
-      const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
-      setMinimum(Number(flatFee.toFixed(2)))
-    })
+    const prices = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
+    setMinimum(Number(flatFee.toFixed(2)))
   }, [tokenAddress])
 
   return { minimum, getMinimum }
