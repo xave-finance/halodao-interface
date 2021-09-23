@@ -262,7 +262,7 @@ export function getContract(
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
   if (overrideCurrentProvider) {
-    const mainnetProvider = new JsonRpcProvider(RPC[ChainId.MAINNET], 'any')
+    const mainnetProvider = new JsonRpcProvider(RPC[ChainId.MAINNET], ChainId.MAINNET)
     return new Contract(address, ABI, mainnetProvider as any)
   }
   return new Contract(address, ABI, getProviderOrSigner(library, account) as any)
