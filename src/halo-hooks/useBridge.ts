@@ -300,6 +300,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId) => {
   const [lowerBoundFee, setLowerBoundFee] = useState(0)
   const [upperBoundFee, setUpperBoundFee] = useState(0)
+  console.log('destinationChainId:', destinationChainId)
 
   const getFee = useCallback(async () => {
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
@@ -310,12 +311,14 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
     switch (destinationChainId) {
       case ChainId.MAINNET:
         estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
+        console.log('1')
         break
       case ChainId.MATIC:
         estimatedGasRange = {
           floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
           ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
         }
+        console.log('2')
         break
       default:
         throw new Error('Invalid destination chain.')
@@ -333,7 +336,6 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
 
 export const useMinimumAmount = (tokenAddress: string) => {
   const [minimum, setMinimum] = useState(0)
-  console.log('process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD:', process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD)
 
   const getMinimum = useCallback(async () => {
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
