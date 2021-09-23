@@ -21,7 +21,7 @@ const useHaloHalo = () => {
   const haloHaloAddress = chainId ? HALOHALO_ADDRESS[contractChainId as ChainId] : undefined
   const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[contractChainId as ChainId] : undefined
   const haloContract = useTokenContract(
-    chainId ? HALO_TOKEN_ADDRESS[contractChainId as ChainId] : undefined || '',
+    chainId ? HALO_TOKEN_ADDRESS[contractChainId as ChainId] : undefined,
     true,
     overrideCurrentProvider
   ) // withSigner
