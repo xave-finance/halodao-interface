@@ -20,7 +20,7 @@ const _queryETHGasWatchAPI = async () => {
    * @info
    * https://docs.ethgas.watch/api
    */
-  const url = `http://ethgas.watch/api/gas`
+  const url = `${process.env.REACT_APP_ETHGAS_API_HOST}/api/gas`
 
   return fetch(url).then(response => response.json())
 }
