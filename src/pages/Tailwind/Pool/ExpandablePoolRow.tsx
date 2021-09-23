@@ -163,7 +163,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
 
   // Return an empty component if failed to fetch pool info
   if (!pool) {
-    return <></>
+    return <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
   }
 
   return (

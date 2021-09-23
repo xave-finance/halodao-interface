@@ -104,9 +104,10 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
 
           {activePools.length === 0 && (
             <div>
-              <div className="animate-pulse bg-primary-lighter h-6 rounded mb-2"></div>
-              <div className="animate-pulse bg-primary-lighter h-6 rounded mb-2"></div>
-              <div className="animate-pulse bg-primary-lighter h-6 rounded"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
             </div>
           )}
 
