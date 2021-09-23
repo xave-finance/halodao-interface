@@ -25,7 +25,7 @@ const useHaloHalo = () => {
     true,
     overrideCurrentProvider
   ) // withSigner
-  const halohaloContract = useContract(haloHaloAddress || '', HALOHALO_ABI, true, overrideCurrentProvider) // withSigner
+  const halohaloContract = useContract(haloHaloAddress, HALOHALO_ABI, true, overrideCurrentProvider) // withSigner
   const [allowance, setAllowance] = useState('0')
   const [haloHaloAPY, setHaloHaloAPY] = useState(0)
   const [haloHaloPrice, setHaloHaloPrice] = useState('0')
