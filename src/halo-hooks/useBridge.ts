@@ -333,6 +333,7 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
 
 export const useMinimumAmount = (tokenAddress: string) => {
   const [minimum, setMinimum] = useState(0)
+  console.log('process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD:', process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD)
 
   const getMinimum = useCallback(async () => {
     const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
