@@ -22,7 +22,6 @@ interface ConfirmTransactionModalProps {
   originChainId: ChainId
   destinationChainId: ChainId
   token: Token
-  wrappedTokenSymbol: string
   state: ModalState
   setState: (state: ModalState) => void
   successHash: string
@@ -33,7 +32,6 @@ interface ConfirmTransactionModalProps {
 interface InProgressContentProps {
   amount: string
   tokenSymbol: string
-  wrappedTokenSymbol: string
 }
 
 const ConfirmTransactionModal = ({
@@ -47,7 +45,6 @@ const ConfirmTransactionModal = ({
   originChainId,
   destinationChainId,
   token,
-  wrappedTokenSymbol,
   state,
   setState,
   successHash,
@@ -233,13 +230,7 @@ const ConfirmTransactionModal = ({
       }}
     >
       {state === ModalState.NotConfirmed && <ConfirmContent />}
-      {state === ModalState.InProgress && (
-        <InProgressContent
-          amount={amount}
-          tokenSymbol={token.symbol as string}
-          wrappedTokenSymbol={wrappedTokenSymbol}
-        />
-      )}
+      {state === ModalState.InProgress && <InProgressContent amount={amount} tokenSymbol={token.symbol as string} />}
       {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>
   )

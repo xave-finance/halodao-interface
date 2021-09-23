@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
 import { ChainId, Token } from '@sushiswap/sdk'
-import { ChainTokenMap, HALO, MOCK_TOKEN } from '../../../constants'
-import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
+import BridgeInput from './modals/BridgeInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
@@ -28,16 +27,9 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ModalState.NotConfirmed)
 
-  const [chainToken, setChainToken] = useState<ChainTokenMap>(
-    process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO
-  )
-  const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   const {
-    onTokenChange,
-    onChainIdChange,
-    onDestinationChainIdChange,
     estimateDeposit,
     estimateBurnWrappedToken,
     approveAllowance,
@@ -49,8 +41,10 @@ const BridgePanel = () => {
     balance,
     estimatedGas,
     successHash,
-    primaryBridgeContract
-  } = useBridge({ setButtonState, setApproveState, setInputValue, setChainToken, chainToken, setToken, token })
+    primaryBridgeContract,
+    token,
+    setToken
+  } = useBridge({ setButtonState, setApproveState, setInputValue })
 
   const { minimum, getMinimum } = useMinimumAmount(token?.address as string)
 
@@ -81,18 +75,6 @@ const BridgePanel = () => {
   useEffect(() => {
     setButtonStates()
   }, [setButtonStates])
-
-  useEffect(() => {
-    onTokenChange()
-  }, [onTokenChange])
-
-  useEffect(() => {
-    onChainIdChange()
-  }, [onChainIdChange])
-
-  useEffect(() => {
-    onDestinationChainIdChange()
-  }, [onDestinationChainIdChange])
 
   const NotApproveContent = () => {
     return (
@@ -331,26 +313,21 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={token ? token.address : chainToken[ChainId.MATIC]?.address}
+                tokenAddress={token ? token.address : token[ChainId.MATIC]?.address}
               />
             </div>
 
             <p className="mt-2 font-semibold text-secondary-alternate">Amount</p>
 
             <div className="mt-2">
-              <CurrencyInput
-                currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
+              <BridgeInput
+                currency={token[chainId as ChainId]}
                 value={inputValue}
                 canSelectToken={true}
                 didChangeValue={val => setInputValue(val)}
                 showBalance={true}
                 showMax={true}
-                onSelectToken={selectedToken => {
-                  if (chainId) {
-                    setChainToken({ [chainId]: selectedToken })
-                  }
-                }}
-                balance={String(balance)}
+                onSelectToken={setToken}
               />
             </div>
             <MainContent />
@@ -360,7 +337,7 @@ const BridgePanel = () => {
 
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={token ?? HALO[ChainId.MAINNET]!} // eslint-disable-line
+        currency={token}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
@@ -392,7 +369,6 @@ const BridgePanel = () => {
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}
         successHash={successHash}
