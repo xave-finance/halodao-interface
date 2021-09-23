@@ -31,7 +31,12 @@ import { useActiveWeb3React } from './index'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
 
 // returns null on errors
-export function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
+export function useContract(
+  address: string | undefined,
+  ABI: any,
+  withSignerIfPossible = true,
+  overrideCurrentProvider?: boolean
+): Contract | null {
   const { library, account } = useActiveWeb3React()
 
   return useMemo(() => {
@@ -39,12 +44,18 @@ export function useContract(address: string | undefined, ABI: any, withSignerIfP
       return null
     }
     try {
-      return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+      return getContract(
+        address,
+        ABI,
+        library,
+        withSignerIfPossible && account ? account : undefined,
+        overrideCurrentProvider
+      )
     } catch (error) {
       console.error('Failed to get contract', error)
       return null
     }
-  }, [address, ABI, library, withSignerIfPossible, account])
+  }, [address, ABI, library, withSignerIfPossible, account, overrideCurrentProvider])
 }
 
 export function useV1FactoryContract(): Contract | null {
@@ -60,8 +71,12 @@ export function useV1ExchangeContract(address?: string, withSignerIfPossible?: b
   return useContract(address, V1_EXCHANGE_ABI, withSignerIfPossible)
 }
 
-export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
+export function useTokenContract(
+  tokenAddress?: string,
+  withSignerIfPossible?: boolean,
+  overrideCurrentProvider?: boolean
+): Contract | null {
+  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible, overrideCurrentProvider)
 }
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {

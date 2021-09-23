@@ -14,6 +14,7 @@ import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
+import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -57,6 +58,7 @@ const AddLiquityModal = ({
   const [poolShare, setPoolShare] = useState(0)
   const [depositAmount, setDepositAmount] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation()
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
@@ -79,6 +81,7 @@ const AddLiquityModal = ({
     if (isMultisided && (!baseAmount || !quoteAmount || baseAmount === '' || quoteAmount === '')) return
     if (!isMultisided && (!zapAmount || zapAmount === '')) return
 
+    setIsLoading(true)
     let baseTokenAmount = 0
     let quoteTokenAmount = 0
 
@@ -120,6 +123,7 @@ const AddLiquityModal = ({
     })
 
     setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -189,7 +193,10 @@ const AddLiquityModal = ({
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
 
-      if ((err as any).code === -32016) {
+      if (
+        (err as any).code === ZapErrorCode.SlippageTooLow ||
+        (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
+      ) {
         setErrorMessage(t('error-liquidity-zap-reverted'))
       }
     }
@@ -200,7 +207,14 @@ const AddLiquityModal = ({
       <>
         <div className="bg-primary-lightest p-4">
           <div className="font-semibold text-lg">You will receive</div>
-          <div className="mt-4 font-semibold text-2xl">{formatNumber(lpAmount.target, NumberFormat.long)} HLP</div>
+          <div
+            className={`
+              ${isLoading && 'animate-pulse bg-primary h-8 w-40'}
+              mt-4 font-semibold text-2xl rounded
+            `}
+          >
+            {!isLoading && <>{formatNumber(lpAmount.target, NumberFormat.long)} HLP</>}
+          </div>
           <div className="mt-1 text-xl">
             {pool.token0.symbol}/{pool.token1.symbol} Pool Tokens
           </div>
@@ -216,35 +230,53 @@ const AddLiquityModal = ({
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2">
               <div className="font-bold">{pool.token0.symbol} Deposited</div>
-              <div>
-                {formatNumber(tokenAmounts[0], NumberFormat.long)} {pool.token0.symbol}
+              <div className={isLoading ? 'animate-pulse bg-primary h-4 w-36 rounded' : ''}>
+                {!isLoading && (
+                  <>
+                    {formatNumber(tokenAmounts[0], NumberFormat.long)} {pool.token0.symbol}
+                  </>
+                )}
               </div>
             </div>
             <div className="flex justify-between mb-2">
               <div className="font-bold">{pool.token1.symbol} Deposited</div>
-              <div>
-                {formatNumber(tokenAmounts[1], NumberFormat.long)} {pool.token1.symbol}
+              <div className={isLoading ? 'animate-pulse bg-primary h-4 w-36 rounded' : ''}>
+                {!isLoading && (
+                  <>
+                    {formatNumber(tokenAmounts[1], NumberFormat.long)} {pool.token1.symbol}
+                  </>
+                )}
               </div>
             </div>
             <div className="flex justify-between mb-2">
               <div className="font-bold">Rates</div>
               <div>
-                <div>
-                  1 {pool.token0.symbol} = {formatNumber(tokenPrices[0])} {pool.token1.symbol}
+                <div className={isLoading ? 'animate-pulse bg-primary h-4 w-52 rounded mb-1' : ''}>
+                  {!isLoading && (
+                    <>
+                      1 {pool.token0.symbol} = {formatNumber(tokenPrices[0])} {pool.token1.symbol}
+                    </>
+                  )}
                 </div>
-                <div>
-                  1 {pool.token1.symbol} = {formatNumber(tokenPrices[1])} {pool.token0.symbol}
+                <div className={isLoading ? 'animate-pulse bg-primary h-4 w-52 rounded' : ''}>
+                  {!isLoading && (
+                    <>
+                      1 {pool.token1.symbol} = {formatNumber(tokenPrices[1])} {pool.token0.symbol}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
             <div className="flex justify-between">
               <div className="font-bold">Share of Pool</div>
-              <div>{formatNumber(poolShare, NumberFormat.percent)}</div>
+              <div className={isLoading ? 'animate-pulse bg-primary h-4 w-24 rounded' : ''}>
+                {!isLoading && <>{formatNumber(poolShare, NumberFormat.percent)}</>}
+              </div>
             </div>
           </div>
           <PrimaryButton
             title="Confirm Supply"
-            state={lpAmount.target > 0 ? PrimaryButtonState.Enabled : PrimaryButtonState.Disabled}
+            state={isLoading ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
             onClick={() => {
               isMultisided ? confirmDeposit() : confirmZap()
             }}

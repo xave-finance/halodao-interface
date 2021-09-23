@@ -97,6 +97,7 @@ jobs:
           REACT_APP_SHUTTLE_FEE_PERCENTAGE: ${{ secrets.REACT_APP_SHUTTLE_FEE_PERCENTAGE }}
           REACT_APP_SHUTTLE_FLAT_FEE_USD: ${{ secrets.REACT_APP_SHUTTLE_FLAT_FEE_USD }}
           REACT_APP_ETHGAS_API_HOST: ${{ secrets.REACT_APP_ETHGAS_API_HOST }}
+          REACT_APP_IS_CONSOLE_LOG_ENABLED: ${{ secrets.REACT_APP_IS_CONSOLE_LOG_ENABLED }}
           SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:

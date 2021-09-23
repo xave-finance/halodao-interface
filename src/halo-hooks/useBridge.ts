@@ -306,6 +306,7 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
     const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
 
     let estimatedGasRange: GasModeRangeData
+    console.log('REACT_APP_ETHGAS_API_HOST:', REACT_APP_ETHGAS_API_HOST)
 
     switch (destinationChainId) {
       case ChainId.MAINNET:
