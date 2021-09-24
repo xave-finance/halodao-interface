@@ -331,10 +331,9 @@ export const useMinimumAmount = (tokenAddress: string) => {
 
   const getMinimum = useCallback(async () => {
     // const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
-    // getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress]).then(prices => {
-    //   const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
-    //   setMinimum(Number(flatFee.toFixed(2)))
-    // })
+    // const prices = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    // const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
+    // setMinimum(Number(flatFee.toFixed(2)))
     setMinimum(Number(0)) // temp
   }, [tokenAddress])
 
