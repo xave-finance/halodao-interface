@@ -62,8 +62,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
   )
   const dispatch = useDispatch<AppDispatch>()
 
-  const blockNumber = useBlockNumber();
-  const activePopups = useActivePopups();
+  const blockNumber = useBlockNumber()
+  const activePopups = useActivePopups()
 
   useEffect(() => {
     setReloader((r: number) => r + 1)
@@ -132,7 +132,17 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply, blockNumber, reloader])
+  }, [
+    poolAddress,
+    getTokens,
+    getLiquidity,
+    getBalance,
+    getStakedLPToken,
+    getPendingRewards,
+    getTotalSupply,
+    blockNumber,
+    reloader
+  ])
 
   /**
    * Update cached pool data in app cache
