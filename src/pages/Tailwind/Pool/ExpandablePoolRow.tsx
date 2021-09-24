@@ -55,7 +55,7 @@ interface ExpandablePoolRowProps {
 
 const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
-  const [reloader, setReloader] = useState(0);
+  const [reloader, setReloader] = useState(0)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
     pid
