@@ -337,7 +337,6 @@ const BridgePanel = () => {
 
       <BridgeTransactionModal
         isVisible={showModal}
-        currency={token}
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
@@ -365,7 +364,7 @@ const BridgePanel = () => {
           setShowModal(false)
           if (modalState === ModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
-        token={token as Token}
+        token={token[chainId as ChainId]}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}

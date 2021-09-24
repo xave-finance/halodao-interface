@@ -13,7 +13,6 @@ import { ModalState } from '../../../../constants/buttonStates'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
-  currency: Currency
   amount: string
   account: string | null | undefined
   confirmLogic: () => void
@@ -36,7 +35,6 @@ interface InProgressContentProps {
 
 const ConfirmTransactionModal = ({
   isVisible,
-  currency,
   amount,
   account,
   confirmLogic,
@@ -84,14 +82,14 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
-              <span>{currency.name}</span>
+              <span>{token.name}</span>
             </div>
           </div>
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Amount</span>
             <div className="mt-1">
               <span>{amount} </span>
-              <span>{currency.symbol}</span>
+              <span>{token.symbol}</span>
             </div>
           </div>
           <div className="mt-4">
@@ -113,7 +111,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Estimated Lower Bound Shuttle fee</div>
               <div>
                 <div>
-                  {lowerBoundFee.toFixed(2)} {currency.symbol}
+                  {lowerBoundFee.toFixed(2)} {token.symbol}
                 </div>
               </div>
             </div>
@@ -121,7 +119,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Estimated Upper Bound Shuttle fee</div>
               <div>
                 <div>
-                  {upperBoundFee.toFixed(2)} {currency.symbol}
+                  {upperBoundFee.toFixed(2)} {token.symbol}
                 </div>
               </div>
             </div>
@@ -131,7 +129,7 @@ const ConfirmTransactionModal = ({
               <div>
                 <div>
                   {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
-                  {currency.symbol}
+                  {token.symbol}
                 </div>
               </div>
             </div>
