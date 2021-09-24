@@ -55,7 +55,7 @@ interface ExpandablePoolRowProps {
 
 const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
-  const [reloader, setReloader] = useState(0); //eslint-disable-line
+  const [reloader, setReloader] = useState(0);
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
     pid
@@ -132,7 +132,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply, blockNumber])
+  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply, blockNumber, reloader])
 
   /**
    * Update cached pool data in app cache
