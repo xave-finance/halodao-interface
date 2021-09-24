@@ -46,7 +46,7 @@ const BridgePanel = () => {
     setToken
   } = useBridge({ setButtonState, setApproveState, setInputValue })
 
-  const { minimum, getMinimum } = useMinimumAmount(token?.address as string)
+  const { minimum, getMinimum } = useMinimumAmount(token[chainId as ChainId].address)
 
   useEffect(() => {
     getMinimum()
@@ -172,18 +172,6 @@ const BridgePanel = () => {
     )
   }
 
-  const NotMinimumContent = () => {
-    return (
-      <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title={`Minimum amount 20 ${token?.symbol}`}
-          state={PrimaryButtonState.Disabled}
-        />
-      </div>
-    )
-  }
-
   const MaxCapContent = () => {
     return (
       <div className="mt-4">
@@ -201,7 +189,7 @@ const BridgePanel = () => {
       <div className="mt-4">
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
-          title={`Minimum bridge threshold below ${minimum} ${token?.symbol}`}
+          title={`Minimum bridge threshold below ${minimum} ${token[chainId as ChainId].symbol}`}
           state={PrimaryButtonState.Disabled}
         />
       </div>
@@ -244,9 +232,6 @@ const BridgePanel = () => {
     }
     if (approveState === ApproveButtonState.Approved && buttonState === ButtonState.Retry) {
       content = <RetryContent />
-    }
-    if (buttonState === ButtonState.NotMinimum) {
-      content = <NotMinimumContent />
     }
     if (buttonState === ButtonState.InsufficientBalance) {
       content = <InsufficientBalanceContent />
@@ -313,7 +298,9 @@ const BridgePanel = () => {
                 mode={NetworkModalMode.SecondaryBridge}
                 chainId={destinationChainId}
                 onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={token ? token.address : token[ChainId.MATIC]?.address}
+                tokenAddress={
+                  token[chainId as ChainId] ? token[chainId as ChainId].address : token[ChainId.MATIC]?.address
+                }
               />
             </div>
 
@@ -340,7 +327,7 @@ const BridgePanel = () => {
         amount={inputValue}
         account={account}
         confirmLogic={async () => {
-          if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
+          if (token[chainId as ChainId] && ORIGINAL_TOKEN_CHAIN_ID[token[chainId as ChainId].address] !== chainId) {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ModalState.Successful)
               setButtonStates()
