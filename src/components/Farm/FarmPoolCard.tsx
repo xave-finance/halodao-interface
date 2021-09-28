@@ -52,6 +52,8 @@ import { AppDispatch } from 'state'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
+import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
+import { useTransactionAdder } from 'state/transactions/hooks'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -475,11 +477,15 @@ export default function FarmPoolCard({
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
+  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // Change this when migrating to a new AMM Rewards Version
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+  const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
+  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // Change this when migrating to a new AMM Rewards Version
+  const addTransaction = useTransactionAdder()
 
   /**
    * APY computation
@@ -554,12 +560,14 @@ export default function FarmPoolCard({
   useEffect(() => {
     if (isTxInProgress) return
 
-    if (unclaimedHALO > 0) {
+    if (unclaimedHALO > 0 && rewardsVersion === AmmRewardsVersion.V1 && bptStaked === 0) {
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+    } else if (unclaimedHALO > 0) {
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, rewardsVersion])
 
   /**
    * Approves the stake amount
@@ -666,6 +674,60 @@ export default function FarmPoolCard({
     dispatch(updatePoolToHarvest({ vestingInfo }))
 
     history.push('/vesting')
+  }
+
+  /**
+   * Handles the user clicking "Harvest" button
+   */
+  const handleMigrate = async () => {
+    setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
+
+    const valueToMigrate = parseEther(`${bptStaked}`)
+
+    try {
+      const tx1 = await withdraw(poolInfo.pid, valueToMigrate ?? 0, poolInfo.address)
+
+      const txnResult1 = await tx1.wait()
+      console.log(
+        `Withdraw from v1.0 - Storing gas used: ${formatEther(txnResult1.gasUsed)}, txn hash: ${
+          txnResult1.transactionHash
+        }`
+      )
+
+      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate)
+      const txnResult2 = await tx2.wait()
+
+      addTransaction(tx2, {
+        summary: `Approved LP to be migrated`
+      })
+
+      const tx3 = await rewardsContractV1_1?.deposit(poolInfo.pid, valueToMigrate, account)
+      const txnResult3 = await tx3.wait()
+
+      addTransaction(tx3, {
+        summary: `LP Migrated to v1.1`
+      })
+
+      console.log(
+        `insert storing pending reward token: ${unclaimedRewards}, total gas costs: ${formatEther(
+          txnResult1.gasUsed.add(txnResult2.gasUsed).add(txnResult3.gasUsed)
+        )}`
+      )
+
+      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+    } catch (e) {
+      console.error('Migration error: ', e)
+    }
+
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Migrate',
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
+    })
   }
 
   return (
@@ -898,19 +960,35 @@ export default function FarmPoolCard({
                 </Text>
               </RewardsChild>
               <RewardsChild>
-                <ClaimButton
-                  onClick={handleClaim}
-                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                    harvestButtonState
-                  )}
-                >
-                  {t('harvest')}&nbsp;&nbsp;
-                  {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
-                    <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                  ) : (
-                    <img src={ArrowRight} alt="Harvest icon" />
-                  )}
-                </ClaimButton>
+                {rewardsVersion === AmmRewardsVersion.V1 ? (
+                  <ClaimButton
+                    onClick={handleMigrate}
+                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                      harvestButtonState
+                    )}
+                  >
+                    {t('migrate')}&nbsp;&nbsp;
+                    {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                    ) : (
+                      <img src={ArrowRight} alt="Harvest icon" />
+                    )}
+                  </ClaimButton>
+                ) : (
+                  <ClaimButton
+                    onClick={handleClaim}
+                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                      harvestButtonState
+                    )}
+                  >
+                    {t('harvest')}&nbsp;&nbsp;
+                    {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                    ) : (
+                      <img src={ArrowRight} alt="Harvest icon" />
+                    )}
+                  </ClaimButton>
+                )}
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
