@@ -677,7 +677,7 @@ export default function FarmPoolCard({
   }
 
   /**
-   * Handles the user clicking "Harvest" button
+   * Handles the user clicking "Migrate" button
    */
   const handleMigrate = async () => {
     setIsTxInProgress(true)
