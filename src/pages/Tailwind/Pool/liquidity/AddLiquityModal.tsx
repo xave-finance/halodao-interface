@@ -14,6 +14,7 @@ import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
+import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -192,7 +193,10 @@ const AddLiquityModal = ({
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
 
-      if ((err as any).code === -32016) {
+      if (
+        (err as any).code === ZapErrorCode.SlippageTooLow ||
+        (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
+      ) {
         setErrorMessage(t('error-liquidity-zap-reverted'))
       }
     }
@@ -319,29 +323,14 @@ const AddLiquityModal = ({
           </a>
         </div>
         <div className="mt-12">
-          <PrimaryButton
-            title="Close"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              window.location.reload()
-            }}
-          />
+          <PrimaryButton title="Close" state={PrimaryButtonState.Enabled} onClick={dismissGracefully} />
         </div>
       </div>
     )
   }
 
   return (
-    <BaseModal
-      isVisible={isVisible}
-      onDismiss={() => {
-        if (state === AddLiquityModalState.Successful) {
-          window.location.reload()
-        } else {
-          dismissGracefully()
-        }
-      }}
-    >
+    <BaseModal isVisible={isVisible} onDismiss={dismissGracefully}>
       {state === AddLiquityModalState.NotConfirmed && <ConfirmContent />}
       {state === AddLiquityModalState.InProgress && <InProgressContent />}
       {state === AddLiquityModalState.Successful && <SuccessContent />}

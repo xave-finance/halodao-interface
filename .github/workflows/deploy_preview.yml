@@ -92,6 +92,7 @@ jobs:
           REACT_APP_BALANCER_LPTOKEN_POOL_MAP_KOVAN: ${{ secrets.REACT_APP_BALANCER_LPTOKEN_POOL_MAP_KOVAN }}
           REACT_APP_SHOW_DEMO: ${{ secrets.REACT_APP_SHOW_DEMO }}
           REACT_APP_IS_BRIDGE_CAPPED: ${{ secrets.REACT_APP_IS_BRIDGE_CAPPED }}
+          REACT_APP_IS_CONSOLE_LOG_ENABLED: ${{ secrets.REACT_APP_IS_CONSOLE_LOG_ENABLED }}
           SKIP_PREFLIGHT_CHECK: ${{ secrets.SKIP_PREFLIGHT_CHECK }}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
