@@ -13,6 +13,7 @@ import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
+import { useActivePopups, useBlockNumber } from '../../../state/application/hooks'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -54,11 +55,22 @@ interface ExpandablePoolRowProps {
 
 const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
+  const [reloader, setReloader] = useState(0)
   const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
     poolAddress,
     pid
   )
   const dispatch = useDispatch<AppDispatch>()
+
+  const blockNumber = useBlockNumber()
+  const activePopups = useActivePopups()
+
+  useEffect(() => {
+    setReloader((r: number) => r + 1)
+    setTimeout(() => {
+      setReloader((r: number) => r + 1)
+    }, 5000)
+  }, [activePopups]); //eslint-disable-line
 
   /**
    * Main logic: fetching pool info
@@ -120,7 +132,17 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply])
+  }, [
+    poolAddress,
+    getTokens,
+    getLiquidity,
+    getBalance,
+    getStakedLPToken,
+    getPendingRewards,
+    getTotalSupply,
+    blockNumber,
+    reloader
+  ])
 
   /**
    * Update cached pool data in app cache
@@ -135,12 +157,13 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
       lpTokenPrice: pool.totalSupply > 0 ? pool.pooled.total / pool.totalSupply : 0,
       pendingRewards: pool.earned
     }
+
     dispatch(updatePools([poolData]))
   }, [pool]) // eslint-disable-line
 
   // Return an empty component if failed to fetch pool info
   if (!pool) {
-    return <></>
+    return <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
   }
 
   return (

@@ -1,13 +1,21 @@
 import {
   BALANCER_POOLS_ADDRESSES,
+  BALANCER_POOLS_ADDRESSES_KOVAN,
   DOUBLE_ESTIMATE_POOLS,
+  DOUBLE_ESTIMATE_POOLS_KOVAN,
+  DOUBLE_ESTIMATE_POOLS_MATIC,
   INACTIVE_POOLS,
+  INACTIVE_POOLS_MATIC,
+  INACTIVE_POOLS_KOVAN,
   LIQUIDITY_POOLS_ADDRESSES,
+  LIQUIDITY_POOLS_ADDRESSES_KOVAN,
   LIQUIDITY_POOLS_ADDRESSES_MATIC,
   SUSHI_POOLS_ADDRESSES,
-  UNI_POOLS_ADDRESSES
+  SUSHI_POOLS_ADDRESSES_KOVAN,
+  UNI_POOLS_ADDRESSES,
+  UNI_POOLS_ADDRESSES_KOVAN
 } from 'constants/pools'
-import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
 import { ChainId } from '@sushiswap/sdk'
@@ -17,26 +25,42 @@ export type PoolIdLpTokenMap = {
   lpToken: string
 }
 
-const isBalancerPool = (address: string) => {
+const isBalancerPool = (address: string, chainId: ChainId | undefined) => {
+  if (chainId === ChainId.KOVAN) {
+    return BALANCER_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
+  }
   return BALANCER_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
 
-const isUniPool = (address: string) => {
+const isUniPool = (address: string, chainId: ChainId | undefined) => {
+  if (chainId === ChainId.KOVAN) {
+    return UNI_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
+  }
   return UNI_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
 
-const isSushiPool = (address: string) => {
+const isSushiPool = (address: string, chainId: ChainId | undefined) => {
+  if (chainId === ChainId.KOVAN) {
+    return SUSHI_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
+  }
   return SUSHI_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
 
 const isHaloPool = (address: string, chainId: ChainId | undefined) => {
   if (chainId === ChainId.MATIC) {
     return LIQUIDITY_POOLS_ADDRESSES_MATIC.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.KOVAN) {
+    return LIQUIDITY_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
   }
   return LIQUIDITY_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
 
-const isInactivePool = (address: string) => {
+export const isInactivePool = (address: string, chainId: ChainId | undefined) => {
+  if (chainId === ChainId.MATIC) {
+    return INACTIVE_POOLS_MATIC.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.KOVAN) {
+    return INACTIVE_POOLS_KOVAN.includes(address.toLocaleLowerCase())
+  }
   return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
 }
 
@@ -48,11 +72,11 @@ export const groupByPoolProvider = (addresses: string[], chainId: ChainId | unde
 
   for (const [pid, address] of addresses.entries()) {
     if (address) {
-      if (isBalancerPool(address)) {
+      if (isBalancerPool(address, chainId)) {
         balancerPools.push({ pid, lpToken: getAddress(address) })
-      } else if (isUniPool(address)) {
+      } else if (isUniPool(address, chainId)) {
         uniPools.push({ pid, lpToken: getAddress(address) })
-      } else if (isSushiPool(address)) {
+      } else if (isSushiPool(address, chainId)) {
         sushiPools.push({ pid, lpToken: getAddress(address) })
       } else if (isHaloPool(address, chainId)) {
         haloPools.push({ pid, lpToken: getAddress(address) })
@@ -68,12 +92,12 @@ export const groupByPoolProvider = (addresses: string[], chainId: ChainId | unde
   }
 }
 
-export const tokenSymbolForPool = (address: string) => {
-  if (isBalancerPool(address)) {
+export const tokenSymbolForPool = (address: string, chainId: ChainId | undefined) => {
+  if (isBalancerPool(address, chainId)) {
     return 'BPT'
-  } else if (isUniPool(address)) {
+  } else if (isUniPool(address, chainId)) {
     return 'UNI-V2'
-  } else if (isSushiPool(address)) {
+  } else if (isSushiPool(address, chainId)) {
     return 'SLP'
   }
 
@@ -81,10 +105,14 @@ export const tokenSymbolForPool = (address: string) => {
 }
 
 export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => {
+  // No need to compute for $ liquidity if a HALO pool
+  if (poolInfo.provider === PoolProvider.Halo) {
+    return poolInfo.liquidity
+  }
+
   let sumWeight = 0
   let sumValue = 0
-  // console.log(`Calculating liquidity for: ${poolInfo.pair}...`)
-  // console.log('PoolInfo: ', poolInfo)
+
   for (const tokenInfo of poolInfo.tokens) {
     const price = tokenPrice[tokenInfo.address]
     if (!price) {
@@ -92,24 +120,21 @@ export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => 
     }
     sumWeight += tokenInfo.weightPercentage / 100
     sumValue += price * tokenInfo.balance
-    // console.log('SUM weight, value: ', sumWeight, sumValue)
   }
-  // console.log('FINAL SUM weight, value: ', sumWeight, sumValue)
+
   if (sumWeight > 0) {
-    // console.log('Returned calculated value: ', sumValue / sumWeight)
     return sumValue / sumWeight
   } else {
-    // console.log('Returned balancer data: ', poolInfo.liquidity)
     return poolInfo.liquidity
   }
 }
 
-export const groupPoolsInfo = (poolInfos: PoolInfo[]) => {
+export const groupPoolsInfo = (poolInfos: PoolInfo[], chainId: ChainId | undefined) => {
   const activePools: PoolInfo[] = []
   const inactivePools: PoolInfo[] = []
 
   for (const poolInfo of poolInfos) {
-    if (isInactivePool(poolInfo.asToken.address)) {
+    if (isInactivePool(poolInfo.asToken.address, chainId)) {
       inactivePools.push(poolInfo)
     } else {
       activePools.push(poolInfo)
@@ -122,6 +147,11 @@ export const groupPoolsInfo = (poolInfos: PoolInfo[]) => {
   }
 }
 
-export const isDoubleEstimatePool = (address: string) => {
+export const isDoubleEstimatePool = (address: string, chainId: ChainId | undefined) => {
+  if (chainId === ChainId.MATIC) {
+    return DOUBLE_ESTIMATE_POOLS_MATIC.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.KOVAN) {
+    return DOUBLE_ESTIMATE_POOLS_KOVAN.includes(address.toLocaleLowerCase())
+  }
   return DOUBLE_ESTIMATE_POOLS.includes(address.toLocaleLowerCase())
 }

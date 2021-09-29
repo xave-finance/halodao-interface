@@ -205,6 +205,19 @@ export const HALO_REWARDS_V1_ADDRESS: ChainAddressMap = {
   [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_V1_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
 }
 
+export const HALO_REWARDS_V1_1_ADDRESS: ChainAddressMap = {
+  // Mainnets
+  [ChainId.MAINNET]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.BSC]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_BSC || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_MATIC || ZERO_ADDRESS,
+  // Testnets
+  [ChainId.KOVAN]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_KOVAN || ZERO_ADDRESS,
+  [ChainId.RINKEBY]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_RINKEBY || ZERO_ADDRESS,
+  [ChainId.GÖRLI]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_GOERLI || ZERO_ADDRESS,
+  [ChainId.BSC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_BSC_TESTNET || ZERO_ADDRESS,
+  [ChainId.MATIC_TESTNET]: process.env.REACT_APP_HALO_REWARDS_V1_1_ADDRESS_MATIC_MUMBAI || ZERO_ADDRESS
+}
+
 // HALO RewardsManager Addresses
 export const HALO_REWARDS_MANAGER_ADDRESS: ChainAddressMap = {
   // Mainnets
@@ -247,10 +260,15 @@ export const AMM_ZAP_ADDRESS: ChainAddressMap = {
 }
 
 // Balancer URLs
-export const BALANCER_POOL_URL = process.env.REACT_APP_BALANCER_POOL_URL || 'https://pools.balancer.exchange/#/pool'
-export const BALANCER_SUBGRAPH_URL =
-  process.env.REACT_APP_BALANCER_SUBGRAPH_URL ||
-  'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
+export const BALANCER_POOL_URL = {
+  [ChainId.MAINNET]: process.env.REACT_APP_BALANCER_POOL_URL,
+  [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_POOL_URL_KOVAN
+}
+
+export const BALANCER_SUBGRAPH_URL = {
+  [ChainId.MAINNET]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL,
+  [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL_KOVAN
+}
 
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'

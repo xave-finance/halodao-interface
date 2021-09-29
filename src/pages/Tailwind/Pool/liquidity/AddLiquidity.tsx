@@ -18,7 +18,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [zapAmount, setZapAmount] = useState('')
-  const [isGivenBase, setIsGivenBase] = useState(false)
+  const [isGivenBase, setIsGivenBase] = useState(true)
   const [slippage, setSlippage] = useState('3')
 
   const { account } = useActiveWeb3React()

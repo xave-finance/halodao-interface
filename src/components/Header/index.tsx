@@ -210,14 +210,14 @@ const Title = styled.a`
   }
 
   .site-logo {
-    width: 40px;
+    width: 20px;
   }
 
   ${({ theme }) => theme.mediaWidth.upToMedium`
     justify-self: center;
 
     .site-logo {
-      width: 26px;
+      width: 16px;
     }
   `};
 `
@@ -239,7 +239,7 @@ const StyledNavLink = styled(NavLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1.5rem;
+  font-size: 1rem;
   width: fit-content;
   margin: 4px 15px 0;
   padding: 1.25rem 0;
@@ -271,7 +271,7 @@ const StyledExternalLink = styled(ExternalLink).attrs({
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text2};
-  font-size: 1.5rem;
+  font-size: 1rem;
   width: fit-content;
   margin: 4px 15px 0;
   font-weight: 400;

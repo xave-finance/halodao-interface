@@ -5,18 +5,24 @@ import { formatEther } from 'ethers/lib/utils'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { tokenSymbolForPool } from 'utils/poolInfo'
+import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 
-export const useLPTokenAddresses = (rewardsVersion = 1) => {
+export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
   const [poolLength, setPoolLength] = useState(0)
   const [lpTokenAddresses, setLpTokenAddresses] = useState<string[]>([])
 
   const fetchPoolLength = useCallback(async () => {
+    if (!rewardsContract) {
+      setPoolLength(0)
+      return
+    }
+
     try {
-      const result = await rewardsContract?.poolLength()
+      const result = await rewardsContract.poolLength()
       setPoolLength(result ? result.toNumber() : 0)
     } catch (err) {
       console.error(`Error fetching poolLength: `, err)
@@ -24,9 +30,14 @@ export const useLPTokenAddresses = (rewardsVersion = 1) => {
   }, [rewardsContract])
 
   const fetchLpToken = useCallback(async () => {
+    if (!rewardsContract) {
+      setLpTokenAddresses([])
+      return
+    }
+
     const promises = []
     for (let pid = 0; pid < poolLength; pid++) {
-      promises.push(rewardsContract?.lpToken(`${pid}`))
+      promises.push(rewardsContract.lpToken(`${pid}`))
     }
 
     try {
@@ -52,7 +63,10 @@ export const useLPTokenAddresses = (rewardsVersion = 1) => {
   return lpTokenAddresses
 }
 
-export const useUnclaimedRewardsPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
+export const useUnclaimedRewardsPerPool = (
+  poolIds: number[],
+  rewardsVersion = AmmRewardsVersion.Latest
+): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract(rewardsVersion)
 
@@ -86,7 +100,10 @@ export const useUnclaimedRewardsPerPool = (poolIds: number[], rewardsVersion = 1
   return unclaimedRewards
 }
 
-export const useStakedBPTPerPool = (poolIds: number[], rewardsVersion = 1): { [poolId: number]: number } => {
+export const useStakedBPTPerPool = (
+  poolIds: number[],
+  rewardsVersion = AmmRewardsVersion.Latest
+): { [poolId: number]: number } => {
   const { account } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract(rewardsVersion)
 
@@ -110,8 +127,8 @@ export const useStakedBPTPerPool = (poolIds: number[], rewardsVersion = 1): { [p
   )
 }
 
-export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
-  const { account } = useActiveWeb3React()
+export const useDepositWithdrawHarvestCallback = (rewardsVersion = AmmRewardsVersion.Latest) => {
+  const { account, chainId } = useActiveWeb3React()
   const rewardsContract = useHALORewardsContract(rewardsVersion)
   const addTransaction = useTransactionAdder()
 
@@ -119,22 +136,22 @@ export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.deposit(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Stake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
+        summary: `Stake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress, chainId)
       })
       return tx
     },
-    [rewardsContract, addTransaction, account]
+    [rewardsContract, addTransaction, account, chainId]
   )
 
   const withdraw = useCallback(
     async (poolId: number, amount: BigNumber, poolAddress: string) => {
       const tx = await rewardsContract?.withdraw(poolId, amount, account)
       addTransaction(tx, {
-        summary: `Unstake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress)
+        summary: `Unstake ${formatEther(amount)} ` + tokenSymbolForPool(poolAddress, chainId)
       })
       return tx
     },
-    [rewardsContract, addTransaction, account]
+    [rewardsContract, addTransaction, account, chainId]
   )
 
   const harvest = useCallback(
@@ -151,7 +168,7 @@ export const useDepositWithdrawHarvestCallback = (rewardsVersion = 1) => {
   return { deposit, withdraw, harvest }
 }
 
-export const useRewardTokenPerSecond = (rewardsVersion = 1) => {
+export const useRewardTokenPerSecond = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'rewardTokenPerSecond')
 
@@ -160,7 +177,7 @@ export const useRewardTokenPerSecond = (rewardsVersion = 1) => {
   }, [data])
 }
 
-export const useTotalAllocPoint = (rewardsVersion = 1) => {
+export const useTotalAllocPoint = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
   const data = useSingleCallResult(rewardsContract, 'totalAllocPoint')
 
@@ -169,7 +186,7 @@ export const useTotalAllocPoint = (rewardsVersion = 1) => {
   }, [data])
 }
 
-export const useAllocPoints = (poolAddresses: string[], rewardsVersion = 1) => {
+export const useAllocPoints = (poolAddresses: string[], rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
 
   const [allocPoint, setAllocPoint] = useState(() => {
@@ -181,9 +198,11 @@ export const useAllocPoints = (poolAddresses: string[], rewardsVersion = 1) => {
   })
 
   const fetchAllocPoint = useCallback(async () => {
+    if (!rewardsContract || poolAddresses.length === 0) return
+
     const promises = []
     for (let pid = 0; pid < poolAddresses.length; pid++) {
-      promises.push(rewardsContract?.poolInfo(`${pid}`))
+      promises.push(rewardsContract.poolInfo(`${pid}`))
     }
 
     try {
