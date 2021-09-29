@@ -20,10 +20,9 @@ import { HALO, MOCK_TOKEN } from '../constants'
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
   setApproveState: (approveState: ApproveButtonState) => void
-  setInputValue: (input: string) => void
 }
 
-const useBridge = ({ setButtonState, setApproveState, setInputValue }: BridgeProps) => {
+const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -51,6 +50,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue }: BridgePro
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   useEffect(() => {
@@ -69,6 +69,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue }: BridgePro
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chainId])
 
   useEffect(() => {
@@ -81,6 +82,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue }: BridgePro
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [destinationChainId])
 
   const giveBridgeAllowance = useCallback(
