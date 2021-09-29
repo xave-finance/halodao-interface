@@ -54,6 +54,8 @@ import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
 import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
 import { useTransactionAdder } from 'state/transactions/hooks'
+import { consoleLog } from 'utils/simpleLogger'
+import { MetamaskError } from 'constants/errors'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -478,7 +480,7 @@ export default function FarmPoolCard({
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
-  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable @typescript-eslint/camelcase
+  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable-line
 
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
@@ -487,7 +489,7 @@ export default function FarmPoolCard({
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
-  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable @typescript-eslint/camelcase
+  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable-line
 
   const addTransaction = useTransactionAdder()
 
@@ -564,9 +566,7 @@ export default function FarmPoolCard({
   useEffect(() => {
     if (isTxInProgress) return
 
-    if (unclaimedHALO > 0 && rewardsVersion === AmmRewardsVersion.V1 && bptStaked === 0) {
-      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
-    } else if (unclaimedHALO > 0) {
+    if (unclaimedHALO > 0) {
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
@@ -688,40 +688,45 @@ export default function FarmPoolCard({
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
     const valueToMigrate = parseEther(`${bptStaked}`)
+    if (unclaimedHALO > 0 && rewardsVersion === AmmRewardsVersion.V1 && bptStaked === 0) {
+      // TODO: Record pendingRewards using firebase funcs, pop up in transaction
+      consoleLog(`Recording pendingrewards`)
+      setIsTxInProgress(false)
+      setHarvestButtonState(ButtonHaloSimpleStates.Enabled) // TODO: Change when function is already integrated
+    } else {
+      try {
+        const tx1 = await withdraw(poolInfo.pid, valueToMigrate ?? 0, poolInfo.address)
+        const txnResult1 = await tx1.wait()
 
-    try {
-      const tx1 = await withdraw(poolInfo.pid, valueToMigrate ?? 0, poolInfo.address)
+        const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate) // eslint-disable-line
+        const txnResult2 = await tx2.wait()
 
-      const txnResult1 = await tx1.wait()
-      console.log(
-        `Withdraw from v1.0 - Storing gas used: ${formatEther(txnResult1.gasUsed)}, txn hash: ${
-          txnResult1.transactionHash
-        }`
-      )
+        addTransaction(tx2, {
+          summary: `Approved ${poolInfo.asToken.symbol} to be migrated to v1.1`
+        })
 
-      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate) // eslint-disable @typescript-eslint/camelcase
-      const txnResult2 = await tx2.wait()
+        const tx3 = await rewardsContractV1_1?.deposit(poolInfo.pid, valueToMigrate, account)
+        const txnResult3 = await tx3.wait()
 
-      addTransaction(tx2, {
-        summary: `Approved LP to be migrated`
-      })
+        addTransaction(tx3, {
+          summary: `${poolInfo.asToken.symbol} migrated to v1.1`
+        })
 
-      const tx3 = await rewardsContractV1_1?.deposit(poolInfo.pid, valueToMigrate, account)
-      const txnResult3 = await tx3.wait()
+        consoleLog(
+          `insert storing pending reward token: ${unclaimedRewards}, total gas costs: ${formatEther(
+            txnResult1.gasUsed.add(txnResult2.gasUsed).add(txnResult3.gasUsed)
+          )}`
+        )
 
-      addTransaction(tx3, {
-        summary: `LP Migrated to v1.1`
-      })
+        setIsTxInProgress(false)
+      } catch (e) {
+        console.error('Migration error: ', e)
 
-      console.log(
-        `insert storing pending reward token: ${unclaimedRewards}, total gas costs: ${formatEther(
-          txnResult1.gasUsed.add(txnResult2.gasUsed).add(txnResult3.gasUsed)
-        )}`
-      )
-
-      setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
-    } catch (e) {
-      console.error('Migration error: ', e)
+        // when txn signature is canceled
+        if (e.code === MetamaskError.Cancelled) {
+          setIsTxInProgress(false)
+        }
+      }
     }
 
     /** log harvest in GA
@@ -964,35 +969,19 @@ export default function FarmPoolCard({
                 </Text>
               </RewardsChild>
               <RewardsChild>
-                {rewardsVersion === AmmRewardsVersion.V1 ? (
-                  <ClaimButton
-                    onClick={handleMigrate}
-                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                      harvestButtonState
-                    )}
-                  >
-                    {t('migrate')}&nbsp;&nbsp;
-                    {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
-                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                    ) : (
-                      <img src={ArrowRight} alt="Harvest icon" />
-                    )}
-                  </ClaimButton>
-                ) : (
-                  <ClaimButton
-                    onClick={handleClaim}
-                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                      harvestButtonState
-                    )}
-                  >
-                    {t('harvest')}&nbsp;&nbsp;
-                    {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
-                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                    ) : (
-                      <img src={ArrowRight} alt="Harvest icon" />
-                    )}
-                  </ClaimButton>
-                )}
+                <ClaimButton
+                  onClick={rewardsVersion === AmmRewardsVersion.V1 ? handleMigrate : handleClaim}
+                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                    harvestButtonState
+                  )}
+                >
+                  {t(rewardsVersion === AmmRewardsVersion.V1 ? 'migrate' : 'harvest')}&nbsp;&nbsp;
+                  {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                    <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                  ) : (
+                    <img src={ArrowRight} alt="Harvest icon" />
+                  )}
+                </ClaimButton>
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
