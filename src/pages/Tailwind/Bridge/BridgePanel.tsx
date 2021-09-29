@@ -44,7 +44,7 @@ const BridgePanel = () => {
     primaryBridgeContract,
     token,
     setToken
-  } = useBridge({ setButtonState, setApproveState, setInputValue })
+  } = useBridge({ setButtonState, setApproveState })
 
   const { minimum, getMinimum } = useMinimumAmount(token[chainId as ChainId].address)
 
