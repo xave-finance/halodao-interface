@@ -477,14 +477,18 @@ export default function FarmPoolCard({
 
   // Make use of `useApproveCallback` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
-  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // Change this when migrating to a new AMM Rewards Version
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable @typescript-eslint/camelcase
+
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
   const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
-  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // Change this when migrating to a new AMM Rewards Version
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable @typescript-eslint/camelcase
+
   const addTransaction = useTransactionAdder()
 
   /**
@@ -695,7 +699,7 @@ export default function FarmPoolCard({
         }`
       )
 
-      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate)
+      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate) // eslint-disable @typescript-eslint/camelcase
       const txnResult2 = await tx2.wait()
 
       addTransaction(tx2, {
