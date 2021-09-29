@@ -6,13 +6,7 @@ import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build
 import { ChainId, WETH } from '@sushiswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
-import {
-  GOVERNANCE_ADDRESS,
-  MERKLE_DISTRIBUTOR_ADDRESS,
-  HALO,
-  HALO_REWARDS_ADDRESS,
-  HALO_REWARDS_V1_ADDRESS
-} from '../constants'
+import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
   ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS
@@ -29,6 +23,7 @@ import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../consta
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
+import { getAmmRewardsContractAddress, AmmRewardsVersion } from 'utils/ammRewards'
 
 // returns null on errors
 export function useContract(
@@ -153,13 +148,8 @@ export function useSocksController(): Contract | null {
   )
 }
 
-export function useHALORewardsContract(rewardsVersion = 1): Contract | null {
+export function useHALORewardsContract(rewardsVersion = AmmRewardsVersion.Latest): Contract | null {
   const { chainId } = useActiveWeb3React()
-  const address = chainId
-    ? rewardsVersion === 0
-      ? HALO_REWARDS_ADDRESS[chainId]
-      : HALO_REWARDS_V1_ADDRESS[chainId]
-    : undefined
-
+  const address = getAmmRewardsContractAddress(chainId, rewardsVersion)
   return useContract(address, HALO_REWARDS_ABI, true)
 }

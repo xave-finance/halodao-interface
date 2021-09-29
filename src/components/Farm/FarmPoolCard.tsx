@@ -26,7 +26,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE, HALO_REWARDS_V1_ADDRESS } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -51,6 +51,7 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -424,7 +425,7 @@ interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
   isActivePool: boolean
-  rewardsVersion?: number
+  rewardsVersion?: AmmRewardsVersion
   preselected?: boolean
 }
 
@@ -432,7 +433,7 @@ export default function FarmPoolCard({
   poolInfo,
   tokenPrice,
   isActivePool,
-  rewardsVersion = 1,
+  rewardsVersion = AmmRewardsVersion.Latest,
   preselected = false
 }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
@@ -473,11 +474,7 @@ export default function FarmPoolCard({
   const unclaimedHALO = unclaimedPoolRewards
 
   // Make use of `useApproveCallback` for checking & setting allowance
-  const rewardsContractAddress = chainId
-    ? rewardsVersion === 0
-      ? HALO_REWARDS_ADDRESS[chainId]
-      : HALO_REWARDS_V1_ADDRESS[chainId]
-    : undefined
+  const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
 
