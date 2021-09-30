@@ -740,6 +740,7 @@ export default function FarmPoolCard({
       )
 
       setIsTxInProgress(false)
+      setAlreadyMigrated(true)
     } catch (e) {
       console.error('Migration error: ', e)
 
