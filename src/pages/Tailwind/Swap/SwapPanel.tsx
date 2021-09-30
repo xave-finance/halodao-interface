@@ -17,6 +17,7 @@ import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
 import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
+import { MetamaskError } from 'constants/errors'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -60,7 +61,7 @@ const SwapPanel = () => {
       const txHash: any = await approve()
 
       // user rejected tx or didn't go thru
-      if (txHash.code === 4001 || !txHash) {
+      if (txHash.code === MetamaskError.Cancelled || !txHash) {
         setApproveState(ApproveButtonState.NotApproved)
       }
     } catch (e) {
