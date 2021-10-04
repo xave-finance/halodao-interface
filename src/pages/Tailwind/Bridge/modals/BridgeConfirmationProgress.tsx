@@ -57,7 +57,7 @@ const BridgeConfirmationProgress = ({
               <div className="text-lg text-primary-gray pl-2">Waiting for confirmation </div>
             </div>
             <div className="w-1/5">
-              <img className="animate-spin" src={SpinnerIcon} alt="In progress..." />
+              <img className="animate-spin" src={SpinnerIcon} width="64px" alt="In progress..." />
             </div>
           </div>
         </div>
@@ -129,7 +129,7 @@ const BridgeConfirmationProgress = ({
               </div>
             </div>
             <div className="flex items-center justify-center w-1/5">
-              <img className="animate-spin" src={SpinnerIcon} alt="In progress..." />
+              <img className="animate-spin" src={SpinnerIcon} width="64px" alt="In progress..." />
               <div className="absolute m-10 mr-10 z-10 text-primary-hover font-bold">
                 {formatNumber(percentProgress, NumberFormat.percentShort)}
               </div>
@@ -141,7 +141,7 @@ const BridgeConfirmationProgress = ({
     )
   }
 
-  const FinalityContent = () => {
+  const FinalityContent = ({ chainId, successHash }: SuccessContentProps) => {
     return (
       <>
         <div className="flex flex-col justify-center mt-4 bg-primary-green rounded-lg p-4 w-full">
@@ -153,6 +153,14 @@ const BridgeConfirmationProgress = ({
               <div className="text-lg text-primary-gray pl-2">
                 Transaction complete on {NETWORK_LABEL[originChainId]}{' '}
               </div>
+              <a
+                className="font-semibold text-link pl-2"
+                href={getExplorerLink(chainId, successHash, 'transaction')}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View on Chain Explorer
+              </a>
             </div>
             <div className="flex items-center justify-center w-1/5">
               <img src={CompleteIcon} alt="Complete" />
@@ -179,9 +187,7 @@ const BridgeConfirmationProgress = ({
             type={PrimaryButtonType.Default}
             state={PrimaryButtonState.Enabled}
             onClick={async () => {
-              console.log('NewTransactionButton clicked')
               setProgressState(false)
-              console.log('NewTransactionButton clicked')
             }}
           />
         }
@@ -195,9 +201,7 @@ const BridgeConfirmationProgress = ({
       {!finalityValue && state === ModalState.Successful && (
         <TxCompleteContent chainId={originChainId} successHash={successHash} />
       )}
-      {finalityValue && <FinalityContent />}
-      {/* {<TxCompleteContent chainId={originChainId} successHash={successHash} />}
-      {<FinalityContent />} */}
+      {finalityValue && <FinalityContent chainId={originChainId} successHash={successHash} />}
     </>
   )
 }

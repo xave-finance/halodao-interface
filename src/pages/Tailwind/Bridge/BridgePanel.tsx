@@ -346,6 +346,7 @@ const BridgePanel = () => {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ModalState.Successful)
               setButtonStates()
+              setInputValue('')
             } else {
               setShowModal(false)
               setShowProgress(false)
@@ -356,6 +357,7 @@ const BridgePanel = () => {
             if (await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)) {
               setModalState(ModalState.Successful)
               setButtonStates()
+              setInputValue('')
             } else {
               setShowModal(false)
               setShowProgress(false)
