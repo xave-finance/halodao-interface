@@ -114,7 +114,7 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Estimated Lower Bound Shuttle fee</div>
+              <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
                 <div>
                   {lowerBoundFee.toFixed(2)} {currency.symbol}
@@ -122,7 +122,7 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Estimated Upper Bound Shuttle fee</div>
+              <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
               <div>
                 <div>
                   {upperBoundFee.toFixed(2)} {currency.symbol}
