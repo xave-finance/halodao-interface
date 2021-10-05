@@ -296,6 +296,7 @@ export const NETWORK_SUPPORTED_FEATURES: {
     lend: true,
     borrow: true,
     bridge: false,
+    // bridge: true, // testing
     isBridgeCapped: isBridgeCapped === 'true'
   }
 }

@@ -5,3 +5,7 @@ export enum ZapErrorCode {
 export enum ZapErrorMessage {
   NotEnoughLpAmount = '!Zap/not-enough-lp-amount'
 }
+
+export enum MetamaskError {
+  Cancelled = 4001
+}

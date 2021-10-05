@@ -7,12 +7,14 @@ import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { getContract } from 'utils'
-import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
+import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID, ORIGINAL_TOKEN_CHAIN_ADDRESS } from 'constants/bridge'
 import { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
 import { ButtonState } from '../constants/buttonStates'
+import { getGasRangeEstimation, GasModes, GasModeRangeData } from 'utils/ethGasEstimator'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
@@ -45,11 +47,11 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, PRIMARY_BRIDGE_ABI, library, account as string)
     )
     if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
   }, [chainToken, account, chainId, library, setToken])
@@ -58,11 +60,11 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     if (!chainId || !token || !library) return
 
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[token.address] as string, PRIMARY_BRIDGE_ABI, library, account as string)
     )
     if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[token.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
       setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
     } else {
@@ -80,7 +82,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 
     if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[token.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
   }, [chainId, library, account, destinationChainId, token])
@@ -112,6 +114,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
       try {
+        console.log('chainIdDestination', chainIdDestination)
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
         setSuccessHash(tx.hash)
@@ -292,6 +295,59 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     estimatedGas,
     successHash
   }
+}
+
+export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId) => {
+  const [lowerBoundFee, setLowerBoundFee] = useState(0)
+  const [upperBoundFee, setUpperBoundFee] = useState(0)
+
+  const getFee = useCallback(async () => {
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
+    const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+
+    let estimatedGasRange: GasModeRangeData
+
+    switch (destinationChainId) {
+      case ChainId.MAINNET:
+        estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
+        break
+      case ChainId.MATIC:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
+      case ChainId.XDAI:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
+      default:
+        throw new Error('Invalid destination chain.')
+    }
+    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
+    const floorFeeInToken = estimatedGasRange.floor.usd * tokensPerUSD
+    const ceilingFeeInToken = estimatedGasRange.ceiling.usd * tokensPerUSD
+
+    setLowerBoundFee(floorFeeInToken)
+    setUpperBoundFee(ceilingFeeInToken)
+  }, [tokenAddress, destinationChainId])
+
+  return { lowerBoundFee, upperBoundFee, getFee }
+}
+
+export const useMinimumAmount = (tokenAddress: string) => {
+  const [minimum, setMinimum] = useState(0)
+
+  const getMinimum = useCallback(async () => {
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
+    const prices = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
+    setMinimum(Number(flatFee.toFixed(2)))
+  }, [tokenAddress])
+
+  return { minimum, getMinimum }
 }
 
 export default useBridge

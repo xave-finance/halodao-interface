@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
-import { ChainId } from '@sushiswap/sdk'
-import { ChainTokenMap, HALO } from '../../../constants'
+import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainTokenMap, HALO, MOCK_TOKEN } from '../../../constants'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'
@@ -15,7 +15,7 @@ import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { useWalletModalToggle } from 'state/application/hooks'
 import { shortenAddress } from 'utils'
 import { Lock } from 'react-feather'
-import useBridge from 'halo-hooks/useBridge'
+import useBridge, { useMinimumAmount } from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
 import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
 import { ButtonState, ModalState } from '../../../constants/buttonStates'
@@ -28,7 +28,9 @@ const BridgePanel = () => {
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ModalState.NotConfirmed)
 
-  const [chainToken, setChainToken] = useState<ChainTokenMap>(HALO)
+  const [chainToken, setChainToken] = useState<ChainTokenMap>(
+    process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO
+  )
   const [token, setToken] = useState(chainId ? HALO[chainId] : undefined)
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
@@ -46,14 +48,21 @@ const BridgePanel = () => {
     setDestinationChainId,
     balance,
     estimatedGas,
-    successHash
+    successHash,
+    primaryBridgeContract
   } = useBridge({ setButtonState, setApproveState, setInputValue, setChainToken, chainToken, setToken, token })
+
+  const { minimum, getMinimum } = useMinimumAmount(token?.address as string)
+
+  useEffect(() => {
+    getMinimum()
+  }, [primaryBridgeContract, getMinimum])
 
   const setButtonStates = useCallback(() => {
     if (parseFloat(inputValue) <= 0 || inputValue.trim() === '') {
       setButtonState(ButtonState.EnterAmount)
       setApproveState(ApproveButtonState.NotApproved)
-    } else if (parseFloat(inputValue) < 20) {
+    } else if (Number(inputValue) < minimum) {
       setButtonState(ButtonState.NotMinimum)
       setApproveState(ApproveButtonState.NotApproved)
     } else if (allowance >= parseFloat(inputValue) && parseFloat(inputValue) <= 10000) {
@@ -67,7 +76,7 @@ const BridgePanel = () => {
     } else if (parseFloat(inputValue) > balance && parseFloat(inputValue) > allowance) {
       setButtonState(ButtonState.InsufficientBalance)
     }
-  }, [inputValue, allowance, balance, features])
+  }, [inputValue, allowance, minimum, balance, features])
 
   useEffect(() => {
     setButtonStates()
@@ -205,6 +214,18 @@ const BridgePanel = () => {
     )
   }
 
+  const BelowMinimumContent = () => {
+    return (
+      <div className="mt-4">
+        <PrimaryButton
+          type={PrimaryButtonType.Gradient}
+          title={`Minimum bridge threshold below ${minimum} ${token?.symbol}`}
+          state={PrimaryButtonState.Disabled}
+        />
+      </div>
+    )
+  }
+
   const RetryContent = () => {
     return (
       <div className="mt-4">
@@ -250,6 +271,9 @@ const BridgePanel = () => {
     }
     if (buttonState === ButtonState.MaxCap) {
       content = <MaxCapContent />
+    }
+    if (buttonState === ButtonState.NotMinimum) {
+      content = <BelowMinimumContent />
     }
     return content
   }
@@ -364,15 +388,16 @@ const BridgePanel = () => {
           setShowModal(false)
           if (modalState === ModalState.NotConfirmed) setButtonState(ButtonState.Retry)
         }}
+        token={token as Token}
         onSuccessConfirm={() => setShowModal(false)}
         originChainId={chainId ?? ChainId.MAINNET}
         destinationChainId={destinationChainId}
-        tokenSymbol={token ? token.symbol ?? '' : ''}
         wrappedTokenSymbol={chainToken[destinationChainId] ? chainToken[destinationChainId]?.symbol ?? '' : ''}
         state={modalState}
         setState={setModalState}
         successHash={successHash}
         estimatedGas={estimatedGas}
+        primaryBridgeContract={primaryBridgeContract}
       />
     </>
   )

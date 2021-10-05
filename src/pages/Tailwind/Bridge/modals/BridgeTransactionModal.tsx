@@ -1,5 +1,5 @@
-import React from 'react'
-import { ChainId, Currency } from '@sushiswap/sdk'
+import React, { useEffect } from 'react'
+import { ChainId, Currency, Token } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -7,8 +7,10 @@ import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress, getExplorerLink } from 'utils'
-import { calculateShuttleFee } from 'utils/bridge'
+import { useShuttleFee } from 'halo-hooks/useBridge'
+import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 import { ModalState } from '../../../../constants/buttonStates'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -20,12 +22,13 @@ interface ConfirmTransactionModalProps {
   onSuccessConfirm: () => void
   originChainId: ChainId
   destinationChainId: ChainId
-  tokenSymbol: string
+  token: Token
   wrappedTokenSymbol: string
   state: ModalState
   setState: (state: ModalState) => void
   successHash: string
   estimatedGas: string
+  primaryBridgeContract: any
 }
 
 interface InProgressContentProps {
@@ -44,13 +47,20 @@ const ConfirmTransactionModal = ({
   onSuccessConfirm,
   originChainId,
   destinationChainId,
-  tokenSymbol,
+  token,
   wrappedTokenSymbol,
   state,
   setState,
   successHash,
-  estimatedGas
+  estimatedGas,
+  primaryBridgeContract
 }: ConfirmTransactionModalProps) => {
+  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(token.address, destinationChainId)
+
+  useEffect(() => {
+    getFee()
+  }, [primaryBridgeContract, getFee])
+
   const ConfirmContent = () => {
     return (
       <>
@@ -104,19 +114,28 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
+              <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
                 <div>
-                  {calculateShuttleFee(currency.symbol as string)} {currency.symbol}
+                  {lowerBoundFee.toFixed(2)} {currency.symbol}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between mb-2 font-bold">
+              <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
+              <div>
+                <div>
+                  {upperBoundFee.toFixed(2)} {currency.symbol}
                 </div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Amount after transaction</div>
+              <div className="text-secondary-alternate">Amount after fees</div>
               <div>
                 <div>
-                  {Number(Number(amount) - calculateShuttleFee(currency.symbol as string))} {currency.symbol}
+                  {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
+                  {currency.symbol}
                 </div>
               </div>
             </div>
@@ -138,7 +157,7 @@ const ConfirmTransactionModal = ({
     )
   }
 
-  const InProgressContent = ({ amount, tokenSymbol, wrappedTokenSymbol }: InProgressContentProps) => {
+  const InProgressContent = ({ amount, tokenSymbol }: InProgressContentProps) => {
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -150,7 +169,6 @@ const ConfirmTransactionModal = ({
           <b>
             {amount} {tokenSymbol}
           </b>{' '}
-          {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
       </div>
@@ -163,6 +181,7 @@ const ConfirmTransactionModal = ({
   }
 
   const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
+    const { confirmations, requiredConfirmations, done } = useTransactionConfirmation(successHash)
     return (
       <div className="p-4">
         <div className="py-12 flex justify-center">
@@ -170,7 +189,15 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="text-center mb-2">
+        <div className="by-secondary-lighter text-center text-sm text-gray-500 mb-2 border border-bg-secondary-light radius-lg p-4">
+          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
+          update on {NETWORK_LABEL[destinationChainId]}
+        </div>
+        <div className="text-center">
+          {/* Temporary code */}
+          {consoleLog('SuccessContent confirmations:', confirmations)}
+          {consoleLog('SuccessContent requiredConfirmations:', requiredConfirmations)}
+          {consoleLog('SuccessContent done:', done)}
           <a
             className="font-semibold text-link"
             href={getExplorerLink(chainId, successHash, 'transaction')}
@@ -208,7 +235,11 @@ const ConfirmTransactionModal = ({
     >
       {state === ModalState.NotConfirmed && <ConfirmContent />}
       {state === ModalState.InProgress && (
-        <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
+        <InProgressContent
+          amount={amount}
+          tokenSymbol={token.symbol as string}
+          wrappedTokenSymbol={wrappedTokenSymbol}
+        />
       )}
       {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>

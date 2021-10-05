@@ -127,6 +127,9 @@
   "inactive": "Inactive",
   "bridge": "Bridge",
   "error-liquidity-zap-reverted": "The transaction has reverted. You may increase the slippage tolerance and try again.",
+  "error-liquidity-estimates-changed": "FX estimation has changed. Please try entering a slightly lower amount.",
+  "migrate": "Migrate",
+  "migrated": "Migrated",
   "curveDefaultErrorMessage": "Something went wrong. Please show this error message to the team.",
   "curveAllowanceErrorMessage": "Allowance error. Please ask the team.",
   "curveFrozenMessage": "Contract is currently frozen. Only proportional withdraw allowed",
@@ -139,5 +142,4 @@
   "curveSwapHaltErrorMessage": "Pool has reached maximum inbalance. Swap back towards ideal ratios at cheaper fees.",
   "curveERC20TransferFailedMessage": "ERC20 transfer failed."
   "error-liquidity-zap-reverted": "The transaction has reverted. You may increase the slippage tolerance and try again.",
-  "error-liquidity-estimates-changed": "FX estimation has changed. Please try entering a slightly lower amount."
 }
