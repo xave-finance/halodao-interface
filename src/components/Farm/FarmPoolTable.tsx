@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TYPE, HideSmall } from '../../theme'
 import { RowBetween, RowFixed } from '../Row'
@@ -9,7 +9,10 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { groupPoolsInfo } from 'utils/poolInfo'
 import styled from 'styled-components'
+import useTheme from 'hooks/useTheme'
 import { useActiveWeb3React } from 'hooks'
+import { AmmRewardsVersion } from 'utils/ammRewards'
+import { Maximize2, Minimize2 } from 'react-feather'
 
 const InactivePools = styled.div`
   margin-top: 1rem;
@@ -22,14 +25,19 @@ const InactivePools = styled.div`
 interface FarmPoolTableProps {
   poolsInfo: PoolInfo[]
   v0PoolsInfo: PoolInfo[]
+  v1PoolsInfo: PoolInfo[]
   tokenPrice: TokenPrice
   selectedPool?: string
 }
 
-const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice, selectedPool }: FarmPoolTableProps) => {
+const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, selectedPool }: FarmPoolTableProps) => {
   const { t } = useTranslation()
+  const theme = useTheme()
   const { account, chainId } = useActiveWeb3React()
-  const { inactivePools, activePools } = groupPoolsInfo(poolsInfo, chainId)
+  const { activePools, inactivePools } = groupPoolsInfo(poolsInfo, chainId)
+  const [showInactiveSection, setShowInactiveSection] = useState(false)
+  const [showInactiveV0Section, setShowInactiveV0Section] = useState(false)
+  const [showInactiveV1Section, setShowInactiveV1Section] = useState(true)
 
   /**
    * Automatically scroll to a pool card if address is provided
@@ -94,30 +102,110 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, tokenPrice, selectedPool }: Far
             )
           })}
 
-          {(inactivePools.length > 0 || v0PoolsInfo.length > 0) && (
+          {activePools.length === 0 && (
+            <div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+              <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
+            </div>
+          )}
+
+          {inactivePools.length > 0 && (
             <InactivePools>
-              <TYPE.thHeader className="tbHeader">{t('inactive pools')}</TYPE.thHeader>
-              {inactivePools.map(poolInfo => {
-                return (
-                  <FarmPoolCard
-                    key={poolInfo.address}
-                    poolInfo={poolInfo}
-                    tokenPrice={tokenPrice}
-                    isActivePool={false}
-                  />
-                )
-              })}
-              {v0PoolsInfo.map(poolInfo => {
-                return (
-                  <FarmPoolCard
-                    key={poolInfo.address}
-                    poolInfo={poolInfo}
-                    tokenPrice={tokenPrice}
-                    isActivePool={false}
-                    rewardsVersion={0}
-                  />
-                )
-              })}
+              <TYPE.thHeader
+                className="tbHeader flex items-center cursor-pointer"
+                onClick={() => setShowInactiveSection(!showInactiveSection)}
+              >
+                <div className="text-primary">{t('inactive pools')}</div>
+                <div className="ml-2">
+                  {showInactiveSection ? (
+                    <Minimize2 size={16} color={theme.primary1} />
+                  ) : (
+                    <Maximize2 size={14} color={theme.primary1} />
+                  )}
+                </div>
+              </TYPE.thHeader>
+              {showInactiveSection && (
+                <>
+                  {inactivePools.map(poolInfo => {
+                    return (
+                      <FarmPoolCard
+                        key={poolInfo.address}
+                        poolInfo={poolInfo}
+                        tokenPrice={tokenPrice}
+                        isActivePool={false}
+                      />
+                    )
+                  })}
+                </>
+              )}
+            </InactivePools>
+          )}
+
+          {v1PoolsInfo.length > 0 && (
+            <InactivePools>
+              <TYPE.thHeader
+                className="tbHeader flex items-center cursor-pointer"
+                onClick={() => setShowInactiveV1Section(!showInactiveV1Section)}
+              >
+                <div className="text-primary">{t('inactive pools')} v1</div>
+                <div className="ml-2">
+                  {showInactiveV1Section ? (
+                    <Minimize2 size={16} color={theme.primary1} />
+                  ) : (
+                    <Maximize2 size={14} color={theme.primary1} />
+                  )}
+                </div>
+              </TYPE.thHeader>
+              {showInactiveV1Section && (
+                <>
+                  {v1PoolsInfo.map(poolInfo => {
+                    return (
+                      <FarmPoolCard
+                        key={poolInfo.address}
+                        poolInfo={poolInfo}
+                        tokenPrice={tokenPrice}
+                        isActivePool={false}
+                        rewardsVersion={AmmRewardsVersion.V1}
+                      />
+                    )
+                  })}
+                </>
+              )}
+            </InactivePools>
+          )}
+
+          {v0PoolsInfo.length > 0 && (
+            <InactivePools>
+              <TYPE.thHeader
+                className="tbHeader flex items-center cursor-pointer"
+                onClick={() => setShowInactiveV0Section(!showInactiveV0Section)}
+              >
+                <div className="text-primary">{t('inactive pools')} v0</div>
+                <div className="ml-2">
+                  {showInactiveV0Section ? (
+                    <Minimize2 size={16} color={theme.primary1} />
+                  ) : (
+                    <Maximize2 size={14} color={theme.primary1} />
+                  )}
+                </div>
+              </TYPE.thHeader>
+              {showInactiveV0Section && (
+                <>
+                  {v0PoolsInfo.map(poolInfo => {
+                    return (
+                      <FarmPoolCard
+                        key={poolInfo.address}
+                        poolInfo={poolInfo}
+                        tokenPrice={tokenPrice}
+                        isActivePool={false}
+                        rewardsVersion={AmmRewardsVersion.V0}
+                      />
+                    )
+                  })}
+                </>
+              )}
             </InactivePools>
           )}
         </AutoColumn>
