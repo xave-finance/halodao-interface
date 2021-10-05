@@ -530,6 +530,11 @@ export default function FarmPoolCard({
       break
   }
 
+  // Wether to show migrate or harvest button
+  const showMigrateButton = (() => {
+    return rewardsVersion === AmmRewardsVersion.V1
+  })()
+
   /**
    * Updating the state of stake button
    */
@@ -565,17 +570,26 @@ export default function FarmPoolCard({
   }, [unstakeAmount, bptStaked, isTxInProgress])
 
   /**
-   * Updating the state of harvest button
+   * Updating the state of harvest/migrate button
    */
   useEffect(() => {
     if (isTxInProgress) return
+
+    if (showMigrateButton) {
+      if (!alreadyMigrated && (unclaimedHALO > 0 || bptStaked > 0)) {
+        setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
+      } else {
+        setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+      }
+      return
+    }
 
     if (unclaimedHALO > 0) {
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress, bptStaked, rewardsVersion])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated])
 
   /**
    * Checks if user already migrated (from v1.0 to v1.1 AMMRewards)
@@ -990,7 +1004,7 @@ export default function FarmPoolCard({
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
                 <Text className="balance">
-                  {rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                  {showMigrateButton && alreadyMigrated ? (
                     <>0 xRNBW </>
                   ) : (
                     <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
@@ -999,21 +1013,18 @@ export default function FarmPoolCard({
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
-                  onClick={rewardsVersion === AmmRewardsVersion.V1 ? handleMigrate : handleClaim}
-                  disabled={
-                    [ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                      harvestButtonState
-                    ) ||
-                    (rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated)
-                  }
+                  onClick={showMigrateButton ? handleMigrate : handleClaim}
+                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                    harvestButtonState
+                  )}
                 >
-                  {t(rewardsVersion === AmmRewardsVersion.V1 ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                  {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
                   &nbsp;&nbsp;
                   {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
                     <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                  ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                  ) : showMigrateButton && alreadyMigrated ? (
                     <Check size={16} />
-                  ) : rewardsVersion === AmmRewardsVersion.V1 && !alreadyMigrated ? (
+                  ) : showMigrateButton && !alreadyMigrated ? (
                     <GitPullRequest size={16} />
                   ) : (
                     <img src={ArrowRight} alt="Harvest icon" />
