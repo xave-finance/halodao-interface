@@ -103,7 +103,8 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
             ChainId.MAINNET,
             //ChainId.FANTOM,
             // ChainId.BSC,
-            ChainId.MATIC
+            ChainId.MATIC,
+            ...(process.env.REACT_APP_MOCK_TOKEN_MAINNET ? [ChainId.XDAI] : [])
             //ChainId.HECO,
             // ChainId.XDAI
             //ChainId.HARMONY,
