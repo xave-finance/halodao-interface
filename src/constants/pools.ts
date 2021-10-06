@@ -1,21 +1,4 @@
 /**
- * Hardcoded SUSHI pool addresses
- */
-
-// ETH Mainnet
-export const SUSHI_RNBW_ETH_ADDRESS = '0xdb30d3f9b55bd57271d171fec708b575aa940082'
-
-// BSC Testnet
-export const SUSHI_BUSD_BNB_ADDRESS = '0x71e3c96C21D734bFA64D652EA99611Aa64F7D9F6'
-export const SUSHI_BUSD_XSGD_ADDRESS = '0x9A0eeceDA5c0203924484F5467cEE4321cf6A189'
-export const BUSD_TOKEN_ADDRESS = '0xed24fc36d5ee211ea25a80239fb8c4cfd80f12ee'
-export const BNB_TOKEN_ADDRESS = '0xae13d989dac2f0debff460ac112a837c89baa7cd'
-export const XSGD_TOKEN_ADDRESS = '0x979b00492a1cbf691b1fae867936c01bab0b8c4d'
-
-// Matic Testnet
-export const SUSHI_XSGD_ADDRESS = '0xDbcc6EA9C5C2B62f6226a99B1E0EC089B0927a59'
-
-/**
  * Known pool addresses per provider (balancer, uni, sushi)
  */
 
@@ -32,7 +15,9 @@ const uniPoolsAddressesKovan = uniPoolsKovan !== '' ? uniPoolsKovan.split(',').m
 
 const sushiPools = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
 const sushiPoolsAddresses = sushiPools !== '' ? sushiPools.split(',').map(a => a.toLowerCase()) : []
-const sushiPoolsKovan = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
+const sushiPoolsMatic = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES_MATIC || ''
+const sushiPoolsAddressesMatic = sushiPoolsMatic !== '' ? sushiPoolsMatic.split(',').map(a => a.toLowerCase()) : []
+const sushiPoolsKovan = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES_KOVAN || ''
 const sushiPoolsAddressesKovan = sushiPoolsKovan !== '' ? sushiPoolsKovan.split(',').map(a => a.toLowerCase()) : []
 
 const liquidityPools = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES || ''
@@ -50,6 +35,7 @@ export const UNI_POOLS_ADDRESSES = uniPoolsAddresses
 export const UNI_POOLS_ADDRESSES_KOVAN = uniPoolsAddressesKovan
 export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
 export const SUSHI_POOLS_ADDRESSES_KOVAN = sushiPoolsAddressesKovan
+export const SUSHI_POOLS_ADDRESSES_MATIC = sushiPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES = liquidityPoolsAddresses
 export const LIQUIDITY_POOLS_ADDRESSES_MATIC = liquidityPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES_KOVAN = liquidityPoolsAddressesKovan
