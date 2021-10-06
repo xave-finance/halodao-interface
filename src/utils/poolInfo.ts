@@ -13,7 +13,8 @@ import {
   SUSHI_POOLS_ADDRESSES,
   SUSHI_POOLS_ADDRESSES_KOVAN,
   UNI_POOLS_ADDRESSES,
-  UNI_POOLS_ADDRESSES_KOVAN
+  UNI_POOLS_ADDRESSES_KOVAN,
+  SUSHI_POOLS_ADDRESSES_MATIC
 } from 'constants/pools'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
@@ -40,7 +41,9 @@ const isUniPool = (address: string, chainId: ChainId | undefined) => {
 }
 
 const isSushiPool = (address: string, chainId: ChainId | undefined) => {
-  if (chainId === ChainId.KOVAN) {
+  if (chainId === ChainId.MATIC) {
+    return SUSHI_POOLS_ADDRESSES_MATIC.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.KOVAN) {
     return SUSHI_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
   }
   return SUSHI_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
