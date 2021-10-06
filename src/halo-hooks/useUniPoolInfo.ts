@@ -76,12 +76,14 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         tokens: [
           {
             address: token1Address,
+            mainnetAddress: token1Address,
             balance: +formatEther(totalReserves[0]),
             weightPercentage: 50,
             asToken: new Token(chainId, token1Address, 18, token1Symbol, token1Symbol)
           },
           {
             address: token2Address,
+            mainnetAddress: token2Address,
             balance: +formatEther(totalReserves[1]),
             weightPercentage: 50,
             asToken: new Token(chainId, token2Address, 18, token2Symbol, token2Symbol)

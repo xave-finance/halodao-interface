@@ -9,6 +9,25 @@ import { formatEther } from '@ethersproject/units'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { PoolIdLpTokenMap } from 'utils/poolInfo'
 import { getContract } from 'utils'
+import { HALO } from '../constants'
+
+const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) => {
+  if (chainId !== ChainId.MATIC) {
+    console.log('chainId not matic')
+    return address
+  }
+
+  if (symbol.toLowerCase() === 'weth') {
+    console.log('mainnet WETH: ', WETH[ChainId.MAINNET]?.address)
+    return WETH[ChainId.MAINNET]?.address ?? address
+  } else if (symbol.toLowerCase() === 'wrnbw') {
+    console.log('mainnet RNBW: ', HALO[ChainId.MAINNET]?.address)
+    return HALO[ChainId.MAINNET]?.address ?? address
+  }
+
+  console.log('unknown symbol')
+  return address
+}
 
 export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { chainId, library, account } = useActiveWeb3React()
@@ -18,6 +37,7 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const fetchPoolInfo = useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
     const tokenAddresses: string[] = []
+    const mainnetTokenAddresses: string[] = []
 
     if (!chainId || !library) {
       return { poolsInfo, tokenAddresses }
@@ -43,6 +63,7 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       const token1Address = getAddress(results[0])
       const token2Address = getAddress(results[1])
       const totalReserves = results[2]
+
       reserves[map.pid] = {
         token0: +formatEther(totalReserves[0]),
         token1: +formatEther(totalReserves[1])
@@ -67,6 +88,9 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       const token1Param = token1Symbol === 'ETH' ? 'ETH' : token1Address
       const token2Param = token2Symbol === 'ETH' ? 'ETH' : token2Address
 
+      let token1MainnetAddress = getMainnetAddress(token1Address, token1Symbol, chainId)
+      let token2MainnetAddress = getMainnetAddress(token2Address, token2Symbol, chainId)
+
       poolsInfo.push({
         pid: map.pid,
         pair: `${token1Symbol}/${token2Symbol}`,
@@ -76,12 +100,14 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         tokens: [
           {
             address: token1Address,
+            mainnetAddress: token1MainnetAddress,
             balance: +formatEther(totalReserves[0]),
             weightPercentage: 50,
             asToken: new Token(chainId, token1Address, 18, token1Symbol, token1Symbol)
           },
           {
             address: token2Address,
+            mainnetAddress: token2MainnetAddress,
             balance: +formatEther(totalReserves[1]),
             weightPercentage: 50,
             asToken: new Token(chainId, token2Address, 18, token2Symbol, token2Symbol)
@@ -94,16 +120,30 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
       tokenAddresses.push(token1Address)
       tokenAddresses.push(token2Address)
+      mainnetTokenAddresses.push(token1MainnetAddress)
+      mainnetTokenAddresses.push(token2MainnetAddress)
     }
 
+    console.log('mainnetTokenAddresses: ', mainnetTokenAddresses)
+
     // Calculate liquidity
-    const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, tokenAddresses)
+    const tokenPrice = await getTokensUSDPrice(
+      GetPriceBy.address,
+      chainId === ChainId.MATIC ? mainnetTokenAddresses : tokenAddresses
+    )
+
+    console.log('tokenPrice: ', tokenPrice)
+    console.log('reserves: ', reserves)
 
     for (const poolInfo of poolsInfo) {
       poolInfo.liquidity =
-        reserves[poolInfo.pid].token0 * tokenPrice[poolInfo.tokens[0].address] +
-        reserves[poolInfo.pid].token1 * tokenPrice[poolInfo.tokens[1].address]
+        reserves[poolInfo.pid].token0 *
+          tokenPrice[chainId === ChainId.MATIC ? poolInfo.tokens[0].mainnetAddress : poolInfo.tokens[0].address] +
+        reserves[poolInfo.pid].token1 *
+          tokenPrice[chainId === ChainId.MATIC ? poolInfo.tokens[1].mainnetAddress : poolInfo.tokens[1].address]
     }
+
+    console.log('sushi: ', poolsInfo, tokenAddresses)
 
     return { poolsInfo, tokenAddresses }
   }, [pidLpTokenMap, chainId, library, account, WETH_ADDRESS])
