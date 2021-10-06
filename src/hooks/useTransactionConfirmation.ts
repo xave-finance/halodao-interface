@@ -3,12 +3,6 @@ import { ChainId } from '@sushiswap/sdk'
 import { useActiveWeb3React } from './index'
 import useInterval from 'hooks/useInterval'
 
-interface GetTransactionCall {
-  confirmations: number
-  requiredConfirmations: number
-  done: boolean
-}
-
 type ChainConfirmationList = {
   readonly [chainId in ChainId]?: number
 }
@@ -18,7 +12,7 @@ const CHAIN_REQUIRED_CONFIRMATIONS: ChainConfirmationList = {
   [ChainId.MATIC]: 192
 }
 
-export default function useTransactionConfirmation(txHash: string): GetTransactionCall {
+export default function useTransactionConfirmation(txHash: string) {
   const { library, chainId } = useActiveWeb3React()
 
   const [confirmations, setConfirmations] = useState(0)

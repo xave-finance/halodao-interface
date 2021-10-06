@@ -26,7 +26,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE, HALO_REWARDS_V1_ADDRESS } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -51,6 +51,14 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
+import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { consoleLog } from 'utils/simpleLogger'
+import { MetamaskError } from 'constants/errors'
+import { BigNumber } from '@ethersproject/bignumber'
+import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
+import { Check, GitPullRequest } from 'react-feather'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -424,7 +432,7 @@ interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
   isActivePool: boolean
-  rewardsVersion?: number
+  rewardsVersion?: AmmRewardsVersion
   preselected?: boolean
 }
 
@@ -432,7 +440,7 @@ export default function FarmPoolCard({
   poolInfo,
   tokenPrice,
   isActivePool,
-  rewardsVersion = 1,
+  rewardsVersion = AmmRewardsVersion.Latest,
   preselected = false
 }: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
@@ -447,6 +455,7 @@ export default function FarmPoolCard({
   const [unstakeButtonState, setUnstakeButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [harvestButtonState, setHarvestButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
+  const [alreadyMigrated, setAlreadyMigrated] = useState(false)
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
@@ -473,16 +482,20 @@ export default function FarmPoolCard({
   const unclaimedHALO = unclaimedPoolRewards
 
   // Make use of `useApproveCallback` for checking & setting allowance
-  const rewardsContractAddress = chainId
-    ? rewardsVersion === 0
-      ? HALO_REWARDS_ADDRESS[chainId]
-      : HALO_REWARDS_V1_ADDRESS[chainId]
-    : undefined
+  const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable-line
+
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+  const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
   const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable-line
+
+  const addTransaction = useTransactionAdder()
 
   /**
    * APY computation
@@ -562,7 +575,16 @@ export default function FarmPoolCard({
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, rewardsVersion])
+
+  /**
+   * Checks if user already migrated (from v1.0 to v1.1 AMMRewards)
+   */
+  useEffect(() => {
+    didAlreadyMigrate(account ?? '', poolInfo.address).then(migrated => {
+      setAlreadyMigrated(migrated)
+    })
+  }, [account, poolInfo.address, rewardsVersion])
 
   /**
    * Approves the stake amount
@@ -647,6 +669,7 @@ export default function FarmPoolCard({
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
+
     /** log harvest in GA
      */
     ReactGA.event({
@@ -669,6 +692,74 @@ export default function FarmPoolCard({
     dispatch(updatePoolToHarvest({ vestingInfo }))
 
     history.push('/vesting')
+  }
+
+  /**
+   * Handles the user clicking "Migrate" button
+   */
+  const handleMigrate = async () => {
+    setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
+
+    const valueToMigrate = parseEther(toFixed(bptStaked, 8))
+    let txHashes: string[] = []
+    let totalGas = BigNumber.from(0)
+
+    try {
+      const tx1 = await withdraw(poolInfo.pid, valueToMigrate ?? 0, poolInfo.address)
+      const txnResult1 = await tx1.wait()
+
+      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate) // eslint-disable-line
+      const txnResult2 = await tx2.wait()
+
+      addTransaction(tx2, {
+        summary: `Approved ${poolInfo.asToken.symbol} to be migrated to v1.1`
+      })
+
+      const tx3 = await rewardsContractV1_1?.deposit(poolInfo.pid, valueToMigrate, account)
+      const txnResult3 = await tx3.wait()
+
+      addTransaction(tx3, {
+        summary: `${poolInfo.asToken.symbol} migrated to v1.1`
+      })
+
+      txHashes = [tx1.hash, tx2.hash, tx3.hash]
+      totalGas = txnResult1.gasUsed.add(txnResult2.gasUsed).add(txnResult3.gasUsed)
+
+      consoleLog(
+        `Storing pending reward token: ${unclaimedHALO}, total gas costs: ${formatEther(totalGas)}, hashes: ${txHashes}`
+      )
+
+      addPendingRewards(
+        account ?? '',
+        poolInfo.address,
+        poolInfo.pid,
+        `${unclaimedHALO}`,
+        totalGas.toString(),
+        txHashes
+      )
+
+      setIsTxInProgress(false)
+      setAlreadyMigrated(true)
+    } catch (e) {
+      console.error('Migration error: ', e)
+
+      // when txn signature is canceled
+      if ((e as any).code === MetamaskError.Cancelled) {
+        setIsTxInProgress(false)
+      }
+
+      return
+    }
+
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Migrate',
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
+    })
   }
 
   return (
@@ -719,6 +810,8 @@ export default function FarmPoolCard({
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
                 <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</u>
+              ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                <>0 xRNBW</>
               ) : (
                 <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
               )}
@@ -897,19 +990,31 @@ export default function FarmPoolCard({
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
                 <Text className="balance">
-                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW
+                  {rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                    <>0 xRNBW </>
+                  ) : (
+                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                  )}
                 </Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
-                  onClick={handleClaim}
-                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                    harvestButtonState
-                  )}
+                  onClick={rewardsVersion === AmmRewardsVersion.V1 ? handleMigrate : handleClaim}
+                  disabled={
+                    [ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                      harvestButtonState
+                    ) ||
+                    (rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated)
+                  }
                 >
-                  {t('harvest')}&nbsp;&nbsp;
+                  {t(rewardsVersion === AmmRewardsVersion.V1 ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                  &nbsp;&nbsp;
                   {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
                     <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                  ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                    <Check size={16} />
+                  ) : rewardsVersion === AmmRewardsVersion.V1 && !alreadyMigrated ? (
+                    <GitPullRequest size={16} />
                   ) : (
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}

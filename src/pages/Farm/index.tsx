@@ -11,6 +11,8 @@ import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { useParams } from 'react-router'
+import { AmmRewardsVersion } from 'utils/ammRewards'
+import { useActiveWeb3React } from 'hooks'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1040px;
@@ -73,20 +75,31 @@ const StyledExternalLink = styled(ExternalLink)`
 const Farm = () => {
   const { address } = useParams<{ address: string | undefined }>()
   const [selectedPoolAddress, setSelectedPoolAddress] = useState<string | undefined>(undefined)
+  const { t } = useTranslation()
+  const { chainId } = useActiveWeb3React()
+  const [allTokenAddresses, setAllTokenAddresses] = useState<string[]>([])
+  const tokenPrice = useTokenPrice(allTokenAddresses)
 
-  const v0LpTokenAddresses = useLPTokenAddresses(0)
+  const v0LpTokenAddresses = useLPTokenAddresses(AmmRewardsVersion.V0)
   const fetchV0PoolInfo = usePoolInfo(v0LpTokenAddresses)
   const [v0PoolsInfo, setV0PoolsInfo] = useState<PoolInfo[]>([])
-  const v0AllocPoints = useAllocPoints(v0LpTokenAddresses, 0)
+  const v0AllocPoints = useAllocPoints(v0LpTokenAddresses, AmmRewardsVersion.V0)
+
+  const v1LpTokenAddresses = useLPTokenAddresses(AmmRewardsVersion.V1)
+  const fetchV1PoolInfo = usePoolInfo(v1LpTokenAddresses)
+  const [v1PoolsInfo, setV1PoolsInfo] = useState<PoolInfo[]>([])
+  const v1AllocPoints = useAllocPoints(v1LpTokenAddresses, AmmRewardsVersion.V1)
 
   const lpTokenAddresses = useLPTokenAddresses()
   const fetchPoolInfo = usePoolInfo(lpTokenAddresses)
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const allocPoints = useAllocPoints(lpTokenAddresses)
 
-  const { t } = useTranslation()
-  const [allTokenAddresses, setAllTokenAddresses] = useState<string[]>([])
-  const tokenPrice = useTokenPrice(allTokenAddresses)
+  useEffect(() => {
+    setPoolsInfo([])
+    setV0PoolsInfo([])
+    setV1PoolsInfo([])
+  }, [chainId])
 
   useEffect(() => {
     fetchPoolInfo().then(result => {
@@ -103,6 +116,13 @@ const Farm = () => {
   }, [v0LpTokenAddresses]) //eslint-disable-line
 
   useEffect(() => {
+    fetchV1PoolInfo().then(result => {
+      setV1PoolsInfo(result.poolsInfo)
+      setAllTokenAddresses(prev => [...prev, ...result.tokenAddresses])
+    })
+  }, [v1LpTokenAddresses]) //eslint-disable-line
+
+  useEffect(() => {
     const newPoolsInfo = poolsInfo
     newPoolsInfo.forEach(poolInfo => {
       poolInfo.allocPoint = allocPoints[poolInfo.pid]
@@ -117,6 +137,14 @@ const Farm = () => {
     })
     setV0PoolsInfo(newPoolsInfo)
   }, [v0PoolsInfo, v0AllocPoints])
+
+  useEffect(() => {
+    const newPoolsInfo = v1PoolsInfo
+    newPoolsInfo.forEach(poolInfo => {
+      poolInfo.allocPoint = v1AllocPoints[poolInfo.pid]
+    })
+    setV1PoolsInfo(newPoolsInfo)
+  }, [v1PoolsInfo, v1AllocPoints])
 
   useEffect(() => {
     setSelectedPoolAddress(address?.toLowerCase())
@@ -152,6 +180,7 @@ const Farm = () => {
         <FarmPoolTable
           poolsInfo={poolsInfo}
           v0PoolsInfo={v0PoolsInfo}
+          v1PoolsInfo={v1PoolsInfo}
           tokenPrice={tokenPrice}
           selectedPool={selectedPoolAddress}
         />

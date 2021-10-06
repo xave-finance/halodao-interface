@@ -315,6 +315,12 @@ export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId)
           ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
         }
         break
+      case ChainId.XDAI:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
       default:
         throw new Error('Invalid destination chain.')
     }

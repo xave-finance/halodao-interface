@@ -19,4 +19,5 @@ jobs:
 workflows:
   test_my_app:
     jobs:
-      - test
+      - test:
+          context: halodao-interface-dev
