@@ -13,19 +13,14 @@ import { HALO } from '../constants'
 
 const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) => {
   if (chainId !== ChainId.MATIC) {
-    console.log('chainId not matic')
     return address
   }
 
   if (symbol.toLowerCase() === 'weth') {
-    console.log('mainnet WETH: ', WETH[ChainId.MAINNET]?.address)
     return WETH[ChainId.MAINNET]?.address ?? address
   } else if (symbol.toLowerCase() === 'wrnbw') {
-    console.log('mainnet RNBW: ', HALO[ChainId.MAINNET]?.address)
     return HALO[ChainId.MAINNET]?.address ?? address
   }
-
-  console.log('unknown symbol')
   return address
 }
 
@@ -120,20 +115,21 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
       tokenAddresses.push(token1Address)
       tokenAddresses.push(token2Address)
+
+      if (chainId === ChainId.MATIC) {
+        tokenAddresses.push(token1MainnetAddress)
+        tokenAddresses.push(token2MainnetAddress)
+      }
+
       mainnetTokenAddresses.push(token1MainnetAddress)
       mainnetTokenAddresses.push(token2MainnetAddress)
     }
-
-    console.log('mainnetTokenAddresses: ', mainnetTokenAddresses)
 
     // Calculate liquidity
     const tokenPrice = await getTokensUSDPrice(
       GetPriceBy.address,
       chainId === ChainId.MATIC ? mainnetTokenAddresses : tokenAddresses
     )
-
-    console.log('tokenPrice: ', tokenPrice)
-    console.log('reserves: ', reserves)
 
     for (const poolInfo of poolsInfo) {
       poolInfo.liquidity =
@@ -142,8 +138,6 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         reserves[poolInfo.pid].token1 *
           tokenPrice[chainId === ChainId.MATIC ? poolInfo.tokens[1].mainnetAddress : poolInfo.tokens[1].address]
     }
-
-    console.log('sushi: ', poolsInfo, tokenAddresses)
 
     return { poolsInfo, tokenAddresses }
   }, [pidLpTokenMap, chainId, library, account, WETH_ADDRESS])

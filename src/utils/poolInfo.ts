@@ -117,7 +117,12 @@ export const getPoolLiquidity = (poolInfo: PoolInfo, tokenPrice: TokenPrice) => 
   let sumValue = 0
 
   for (const tokenInfo of poolInfo.tokens) {
-    const price = tokenPrice[tokenInfo.address]
+    let mainnetAddress = tokenInfo.address
+    if (tokenInfo.mainnetAddress !== tokenInfo.address) {
+      mainnetAddress = tokenInfo.mainnetAddress
+    }
+
+    const price = tokenPrice[mainnetAddress]
     if (!price) {
       continue
     }
