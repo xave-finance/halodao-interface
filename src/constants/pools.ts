@@ -32,7 +32,9 @@ const uniPoolsAddressesKovan = uniPoolsKovan !== '' ? uniPoolsKovan.split(',').m
 
 const sushiPools = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
 const sushiPoolsAddresses = sushiPools !== '' ? sushiPools.split(',').map(a => a.toLowerCase()) : []
-const sushiPoolsKovan = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES || ''
+const sushiPoolsMatic = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES_MATIC || ''
+const sushiPoolsAddressesMatic = sushiPoolsMatic !== '' ? sushiPoolsMatic.split(',').map(a => a.toLowerCase()) : []
+const sushiPoolsKovan = process.env.REACT_APP_SUSHI_POOLS_ADDRESSES_KOVAN || ''
 const sushiPoolsAddressesKovan = sushiPoolsKovan !== '' ? sushiPoolsKovan.split(',').map(a => a.toLowerCase()) : []
 
 const liquidityPools = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES || ''
@@ -50,6 +52,7 @@ export const UNI_POOLS_ADDRESSES = uniPoolsAddresses
 export const UNI_POOLS_ADDRESSES_KOVAN = uniPoolsAddressesKovan
 export const SUSHI_POOLS_ADDRESSES = sushiPoolsAddresses
 export const SUSHI_POOLS_ADDRESSES_KOVAN = sushiPoolsAddressesKovan
+export const SUSHI_POOLS_ADDRESSES_MATIC = sushiPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES = liquidityPoolsAddresses
 export const LIQUIDITY_POOLS_ADDRESSES_MATIC = liquidityPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES_KOVAN = liquidityPoolsAddressesKovan
