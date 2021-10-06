@@ -10,6 +10,7 @@ import { shortenAddress, getExplorerLink } from 'utils'
 import { useShuttleFee } from 'halo-hooks/useBridge'
 import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 import { ModalState } from '../../../../constants/buttonStates'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -108,7 +109,7 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Estimated Lower Bound Shuttle fee</div>
+              <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
                 <div>
                   {lowerBoundFee.toFixed(2)} {token.symbol}
@@ -116,7 +117,7 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Estimated Upper Bound Shuttle fee</div>
+              <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
               <div>
                 <div>
                   {upperBoundFee.toFixed(2)} {token.symbol}
@@ -185,9 +186,9 @@ const ConfirmTransactionModal = ({
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
         <div className="text-center">
           {/* Temporary code */}
-          {console.log('SuccessContent confirmations:', confirmations)}
-          {console.log('SuccessContent requiredConfirmations:', requiredConfirmations)}
-          {console.log('SuccessContent done:', done)}
+          {consoleLog('SuccessContent confirmations:', confirmations)}
+          {consoleLog('SuccessContent requiredConfirmations:', requiredConfirmations)}
+          {consoleLog('SuccessContent done:', done)}
           <a
             className="font-semibold text-link"
             href={getExplorerLink(chainId, successHash, 'transaction')}

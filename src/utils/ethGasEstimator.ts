@@ -26,7 +26,7 @@ const _queryETHGasWatchAPI = async () => {
   return response.json()
 }
 
-export const getGasRangeEstimation = async (floor: GasModes, ceiling: GasModes): Promise<GasModeRangeData> => {
+export const getGasRangeEstimation = async (floor: GasModes, ceiling: GasModes) => {
   const queryResult = await _queryETHGasWatchAPI()
 
   if (queryResult['normal'].usd > queryResult[floor].usd) {
