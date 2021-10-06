@@ -83,8 +83,8 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       const token1Param = token1Symbol === 'ETH' ? 'ETH' : token1Address
       const token2Param = token2Symbol === 'ETH' ? 'ETH' : token2Address
 
-      let token1MainnetAddress = getMainnetAddress(token1Address, token1Symbol, chainId)
-      let token2MainnetAddress = getMainnetAddress(token2Address, token2Symbol, chainId)
+      const token1MainnetAddress = getMainnetAddress(token1Address, token1Symbol, chainId)
+      const token2MainnetAddress = getMainnetAddress(token2Address, token2Symbol, chainId)
 
       poolsInfo.push({
         pid: map.pid,
