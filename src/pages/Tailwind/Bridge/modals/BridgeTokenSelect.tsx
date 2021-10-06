@@ -41,7 +41,7 @@ const TokenList = ({ chainId, onSelect }: TokenListProps) => {
   )
 }
 
-const TokenSelectModal = ({ isVisible, onSelect, onDismiss }: TokenSelectModalProps) => {
+const BridgeTokenSelect = ({ isVisible, onSelect, onDismiss }: TokenSelectModalProps) => {
   const { chainId } = useWeb3React()
   return (
     <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
@@ -62,4 +62,4 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss }: TokenSelectModalPr
   )
 }
 
-export default TokenSelectModal
+export default BridgeTokenSelect

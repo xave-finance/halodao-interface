@@ -33,7 +33,7 @@ const TokenInput = ({
 
   const onMax = () => {
     if (balance) {
-      didChangeValue(balance.toExact())
+      didChangeValue(balance.toSignificant(6))
     }
   }
 
