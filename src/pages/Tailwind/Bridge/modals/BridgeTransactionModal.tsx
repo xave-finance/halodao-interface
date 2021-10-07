@@ -14,7 +14,6 @@ import { consoleLog } from 'utils/simpleLogger'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
-  currency: Currency
   amount: string
   account: string | null | undefined
   confirmLogic: () => void
@@ -23,7 +22,6 @@ interface ConfirmTransactionModalProps {
   originChainId: ChainId
   destinationChainId: ChainId
   token: Token
-  wrappedTokenSymbol: string
   state: ModalState
   setState: (state: ModalState) => void
   successHash: string
@@ -34,12 +32,10 @@ interface ConfirmTransactionModalProps {
 interface InProgressContentProps {
   amount: string
   tokenSymbol: string
-  wrappedTokenSymbol: string
 }
 
 const ConfirmTransactionModal = ({
   isVisible,
-  currency,
   amount,
   account,
   confirmLogic,
@@ -48,7 +44,6 @@ const ConfirmTransactionModal = ({
   originChainId,
   destinationChainId,
   token,
-  wrappedTokenSymbol,
   state,
   setState,
   successHash,
@@ -88,14 +83,14 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
-              <span>{currency.name}</span>
+              <span>{token.name}</span>
             </div>
           </div>
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Amount</span>
             <div className="mt-1">
               <span>{amount} </span>
-              <span>{currency.symbol}</span>
+              <span>{token.symbol}</span>
             </div>
           </div>
           <div className="mt-4">
@@ -117,7 +112,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
                 <div>
-                  {lowerBoundFee.toFixed(2)} {currency.symbol}
+                  {lowerBoundFee.toFixed(2)} {token.symbol}
                 </div>
               </div>
             </div>
@@ -125,7 +120,7 @@ const ConfirmTransactionModal = ({
               <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
               <div>
                 <div>
-                  {upperBoundFee.toFixed(2)} {currency.symbol}
+                  {upperBoundFee.toFixed(2)} {token.symbol}
                 </div>
               </div>
             </div>
@@ -135,7 +130,7 @@ const ConfirmTransactionModal = ({
               <div>
                 <div>
                   {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
-                  {currency.symbol}
+                  {token.symbol}
                 </div>
               </div>
             </div>
@@ -189,10 +184,6 @@ const ConfirmTransactionModal = ({
         </div>
 
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="by-secondary-lighter text-center text-sm text-gray-500 mb-2 border border-bg-secondary-light radius-lg p-4">
-          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
-        </div>
         <div className="text-center">
           {/* Temporary code */}
           {consoleLog('SuccessContent confirmations:', confirmations)}
@@ -209,7 +200,8 @@ const ConfirmTransactionModal = ({
         </div>
         <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
           Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
+          update on {NETWORK_LABEL[destinationChainId]}. Please note that the shuttle fee may vary depending on gas
+          prices.
         </div>
         <div className="mt-2">
           <PrimaryButton
@@ -234,13 +226,7 @@ const ConfirmTransactionModal = ({
       }}
     >
       {state === ModalState.NotConfirmed && <ConfirmContent />}
-      {state === ModalState.InProgress && (
-        <InProgressContent
-          amount={amount}
-          tokenSymbol={token.symbol as string}
-          wrappedTokenSymbol={wrappedTokenSymbol}
-        />
-      )}
+      {state === ModalState.InProgress && <InProgressContent amount={amount} tokenSymbol={token.symbol as string} />}
       {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>
   )
