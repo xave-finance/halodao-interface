@@ -106,9 +106,12 @@ const BridgePanel = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
-              if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
+              console.log('chainToken:', chainToken)
+              if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+                console.log('1')
                 estimateBurnWrappedToken(inputValue)
               } else {
+                console.log('2')
                 estimateDeposit(destinationChainId, inputValue)
               }
               setModalState(ModalState.NotConfirmed)
