@@ -10,7 +10,7 @@ import ArrowDownIcon from 'assets/svg/arrow-down-icon.svg'
 import WarningIcon from 'assets/svg/warning-icon-purple.svg'
 import { getExplorerLink } from '../../../../utils'
 import { ModalState } from 'constants/buttonStates'
-import ErrorContent from 'components/Tailwind/ErrorContent/ErrorContent'
+import ErrorContent from 'components/Tailwind/ErrorContent/TransactionErrorContent'
 import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 
 interface SwapTransactionModalProps {

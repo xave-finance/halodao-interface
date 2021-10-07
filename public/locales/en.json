@@ -141,5 +141,4 @@
   "curveSwapFailedErrorMessage": "Swap failed. Please try again",
   "curveSwapHaltErrorMessage": "Pool has reached maximum inbalance. Swap back towards ideal ratios at cheaper fees.",
   "curveERC20TransferFailedMessage": "ERC20 transfer failed."
-  "error-liquidity-zap-reverted": "The transaction has reverted. You may increase the slippage tolerance and try again.",
 }

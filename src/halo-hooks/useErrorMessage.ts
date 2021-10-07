@@ -17,7 +17,7 @@ export enum CurveError {
   liquidityInvariantViolation = 'Curve/liquidity-invariant-violation',
   upperHalt = 'Curve/upper-halt',
   lowerHalt = 'Curve/lower-halt',
-  CADCTransferFailed = 'Curve/CADC-transfer-from-failed'
+  CADCTransferFailed = 'Curve/CADC-transfer-from-failed' // change in case and token
   // check the other failed
 }
 

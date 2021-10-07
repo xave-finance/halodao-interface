@@ -155,10 +155,10 @@ const SwapPanel = () => {
           onClick={() => {
             setTimeLeft(60)
             setIsExpired(false)
-            // if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
-            setButtonState(SwapButtonState.Confirming)
-            setShowModal(true)
-            // }
+            if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
+              setButtonState(SwapButtonState.Confirming)
+              setShowModal(true)
+            }
           }}
         />
       </div>
@@ -339,7 +339,7 @@ const SwapPanel = () => {
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
                     setButtonState(SwapButtonState.Swap)
                   } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
-                    // setButtonState(SwapButtonState.InsufficientBalance)
+                    setButtonState(SwapButtonState.InsufficientBalance)
                   }
                   getMinimumAmount(val, CurrencySide.TO_CURRENCY)
 
