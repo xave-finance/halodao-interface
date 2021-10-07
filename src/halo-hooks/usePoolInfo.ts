@@ -28,6 +28,7 @@ export type PoolInfo = {
 
 export type PoolTokenInfo = {
   address: string
+  mainnetAddress: string
   balance: number
   weightPercentage: number
   asToken: Token

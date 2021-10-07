@@ -63,6 +63,7 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
         poolTokensInfo.push({
           address: tokenAddress,
+          mainnetAddress: tokenAddress,
           balance: parseFloat(token.balance),
           weightPercentage: (100 / pool.totalWeight) * token.denormWeight,
           asToken: new Token(chainId, tokenAddress, token.decimals, token.symbol, token.name)

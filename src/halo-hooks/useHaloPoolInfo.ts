@@ -56,12 +56,14 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         tokens: [
           {
             address: token0Address,
+            mainnetAddress: token0Address,
             balance: +formatEther(totalLiquidityValue.individual_[0]),
             weightPercentage: 50,
             asToken: new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol)
           },
           {
             address: token1Address,
+            mainnetAddress: token1Address,
             balance: +formatEther(totalLiquidityValue.individual_[1]),
             weightPercentage: 50,
             asToken: new Token(chainId, token1Address, token1Decimals, token1Symbol, token1Symbol)
