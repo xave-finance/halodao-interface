@@ -7,5 +7,6 @@ export enum ZapErrorMessage {
 }
 
 export enum MetamaskError {
-  Cancelled = 4001
+  Cancelled = 4001,
+  Reverted = -32015
 }
