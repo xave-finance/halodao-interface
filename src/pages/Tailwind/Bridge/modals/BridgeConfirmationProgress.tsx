@@ -98,9 +98,7 @@ const BridgeConfirmationProgress = ({
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Complete
               </div>
-              <div className="text-lg text-gray-800 pl-2">
-                Transaction complete on {NETWORK_LABEL[originChainId]}
-              </div>
+              <div className="text-lg text-gray-800 pl-2">Transaction complete on {NETWORK_LABEL[originChainId]}</div>
               <a
                 className="font-semibold text-link pl-2"
                 href={getExplorerLink(chainId, successHash, 'transaction')}
@@ -147,9 +145,7 @@ const BridgeConfirmationProgress = ({
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Complete
               </div>
-              <div className="text-lg text-gray-800 pl-2">
-                Transaction complete on {NETWORK_LABEL[originChainId]}{' '}
-              </div>
+              <div className="text-lg text-gray-800 pl-2">Transaction complete on {NETWORK_LABEL[originChainId]} </div>
               <a
                 className="font-semibold text-link pl-2"
                 href={getExplorerLink(chainId, successHash, 'transaction')}
@@ -170,9 +166,7 @@ const BridgeConfirmationProgress = ({
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Block Confirmation
               </div>
-              <div className="text-lg text-gray-800 pl-2">
-                Block finality reached. You may check your balance now.
-              </div>
+              <div className="text-lg text-gray-800 pl-2">Block finality reached. You may check your balance now.</div>
             </div>
             <div className="flex items-center justify-center w-1/5">
               <img src={CompleteIcon} alt="Complete" />
