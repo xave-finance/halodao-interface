@@ -12,7 +12,7 @@ import { getContract } from 'utils'
 import { HALO } from '../constants'
 
 const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) => {
-  if (chainId !== ChainId.MATIC) {
+  if (chainId === ChainId.MAINNET) {
     return address
   }
 
@@ -126,17 +126,12 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     }
 
     // Calculate liquidity
-    const tokenPrice = await getTokensUSDPrice(
-      GetPriceBy.address,
-      chainId === ChainId.MATIC ? mainnetTokenAddresses : tokenAddresses
-    )
+    const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, mainnetTokenAddresses)
 
     for (const poolInfo of poolsInfo) {
       poolInfo.liquidity =
-        reserves[poolInfo.pid].token0 *
-          tokenPrice[chainId === ChainId.MATIC ? poolInfo.tokens[0].mainnetAddress : poolInfo.tokens[0].address] +
-        reserves[poolInfo.pid].token1 *
-          tokenPrice[chainId === ChainId.MATIC ? poolInfo.tokens[1].mainnetAddress : poolInfo.tokens[1].address]
+        reserves[poolInfo.pid].token0 * tokenPrice[poolInfo.tokens[0].mainnetAddress] +
+        reserves[poolInfo.pid].token1 * tokenPrice[poolInfo.tokens[1].mainnetAddress]
     }
 
     return { poolsInfo, tokenAddresses }
