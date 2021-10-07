@@ -50,7 +50,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainToken]) // eslint-disable-lines
+  }, [chainToken]) // eslint-disable-line
 
   useEffect(() => {
     if (!chainId || !library) return
@@ -68,8 +68,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+  }, [chainId]) // eslint-disable-line
 
   useEffect(() => {
     if (!chainId || !destinationChainId || !library || !chainToken) return
@@ -81,8 +80,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destinationChainId])
+  }, [destinationChainId]) // eslint-disable-line
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
