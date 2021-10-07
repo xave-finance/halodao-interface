@@ -9,7 +9,7 @@ type ChainConfirmationList = {
 
 const CHAIN_REQUIRED_CONFIRMATIONS: ChainConfirmationList = {
   [ChainId.MAINNET]: 20,
-  [ChainId.MATIC]: 192
+  [ChainId.MATIC]: 200
 }
 
 export default function useTransactionConfirmation(txHash: string) {

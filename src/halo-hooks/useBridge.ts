@@ -35,12 +35,12 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const [estimatedGas, setEstimatedGas] = useState('')
   const [successHash, setSuccessHash] = useState('')
 
-  const [token, setToken] = useState<any>(process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO)
+  const [chainToken, setChainToken] = useState<any>(process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO)
 
   useEffect(() => {
     if (!chainId || !library) return
 
-    const selectedToken = token[chainId as ChainId]
+    const selectedToken = chainToken[chainId as ChainId]
 
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
@@ -51,13 +51,12 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+  }, [chainToken]) // eslint-disable-line
 
   useEffect(() => {
     if (!chainId || !library) return
 
-    const selectedToken = token[chainId as ChainId]
+    const selectedToken = chainToken[chainId as ChainId]
     const bridgeContract = BRIDGE_CONTRACTS[selectedToken.address] as string
     setPrimaryBridgeContract(getContract(bridgeContract, PRIMARY_BRIDGE_ABI, library, account as string))
     if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
@@ -70,21 +69,19 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chainId])
+  }, [chainId]) // eslint-disable-line
 
   useEffect(() => {
-    if (!chainId || !destinationChainId || !library || !token) return
+    if (!chainId || !destinationChainId || !library || !chainToken) return
 
-    const selectedToken = token[chainId as ChainId]
+    const selectedToken = chainToken[chainId as ChainId]
 
     if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== destinationChainId) {
       setSecondaryBridgeContract(
         getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destinationChainId])
+  }, [destinationChainId]) // eslint-disable-line
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -105,6 +102,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const estimateDeposit = useCallback(
     async (chainIdDestination: number, inputValue: string) => {
       const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(parseEther(inputValue), chainIdDestination)
+      console.log('estimatedGassss:', estimatedGas)
       setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [primaryBridgeContract]
@@ -170,7 +168,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
+      if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -186,7 +184,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
 
   const fetchAllowance = useCallback(async () => {
     try {
-      if (token && chainId === ORIGINAL_TOKEN_CHAIN_ID[token.address]) {
+      if (chainToken && chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken.address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -198,7 +196,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     } catch (e) {
       console.error(e)
     }
-  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, token])
+  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, chainToken])
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -209,7 +207,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   }, [tokenContract, account])
 
   useEffect(() => {
-    if (account && primaryBridgeContract && secondaryBridgeContract && token) {
+    if (account && primaryBridgeContract && secondaryBridgeContract && chainToken) {
       fetchAllowance()
       fetchBalance()
     }
@@ -219,7 +217,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
       fetchBalance()
     }, 10000)
     return () => clearInterval(refreshInterval)
-  }, [account, fetchAllowance, fetchBalance, token, allowance, primaryBridgeContract, secondaryBridgeContract])
+  }, [account, fetchAllowance, fetchBalance, chainToken, allowance, primaryBridgeContract, secondaryBridgeContract])
 
   const deposit = async (amount: ethers.BigNumber, chainId: number): Promise<boolean> => {
     setButtonState(ButtonState.Confirming)
@@ -238,7 +236,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: token ? token.symbol : '',
+      label: chainToken ? chainToken.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -259,7 +257,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     }
 
     /** log burn to google analytics */
-    const targetToken = token[destinationChainId]
+    const targetToken = chainToken[destinationChainId]
     ReactGA.event({
       category: 'Bridge',
       action: 'burn',
@@ -290,8 +288,8 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     balance,
     estimatedGas,
     successHash,
-    token,
-    setToken
+    chainToken,
+    setChainToken
   }
 }
 

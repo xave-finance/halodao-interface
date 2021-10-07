@@ -8,7 +8,7 @@ import { shortenAddress } from 'utils'
 import { useShuttleFee } from 'halo-hooks/useBridge'
 import { ModalState } from '../../../../constants/buttonStates'
 
-interface ConfirmTransactionModalProps {
+interface BridgeTransactionModalProps {
   isVisible: boolean
   amount: string
   account: string | null | undefined
@@ -30,7 +30,7 @@ interface InProgressContentProps {
   tokenSymbol: string
 }
 
-const ConfirmTransactionModal = ({
+const BridgeTransactionModal = ({
   isVisible,
   amount,
   account,
@@ -45,7 +45,7 @@ const ConfirmTransactionModal = ({
   estimatedGas,
   primaryBridgeContract,
   setProgressState
-}: ConfirmTransactionModalProps) => {
+}: BridgeTransactionModalProps) => {
   const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(token.address, destinationChainId)
 
   useEffect(() => {
@@ -163,4 +163,4 @@ const ConfirmTransactionModal = ({
   )
 }
 
-export default ConfirmTransactionModal
+export default BridgeTransactionModal

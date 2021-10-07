@@ -1,148 +1,141 @@
 import { useCallback } from 'react'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token, WETH } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider } from './usePoolInfo'
-import PAIR from '../constants/sushiAbis/pair.json'
-import { useContract, useTokenContract } from 'hooks/useContract'
+import UNI_V2_ABI from '../constants/haloAbis/UniV2.json'
+import ERC20_ABI from '../constants/abis/erc20.json'
 import { formatEther } from '@ethersproject/units'
 import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { PoolIdLpTokenMap } from 'utils/poolInfo'
-import {
-  BNB_TOKEN_ADDRESS,
-  SUSHI_BUSD_BNB_ADDRESS,
-  BUSD_TOKEN_ADDRESS,
-  SUSHI_BUSD_XSGD_ADDRESS,
-  SUSHI_XSGD_ADDRESS,
-  XSGD_TOKEN_ADDRESS
-} from '../constants/pools'
+import { getContract } from 'utils'
+import { HALO } from '../constants'
+
+const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) => {
+  if (chainId === ChainId.MAINNET) {
+    return address
+  }
+
+  if (symbol.toLowerCase() === 'weth') {
+    return WETH[ChainId.MAINNET]?.address ?? address
+  } else if (symbol.toLowerCase() === 'wrnbw') {
+    return HALO[ChainId.MAINNET]?.address ?? address
+  }
+  return address
+}
 
 export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
-  const { chainId } = useActiveWeb3React()
+  const { chainId, library, account } = useActiveWeb3React()
 
-  // BSC Testnet Pairs
-  const BusdBnbSLPContract = useContract(SUSHI_BUSD_BNB_ADDRESS, PAIR)
-  const BusdXsgdSLPContract = useContract(SUSHI_BUSD_XSGD_ADDRESS, PAIR)
-
-  // Matic Testnet Pairs
-  const SLPTokenContract = useTokenContract(SUSHI_XSGD_ADDRESS)
+  const WETH_ADDRESS = WETH[chainId || ChainId.MAINNET].address
 
   const fetchPoolInfo = useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
     const tokenAddresses: string[] = []
+    const mainnetTokenAddresses: string[] = []
 
-    // get token prices from main net
-    const tokenPrice = await getTokensUSDPrice(GetPriceBy.id, ['busd', 'xsgd', 'binancecoin', 'sushi'])
-
-    // get reserves from the contract
-    let busdBnbReserves: any
-    let busdXsgdReserves: any
-    let slpTotalSupply = 0
-
-    if (chainId === ChainId.BSC_TESTNET) {
-      busdBnbReserves = await BusdBnbSLPContract?.getReserves()
-      busdXsgdReserves = await BusdXsgdSLPContract?.getReserves()
+    if (!chainId || !library) {
+      return { poolsInfo, tokenAddresses }
     }
 
-    if (chainId === ChainId.MATIC_TESTNET) {
-      slpTotalSupply = +formatEther(await SLPTokenContract?.totalSupply())
-    }
-
-    if (!chainId) return { poolsInfo, tokenAddresses }
-
-    /**
-     * For now we'll hardcode the pool token addresses & other info
-     * Total pool value is calculated as reserves * coingecko token price in USD
-     */
-    pidLpTokenMap.forEach(map => {
-      if (map.lpToken === SUSHI_BUSD_BNB_ADDRESS) {
-        poolsInfo.push({
-          pid: map.pid,
-          pair: 'BUSD/BNB',
-          address: getAddress(map.lpToken),
-          addLiquidityUrl: `https://app.sushi.com/add/${BNB_TOKEN_ADDRESS}/${BUSD_TOKEN_ADDRESS}`,
-          liquidity:
-            +formatEther(busdBnbReserves[0]) * tokenPrice['binancecoin'] +
-            +formatEther(busdBnbReserves[1]) * tokenPrice['busd'],
-          tokens: [
-            {
-              address: getAddress(BUSD_TOKEN_ADDRESS),
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(BUSD_TOKEN_ADDRESS), 18, 'BUSD', 'Binance USD')
-            },
-            {
-              address: getAddress(BNB_TOKEN_ADDRESS),
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(BNB_TOKEN_ADDRESS), 18, 'BNB', 'Wrapped BNB')
-            }
-          ],
-          asToken: new Token(chainId, getAddress(map.lpToken), 18, 'SLP', 'BUSD/BNB SLP'),
-          allocPoint: 0,
-          provider: PoolProvider.Sushi
-        })
-      } else if (map.lpToken === SUSHI_BUSD_XSGD_ADDRESS) {
-        poolsInfo.push({
-          pid: map.pid,
-          pair: 'xSGD/BUSD',
-          address: getAddress(map.lpToken),
-          addLiquidityUrl: `https://app.sushi.com/add/${BUSD_TOKEN_ADDRESS}/${XSGD_TOKEN_ADDRESS}`,
-          liquidity:
-            +formatEther(busdXsgdReserves[0]) * tokenPrice['xsgd'] +
-            +formatEther(busdXsgdReserves[1]) * tokenPrice['busd'],
-          tokens: [
-            {
-              address: getAddress(BUSD_TOKEN_ADDRESS),
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(BUSD_TOKEN_ADDRESS), 18, 'BUSD', 'Binance USD')
-            },
-            {
-              address: getAddress(XSGD_TOKEN_ADDRESS),
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(XSGD_TOKEN_ADDRESS), 18, 'xSGD', 'Singapore Dollar')
-            }
-          ],
-          asToken: new Token(chainId, getAddress(map.lpToken), 18, 'SLP', 'BUSD/xSGD SLP'),
-          allocPoint: 0,
-          provider: PoolProvider.Sushi
-        })
-      } else if (map.lpToken === SUSHI_XSGD_ADDRESS) {
-        poolsInfo.push({
-          pid: map.pid,
-          pair: 'SUSHI/xSGD',
-          address: getAddress(map.lpToken),
-          addLiquidityUrl: `https://app.sushi.com/`,
-          liquidity: slpTotalSupply || 1 * (tokenPrice['sushi'] + tokenPrice['xsgd']),
-          tokens: [
-            {
-              address: '',
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(BUSD_TOKEN_ADDRESS), 18, 'SUSHI', 'Sushi Token')
-            },
-            {
-              address: '',
-              balance: 0,
-              weightPercentage: 0.5,
-              asToken: new Token(chainId, getAddress(XSGD_TOKEN_ADDRESS), 18, 'xSGD', 'Singapore Dollar')
-            }
-          ],
-          asToken: new Token(chainId, getAddress(map.lpToken), 18, 'SLP', 'SUSHI/xSGD SLP'),
-          allocPoint: 0,
-          provider: PoolProvider.Sushi
-        })
+    const reserves: {
+      [pid: number]: {
+        token0: number
+        token1: number
       }
-    })
+    } = {}
 
-    tokenAddresses.push(BUSD_TOKEN_ADDRESS)
-    tokenAddresses.push(BNB_TOKEN_ADDRESS)
-    tokenAddresses.push(XSGD_TOKEN_ADDRESS)
+    for (const map of pidLpTokenMap) {
+      const poolAddress = getAddress(map.lpToken)
+      const PoolContract = getContract(poolAddress, UNI_V2_ABI, library, account ?? undefined)
+
+      const promises: any[] = []
+      promises.push(PoolContract?.token0())
+      promises.push(PoolContract?.token1())
+      promises.push(PoolContract?.getReserves())
+
+      const results = await Promise.all(promises)
+      const token1Address = getAddress(results[0])
+      const token2Address = getAddress(results[1])
+      const totalReserves = results[2]
+
+      reserves[map.pid] = {
+        token0: +formatEther(totalReserves[0]),
+        token1: +formatEther(totalReserves[1])
+      }
+
+      let token1Symbol = ''
+      if (token1Address === WETH_ADDRESS) {
+        token1Symbol = 'ETH'
+      } else {
+        const Token1Contract = getContract(token1Address, ERC20_ABI, library, account ?? undefined)
+        token1Symbol = await Token1Contract?.symbol()
+      }
+
+      let token2Symbol = ''
+      if (token2Address === WETH_ADDRESS) {
+        token2Symbol = 'ETH'
+      } else {
+        const Token2Contract = getContract(token2Address, ERC20_ABI, library, account ?? undefined)
+        token2Symbol = await Token2Contract?.symbol()
+      }
+
+      const token1Param = token1Symbol === 'ETH' ? 'ETH' : token1Address
+      const token2Param = token2Symbol === 'ETH' ? 'ETH' : token2Address
+
+      const token1MainnetAddress = getMainnetAddress(token1Address, token1Symbol, chainId)
+      const token2MainnetAddress = getMainnetAddress(token2Address, token2Symbol, chainId)
+
+      poolsInfo.push({
+        pid: map.pid,
+        pair: `${token1Symbol}/${token2Symbol}`,
+        address: getAddress(map.lpToken),
+        addLiquidityUrl: `https://app.sushi.com/add/${token1Param}/${token2Param}`,
+        liquidity: 0,
+        tokens: [
+          {
+            address: token1Address,
+            mainnetAddress: token1MainnetAddress,
+            balance: +formatEther(totalReserves[0]),
+            weightPercentage: 50,
+            asToken: new Token(chainId, token1Address, 18, token1Symbol, token1Symbol)
+          },
+          {
+            address: token2Address,
+            mainnetAddress: token2MainnetAddress,
+            balance: +formatEther(totalReserves[1]),
+            weightPercentage: 50,
+            asToken: new Token(chainId, token2Address, 18, token2Symbol, token2Symbol)
+          }
+        ],
+        asToken: new Token(chainId, poolAddress, 18, 'SLP', 'SLP'),
+        allocPoint: 0,
+        provider: PoolProvider.Sushi
+      })
+
+      tokenAddresses.push(token1Address)
+      tokenAddresses.push(token2Address)
+
+      if (chainId !== ChainId.MAINNET) {
+        tokenAddresses.push(token1MainnetAddress)
+        tokenAddresses.push(token2MainnetAddress)
+      }
+
+      mainnetTokenAddresses.push(token1MainnetAddress)
+      mainnetTokenAddresses.push(token2MainnetAddress)
+    }
+
+    // Calculate liquidity
+    const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, mainnetTokenAddresses)
+
+    for (const poolInfo of poolsInfo) {
+      poolInfo.liquidity =
+        reserves[poolInfo.pid].token0 * tokenPrice[poolInfo.tokens[0].mainnetAddress] +
+        reserves[poolInfo.pid].token1 * tokenPrice[poolInfo.tokens[1].mainnetAddress]
+    }
 
     return { poolsInfo, tokenAddresses }
-  }, [pidLpTokenMap, chainId, BusdBnbSLPContract, BusdXsgdSLPContract, SLPTokenContract])
+  }, [pidLpTokenMap, chainId, library, account, WETH_ADDRESS])
 
   return fetchPoolInfo
 }
