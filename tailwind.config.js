@@ -18,7 +18,9 @@ module.exports = {
           gradientTo: '#2DB7C4',
           gray: '#333333',
           grayLight: '#E0E0E0',
-          green: '#EDFFEF'
+          misc: {
+            green: '#EDFFEF'
+          }
         },
         secondary: {
           DEFAULT: '#A38DD8',

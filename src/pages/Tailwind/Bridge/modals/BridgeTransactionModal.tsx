@@ -7,7 +7,6 @@ import SwitchIcon from 'assets/svg/switch-icon.svg'
 import { shortenAddress } from 'utils'
 import { useShuttleFee } from 'halo-hooks/useBridge'
 import { ModalState } from '../../../../constants/buttonStates'
-import { consoleLog } from 'utils/simpleLogger'
 
 interface ConfirmTransactionModalProps {
   isVisible: boolean
@@ -148,74 +147,6 @@ const ConfirmTransactionModal = ({
           />
         </div>
       </>
-    )
-  }
-
-  const InProgressContent = ({ amount, tokenSymbol }: InProgressContentProps) => {
-    return (
-      <div className="p-4">
-        <div className="py-12 flex justify-center">
-          <img className="animate-spin" src={SpinnerIcon} alt="In progress..." />
-        </div>
-        <div className="text-center font-semibold text-2xl mb-2">Waiting for confirmation</div>
-        <div className="text-center font-bold mb-2">
-          Bridging{' '}
-          <b>
-            {amount} {tokenSymbol}
-          </b>{' '}
-        </div>
-        <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
-      </div>
-    )
-  }
-
-  interface SuccessContentProps {
-    chainId: ChainId
-    successHash: string
-  }
-
-  const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
-    const { confirmations, requiredConfirmations, done } = useTransactionConfirmation(successHash)
-    return (
-      <div className="p-4">
-        <div className="py-12 flex justify-center">
-          <img src={ArrowIcon} alt="Confirmed" />
-        </div>
-
-        <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="by-secondary-lighter text-center text-sm text-gray-500 mb-2 border border-bg-secondary-light radius-lg p-4">
-          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
-        </div>
-        <div className="text-center">
-          {/* Temporary code */}
-          {consoleLog('SuccessContent confirmations:', confirmations)}
-          {consoleLog('SuccessContent requiredConfirmations:', requiredConfirmations)}
-          {consoleLog('SuccessContent done:', done)}
-          <a
-            className="font-semibold text-link"
-            href={getExplorerLink(chainId, successHash, 'transaction')}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View on Chain Explorer
-          </a>
-        </div>
-        <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
-          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
-        </div>
-        <div className="mt-2">
-          <PrimaryButton
-            title="Close"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              onSuccessConfirm()
-              setState(ModalState.NotConfirmed)
-            }}
-          />
-        </div>
-      </div>
     )
   }
 

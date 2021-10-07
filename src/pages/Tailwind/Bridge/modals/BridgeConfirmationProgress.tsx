@@ -9,14 +9,7 @@ import { NETWORK_LABEL } from 'constants/networks'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import useTransactionConfirmation from 'hooks/useTransactionConfirmation'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-
-interface BridgeConfirmationProgressProps {
-  originChainId: ChainId
-  destinationChainId: ChainId
-  state: ModalState
-  successHash: string
-  setProgressState: (isVisible: boolean) => void
-}
+import { consoleLog } from 'utils/simpleLogger'
 
 const BridgeConfirmationProgress = ({
   originChainId,
@@ -24,20 +17,24 @@ const BridgeConfirmationProgress = ({
   state,
   successHash,
   setProgressState
-}: BridgeConfirmationProgressProps) => {
-  interface InProgressContentProps {
-    chainId: ChainId
-  }
-
+}: {
+  originChainId: ChainId
+  destinationChainId: ChainId
+  state: ModalState
+  successHash: string
+  setProgressState: (isVisible: boolean) => void
+}) => {
   const [finalityValue, setFinalityValue] = useState(false)
 
-  interface NewTransactionButtonProps {
+  const NewTransactionButton = ({
+    type,
+    state,
+    onClick
+  }: {
     type: PrimaryButtonType
     state: PrimaryButtonState
     onClick?: () => void
-  }
-
-  const NewTransactionButton = ({ type, state, onClick }: NewTransactionButtonProps) => {
+  }) => {
     return (
       <div className="mt-6">
         <PrimaryButton type={type} title="New Transaction" state={state} onClick={onClick} />
@@ -54,20 +51,20 @@ const BridgeConfirmationProgress = ({
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Transaction Pending
               </div>
-              <div className="text-lg text-primary-gray pl-2">Waiting for confirmation </div>
+              <div className="text-lg text-gray-800 pl-2">Waiting for confirmation </div>
             </div>
             <div className="w-1/5">
               <img className="animate-spin" src={SpinnerIcon} width="64px" alt="In progress..." />
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-center mt-4 bg-primary-grayLight rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-gray-200 rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Block Confirmation
               </div>
-              <div className="text-lg text-primary-gray pl-2">
+              <div className="text-lg text-gray-800 pl-2">
                 Please wait a few minutes for your balance to update on {NETWORK_LABEL[destinationChainId]}
               </div>
             </div>
@@ -92,16 +89,16 @@ const BridgeConfirmationProgress = ({
     return (
       <>
         {/* Temporary code */}
-        {console.log('SuccessContent confirmations:', confirmations)}
-        {console.log('SuccessContent requiredConfirmations:', requiredConfirmations)}
-        {console.log('SuccessContent done:', done)}
-        <div className="flex flex-col justify-center mt-4 bg-primary-green rounded-lg p-4 w-full">
+        {consoleLog('SuccessContent confirmations:', confirmations)}
+        {consoleLog('SuccessContent requiredConfirmations:', requiredConfirmations)}
+        {consoleLog('SuccessContent done:', done)}
+        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Complete
               </div>
-              <div className="text-lg text-primary-gray pl-2">
+              <div className="text-lg text-gray-800 pl-2">
                 Transaction complete on {NETWORK_LABEL[originChainId]}
               </div>
               <a
@@ -124,7 +121,7 @@ const BridgeConfirmationProgress = ({
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Block Confirmation
               </div>
-              <div className="text-lg text-primary-gray pl-2">
+              <div className="text-lg text-gray-800 pl-2">
                 Please wait a few minutes for your balance to update on {NETWORK_LABEL[destinationChainId]}
               </div>
             </div>
@@ -144,13 +141,13 @@ const BridgeConfirmationProgress = ({
   const FinalityContent = ({ chainId, successHash }: SuccessContentProps) => {
     return (
       <>
-        <div className="flex flex-col justify-center mt-4 bg-primary-green rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Complete
               </div>
-              <div className="text-lg text-primary-gray pl-2">
+              <div className="text-lg text-gray-800 pl-2">
                 Transaction complete on {NETWORK_LABEL[originChainId]}{' '}
               </div>
               <a
@@ -167,13 +164,13 @@ const BridgeConfirmationProgress = ({
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-center mt-4 bg-primary-green rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
                 Block Confirmation
               </div>
-              <div className="text-lg text-primary-gray pl-2">
+              <div className="text-lg text-gray-800 pl-2">
                 Block finality reached. You may check your balance now.
               </div>
             </div>
@@ -182,15 +179,13 @@ const BridgeConfirmationProgress = ({
             </div>
           </div>
         </div>
-        {
-          <NewTransactionButton
-            type={PrimaryButtonType.Default}
-            state={PrimaryButtonState.Enabled}
-            onClick={async () => {
-              setProgressState(false)
-            }}
-          />
-        }
+        <NewTransactionButton
+          type={PrimaryButtonType.Default}
+          state={PrimaryButtonState.Enabled}
+          onClick={async () => {
+            setProgressState(false)
+          }}
+        />
       </>
     )
   }
