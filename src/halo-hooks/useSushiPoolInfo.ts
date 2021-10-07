@@ -116,7 +116,7 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       tokenAddresses.push(token1Address)
       tokenAddresses.push(token2Address)
 
-      if (chainId === ChainId.MATIC) {
+      if (chainId !== ChainId.MAINNET) {
         tokenAddresses.push(token1MainnetAddress)
         tokenAddresses.push(token2MainnetAddress)
       }
