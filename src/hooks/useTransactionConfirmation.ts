@@ -8,7 +8,7 @@ type ChainConfirmationList = {
 }
 
 const CHAIN_REQUIRED_CONFIRMATIONS: ChainConfirmationList = {
-  [ChainId.MAINNET]: 20,
+  [ChainId.MAINNET]: 24,
   [ChainId.MATIC]: 200
 }
 
