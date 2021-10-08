@@ -21,7 +21,11 @@ module.exports = {
           DEFAULT: '#A38DD8',
           light: '#FA6F44',
           lighter: '#FFE6DE',
+          lightest: '#F0EDFF',
           alternate: '#5E5E5E'
+        },
+        misc: {
+          green: '#EDFFEF'
         },
         warning: {
           DEFAULT: '#FA6F44'

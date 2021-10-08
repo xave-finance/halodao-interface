@@ -16,6 +16,7 @@ import ReactGA from 'react-ga'
 import { ButtonState } from '../constants/buttonStates'
 import { getGasRangeEstimation, GasModes, GasModeRangeData } from 'utils/ethGasEstimator'
 import { HALO, MOCK_TOKEN } from '../constants'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
@@ -101,6 +102,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const estimateDeposit = useCallback(
     async (chainIdDestination: number, inputValue: string) => {
       const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(parseEther(inputValue), chainIdDestination)
+      console.log('estimatedGassss:', estimatedGas)
       setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [primaryBridgeContract]
@@ -109,7 +111,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
       try {
-        console.log('chainIdDestination', chainIdDestination)
+        consoleLog('chainIdDestination', chainIdDestination)
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
         setSuccessHash(tx.hash)

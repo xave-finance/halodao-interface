@@ -18,6 +18,8 @@ import useBridge, { useMinimumAmount } from 'halo-hooks/useBridge'
 import { useActiveWeb3React } from 'hooks'
 import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
 import { ButtonState, ModalState } from '../../../constants/buttonStates'
+import BridgeConfirmationProgress from './modals/BridgeConfirmationProgress'
+import { consoleLog } from 'utils/simpleLogger'
 
 const BridgePanel = () => {
   const { account, error, chainId } = useActiveWeb3React()
@@ -26,6 +28,7 @@ const BridgePanel = () => {
   const [showModal, setShowModal] = useState(false)
   const [buttonState, setButtonState] = useState(ButtonState.EnterAmount)
   const [modalState, setModalState] = useState(ModalState.NotConfirmed)
+  const [showProgress, setShowProgress] = useState(false)
 
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
@@ -103,10 +106,12 @@ const BridgePanel = () => {
           onClick={() => {
             if (inputValue) {
               setButtonState(ButtonState.Confirming)
-
-              if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
+              console.log('chainToken:', chainToken)
+              if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
+                console.log('1')
                 estimateBurnWrappedToken(inputValue)
               } else {
+                console.log('2')
                 estimateDeposit(destinationChainId, inputValue)
               }
               setModalState(ModalState.NotConfirmed)
@@ -274,52 +279,65 @@ const BridgePanel = () => {
       <div>
         <div className="flex items-start bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
           <div className="w-full">
-            <div className="flex md:space-x-4 mt-2">
-              <div className="mb-2 w-2/5">
-                <p className="text-secondary-alternate font-semibold">From</p>
-              </div>
-              <div className="mb-2 w-1/5"></div>
-              <div className="mb-2 w-2/5">
-                <p className="text-secondary-alternate font-semibold">To</p>
-              </div>
-            </div>
-            <div className="flex space-x-4">
-              <SelectedNetworkPanel
-                mode={NetworkModalMode.PrimaryBridge}
-                chainId={chainId ?? ChainId.MAINNET}
-                onChangeNetwork={() => console.log('hello')}
-              />
-              <div className="mb-2 w-1/5 flex items-center justify-center">
-                <div className="p-2 bg-primary-lighter rounded">
-                  <img src={ArrowIcon} alt="Switch" />
+            {showProgress === false && (
+              <>
+                <div className="flex md:space-x-4 mt-2">
+                  <div className="mb-2 w-2/5">
+                    <p className="text-secondary-alternate font-semibold">From</p>
+                  </div>
+                  <div className="mb-2 w-1/5"></div>
+                  <div className="mb-2 w-2/5">
+                    <p className="text-secondary-alternate font-semibold">To</p>
+                  </div>
                 </div>
-              </div>
-              <SelectedNetworkPanel
-                mode={NetworkModalMode.SecondaryBridge}
-                chainId={destinationChainId}
-                onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
-                tokenAddress={
-                  chainToken[chainId as ChainId]
-                    ? chainToken[chainId as ChainId].address
-                    : chainToken[ChainId.MATIC]?.address
-                }
-              />
-            </div>
+                <div className="flex space-x-4">
+                  <SelectedNetworkPanel
+                    mode={NetworkModalMode.PrimaryBridge}
+                    chainId={chainId ?? ChainId.MAINNET}
+                    onChangeNetwork={() => consoleLog('')}
+                  />
+                  <div className="mb-2 w-1/5 flex items-center justify-center">
+                    <div className="p-2 bg-primary-lighter rounded">
+                      <img src={ArrowIcon} alt="Switch" />
+                    </div>
+                  </div>
+                  <SelectedNetworkPanel
+                    mode={NetworkModalMode.SecondaryBridge}
+                    chainId={destinationChainId}
+                    onChangeNetwork={(chainId: number) => setDestinationChainId(chainId)}
+                    tokenAddress={
+                      chainToken[chainId as ChainId]
+                        ? chainToken[chainId as ChainId].address
+                        : chainToken[ChainId.MATIC]?.address
+                    }
+                  />
+                </div>
 
-            <p className="mt-2 font-semibold text-secondary-alternate">Amount</p>
+                <p className="mt-2 font-semibold text-secondary-alternate">Amount</p>
 
-            <div className="mt-2">
-              <BridgeInput
-                currency={chainToken[chainId as ChainId]}
-                value={inputValue}
-                canSelectToken={true}
-                didChangeValue={val => setInputValue(val)}
-                showBalance={true}
-                showMax={true}
-                onSelectToken={setChainToken}
+                <div className="mt-2">
+                  <BridgeInput
+                    currency={chainToken[chainId as ChainId]}
+                    value={inputValue}
+                    canSelectToken={true}
+                    didChangeValue={val => setInputValue(val)}
+                    showBalance={true}
+                    showMax={true}
+                    onSelectToken={setChainToken}
+                  />
+                </div>
+                <MainContent />
+              </>
+            )}
+            {showProgress === true && (
+              <BridgeConfirmationProgress
+                originChainId={chainId ?? ChainId.MAINNET}
+                destinationChainId={destinationChainId}
+                state={modalState}
+                successHash={successHash}
+                setProgressState={setShowProgress}
               />
-            </div>
-            <MainContent />
+            )}
           </div>
         </div>
       </div>
@@ -336,8 +354,10 @@ const BridgePanel = () => {
             if (await burn(ethers.utils.parseEther(`${inputValue}`))) {
               setModalState(ModalState.Successful)
               setButtonStates()
+              setInputValue('')
             } else {
               setShowModal(false)
+              setShowProgress(false)
               setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
@@ -345,8 +365,10 @@ const BridgePanel = () => {
             if (await deposit(ethers.utils.parseEther(`${inputValue}`), destinationChainId)) {
               setModalState(ModalState.Successful)
               setButtonStates()
+              setInputValue('')
             } else {
               setShowModal(false)
+              setShowProgress(false)
               setModalState(ModalState.NotConfirmed)
               setButtonState(ButtonState.Retry)
             }
@@ -362,9 +384,9 @@ const BridgePanel = () => {
         destinationChainId={destinationChainId}
         state={modalState}
         setState={setModalState}
-        successHash={successHash}
         estimatedGas={estimatedGas}
         primaryBridgeContract={primaryBridgeContract}
+        setProgressState={setShowProgress}
       />
     </>
   )

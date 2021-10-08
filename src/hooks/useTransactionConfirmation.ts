@@ -8,14 +8,14 @@ type ChainConfirmationList = {
 }
 
 const CHAIN_REQUIRED_CONFIRMATIONS: ChainConfirmationList = {
-  [ChainId.MAINNET]: 20,
-  [ChainId.MATIC]: 192
+  [ChainId.MAINNET]: 24,
+  [ChainId.MATIC]: 200
 }
 
 export default function useTransactionConfirmation(txHash: string) {
   const { library, chainId } = useActiveWeb3React()
 
-  const [confirmations, setConfirmations] = useState(20)
+  const [confirmations, setConfirmations] = useState(0)
   const requiredConfirmations = CHAIN_REQUIRED_CONFIRMATIONS[chainId as ChainId] as number
   const [done, setDone] = useState(false)
   const fetchTransactionReceipt = useCallback(async () => {
