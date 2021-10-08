@@ -92,7 +92,7 @@ const BridgeConfirmationProgress = ({
         {consoleLog('SuccessContent confirmations:', confirmations)}
         {consoleLog('SuccessContent requiredConfirmations:', requiredConfirmations)}
         {consoleLog('SuccessContent done:', done)}
-        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
@@ -139,7 +139,7 @@ const BridgeConfirmationProgress = ({
   const FinalityContent = ({ chainId, successHash }: SuccessContentProps) => {
     return (
       <>
-        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">
@@ -160,7 +160,7 @@ const BridgeConfirmationProgress = ({
             </div>
           </div>
         </div>
-        <div className="flex flex-col justify-center mt-4 bg-primary-misc-green rounded-lg p-4 w-full">
+        <div className="flex flex-col justify-center mt-4 bg-misc-green rounded-lg p-4 w-full">
           <div className="flex flex-row">
             <div className="w-4/5">
               <div className="text-sm text-primary-hover font-bold mb-2 rounded-lg p-2 uppercase tracking-wide">

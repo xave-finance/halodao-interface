@@ -15,12 +15,7 @@ module.exports = {
           hover: '#15006d',
           disabled: '#9182c6',
           gradientVia: '#5521B6',
-          gradientTo: '#2DB7C4',
-          gray: '#333333',
-          grayLight: '#E0E0E0',
-          misc: {
-            green: '#EDFFEF'
-          }
+          gradientTo: '#2DB7C4'
         },
         secondary: {
           DEFAULT: '#A38DD8',
@@ -28,6 +23,9 @@ module.exports = {
           lighter: '#FFE6DE',
           lightest: '#F0EDFF',
           alternate: '#5E5E5E'
+        },
+        misc: {
+          green: '#EDFFEF'
         },
         warning: {
           DEFAULT: '#FA6F44'
