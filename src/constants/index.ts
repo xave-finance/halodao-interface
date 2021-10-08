@@ -83,6 +83,23 @@ export const TRUE_GBP: ChainTokenMap = {
   )
 }
 
+export const MOCK_TOKEN: ChainTokenMap = {
+  [ChainId.MATIC]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_MOCK_TOKEN_MAINNET || ZERO_ADDRESS,
+    18,
+    'Mock Token',
+    'MOCK'
+  ),
+  [ChainId.XDAI]: new Token(
+    ChainId.MATIC,
+    process.env.REACT_APP_MOCK_TOKEN_MATIC || ZERO_ADDRESS,
+    18,
+    'Wrapped Mock Token',
+    'wMOCK'
+  )
+}
+
 // HALO Token Instance
 export const HALO: ChainTokenMap = {
   // Mainnets

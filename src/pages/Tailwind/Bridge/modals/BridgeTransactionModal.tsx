@@ -1,18 +1,15 @@
-import React from 'react'
-import { ChainId, Currency } from '@sushiswap/sdk'
+import React, { useEffect } from 'react'
+import { ChainId, Currency, Token } from '@sushiswap/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
-import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
-import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import SwitchIcon from 'assets/svg/switch-icon.svg'
-import { shortenAddress, getExplorerLink } from 'utils'
-import { calculateShuttleFee } from 'utils/bridge'
+import { shortenAddress } from 'utils'
+import { useShuttleFee } from 'halo-hooks/useBridge'
 import { ModalState } from '../../../../constants/buttonStates'
 
-interface ConfirmTransactionModalProps {
+interface BridgeTransactionModalProps {
   isVisible: boolean
-  currency: Currency
   amount: string
   account: string | null | undefined
   confirmLogic: () => void
@@ -20,23 +17,21 @@ interface ConfirmTransactionModalProps {
   onSuccessConfirm: () => void
   originChainId: ChainId
   destinationChainId: ChainId
-  tokenSymbol: string
-  wrappedTokenSymbol: string
+  token: Token
   state: ModalState
   setState: (state: ModalState) => void
-  successHash: string
   estimatedGas: string
+  primaryBridgeContract: any
+  setProgressState: (isProgressVisible: boolean) => void
 }
 
 interface InProgressContentProps {
   amount: string
   tokenSymbol: string
-  wrappedTokenSymbol: string
 }
 
-const ConfirmTransactionModal = ({
+const BridgeTransactionModal = ({
   isVisible,
-  currency,
   amount,
   account,
   confirmLogic,
@@ -44,13 +39,19 @@ const ConfirmTransactionModal = ({
   onSuccessConfirm,
   originChainId,
   destinationChainId,
-  tokenSymbol,
-  wrappedTokenSymbol,
+  token,
   state,
   setState,
-  successHash,
-  estimatedGas
-}: ConfirmTransactionModalProps) => {
+  estimatedGas,
+  primaryBridgeContract,
+  setProgressState
+}: BridgeTransactionModalProps) => {
+  const { getFee, lowerBoundFee, upperBoundFee } = useShuttleFee(token.address, destinationChainId)
+
+  useEffect(() => {
+    getFee()
+  }, [primaryBridgeContract, getFee])
+
   const ConfirmContent = () => {
     return (
       <>
@@ -78,14 +79,14 @@ const ConfirmTransactionModal = ({
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Asset</span>
             <div className="mt-1">
-              <span>{currency.name}</span>
+              <span>{token.name}</span>
             </div>
           </div>
           <div className="mt-4">
             <span className="text-sm text-secondary-alternate">Amount</span>
             <div className="mt-1">
               <span>{amount} </span>
-              <span>{currency.symbol}</span>
+              <span>{token.symbol}</span>
             </div>
           </div>
           <div className="mt-4">
@@ -104,19 +105,28 @@ const ConfirmTransactionModal = ({
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Shuttle fee (estimated)</div>
+              <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
                 <div>
-                  {calculateShuttleFee(currency.symbol as string)} {currency.symbol}
+                  {lowerBoundFee.toFixed(2)} {token.symbol}
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between mb-2 font-bold">
+              <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
+              <div>
+                <div>
+                  {upperBoundFee.toFixed(2)} {token.symbol}
                 </div>
               </div>
             </div>
             <div className="border-b border-black w-full"></div>
             <div className="flex justify-between mb-2 font-bold">
-              <div className="text-secondary-alternate">Amount after transaction</div>
+              <div className="text-secondary-alternate">Amount after fees</div>
               <div>
                 <div>
-                  {Number(Number(amount) - calculateShuttleFee(currency.symbol as string))} {currency.symbol}
+                  {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
+                  {token.symbol}
                 </div>
               </div>
             </div>
@@ -126,6 +136,8 @@ const ConfirmTransactionModal = ({
             state={PrimaryButtonState.Enabled}
             onClick={async () => {
               setState(ModalState.InProgress)
+              onSuccessConfirm()
+              setProgressState(true)
               try {
                 await confirmLogic()
               } catch (e) {
@@ -138,66 +150,6 @@ const ConfirmTransactionModal = ({
     )
   }
 
-  const InProgressContent = ({ amount, tokenSymbol, wrappedTokenSymbol }: InProgressContentProps) => {
-    return (
-      <div className="p-4">
-        <div className="py-12 flex justify-center">
-          <img className="animate-spin" src={SpinnerIcon} alt="In progress..." />
-        </div>
-        <div className="text-center font-semibold text-2xl mb-2">Waiting for confirmation</div>
-        <div className="text-center font-bold mb-2">
-          Bridging{' '}
-          <b>
-            {amount} {tokenSymbol}
-          </b>{' '}
-          {console.log('wrappedTokenSymbol:', wrappedTokenSymbol)}
-        </div>
-        <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>
-      </div>
-    )
-  }
-
-  interface SuccessContentProps {
-    chainId: ChainId
-    successHash: string
-  }
-
-  const SuccessContent = ({ chainId, successHash }: SuccessContentProps) => {
-    return (
-      <div className="p-4">
-        <div className="py-12 flex justify-center">
-          <img src={ArrowIcon} alt="Confirmed" />
-        </div>
-
-        <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
-        <div className="text-center mb-2">
-          <a
-            className="font-semibold text-link"
-            href={getExplorerLink(chainId, successHash, 'transaction')}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View on Chain Explorer
-          </a>
-        </div>
-        <div className="bg-secondary-lighter text-center text-sm font-semibold mb-2 border-2 border-secondary-light rounded-lg p-2">
-          Your transaction is complete on {NETWORK_LABEL[originChainId]}. Please wait a few minutes for your balance to
-          update on {NETWORK_LABEL[destinationChainId]}
-        </div>
-        <div className="mt-2">
-          <PrimaryButton
-            title="Close"
-            state={PrimaryButtonState.Enabled}
-            onClick={() => {
-              onSuccessConfirm()
-              setState(ModalState.NotConfirmed)
-            }}
-          />
-        </div>
-      </div>
-    )
-  }
-
   return (
     <BaseModal
       isVisible={isVisible}
@@ -207,12 +159,8 @@ const ConfirmTransactionModal = ({
       }}
     >
       {state === ModalState.NotConfirmed && <ConfirmContent />}
-      {state === ModalState.InProgress && (
-        <InProgressContent amount={amount} tokenSymbol={tokenSymbol} wrappedTokenSymbol={wrappedTokenSymbol} />
-      )}
-      {state === ModalState.Successful && <SuccessContent chainId={originChainId} successHash={successHash} />}
     </BaseModal>
   )
 }
 
-export default ConfirmTransactionModal
+export default BridgeTransactionModal

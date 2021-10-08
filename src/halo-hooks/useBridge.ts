@@ -7,24 +7,23 @@ import PRIMARY_BRIDGE_ABI from 'constants/haloAbis/PrimaryBridge.json'
 import SECONDARY_BRIDGE_ABI from 'constants/haloAbis/SecondaryBridge.json'
 import TOKEN_ABI from 'constants/abis/erc20.json'
 import { getContract } from 'utils'
-import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
+import { BRIDGE_CONTRACTS, ORIGINAL_TOKEN_CHAIN_ID, ORIGINAL_TOKEN_CHAIN_ADDRESS } from 'constants/bridge'
 import { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import { toNumber } from 'utils/formatNumber'
 import { formatEther, parseEther } from 'ethers/lib/utils'
+import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import ReactGA from 'react-ga'
 import { ButtonState } from '../constants/buttonStates'
+import { getGasRangeEstimation, GasModes, GasModeRangeData } from 'utils/ethGasEstimator'
+import { HALO, MOCK_TOKEN } from '../constants'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface BridgeProps {
   setButtonState: (buttonState: ButtonState) => void
   setApproveState: (approveState: ApproveButtonState) => void
-  setInputValue: (input: string) => void
-  setChainToken: (chainToken: any) => void
-  setToken: (token: any) => void
-  token: any
-  chainToken: any
 }
 
-const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken, setToken, token }: BridgeProps) => {
+const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
   const { account, chainId, library } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
   const [tokenContract, setTokenContract] = useState<Contract | null>(null)
@@ -36,54 +35,53 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   const [estimatedGas, setEstimatedGas] = useState('')
   const [successHash, setSuccessHash] = useState('')
 
-  const onTokenChange = useCallback(() => {
+  const [chainToken, setChainToken] = useState<any>(process.env.REACT_APP_MOCK_TOKEN_MAINNET ? MOCK_TOKEN : HALO)
+
+  useEffect(() => {
     if (!chainId || !library) return
 
-    const selectedToken = chainToken[chainId]
-    if (!selectedToken) return
-    setToken(selectedToken)
+    const selectedToken = chainToken[chainId as ChainId]
 
     setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[selectedToken.address], PRIMARY_BRIDGE_ABI, library, account as string)
+      getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, PRIMARY_BRIDGE_ABI, library, account as string)
     )
     if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[selectedToken.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainToken, account, chainId, library, setToken])
+  }, [chainToken]) // eslint-disable-line
 
-  const onChainIdChange = useCallback(() => {
-    if (!chainId || !token || !library) return
+  useEffect(() => {
+    if (!chainId || !library) return
 
-    setPrimaryBridgeContract(
-      getContract(BRIDGE_CONTRACTS[token.address], PRIMARY_BRIDGE_ABI, library, account as string)
-    )
-    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
-      setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
-      )
-      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[token.address])
+    const selectedToken = chainToken[chainId as ChainId]
+    const bridgeContract = BRIDGE_CONTRACTS[selectedToken.address] as string
+    setPrimaryBridgeContract(getContract(bridgeContract, PRIMARY_BRIDGE_ABI, library, account as string))
+    if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== chainId) {
+      setSecondaryBridgeContract(getContract(bridgeContract, SECONDARY_BRIDGE_ABI, library, account as string))
+      setDestinationChainId(ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address])
     } else {
       /** @dev Mock to BSC for now */
       setDestinationChainId(ChainId.MATIC)
     }
-    setTokenContract(getContract(token.address, TOKEN_ABI, library, account as string))
+    setTokenContract(getContract(selectedToken.address, TOKEN_ABI, library, account as string))
     setButtonState(ButtonState.EnterAmount)
     setApproveState(ApproveButtonState.NotApproved)
-    setInputValue('')
-  }, [chainId, library, account, setApproveState, setButtonState, setInputValue, token])
+  }, [chainId]) // eslint-disable-line
 
-  const onDestinationChainIdChange = useCallback(() => {
-    if (!chainId || !destinationChainId || !library || !token) return
+  useEffect(() => {
+    if (!chainId || !destinationChainId || !library || !chainToken) return
 
-    if (ORIGINAL_TOKEN_CHAIN_ID[token.address] !== destinationChainId) {
+    const selectedToken = chainToken[chainId as ChainId]
+
+    if (ORIGINAL_TOKEN_CHAIN_ID[selectedToken.address] !== destinationChainId) {
       setSecondaryBridgeContract(
-        getContract(BRIDGE_CONTRACTS[token.address], SECONDARY_BRIDGE_ABI, library, account as string)
+        getContract(BRIDGE_CONTRACTS[selectedToken.address] as string, SECONDARY_BRIDGE_ABI, library, account as string)
       )
     }
-  }, [chainId, library, account, destinationChainId, token])
+  }, [destinationChainId]) // eslint-disable-line
 
   const giveBridgeAllowance = useCallback(
     async (amount: ethers.BigNumber) => {
@@ -104,6 +102,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   const estimateDeposit = useCallback(
     async (chainIdDestination: number, inputValue: string) => {
       const estimatedGas = await primaryBridgeContract?.estimateGas.deposit(parseEther(inputValue), chainIdDestination)
+      console.log('estimatedGassss:', estimatedGas)
       setEstimatedGas(formatEther(estimatedGas as ethers.BigNumber))
     },
     [primaryBridgeContract]
@@ -112,6 +111,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   const depositToPrimaryBridge = useCallback(
     async (amount: ethers.BigNumber, chainIdDestination: number) => {
       try {
+        consoleLog('chainIdDestination', chainIdDestination)
         const tx = await primaryBridgeContract?.deposit(amount, chainIdDestination)
         addTransaction(tx, { summary: 'Deposit on bridge' })
         setSuccessHash(tx.hash)
@@ -168,7 +168,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (token && ORIGINAL_TOKEN_CHAIN_ID[token.address] !== chainId) {
+      if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -184,7 +184,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
 
   const fetchAllowance = useCallback(async () => {
     try {
-      if (token && chainId === ORIGINAL_TOKEN_CHAIN_ID[token.address]) {
+      if (chainToken && chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken.address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
@@ -196,7 +196,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     } catch (e) {
       console.error(e)
     }
-  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, token])
+  }, [tokenContract, account, chainId, primaryBridgeContract, secondaryBridgeContract, chainToken])
 
   const fetchBalance = useCallback(async () => {
     try {
@@ -236,7 +236,7 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     ReactGA.event({
       category: 'Bridge',
       action: 'deposit',
-      label: token ? token.symbol : '',
+      label: chainToken ? chainToken.symbol : '',
       value: parseFloat(formatEther(parseEther(amount.toString()).toString()))
     })
 
@@ -269,9 +269,6 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
   }
 
   return {
-    onTokenChange,
-    onChainIdChange,
-    onDestinationChainIdChange,
     giveBridgeAllowance,
     estimateDeposit,
     depositToPrimaryBridge,
@@ -290,8 +287,63 @@ const useBridge = ({ setButtonState, setApproveState, setInputValue, chainToken,
     secondaryBridgeContract,
     balance,
     estimatedGas,
-    successHash
+    successHash,
+    chainToken,
+    setChainToken
   }
+}
+
+export const useShuttleFee = (tokenAddress: string, destinationChainId: ChainId) => {
+  const [lowerBoundFee, setLowerBoundFee] = useState(0)
+  const [upperBoundFee, setUpperBoundFee] = useState(0)
+
+  const getFee = useCallback(async () => {
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
+    const tokenUSDPrice = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+
+    let estimatedGasRange: GasModeRangeData
+
+    switch (destinationChainId) {
+      case ChainId.MAINNET:
+        estimatedGasRange = await getGasRangeEstimation(GasModes.fast, GasModes.instant)
+        break
+      case ChainId.MATIC:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
+      case ChainId.XDAI:
+        estimatedGasRange = {
+          floor: { usd: Number(process.env.REACT_APP_MATIC_FLOOR_FLAT_FEE) },
+          ceiling: { usd: Number(process.env.REACT_APP_MATIC_CEILING_FLAT_FEE) }
+        }
+        break
+      default:
+        throw new Error('Invalid destination chain.')
+    }
+    const tokensPerUSD = 1 / tokenUSDPrice[originalTokenAddress]
+    const floorFeeInToken = estimatedGasRange.floor.usd * tokensPerUSD
+    const ceilingFeeInToken = estimatedGasRange.ceiling.usd * tokensPerUSD
+
+    setLowerBoundFee(floorFeeInToken)
+    setUpperBoundFee(ceilingFeeInToken)
+  }, [tokenAddress, destinationChainId])
+
+  return { lowerBoundFee, upperBoundFee, getFee }
+}
+
+export const useMinimumAmount = (tokenAddress: string) => {
+  const [minimum, setMinimum] = useState(0)
+
+  const getMinimum = useCallback(async () => {
+    const originalTokenAddress = ORIGINAL_TOKEN_CHAIN_ADDRESS[tokenAddress] as string
+    const prices = await getTokensUSDPrice(GetPriceBy.address, [originalTokenAddress])
+    const flatFee = Number(process.env.REACT_APP_BRIDGE_MINIMUM_AMOUNT_USD) / prices[originalTokenAddress]
+    setMinimum(Number(flatFee.toFixed(2)))
+  }, [tokenAddress])
+
+  return { minimum, getMinimum }
 }
 
 export default useBridge
