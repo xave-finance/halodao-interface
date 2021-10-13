@@ -15,7 +15,7 @@ const RewardsCard = () => {
         </div>
         <div className="flex justify-end items-end">
           <a
-            href="/vesting"
+            href="#/vesting"
             className="flex items-center justify-center
         font-bold text-white
         bg-gradient-to-tr from-primary-hover via-primary-gradientVia to-primary-gradientTo

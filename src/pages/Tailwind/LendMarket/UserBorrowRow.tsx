@@ -6,7 +6,7 @@ import { UserLendData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
-import BasicButton from 'components/Tailwind/Buttons/ BasicButton'
+import BasicButton from 'components/Tailwind/Buttons/BasicButton'
 
 const Wrapper = styled.div`
   .col-1 {
@@ -129,7 +129,7 @@ const UserBorrowRow = ({ lend }: UserBorrowRowProps) => {
             title="Manage"
             isEnabled={true}
             onClick={() => console.log('clicked')}
-            className="md:bg-primary-gray md:mr-4"
+            className="md:text-primary md:bg-transparent md:mr-4"
           />
         </div>
       </Wrapper>

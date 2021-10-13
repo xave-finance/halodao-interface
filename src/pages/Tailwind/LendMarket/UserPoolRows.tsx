@@ -6,7 +6,7 @@ import { PoolData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
-import BasicButton from 'components/Tailwind/Buttons/ BasicButton'
+import BasicButton from 'components/Tailwind/Buttons/BasicButton'
 
 const Wrapper = styled.div`
   .col-1 {

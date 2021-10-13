@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { HALO, USDT, XSGD, USDC } from '../../../constants'
+import { HALO, USDT, XSGD } from '../../../constants'
 import { PoolData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
-import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
-import BasicButton from 'components/Tailwind/Buttons/ BasicButton'
+import BasicButton from 'components/Tailwind/Buttons/BasicButton'
 
 const Wrapper = styled.div`
   .col-1 {
@@ -67,7 +66,6 @@ const PoolRow = ({ pool }: PoolRowProps) => {
         mb-4 p-4
         rounded shadow-lg
         border border-primary-hover
-        bg-white
         md:mb-2 md:px-4 md:pt-2 md:-ml-4 md:-mr-4
         md:transition-colors
         md:hover:border-primary-hover

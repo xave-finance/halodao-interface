@@ -13,6 +13,7 @@ import UserBorrowColumn from './UserBorrowColumn'
 import UserBorrowRow from './UserBorrowRow'
 import { HALO, USDT, XSGD } from '../../../constants'
 import { PoolData, UserLendData, UserBorrowData } from './models/PoolData'
+import { ArrowUpCircle } from 'react-feather'
 
 const LendMarket = () => {
   const { account, error } = useWeb3React()
@@ -75,7 +76,7 @@ const LendMarket = () => {
 
   return (
     <PageWrapper className="mb-8">
-      <div className="flex flex-col md:flex-row md:space-x-4">
+      <div className="flex flex-col md:flex-row md:space-x-4 pb-2">
         <div className="w-full md:w-3/6">
           <PageHeaderLeft
             subtitle="Overview"
@@ -91,25 +92,34 @@ const LendMarket = () => {
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row mt-6 md:mt-12">
-        <div className="md:w-3/5">
-          <UserLendColumn />
+      <div className="bg-white rounded-lg filter drop-shadow p-4 mt-2 md:p-8">
+        <div className="flex flex-row w-full">
+          <span className="flex justify-start w-3/4 text-gray-600 text-sm uppercase"> Your Deposits </span>
+          <div className="flex justify-end w-1/4">
+            {' '}
+            <span className="mr-2"> Hide </span> <ArrowUpCircle />{' '}
+          </div>
         </div>
-        <div className="md:w-2/5">
-          <UserBorrowColumn />
+        <div className="flex flex-col md:flex-row mt-6">
+          <div className="md:w-3/5">
+            <UserLendColumn />
+          </div>
+          <div className="md:w-2/5">
+            <UserBorrowColumn />
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-col md:flex-row space-x-4">
-        <div className="md:w-3/5">
-          {userLends.map(userLends => (
-            <UserLendRow key={userLends.asset.name} lend={userLends} />
-          ))}
-        </div>
-        <div className="md:w-2/5">
-          {userLends.map(userLends => (
-            <UserBorrowRow key={userLends.asset.name} lend={userLends} />
-          ))}
+        <div className="flex flex-col md:flex-row space-x-4">
+          <div className="md:w-3/5">
+            {userLends.map(userLends => (
+              <UserLendRow key={userLends.asset.name} lend={userLends} />
+            ))}
+          </div>
+          <div className="md:w-2/5">
+            {userLends.map(userLends => (
+              <UserBorrowRow key={userLends.asset.name} lend={userLends} />
+            ))}
+          </div>
         </div>
       </div>
 

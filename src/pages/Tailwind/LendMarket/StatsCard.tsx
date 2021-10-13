@@ -1,5 +1,4 @@
 import React from 'react'
-import { HALO } from '../../../constants'
 import CurrencyLogo from 'components/CurrencyLogo'
 
 import { formatNumber, NumberFormat } from 'utils/formatNumber'

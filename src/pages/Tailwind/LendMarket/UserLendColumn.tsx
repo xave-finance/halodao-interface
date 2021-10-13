@@ -22,7 +22,7 @@ const Wrapper = styled.div`
 const UserLendColumns = () => {
   return (
     <Wrapper className="hidden md:flex flex-row justify-between md:mb-4 md:mr-2">
-      <div className="col-1 text-gray-500 font-bold">Your Assets</div>
+      <div className="col-1 text-gray-500 font-bold">Assets</div>
       <div className="col-2 text-gray-500 font-bold">Current Balance</div>
       <div className="col-3 text-gray-500 font-bold">APY</div>
       <div className="col-4 text-gray-500 font-bold">Collateral</div>
