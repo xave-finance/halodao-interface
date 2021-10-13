@@ -11,7 +11,7 @@ import UserLendColumn from './UserLendColumn'
 import UserLendRow from './UserLendRow'
 import UserBorrowColumn from './UserBorrowColumn'
 import UserBorrowRow from './UserBorrowRow'
-import { HALO, USDT, XSGD, USDC } from '../../../constants'
+import { HALO, USDT, XSGD } from '../../../constants'
 import { PoolData, UserLendData, UserBorrowData } from './models/PoolData'
 
 const LendMarket = () => {
