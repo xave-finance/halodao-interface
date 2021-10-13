@@ -6,7 +6,7 @@ import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import StatsCard from '../StatsCard'
 import RewardsCard from '../RewardsCard'
 import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
-import { HALO, USDT, XSGD } from '../../../../constants'
+import { HALO, USDT, XSGD, USDC } from '../../../../constants'
 import { PoolData, UserLendData, UserBorrowData } from '../models/PoolData'
 import Stepper, { StepperMode } from '../modals/Stepper'
 
@@ -26,7 +26,7 @@ const WithdrawContent = () => {
   )
 }
 
-const Lend = () => {
+const Borrow = () => {
   const { account, error } = useWeb3React()
   const [showModal, setShowModal] = useState(false)
   const [activeSegment, setActiveSegment] = useState(0)
@@ -89,7 +89,7 @@ const Lend = () => {
   return (
     <PageWrapper className="mb-8 md:space-x-8 flex flex-col md:flex-row">
       <div className="md:w-1/2">
-        <PageHeaderLeft subtitle="Lend" title="RNBW" caption="" />
+        <PageHeaderLeft subtitle="Borrow" title="RNBW" caption="" />
         <StatsCard
           currency={HALO[ChainId.MAINNET]}
           label1="Your balance"
@@ -114,7 +114,7 @@ const Lend = () => {
       <div className="md:w-1/2">
         <div className="px-8">
           <SegmentControl
-            segments={['Deposit', 'Withdraw']}
+            segments={['Borrow', 'Repay']}
             activeSegment={activeSegment}
             didChangeSegment={i => setActiveSegment(i)}
             className="py-4 px-6 text-base uppercase"
@@ -126,4 +126,4 @@ const Lend = () => {
   )
 }
 
-export default Lend
+export default Borrow

@@ -76,14 +76,14 @@ const LendMarket = () => {
   return (
     <PageWrapper className="mb-8">
       <div className="flex flex-col md:flex-row md:space-x-4">
-        <div className="w-full md:w-2/6">
+        <div className="w-full md:w-3/6">
           <PageHeaderLeft
             subtitle="Overview"
-            title="Lend"
+            title="Lending Markets"
             caption="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Enim potenti faucibus adipiscing sed tempor diam, ipsum porta."
           />
         </div>
-        <div className="hidden md:block md:w-4/6">
+        <div className="hidden md:block md:w-3/6">
           <PageHeaderCenter />
         </div>
         <div className="hidden md:block md:w-2/6">

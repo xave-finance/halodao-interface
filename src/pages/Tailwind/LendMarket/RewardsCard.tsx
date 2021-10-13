@@ -1,5 +1,5 @@
 import React from 'react'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import xRNBW from 'assets/svg/xRNBW.svg'
 
 const RewardsCard = () => {
   return (
@@ -7,7 +7,7 @@ const RewardsCard = () => {
       <div className="flex-auto bg-primary-dark bg-opacity-10 py-6 px-6 rounded-card flex flex-col">
         <div className="flex-auto">
           <div className="text-xs font-extrabold tracking-widest text-black uppercase">Available Rewards</div>
-          <div className="text-2xl font-semibold">-</div>
+          <div className="flex flex-row mt-2 mb-2"> <img src={xRNBW} width="39px" alt="xrnbw" /><div className="text-2xl font-semibold ml-2">0.00</div> </div>
         </div>
         <div className="flex justify-end items-end">
           <a

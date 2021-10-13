@@ -125,14 +125,9 @@ const PoolRow = ({ pool }: PoolRowProps) => {
             title="Lend"
             isEnabled={true}
             onClick={() => console.log('clicked')}
-            className="md:bg-primary-gray md:mr-4"
+            className="md:bg-primary-hover md:mr-4"
           />
-          <BasicButton
-            title="Borrow"
-            isEnabled={true}
-            onClick={() => console.log('clicked')}
-            className="bg-white border border-primary-hover my-2 md:my-0 md:border-0 md:bg-primary-lightGray text-black"
-          />
+          <BasicButton title="Borrow" isEnabled={true} onClick={() => console.log('clicked')} />
         </div>
       </Wrapper>
     </div>
