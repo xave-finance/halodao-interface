@@ -204,7 +204,12 @@ const Stepper = ({ mode }: { mode: StepperMode }) => {
                   <div className="text-sm text-gray-600 w-3/4 flex">Health Factor</div>
                   <div className="text-sm text-gray-600 w-1/4">
                     <span className="flex justify-end">
-                      0% <span className="align-center pl-1 pr-1"> <ArrowRight size={14}/> </span> 0%
+                      0%{' '}
+                      <span className="align-center pl-1 pr-1">
+                        {' '}
+                        <ArrowRight size={14} />{' '}
+                      </span>{' '}
+                      0%
                     </span>
                   </div>
                 </div>
