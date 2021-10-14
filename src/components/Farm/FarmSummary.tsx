@@ -10,7 +10,7 @@ import { TYPE, HideSmall } from 'theme'
 import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
-import HaloHalo from '../../assets/svg/lpop-token.svg'
+import HaloHalo from '../../assets/svg/xlpop-token.svg'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
 const DashboardRow = styled(Row)`

@@ -330,6 +330,7 @@ export default function Swap() {
               cornerRadiusBottomNone={isExpertMode ? false : true}
               //containerBackground={'#101b31'}
             />
+
             {isExpertMode && !showWrap && (
               <AutoColumn justify="space-between">
                 <AutoRow justify={isExpertMode ? 'space-between' : 'center'} style={{ padding: '0 1rem' }}>

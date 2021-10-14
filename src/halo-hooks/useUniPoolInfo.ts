@@ -23,13 +23,30 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       return { poolsInfo, tokenAddresses }
     }
 
+    const reserves: {
+      [pid: number]: {
+        token0: number
+        token1: number
+      }
+    } = {}
+
     for (const map of pidLpTokenMap) {
       const poolAddress = getAddress(map.lpToken)
-
       const PoolContract = getContract(poolAddress, UNI_V2_ABI, library, account ?? undefined)
-      const token1Address = getAddress(await PoolContract?.token0())
-      const token2Address = getAddress(await PoolContract?.token1())
-      const totalReserves = await PoolContract?.getReserves()
+
+      const promises: any[] = []
+      promises.push(PoolContract?.token0())
+      promises.push(PoolContract?.token1())
+      promises.push(PoolContract?.getReserves())
+
+      const results = await Promise.all(promises)
+      const token1Address = getAddress(results[0])
+      const token2Address = getAddress(results[1])
+      const totalReserves = results[2]
+      reserves[map.pid] = {
+        token0: +formatEther(totalReserves[0]),
+        token1: +formatEther(totalReserves[1])
+      }
 
       let token1Symbol = ''
       if (token1Address === UNI_WETH_ADDRESS) {
@@ -47,8 +64,6 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         token2Symbol = await Token2Contract?.symbol()
       }
 
-      const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, [token1Address, token2Address])
-
       const token1Param = token1Symbol === 'ETH' ? 'ETH' : token1Address
       const token2Param = token2Symbol === 'ETH' ? 'ETH' : token2Address
 
@@ -57,18 +72,18 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         pair: `${token1Symbol}/${token2Symbol}`,
         address: getAddress(map.lpToken),
         addLiquidityUrl: `https://app.uniswap.org/#/add/v2/${token1Param}/${token2Param}`,
-        liquidity:
-          +formatEther(totalReserves[0]) * tokenPrice[token1Address] +
-          +formatEther(totalReserves[1]) * tokenPrice[token2Address],
+        liquidity: 0,
         tokens: [
           {
             address: token1Address,
+            mainnetAddress: token1Address,
             balance: +formatEther(totalReserves[0]),
             weightPercentage: 50,
             asToken: new Token(chainId, token1Address, 18, token1Symbol, token1Symbol)
           },
           {
             address: token2Address,
+            mainnetAddress: token2Address,
             balance: +formatEther(totalReserves[1]),
             weightPercentage: 50,
             asToken: new Token(chainId, token2Address, 18, token2Symbol, token2Symbol)
@@ -81,6 +96,15 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
       tokenAddresses.push(token1Address)
       tokenAddresses.push(token2Address)
+    }
+
+    // Calculate liquidity
+    const tokenPrice = await getTokensUSDPrice(GetPriceBy.address, tokenAddresses)
+
+    for (const poolInfo of poolsInfo) {
+      poolInfo.liquidity =
+        reserves[poolInfo.pid].token0 * tokenPrice[poolInfo.tokens[0].address] +
+        reserves[poolInfo.pid].token1 * tokenPrice[poolInfo.tokens[1].address]
     }
 
     return { poolsInfo, tokenAddresses }

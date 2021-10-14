@@ -1,13 +1,13 @@
-describe('Vesting', () => {
+describe.skip('Vesting', () => {
   beforeEach(() => {
     cy.visit('/vesting')
   })
 
   it('displays vesting APY', () => {
     // 1 - Initially APY blank
-    cy.get('body').contains('0 APY')
+    cy.get('body').contains('APY pending')
     // 2 - Check if APY changed
-    cy.get('body', { timeout: 30000 }).should('not.contain', '0 APY')
+    cy.get('body', { timeout: 30000 }).should('not.contain', 'APY pending')
   })
 
   it('displays LPOP:xLPOP price', () => {

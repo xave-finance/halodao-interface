@@ -6,7 +6,7 @@ import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build
 import { ChainId, WETH } from '@sushiswap/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
-import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO, HALO_REWARDS_ADDRESS } from '../constants'
+import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO } from '../constants'
 import {
   ARGENT_WALLET_DETECTOR_ABI,
   ARGENT_WALLET_DETECTOR_MAINNET_ADDRESS
@@ -23,9 +23,15 @@ import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../consta
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
+import { getAmmRewardsContractAddress, AmmRewardsVersion } from 'utils/ammRewards'
 
 // returns null on errors
-export function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
+export function useContract(
+  address: string | undefined,
+  ABI: any,
+  withSignerIfPossible = true,
+  overrideCurrentProvider?: boolean
+): Contract | null {
   const { library, account } = useActiveWeb3React()
 
   return useMemo(() => {
@@ -33,12 +39,18 @@ export function useContract(address: string | undefined, ABI: any, withSignerIfP
       return null
     }
     try {
-      return getContract(address, ABI, library, withSignerIfPossible && account ? account : undefined)
+      return getContract(
+        address,
+        ABI,
+        library,
+        withSignerIfPossible && account ? account : undefined,
+        overrideCurrentProvider
+      )
     } catch (error) {
       console.error('Failed to get contract', error)
       return null
     }
-  }, [address, ABI, library, withSignerIfPossible, account])
+  }, [address, ABI, library, withSignerIfPossible, account, overrideCurrentProvider])
 }
 
 export function useV1FactoryContract(): Contract | null {
@@ -54,8 +66,12 @@ export function useV1ExchangeContract(address?: string, withSignerIfPossible?: b
   return useContract(address, V1_EXCHANGE_ABI, withSignerIfPossible)
 }
 
-export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: boolean): Contract | null {
-  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
+export function useTokenContract(
+  tokenAddress?: string,
+  withSignerIfPossible?: boolean,
+  overrideCurrentProvider?: boolean
+): Contract | null {
+  return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible, overrideCurrentProvider)
 }
 
 export function useWETHContract(withSignerIfPossible?: boolean): Contract | null {
@@ -132,8 +148,8 @@ export function useSocksController(): Contract | null {
   )
 }
 
-export function useHALORewardsContract(): Contract | null {
+export function useHALORewardsContract(rewardsVersion = AmmRewardsVersion.Latest): Contract | null {
   const { chainId } = useActiveWeb3React()
-
-  return useContract(chainId && HALO_REWARDS_ADDRESS[chainId], HALO_REWARDS_ABI, true)
+  const address = getAmmRewardsContractAddress(chainId, rewardsVersion)
+  return useContract(address, HALO_REWARDS_ABI, true)
 }
