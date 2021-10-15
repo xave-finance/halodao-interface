@@ -94,11 +94,12 @@ const LendMarket = () => {
       </div>
       {!showUserReserves && (
         <div className="bg-white rounded-lg filter drop-shadow p-4 mt-2 md:p-8">
-          <div
-            className="flex flex-row w-full justify-end cursor-pointer"
-            onClick={() => setShowUserReserves(!showUserReserves)}
-          >
-            <span className="mr-2"> Hide </span> <ArrowDownCircle />{' '}
+          <div className="flex flex-row w-full cursor-pointer">
+            <span className="flex justify-start w-3/4 text-gray-600 text-sm uppercase"> Your Deposits </span>
+            <div className="flex justify-end w-1/4" onClick={() => setShowUserReserves(!showUserReserves)}>
+              {' '}
+              <span className="mr-2"> Show </span> <ArrowDownCircle />{' '}
+            </div>
           </div>
         </div>
       )}

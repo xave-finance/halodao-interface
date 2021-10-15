@@ -147,6 +147,7 @@ const Stepper = ({ mode }: { mode: StepperMode }) => {
             <ApproveButton
               title="Pendng"
               state={ApproveButtonState.Approving}
+              className="bg-misc-yellow text-white"
               onClick={() => {
                 console.log('clicked')
               }}

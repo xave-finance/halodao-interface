@@ -118,7 +118,7 @@ const PoolRow = ({ pool }: PoolRowProps) => {
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Total Earned:</div>
           <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
-        <div className="col-7 flex flex-col md:flex-row w-full items-center">
+        <div className="col-7 flex flex-col md:flex-row items-center">
           <BasicButton
             title="Lend"
             isEnabled={true}

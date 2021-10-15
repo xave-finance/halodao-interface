@@ -29,7 +29,8 @@ module.exports = {
           alternate: '#5E5E5E'
         },
         misc: {
-          green: '#EDFFEF'
+          green: '#EDFFEF',
+          yellow: '#EDAB01'
         },
         warning: {
           DEFAULT: '#FA6F44'
