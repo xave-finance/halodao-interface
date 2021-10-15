@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
-import { useWeb3React } from '@web3-react/core'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderCenter from './PageHeaderCenter'
@@ -12,12 +11,10 @@ import UserLendRow from './UserLendRow'
 import UserBorrowColumn from './UserBorrowColumn'
 import UserBorrowRow from './UserBorrowRow'
 import { HALO, USDT, XSGD } from '../../../constants'
-import { PoolData, UserLendData, UserBorrowData } from './models/PoolData'
+import { PoolData, UserLendData } from './models/PoolData'
 import { ArrowUpCircle, ArrowDownCircle } from 'react-feather'
 
 const LendMarket = () => {
-  const { account, error } = useWeb3React()
-  const [showModal, setShowModal] = useState(false)
   const [showUserReserves, setShowUserReserves] = useState(true)
 
   const pools: PoolData[] = [
@@ -59,19 +56,6 @@ const LendMarket = () => {
       balance: 100000,
       lendAPY: 40,
       collateral: true
-    }
-  ]
-
-  const userBorrows: UserBorrowData[] = [
-    {
-      asset: HALO[ChainId.MAINNET]!,
-      borrowed: 1000,
-      borrowAPY: 40
-    },
-    {
-      asset: USDT,
-      borrowed: 1000,
-      borrowAPY: 40
     }
   ]
 

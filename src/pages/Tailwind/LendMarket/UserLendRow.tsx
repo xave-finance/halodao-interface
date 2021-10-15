@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { HALO, USDT, XSGD, USDC } from '../../../constants'
+import { HALO } from '../../../constants'
 import { UserLendData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import CollateralModal from './modals/CollateralModal'
 import BasicButton from 'components/Tailwind/Buttons/BasicButton'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   .col-1 {
@@ -81,21 +82,7 @@ interface UserLendRowProps {
 
 const UserLendRow = ({ lend }: UserLendRowProps) => {
   const [showModal, setShowModal] = useState(false)
-
-  const userLends: UserLendData[] = [
-    {
-      asset: HALO[ChainId.MAINNET]!,
-      balance: 1000,
-      lendAPY: 40,
-      collateral: false
-    },
-    {
-      asset: USDT,
-      balance: 100000,
-      lendAPY: 40,
-      collateral: true
-    }
-  ]
+  const history = useHistory()
 
   return (
     <div
@@ -159,7 +146,7 @@ const UserLendRow = ({ lend }: UserLendRowProps) => {
           <BasicButton
             title="Manage"
             isEnabled={true}
-            onClick={() => console.log('clicked')}
+            onClick={() => history.push('/lend-market/lend')}
             className="md:text-primary md:bg-transparent md:mr-4"
           />
         </div>

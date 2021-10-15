@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ChainId } from '@sushiswap/sdk'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { HALO, USDT, XSGD } from '../../../constants'
+import { HALO } from '../../../constants'
 import { PoolData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import BasicButton from 'components/Tailwind/Buttons/BasicButton'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   .col-1 {
@@ -41,24 +42,7 @@ interface PoolRowProps {
 }
 
 const PoolRow = ({ pool }: PoolRowProps) => {
-  const pools: PoolData[] = [
-    {
-      asset: USDT,
-      marketSize: 1000,
-      borrowed: 100,
-      depositAPY: 40,
-      borrowAPY: 10,
-      earned: 0
-    },
-    {
-      asset: XSGD,
-      marketSize: 1000,
-      borrowed: 100,
-      depositAPY: 40,
-      borrowAPY: 10,
-      earned: 0
-    }
-  ]
+  const history = useHistory()
 
   return (
     <div
@@ -122,10 +106,10 @@ const PoolRow = ({ pool }: PoolRowProps) => {
           <BasicButton
             title="Lend"
             isEnabled={true}
-            onClick={() => console.log('clicked')}
+            onClick={() => history.push('/lend-market/lend')}
             className="md:bg-primary-hover mb-2 md:mb-0 md:mr-4"
           />
-          <BasicButton title="Borrow" isEnabled={true} onClick={() => console.log('clicked')} />
+          <BasicButton title="Borrow" isEnabled={true} onClick={() => history.push('/lend-market/borrow')} />
         </div>
       </Wrapper>
     </div>

@@ -1,12 +1,9 @@
-import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import React from 'react'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { HALO, USDT, XSGD, USDC } from '../../../constants'
 import { UserLendData } from './models/PoolData'
 import styled from 'styled-components'
-import CurrencyLogo from 'components/CurrencyLogo'
-import PoolExpandButton from 'components/Tailwind/Buttons/PoolExpandButton'
 import BasicButton from 'components/Tailwind/Buttons/BasicButton'
+import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
   .col-1 {
@@ -28,69 +25,12 @@ const Wrapper = styled.div`
     }
   `};
 `
-const CheckBoxWrapper = styled.div`
-  position: relative;
-`
-const CheckBoxLabel = styled.label`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 42px;
-  height: 26px;
-  border-radius: 15px;
-  background: #bebebe;
-  cursor: pointer;
-  &::after {
-    content: '';
-    display: block;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    margin: 3px;
-    background: #ffffff;
-    box-shadow: 1px 3px 3px 1px rgba(0, 0, 0, 0.2);
-    transition: 0.2s;
-  }
-`
-const CheckBox = styled.input`
-  opacity: 0;
-  z-index: 1;
-  border-radius: 15px;
-  width: 42px;
-  height: 26px;
-  &:checked + ${CheckBoxLabel} {
-    background: #4fbe79;
-    &::after {
-      content: '';
-      display: block;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      margin-left: 21px;
-      transition: 0.2s;
-    }
-  }
-`
-
 interface UserBorrowRowProps {
   lend: UserLendData
 }
 
 const UserBorrowRow = ({ lend }: UserBorrowRowProps) => {
-  const userLends: UserLendData[] = [
-    {
-      asset: HALO[ChainId.MAINNET]!,
-      balance: 1000,
-      lendAPY: 40,
-      collateral: false
-    },
-    {
-      asset: USDT,
-      balance: 100000,
-      lendAPY: 40,
-      collateral: true
-    }
-  ]
+  const history = useHistory()
 
   return (
     <div
@@ -128,7 +68,7 @@ const UserBorrowRow = ({ lend }: UserBorrowRowProps) => {
           <BasicButton
             title="Manage"
             isEnabled={true}
-            onClick={() => console.log('clicked')}
+            onClick={() => history.push('/lend-market/lend')}
             className="md:text-primary md:bg-transparent md:mr-4"
           />
         </div>
