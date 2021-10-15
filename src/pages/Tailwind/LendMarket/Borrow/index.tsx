@@ -10,18 +10,18 @@ import { HALO, USDT, XSGD, USDC } from '../../../../constants'
 import { PoolData, UserLendData, UserBorrowData } from '../models/PoolData'
 import Stepper, { StepperMode } from '../modals/Stepper'
 
-const DepositContent = () => {
+const BorrowContent = () => {
   return (
     <>
-      <Stepper mode={StepperMode.Deposit} />
+      <Stepper mode={StepperMode.Borrow} />
     </>
   )
 }
 
-const WithdrawContent = () => {
+const RepayContent = () => {
   return (
     <>
-      <Stepper mode={StepperMode.Withdraw} />
+      <Stepper mode={StepperMode.Repay} />
     </>
   )
 }
@@ -119,7 +119,7 @@ const Borrow = () => {
             didChangeSegment={i => setActiveSegment(i)}
             className="py-4 px-6 text-base uppercase"
           />
-          {activeSegment === 0 ? <DepositContent /> : <WithdrawContent />}
+          {activeSegment === 0 ? <BorrowContent /> : <RepayContent />}
         </div>
       </div>
     </PageWrapper>
