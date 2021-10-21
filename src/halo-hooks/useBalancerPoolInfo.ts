@@ -1,7 +1,7 @@
 import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL } from '../constants'
 import { useCallback } from 'react'
 import { getBalancerLPTokenAddress, getBalancerPoolAddress, subgraphRequest } from 'utils/balancer'
-import { Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider, PoolTokenInfo } from './usePoolInfo'
@@ -9,6 +9,13 @@ import { PoolIdLpTokenMap } from 'utils/poolInfo'
 
 export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { chainId } = useActiveWeb3React()
+
+  const balancerPoolUrl = chainId === ChainId.KOVAN ? BALANCER_POOL_URL[chainId] : BALANCER_POOL_URL[ChainId.MAINNET]
+  const dAppPoolUrl = balancerPoolUrl ?? 'https://pools.balancer.exchange/#/pool'
+
+  const balancerSubgraphUrl =
+    chainId === ChainId.KOVAN ? BALANCER_SUBGRAPH_URL[chainId] : BALANCER_SUBGRAPH_URL[ChainId.MAINNET]
+  const subgraphUrl = balancerSubgraphUrl ?? 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer/graphql'
 
   /**
    * Fetches pool info from balancer subgraph api everytime the poolAddresses changed
@@ -20,7 +27,7 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     if (!chainId) return { poolsInfo, tokenAddresses }
 
     // Convert addresses to lowercase (cause subgraph api is case-sensitive)
-    const balancerPoolIds = pidLpTokenMap.map(p => getBalancerPoolAddress(p.lpToken).toLowerCase())
+    const balancerPoolIds = pidLpTokenMap.map(p => getBalancerPoolAddress(p.lpToken, chainId).toLowerCase())
 
     const query = {
       pools: {
@@ -42,8 +49,7 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       }
     }
 
-    const result = await subgraphRequest(BALANCER_SUBGRAPH_URL, query)
-    // console.log('[useBalancerPoolInfo] subgraph response received!')
+    const result = await subgraphRequest(subgraphUrl, query)
 
     // Convert result to `poolsInfo` so we can easily use it in the components
     for (const pool of result.pools) {
@@ -57,6 +63,7 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
         poolTokensInfo.push({
           address: tokenAddress,
+          mainnetAddress: tokenAddress,
           balance: parseFloat(token.balance),
           weightPercentage: (100 / pool.totalWeight) * token.denormWeight,
           asToken: new Token(chainId, tokenAddress, token.decimals, token.symbol, token.name)
@@ -65,14 +72,14 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
 
       // Process pool info
       const pair = tokenSymbols.join('/')
-      const lpTokenAddress = getAddress(getBalancerLPTokenAddress(pool.id))
+      const lpTokenAddress = getAddress(getBalancerLPTokenAddress(pool.id, chainId))
       const LPToken = new Token(chainId, lpTokenAddress, 18, 'BPT', `BPT: ${pool.pair}`)
 
       poolsInfo.push({
         pid: pidLpTokenMap.filter(p => p.lpToken === lpTokenAddress)[0].pid,
         pair,
         address: lpTokenAddress,
-        addLiquidityUrl: `${BALANCER_POOL_URL}${pool.id}`,
+        addLiquidityUrl: `${dAppPoolUrl}${pool.id}`,
         liquidity: parseFloat(pool.liquidity),
         tokens: poolTokensInfo,
         asToken: LPToken,
@@ -82,7 +89,7 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [pidLpTokenMap, chainId])
+  }, [pidLpTokenMap, chainId, subgraphUrl, dAppPoolUrl])
 
   return fetchPoolInfo
 }

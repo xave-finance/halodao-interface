@@ -51,7 +51,7 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   //[ChainId.FANTOM_TESTNET]: 'Fantom Testnet',
   [ChainId.MATIC]: 'Polygon (Matic)',
   [ChainId.MATIC_TESTNET]: 'Matic Testnet',
-  //[ChainId.XDAI]: 'xDai',
+  [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
   [ChainId.MOONBASE]: 'Moonbase'
@@ -115,27 +115,26 @@ export const NETWORK_PARAMS: {
   },
   [ChainId.MATIC]: {
     chainId: '0x89',
-    chainName: 'Matic',
+    chainName: 'Matic(Polygon) Mainnet',
     nativeCurrency: {
       name: 'Matic',
       symbol: 'MATIC',
       decimals: 18
     },
-    rpcUrls: ['https://rpc-mainnet.maticvigil.com'], //['https://matic-mainnet.chainstacklabs.com/'],
-    blockExplorerUrls: ['https://explorer-mainnet.maticvigil.com']
+    rpcUrls: ['https://polygon-rpc.com/'], // see https://docs.matic.network/docs/develop/network-details/network/
+    blockExplorerUrls: ['https://polygonscan.com/']
   },
-  /*
-  [ChainId.HECO]: {
-    chainId: '0x80',
-    chainName: 'Heco',
-    nativeCurrency: {
-      name: 'Heco Token',
-      symbol: 'HT',
-      decimals: 18
-    },
-    rpcUrls: ['https://http-mainnet.hecochain.com'],
-    blockExplorerUrls: ['https://hecoinfo.com']
-  },
+  // [ChainId.HECO]: {
+  //   chainId: '0x80',
+  //   chainName: 'Heco',
+  //   nativeCurrency: {
+  //     name: 'Heco Token',
+  //     symbol: 'HT',
+  //     decimals: 18
+  //   },
+  //   rpcUrls: ['https://http-mainnet.hecochain.com'],
+  //   blockExplorerUrls: ['https://hecoinfo.com']
+  // },
   [ChainId.XDAI]: {
     chainId: '0x64',
     chainName: 'xDai',
@@ -145,9 +144,8 @@ export const NETWORK_PARAMS: {
       decimals: 18
     },
     rpcUrls: ['https://rpc.xdaichain.com'],
-    blockExplorerUrls: ['https://blockscout.com/poa/xdai']
+    blockExplorerUrls: ['https://blockscout.com/xdai/mainnet']
   },
-    */
   [ChainId.MOONBASE]: {
     chainId: '0x507',
     chainName: 'Moonbase Alpha',
@@ -194,4 +192,111 @@ export const NETWORK_PARAMS: {
         blockExplorerUrls: ['https://www.oklink.com/okexchain']
     }
     */
+}
+
+const isBridgeCapped = process.env.REACT_APP_IS_BRIDGE_CAPPED || 'true'
+
+export const NETWORK_SUPPORTED_FEATURES: {
+  [chainId in ChainId]?: {
+    vest: boolean
+    farm: boolean
+    pool: boolean
+    swap: boolean
+    lend: boolean
+    borrow: boolean
+    bridge: boolean
+    isBridgeCapped: boolean
+  }
+} = {
+  [ChainId.MAINNET]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: true,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.KOVAN]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.RINKEBY]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.GÖRLI]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.MATIC]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: true,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.MATIC_TESTNET]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.BSC]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.BSC_TESTNET]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.XDAI]: {
+    vest: true,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    // bridge: true, // testing
+    isBridgeCapped: isBridgeCapped === 'true'
+  }
 }

@@ -28,6 +28,11 @@ import { AppDispatch, AppState } from 'state'
 import BetaLabel from 'components/Labels/BetaLabel'
 import EmptyState from 'components/EmptyState'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
+import { useActiveWeb3React } from '../../hooks'
+import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
+import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -195,6 +200,8 @@ export default function HaloHalo() {
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
   const { t } = useTranslation()
+  const { chainId } = useActiveWeb3React()
+  const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -227,7 +234,7 @@ export default function HaloHalo() {
                     <TokenRewardsExplainer>
                       <RowBetween>
                         This is where your Lollipop Token (LPOP) rewards go. We saved you some gas and sent it straight
-                        to the Lollipop Pool to earn daily.
+                        to the Lollipop Pool to earn monthly vesting rewards and a share of network profits.
                       </RowBetween>
                     </TokenRewardsExplainer>
                   </AutoColumn>
@@ -237,36 +244,51 @@ export default function HaloHalo() {
           </VoteCard>
         </VoteCardWrapper>
         <DepositWrapper>
-          <HaloHaloHeader />
+          <HaloHaloHeader vest={features?.vest} />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
-                <HaloDepositPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to deposit: '}
-                  id="stake-liquidity-token"
-                  buttonText="Claim LPOP"
-                  cornerRadiusBottomNone={true}
-                />
-                <HaloHaloWithdrawPanel
-                  label={''}
-                  disableCurrencySelect={true}
-                  customBalanceText={'Available to withdraw: '}
-                  id="withdraw-liquidity-token"
-                  buttonText="Withdraw"
-                  cornerRadiusTopNone={true}
-                />
+                {features?.vest && (
+                  <HaloDepositPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to deposit: '}
+                    id="stake-liquidity-token"
+                    buttonText="Claim LPOP"
+                    cornerRadiusBottomNone={true}
+                  />
+                )}
+                {!features?.vest && <DepositOnUnsupportedNetwork chainId={chainId as ChainId} />}
+                {features?.vest && (
+                  <HaloHaloWithdrawPanel
+                    label={''}
+                    disableCurrencySelect={true}
+                    customBalanceText={'Available to withdraw: '}
+                    id="withdraw-liquidity-token"
+                    buttonText="Withdraw"
+                    cornerRadiusTopNone={true}
+                  />
+                )}
+                {!features?.vest && (
+                  <div className="mt-4">
+                    <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
+                  </div>
+                )}
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={xRnbwTokenIcon} alt="LPOP" />
-                      <HaloHaloPairText id="haloHaloPrice">xLPOP : </HaloHaloPairText>
-                      <HaloIngredients src={RnbwTokenIcon} alt="LPOP" />
-                      <HaloHaloPairText id="haloHaloPrice">LPOP = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
+                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
+                {!features?.vest && (
+                  <HaloPairCenterContainer>
+                    <HaloHaloPairText>(Ethereum mainnet)</HaloHaloPairText>
+                  </HaloPairCenterContainer>
+                )}
               </AutoColumn>
             </AutoColumnDeposit>
           </Wrapper>
@@ -277,9 +299,9 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep xLPOP, the more LPOP you can claim later on (
+              The longer you keep xRNBW, the more RNBW you can claim later on (
               {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
-              anytime but lose out on monthly LPOP vesting multiples.
+              anytime but lose out on monthly RNBW vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>

@@ -1,12 +1,13 @@
 import { Contract } from '@ethersproject/contracts'
 import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner, Web3Provider, JsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
 import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, ROUTER_ADDRESS } from '@sushiswap/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 import ethers from 'ethers'
+import { RPC } from 'connectors'
 
 import Fraction from '../constants/Fraction'
 
@@ -76,7 +77,7 @@ const builders = {
   },
 
   xdai: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    const prefix = `https://blockscout.com/poa/xdai`
+    const prefix = `https://blockscout.com/xdai/mainnet`
     switch (type) {
       case 'transaction':
         return `${prefix}/tx/${data}`
@@ -98,7 +99,8 @@ const builders = {
   },
 
   matic: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    const prefix = `https://explorer-${chainName}.maticvigil.com`
+    // const prefix = `https://explorer-${chainName}.maticvigil.com`
+    const prefix = 'https://polygonscan.com'
     switch (type) {
       case 'transaction':
         return `${prefix}/tx/${data}`
@@ -249,11 +251,20 @@ export function getProviderOrSigner(library: Web3Provider, account?: string): We
 }
 
 // account is optional
-export function getContract(address: string, ABI: any, library: Web3Provider, account?: string): Contract {
+export function getContract(
+  address: string,
+  ABI: any,
+  library: Web3Provider,
+  account?: string,
+  overrideCurrentProvider?: boolean
+): Contract {
   if (!isAddress(address) || address === AddressZero) {
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
-
+  if (overrideCurrentProvider) {
+    const mainnetProvider = new JsonRpcProvider(RPC[ChainId.MAINNET], ChainId.MAINNET)
+    return new Contract(address, ABI, mainnetProvider as any)
+  }
   return new Contract(address, ABI, getProviderOrSigner(library, account) as any)
 }
 

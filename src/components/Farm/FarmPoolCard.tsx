@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ReactGA from 'react-ga'
 import { Card, Text } from 'rebass'
 import { useTranslation } from 'react-i18next'
 import { useHistory } from 'react-router-dom'
@@ -19,16 +20,16 @@ import { GreyCard } from '../Card'
 import styled from 'styled-components'
 import { transparentize } from 'polished'
 import { formatEther, parseEther } from 'ethers/lib/utils'
-import Spinner from '../../assets/images/spinner.svg'
-import SpinnerPurple from '../../assets/images/spinner-purple.svg'
-import BunnyMoon from '../../assets/svg/bunny-with-moon.svg'
-import BunnyRewards from '../../assets/svg/bunny-rewards.svg'
-import ArrowRight from '../../assets/svg/arrow-right.svg'
-import LinkIcon from '../../assets/svg/link-icon.svg'
-import { HALO_REWARDS_ADDRESS, HALO_REWARDS_MESSAGE } from '../../constants/index'
+import Spinner from 'assets/images/spinner.svg'
+import SpinnerPurple from 'assets/images/spinner-purple.svg'
+import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
+import BunnyRewards from 'assets/svg/bunny-rewards.svg'
+import ArrowRight from 'assets/svg/arrow-right.svg'
+import LinkIcon from 'assets/svg/link-icon.svg'
+import { HALO_REWARDS_MESSAGE } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { PoolInfo } from 'halo-hooks/usePoolInfo'
+import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
@@ -48,9 +49,16 @@ import { ErrorText } from 'components/Alerts'
 import { updatePoolToHarvest } from 'state/user/actions'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
-import useHaloHalo from 'halo-hooks/useHaloHalo'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
+import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
+import { useTransactionAdder } from 'state/transactions/hooks'
+import { consoleLog } from 'utils/simpleLogger'
+import { MetamaskError } from 'constants/errors'
+import { BigNumber } from '@ethersproject/bignumber'
+import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
+import { Check, GitPullRequest } from 'react-feather'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -255,6 +263,8 @@ const GetBPTButton = styled(ExternalLink)`
   `};
 
   & img {
+    display: inline;
+    vertical-align: baseline;
     margin-left: 6px;
     height: 14px;
     margin-bottom: -2px;
@@ -319,6 +329,11 @@ const Banner = styled(Card)`
 
   & img {
     width: 40px;
+  }
+
+  a {
+    font-weight: 600;
+    color: #518cff;
   }
 `
 
@@ -417,66 +432,78 @@ interface FarmPoolCardProps {
   poolInfo: PoolInfo
   tokenPrice: TokenPrice
   isActivePool: boolean
+  rewardsVersion?: AmmRewardsVersion
+  preselected?: boolean
 }
 
-export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: FarmPoolCardProps) {
+export default function FarmPoolCard({
+  poolInfo,
+  tokenPrice,
+  isActivePool,
+  rewardsVersion = AmmRewardsVersion.Latest,
+  preselected = false
+}: FarmPoolCardProps) {
   const { chainId, account } = useActiveWeb3React()
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const history = useHistory()
-  const { haloHaloPrice } = useHaloHalo()
 
-  const [showMore, setShowMore] = useState(false)
+  const [showMore, setShowMore] = useState(preselected)
   const [stakeAmount, setStakeAmount] = useState('')
   const [unstakeAmount, setUnstakeAmount] = useState('')
   const [stakeButtonState, setStakeButtonState] = useState(ButtonHaloStates.Disabled)
   const [unstakeButtonState, setUnstakeButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [harvestButtonState, setHarvestButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
+  const [alreadyMigrated, setAlreadyMigrated] = useState(false)
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
-  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid])
+  const stakedBPTs = useStakedBPTPerPool([poolInfo.pid], rewardsVersion)
   const bptStaked = stakedBPTs[poolInfo.pid] ?? 0
+
+  // Pool liquidity
+  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
 
   // Staked BPT value calculation
   const totalSupplyAmount = useTotalSupply(poolInfo.asToken)
   const totalSupply = totalSupplyAmount ? parseFloat(formatEther(`${totalSupplyAmount.raw}`)) : 0
-  const liquidity = getPoolLiquidity(poolInfo, tokenPrice)
-  const lpTokenPrice = totalSupply > 0 && liquidity > 0 ? liquidity / totalSupply : 0
+  const lpTokenPrice = totalSupply > 0 && poolLiquidity > 0 ? poolLiquidity / totalSupply : 0
   const bptStakedValue = bptStaked * lpTokenPrice
 
-  // Denotes how many rewards token in 1 HALO
-  const rewardsToHALOPrice = Number.parseFloat(haloHaloPrice)
-
   // Get user earned HALO
-  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid])
+  const unclaimedRewards = useUnclaimedRewardsPerPool([poolInfo.pid], rewardsVersion)
   let unclaimedPoolRewards = unclaimedRewards[poolInfo.pid] ?? 0
   const hasPendingRewardTokenError = unclaimedPoolRewards === PENDING_REWARD_FAILED
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
-  const unclaimedHALO = unclaimedPoolRewards * rewardsToHALOPrice
+  const unclaimedHALO = unclaimedPoolRewards
 
   // Make use of `useApproveCallback` for checking & setting allowance
-  const rewardsContractAddress = chainId ? HALO_REWARDS_ADDRESS[chainId] : undefined
+  const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable-line
+
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
   const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+  const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
-  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback()
+  const { deposit, withdraw, harvest } = useDepositWithdrawHarvestCallback(rewardsVersion)
+  // Change this when migrating to a new AMM Rewards Version
+  const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable-line
 
-  // Pool Liquidity
-  const poolLiquidity = getPoolLiquidity(poolInfo, tokenPrice)
+  const addTransaction = useTransactionAdder()
 
   /**
    * APY computation
    */
-  const rewardTokenPerSecond = useRewardTokenPerSecond()
+  const rewardTokenPerSecond = useRewardTokenPerSecond(rewardsVersion)
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
 
-  const totalAllocPoint = useTotalAllocPoint()
+  const totalAllocPoint = useTotalAllocPoint(rewardsVersion)
   const allocPoint = poolInfo.allocPoint
 
   // stakedLiquidity = LPToken.balanceOf(AmmRewards) * lpTokenUSDValue
@@ -486,6 +513,27 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
 
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
+
+  let stakingMessage = HALO_REWARDS_MESSAGE.staking
+  let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
+
+  switch (poolInfo.provider) {
+    case PoolProvider.Halo:
+      stakingMessage = HALO_REWARDS_MESSAGE.stakingHLP
+      unstakingMessage = HALO_REWARDS_MESSAGE.unstakingHLP
+      break
+    case PoolProvider.Uni:
+      stakingMessage = HALO_REWARDS_MESSAGE.stakingUNI
+      unstakingMessage = HALO_REWARDS_MESSAGE.unstakingUNI
+      break
+    default:
+      break
+  }
+
+  // Wether to show migrate or harvest button
+  const showMigrateButton = (() => {
+    return rewardsVersion === AmmRewardsVersion.V1
+  })()
 
   /**
    * Updating the state of stake button
@@ -522,17 +570,35 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
   }, [unstakeAmount, bptStaked, isTxInProgress])
 
   /**
-   * Updating the state of harvest button
+   * Updating the state of harvest/migrate button
    */
   useEffect(() => {
     if (isTxInProgress) return
+
+    if (showMigrateButton) {
+      if (!alreadyMigrated && (unclaimedHALO > 0 || bptStaked > 0)) {
+        setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
+      } else {
+        setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
+      }
+      return
+    }
 
     if (unclaimedHALO > 0) {
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated])
+
+  /**
+   * Checks if user already migrated (from v1.0 to v1.1 AMMRewards)
+   */
+  useEffect(() => {
+    didAlreadyMigrate(account ?? '', poolInfo.address).then(migrated => {
+      setAlreadyMigrated(migrated)
+    })
+  }, [account, poolInfo.address, rewardsVersion])
 
   /**
    * Approves the stake amount
@@ -563,6 +629,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setStakeAmount('')
     setStakeButtonState(ButtonHaloStates.Disabled)
     setIsTxInProgress(false)
+    /** log stake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Stake LP token',
+      label: poolInfo.pair,
+      value: parseFloat(formatEther(parseEther(stakeAmount).toString()))
+    })
   }
 
   /**
@@ -582,6 +656,14 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     setUnstakeAmount('')
     setUnstakeButtonState(ButtonHaloSimpleStates.Disabled)
     setIsTxInProgress(false)
+    /** log unstake in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Unstake LP token',
+      label: poolInfo.pair,
+      value: parseFloat(formatEther(parseEther(unstakeAmount).toString()))
+    })
   }
 
   /**
@@ -602,6 +684,15 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
       return
     }
 
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Harvest',
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
+    })
+
     // Redirect to vesting page
     const vestingInfo = {
       name: poolInfo.pair,
@@ -617,8 +708,80 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
     history.push('/vesting')
   }
 
+  /**
+   * Handles the user clicking "Migrate" button
+   */
+  const handleMigrate = async () => {
+    setIsTxInProgress(true)
+    setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
+
+    const valueToMigrate = parseEther(toFixed(bptStaked, 8))
+    let txHashes: string[] = []
+    let totalGas = BigNumber.from(0)
+
+    try {
+      const tx1 = await withdraw(poolInfo.pid, valueToMigrate ?? 0, poolInfo.address)
+      const txnResult1 = await tx1.wait()
+
+      const tx2 = await lpTokenContract?.approve(rewardsContractV1_1_ContractAddress, valueToMigrate) // eslint-disable-line
+      const txnResult2 = await tx2.wait()
+
+      addTransaction(tx2, {
+        summary: `Approved ${poolInfo.asToken.symbol} to be migrated to v1.1`
+      })
+
+      const tx3 = await rewardsContractV1_1?.deposit(poolInfo.pid, valueToMigrate, account)
+      const txnResult3 = await tx3.wait()
+
+      addTransaction(tx3, {
+        summary: `${poolInfo.asToken.symbol} migrated to v1.1`
+      })
+
+      txHashes = [tx1.hash, tx2.hash, tx3.hash]
+      totalGas = txnResult1.gasUsed.add(txnResult2.gasUsed).add(txnResult3.gasUsed)
+
+      consoleLog(
+        `Storing pending reward token: ${unclaimedHALO}, total gas costs: ${formatEther(totalGas)}, hashes: ${txHashes}`
+      )
+
+      addPendingRewards(
+        account ?? '',
+        poolInfo.address,
+        poolInfo.pid,
+        `${unclaimedHALO}`,
+        totalGas.toString(),
+        txHashes
+      )
+
+      setIsTxInProgress(false)
+      setAlreadyMigrated(true)
+    } catch (e) {
+      console.error('Migration error: ', e)
+
+      // when txn signature is canceled
+      if ((e as any).code === MetamaskError.Cancelled) {
+        setIsTxInProgress(false)
+      }
+
+      return
+    }
+
+    /** log harvest in GA
+     */
+    ReactGA.event({
+      category: 'Farm',
+      action: 'Migrate',
+      label: poolInfo.pair,
+      value: unclaimedPoolRewards
+    })
+  }
+
   return (
-    <StyledCard bgColor="#ffffff" className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
+    <StyledCard
+      id={`pool-${poolInfo.address.toLowerCase()}`}
+      bgColor="#ffffff"
+      className={'pool-card ' + (showMore ? 'expanded' : 'default')}
+    >
       <AutoColumn>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom
@@ -638,8 +801,8 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="13%">
-            <LabelText className="first">{t('apy')}:</LabelText>
+          <StyledRowFixed width="11%">
+            <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
@@ -649,20 +812,22 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
           <StyledRowFixed width="13%">
             <LabelText>{t('stakeable')}:</LabelText>
             <StyledTextForValue>
-              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+              {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
             </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="14%">
+          <StyledRowFixed width="16%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} LPOP</u>
+                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</u>
+              ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                <>0 xLPOP</>
               ) : (
-                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} LPOP</>
+                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</>
               )}
             </StyledTextForValue>
           </StyledRowFixed>
@@ -692,12 +857,12 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address)}
+                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
                   <GetBPTButton href={poolInfo.addLiquidityUrl}>
-                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address))}
+                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
                     <img src={LinkIcon} alt="Link Icon" />
                   </GetBPTButton>
                 </RowFlat>
@@ -751,7 +916,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
                         )}
                         {stakeButtonState === ButtonHaloStates.TxInProgress && (
                           <>
-                            {HALO_REWARDS_MESSAGE.staking}&nbsp;
+                            {stakingMessage}&nbsp;
                             <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
                           </>
                         )}
@@ -766,7 +931,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address)}
+                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <HideSmallFullWidth>
@@ -801,7 +966,7 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
                       unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
                     {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
                       <>
-                        {HALO_REWARDS_MESSAGE.unstaking}&nbsp;
+                        {unstakingMessage}&nbsp;
                         <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
                       </>
                     )}
@@ -815,7 +980,17 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
 
             <BannerContainer>
               <Banner>
-                <Text>{t('tokenCardRewardDescription')}</Text>
+                <Text>
+                  {t('tokenCardRewardDescription')} Learn{' '}
+                  <a
+                    href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    more
+                  </a>{' '}
+                  about Vesting.
+                </Text>
                 <HideSmall>
                   <img src={BunnyMoon} alt="Bunny Moon" />
                 </HideSmall>
@@ -829,19 +1004,28 @@ export default function FarmPoolCard({ poolInfo, tokenPrice, isActivePool }: Far
               <RewardsChild className="main">
                 <Text className="label">{poolInfo.pair} Rewards:</Text>
                 <Text className="balance">
-                  {formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} LPOP
+                  {showMigrateButton && alreadyMigrated ? (
+                    <>0 xLPOP </>
+                  ) : (
+                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</>
+                  )}
                 </Text>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
-                  onClick={handleClaim}
+                  onClick={showMigrateButton ? handleMigrate : handleClaim}
                   disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
                     harvestButtonState
                   )}
                 >
-                  {t('harvest')}&nbsp;&nbsp;
+                  {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                  &nbsp;&nbsp;
                   {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
                     <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                  ) : showMigrateButton && alreadyMigrated ? (
+                    <Check size={16} />
+                  ) : showMigrateButton && !alreadyMigrated ? (
+                    <GitPullRequest size={16} />
                   ) : (
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}
