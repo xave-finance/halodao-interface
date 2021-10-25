@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { ChainAddressMap, USDC, ZERO_ADDRESS } from '../../constants'
 
 // Supported token symbols
+// Adding new pairs step 1: Add tokensymbol enum
 export enum TokenSymbol {
   USDC = 'USDC',
   EURS = 'EURS',
@@ -34,13 +35,14 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 
 // Token Lists
 // Add tokens here to support, divided into different networks
+// Adding new pairs step 2: Add token in tokenList
 const mainNetTokenList: Token[] = [
   USDC,
-  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
-  // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  // new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
-  // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
+  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
+  new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
+ // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
 ]
 
 const kovanTokenList: Token[] = [
@@ -52,11 +54,11 @@ const kovanTokenList: Token[] = [
 
 const polygonTokenList: Token[] = [
   haloUSDC[ChainId.MATIC] as Token,
-  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
-  // new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
-  // new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
-  // new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
+  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
+  new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
+  new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
+  new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
 ]
 
 // allows switch of token list when changing networks
@@ -68,6 +70,7 @@ export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
 
 // Assimilators
 // Add assimilators here to support. These are arranged per base currency per network
+// Adding new pairs step 3: Add assimilator
 const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.USDC]: ZERO_ADDRESS,
   [TokenSymbol.EURS]: ZERO_ADDRESS,
