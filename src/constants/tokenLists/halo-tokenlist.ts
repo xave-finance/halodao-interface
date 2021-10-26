@@ -57,8 +57,8 @@ const polygonTokenList: Token[] = [
   new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
   new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
-  new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
-  new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
+  new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP')
+  // new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
 ]
 
 // allows switch of token list when changing networks
