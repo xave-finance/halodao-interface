@@ -21,14 +21,14 @@ export type AssimilatorAddressMap = {
 // Router addresses
 export const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
-  [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
+  [ChainId.KOVAN]: '0x2441b8071ecDf696B5CE272AADe08d9833DABE8A',
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
 }
 
 // USDC in between chains
 export const haloUSDC: { [chainId in ChainId]?: Token } = {
   [ChainId.MAINNET]: USDC,
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17ae75af37d9eb21124f98b04705be906', 6, 'USDC', 'USDC'),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17Ae75AF37d9eb21124f98b04705Be906', 6, 'USDC', 'USDC'),
   [ChainId.MATIC]: new Token(ChainId.MATIC, '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', 6, 'USDC', 'USDC')
 }
 
@@ -45,9 +45,9 @@ const mainNetTokenList: Token[] = [
 
 const kovanTokenList: Token[] = [
   haloUSDC[ChainId.KOVAN] as Token,
-  new Token(ChainId.KOVAN, '0x7bcFAF04C9BAD18e3A823740E0683A36426BB0Fe', 2, 'EURS', 'EURS Stasis Coin'),
-  new Token(ChainId.KOVAN, '0x6d2dCe898dC56B1F26B8053995E7096804cd3fD5', 18, 'GBP', 'GBP'),
-  new Token(ChainId.KOVAN, '0xE9958574866587c391735b7e7CE0D79432d3b9d0', 18, 'CHF', 'Jarvis Synthetic Swiss Franc')
+  new Token(ChainId.KOVAN, '0xc775C1368c2D4e3329c2b7d33fEd9ae9E38db824', 2, 'EURS', 'EURS Stasis Coin'),
+  new Token(ChainId.KOVAN, '0x51Ca80516644928dbf8c5af5853Dc01bfe8A8f43', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.KOVAN, '0xE8eCD4E3e3be54B1cbB84977F3A921C82C5450C4', 18, 'jCHF', 'Jarvis Synthetic Swiss Franc')
 ]
 
 const polygonTokenList: Token[] = [
@@ -81,15 +81,15 @@ const mainNetAssimilators: AssimilatorAddressMap = {
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0x4a6EF0be792F8C2Ff2f3477Fb9354d0Dbc7797f9',
-  [TokenSymbol.EURS]: '0x3Af71eC189cf9de106b7C4DAC269d6C6d3d37a97',
-  [TokenSymbol.GBP]: '0x6500ACbaF819C520aDA1B5C91cc8aFe0cD91008f',
-  [TokenSymbol.CHF]: '0xa6b02260754c506403E12e9b09211848F6BC9Cc0',
+  [TokenSymbol.USDC]: '0x07F540613ea0B7e723ffB5978515A342a134be07',
+  [TokenSymbol.EURS]: '0x5F43acF8bABc81Aeaf65FD3a7AE89D78abcc98d8',
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: '0xC5465099955Be8601fAFF79A1C699C4742Cdbf7a',
   [TokenSymbol.TUSD]: ethers.constants.AddressZero,
   [TokenSymbol.TAUD]: ethers.constants.AddressZero,
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.XSGD]: '0xB626E339a0EF63a15585FAAb4483a1732aaD0A94'
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
