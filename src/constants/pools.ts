@@ -25,9 +25,14 @@ const liquidityPoolsAddresses = liquidityPools !== '' ? liquidityPools.split(','
 const liquidityPoolsMatic = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_MATIC || ''
 const liquidityPoolsAddressesMatic =
   liquidityPoolsMatic !== '' ? liquidityPoolsMatic.split(',').map(a => a.toLowerCase()) : []
-const liquidityPoolsKovan = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_KOVAN || ''
-const liquidityPoolsAddressesKovan =
-  liquidityPoolsKovan !== '' ? liquidityPoolsKovan.split(',').map(a => a.toLowerCase()) : []
+// const liquidityPoolsKovan = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_KOVAN || ''
+// const liquidityPoolsAddressesKovan =
+//   liquidityPoolsKovan !== '' ? liquidityPoolsKovan.split(',').map(a => a.toLowerCase()) : []
+const liquidityPoolsAddressesKovan = [
+  '0x4b777D274D3D9527ec39e6Ed0F9D10A44f0D1C10',
+  '0xbA3309C61675e35c42b589210dc523C25200cFCf',
+  '0x9b49AC971145354165446F2E83eB5A9ec7565241'
+]
 
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const BALANCER_POOLS_ADDRESSES_KOVAN = balancerPoolsAddressesKovan
