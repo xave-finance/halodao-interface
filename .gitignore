@@ -24,6 +24,7 @@
 .env-alpha.app.halodao.com
 .env-test.app.halodao.com
 .env-app.halodao.com
+.env-beta.unified
 
 /.netlify
 
