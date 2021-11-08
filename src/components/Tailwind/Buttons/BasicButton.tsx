@@ -5,7 +5,6 @@ interface BasicButtonProps {
   isEnabled: boolean
   onClick: () => void
   variant?: BasicButtonVariant
-  className?: string
 }
 
 export enum BasicButtonVariant {
@@ -15,7 +14,7 @@ export enum BasicButtonVariant {
   Outline
 }
 
-const BasicButton = ({ title, isEnabled, onClick, variant, className }: BasicButtonProps) => {
+const BasicButton = ({ title, isEnabled, onClick, variant }: BasicButtonProps) => {
   return (
     <button
       className={`
@@ -24,7 +23,6 @@ const BasicButton = ({ title, isEnabled, onClick, variant, className }: BasicBut
         text-white
         py-1.5 w-full
         rounded
-        ${className}
         ${variant === BasicButtonVariant.Default ? 'bg-primary hover:bg-primary-hover' : ''}
         ${variant === BasicButtonVariant.Dark ? 'bg-primary-hover hover:bg-primary' : ''}
         ${
