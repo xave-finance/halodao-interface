@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
 import PageWrapper from 'components/Tailwind/Layout/PageWrapper'
 import PageHeaderLeft from 'components/Tailwind/Layout/PageHeaderLeft'
 import PageHeaderCenter from './PageHeaderCenter'
@@ -10,54 +9,11 @@ import UserLendColumn from './UserLendColumn'
 import UserLendRow from './UserLendRow'
 import UserBorrowColumn from './UserBorrowColumn'
 import UserBorrowRow from './UserBorrowRow'
-import { HALO, USDT, XSGD } from '../../../constants'
-import { PoolData, UserLendData } from './models/PoolData'
 import { ArrowUpCircle, ArrowDownCircle } from 'react-feather'
+import { pools, userLends } from './fixtures/LendSampleFixtures'
 
 const LendMarket = () => {
   const [showUserReserves, setShowUserReserves] = useState(true)
-
-  const pools: PoolData[] = [
-    {
-      asset: HALO[ChainId.MAINNET]!,
-      marketSize: 1000,
-      borrowed: 100,
-      depositAPY: 40,
-      borrowAPY: 10,
-      earned: 0
-    },
-    {
-      asset: USDT,
-      marketSize: 1000,
-      borrowed: 100,
-      depositAPY: 40,
-      borrowAPY: 10,
-      earned: 0
-    },
-    {
-      asset: XSGD,
-      marketSize: 1000,
-      borrowed: 100,
-      depositAPY: 40,
-      borrowAPY: 10,
-      earned: 0
-    }
-  ]
-
-  const userLends: UserLendData[] = [
-    {
-      asset: HALO[ChainId.MAINNET]!,
-      balance: 1000,
-      lendAPY: 40,
-      collateral: false
-    },
-    {
-      asset: USDT,
-      balance: 100000,
-      lendAPY: 40,
-      collateral: true
-    }
-  ]
 
   return (
     <PageWrapper className="mb-8">

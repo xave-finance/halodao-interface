@@ -6,7 +6,7 @@ import { UserLendData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
 import CollateralModal from './modals/CollateralModal'
-import BasicButton from 'components/Tailwind/Buttons/BasicButton'
+import BasicButton, { BasicButtonVariant } from 'components/Tailwind/Buttons/BasicButton'
 import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
@@ -143,12 +143,22 @@ const UserLendRow = ({ lend }: UserLendRowProps) => {
           </div>
         </div>
         <div className="col-5">
-          <BasicButton
-            title="Manage"
-            isEnabled={true}
-            onClick={() => history.push('/lend-market/lend')}
-            className="md:text-primary md:bg-transparent md:mr-4"
-          />
+          <div className="hidden md:block w-full">
+            <BasicButton
+              title="Manage"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/lend')}
+              variant={BasicButtonVariant.Light}
+            />
+          </div>
+          <div className="md:hidden w-full mb-2">
+            <BasicButton
+              title="Manage"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/lend')}
+              variant={BasicButtonVariant.Outline}
+            />
+          </div>
         </div>
       </Wrapper>
       <CollateralModal isVisible={showModal} currency={HALO[ChainId.MAINNET]!} onDismiss={() => setShowModal(false)} />

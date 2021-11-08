@@ -5,7 +5,7 @@ import { HALO } from '../../../constants'
 import { PoolData } from './models/PoolData'
 import styled from 'styled-components'
 import CurrencyLogo from 'components/CurrencyLogo'
-import BasicButton from 'components/Tailwind/Buttons/BasicButton'
+import BasicButton, { BasicButtonVariant } from 'components/Tailwind/Buttons/BasicButton'
 import { useHistory } from 'react-router-dom'
 
 const Wrapper = styled.div`
@@ -103,13 +103,38 @@ const PoolRow = ({ pool }: PoolRowProps) => {
           <div className="">{formatNumber(pool.earned, NumberFormat.usd)}</div>
         </div>
         <div className="col-7 flex flex-col md:flex-row items-center">
-          <BasicButton
-            title="Lend"
-            isEnabled={true}
-            onClick={() => history.push('/lend-market/lend')}
-            className="md:bg-primary-hover mb-2 md:mb-0 md:mr-4"
-          />
-          <BasicButton title="Borrow" isEnabled={true} onClick={() => history.push('/lend-market/borrow')} />
+          <div className="hidden md:block w-full md:mr-4">
+            <BasicButton
+              title="Lend"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/lend')}
+              variant={BasicButtonVariant.Dark}
+            />
+          </div>
+          <div className="md:hidden w-full mb-2">
+            <BasicButton
+              title="Lend"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/lend')}
+              variant={BasicButtonVariant.Default}
+            />
+          </div>
+          <div className="hidden md:block w-full">
+            <BasicButton
+              title="Borrow"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/borrow')}
+              variant={BasicButtonVariant.Default}
+            />
+          </div>
+          <div className="md:hidden w-full mb-2">
+            <BasicButton
+              title="Borrow"
+              isEnabled={true}
+              onClick={() => history.push('/lend-market/borrow')}
+              variant={BasicButtonVariant.Outline}
+            />
+          </div>
         </div>
       </Wrapper>
     </div>

@@ -1,5 +1,4 @@
 import { Token } from '@sushiswap/sdk'
-import { BigNumber } from 'ethers'
 
 export interface PoolData {
   asset: Token
