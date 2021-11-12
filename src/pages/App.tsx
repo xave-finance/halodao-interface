@@ -16,6 +16,9 @@ import TailwindDemo from './Test/TailwindDemo'
 import Pool from './Tailwind/Pool'
 import Bridge from './Tailwind/Bridge'
 import Swap from './Tailwind/Swap'
+import LendMarket from './Tailwind/LendMarket'
+import Lend from './Tailwind/LendMarket/Lend'
+import Borrow from './Tailwind/LendMarket/Borrow'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -68,11 +71,13 @@ export default function App() {
           <Polling />
           <Web3ReactManager>
             <Switch>
-              <Route exact strict path="/swap" component={Swap} />
-              <Route exact strict path="/vesting" component={HaloHalo} />
+              <Route exact strict path="/pool" component={Pool} />
               <Route exact strict path="/farm" component={Farm} />
               <Route path="/farm/:address" component={Farm} />
-              <Route exact strict path="/pool" component={Pool} />
+              <Route exact strict path="/vesting" component={HaloHalo} />
+              <Route exact strict path="/lend-market" component={LendMarket} />
+              <Route exact strict path="/lend-market/lend" component={Lend} />
+              <Route exact strict path="/lend-market/borrow" component={Borrow} />
               <Route exact strict path="/bridge" component={Bridge} />
               <Route exact strict path="/swap" component={Swap} />
               {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (

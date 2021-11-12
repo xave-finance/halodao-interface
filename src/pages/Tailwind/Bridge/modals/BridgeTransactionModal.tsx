@@ -25,11 +25,6 @@ interface BridgeTransactionModalProps {
   setProgressState: (isProgressVisible: boolean) => void
 }
 
-interface InProgressContentProps {
-  amount: string
-  tokenSymbol: string
-}
-
 const BridgeTransactionModal = ({
   isVisible,
   amount,
