@@ -277,10 +277,10 @@ export default function HaloHalo() {
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
-                      <HaloIngredients src={xRnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">xRNBW : </HaloHaloPairText>
-                      <HaloIngredients src={RnbwTokenIcon} alt="RNBW" />
-                      <HaloHaloPairText id="haloHaloPrice">RNBW = x{haloHaloPrice} </HaloHaloPairText>
+                      <HaloIngredients src={xRnbwTokenIcon} alt="xLPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">xLPOP : </HaloHaloPairText>
+                      <HaloIngredients src={RnbwTokenIcon} alt="LPOP" />
+                      <HaloHaloPairText id="haloHaloPrice">LPOP = x{haloHaloPrice} </HaloHaloPairText>
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
@@ -299,9 +299,9 @@ export default function HaloHalo() {
               <RowBetween>RAINBOW FACT</RowBetween>
             </RowBetweenCard>
             <RowBetween id="haloHaloAPY">
-              The longer you keep xRNBW, the more RNBW you can claim later on (
+              The longer you keep xLPOP, the more LPOP you can claim later on (
               {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APY' : 'APY pending'}). Claim
-              anytime but lose out on monthly RNBW vesting multiples.
+              anytime but lose out on monthly LPOP vesting multiples.
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
