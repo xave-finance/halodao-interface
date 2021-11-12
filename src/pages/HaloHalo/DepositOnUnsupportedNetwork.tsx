@@ -9,7 +9,7 @@ interface DepositOnUnsupportedNetworkProps {
 const DepositOnUnsupportedNetwork = ({ chainId }: DepositOnUnsupportedNetworkProps) => {
   return (
     <div className="flex flex-col justify-center mt-4">
-      <p className="font-semibold text-center mb-2">Got extra RNBW? Earn more rewards on our next rewards epoch. </p>
+      <p className="font-semibold text-center mb-2">Got extra LPOP? Earn more rewards on our next rewards epoch. </p>
       <PrimaryButton
         title="Deposit"
         icon={<ExternalLink />}

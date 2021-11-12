@@ -481,9 +481,9 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
-            <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+            {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
               {t('swap')}
-            </StyledNavLink>
+            </StyledNavLink> */}
             <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
               {t('pool')}
             </StyledNavLink>
@@ -497,9 +497,9 @@ export default function Header() {
             <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
               {t('vesting')}
             </StyledNavLink>
-            <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
+            {/* <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
               {t('bridge')}
-            </StyledNavLink>
+            </StyledNavLink> */}
             <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
               {t('vote')}
             </StyledExternalLink>

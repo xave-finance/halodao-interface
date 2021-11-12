@@ -9,7 +9,7 @@ const WithdrawOnUnsupportedNetwork = ({ chainId }: WithdrawOnUnsupportedNetworkP
   return (
     <div className="flex flex-col justify-center mt-4">
       <p className="font-semibold text-center mb-2">
-        Do you want to claim your RNBW? Swap your vested xRNBW into RNBW.{' '}
+        Do you want to claim your LPOP? Swap your vested xLPOP into LPOP.{' '}
       </p>
       <button
         className={`
@@ -28,7 +28,7 @@ const WithdrawOnUnsupportedNetwork = ({ chainId }: WithdrawOnUnsupportedNetworkP
           }
         }}
       >
-        Claim RNBW <span className="mr-2" /> <ExternalLink />
+        Claim LPOP <span className="mr-2" /> <ExternalLink />
       </button>
     </div>
   )
