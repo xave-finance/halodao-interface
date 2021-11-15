@@ -17,7 +17,8 @@ export enum TokenSymbol {
   LPHP = 'LPHP',
   LSGD = 'LSGD',
   LfxPHP = 'LfxPHP',
-  LtagPHP = 'LtagPHP'
+  LtagPHP = 'LtagPHP',
+  LLEUR = 'LLEUR'
 }
 
 export type AssimilatorAddressMap = {
@@ -59,7 +60,8 @@ const polygonTokenList: Token[] = [
   new Token(ChainId.MATIC, '0x5e26C7DC36041D4784EbBF5142674859003Ce57d', 18, 'LPHP', 'LolliDAO PHP'),
   new Token(ChainId.MATIC, '0x953258D6aAb315c61fD3ebE4c5D76685f77d33cD', 6, 'LSGD', 'LolliDAO SGD'),
   new Token(ChainId.MATIC, '0xEcA94DCa500c188FFA2C99A4Ee78F7507C88d878', 18, 'LfxPHP', 'LolliDAO fxPHP'),
-  new Token(ChainId.MATIC, '0xacd7c06cBfe3FF0Ec786D6f27D7dd2f91c886e12', 18, 'LtagPHP', 'LolliDAO tagPHP')
+  new Token(ChainId.MATIC, '0xacd7c06cBfe3FF0Ec786D6f27D7dd2f91c886e12', 18, 'LtagPHP', 'LolliDAO tagPHP'),
+  new Token(ChainId.MATIC, '0x54c24314949DB0F4fB7da387cc22c78d7C18e9b9', 2, 'LLEUR', 'LolliDAO EUR 2')
 ]
 
 // allows switch of token list when changing networks
@@ -78,6 +80,7 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.LSGD]: ZERO_ADDRESS,
   [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
   [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
   [TokenSymbol.USDC]: '0xDB70e4cF1eE40Ed01A6eE3E4a200AabBf0facCbC',
   [TokenSymbol.EURS]: '0x30A67BCbDC32c0882D8730F17ee3Ee15FCCcee18',
   [TokenSymbol.GBP]: ZERO_ADDRESS,
@@ -96,6 +99,7 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.LSGD]: ZERO_ADDRESS,
   [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
   [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
   [TokenSymbol.USDC]: ZERO_ADDRESS,
   [TokenSymbol.EURS]: ZERO_ADDRESS,
   [TokenSymbol.GBP]: ZERO_ADDRESS,
@@ -114,6 +118,7 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.LSGD]: '0x9b460B09DBC8590Ef6e190B1Da1995bd558e97a1',
   [TokenSymbol.LfxPHP]: '0x6FedC22EF8d8dD595f4D1D06A076AbcC5bADA972',
   [TokenSymbol.LtagPHP]: '0xbD82D06ea44EBd2F5df01c4384128C74067253B3',
+  [TokenSymbol.LLEUR]: '0x54534C49A7Ee7e1e084878B28941Dea35FC7790e',
   [TokenSymbol.USDC]: ZERO_ADDRESS,
   [TokenSymbol.EURS]: ZERO_ADDRESS,
   [TokenSymbol.GBP]: ZERO_ADDRESS,
