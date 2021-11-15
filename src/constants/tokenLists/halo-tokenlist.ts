@@ -20,9 +20,9 @@ export type AssimilatorAddressMap = {
 }
 // Router addresses
 export const routerAddress: ChainAddressMap = {
-  [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
+  [ChainId.MAINNET]: '0xEcDB730E5a58AC94fbAc7d0E216727D1732DD554',
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
-  [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
+  [ChainId.MATIC]: '0xC651c36b0EA5bED3AA2AaA6101e543A3f8345B03'
 }
 
 // USDC in between chains
@@ -36,11 +36,9 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 // Add tokens here to support, divided into different networks
 const mainNetTokenList: Token[] = [
   USDC,
-  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
-  // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  // new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
-  // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
+  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.MAINNET, '0xdb25f211ab05b1c97d595516f45794528a807ad8', 2, 'EUR', 'EUR Stasis'),
+  new Token(ChainId.MAINNET, '0xB0beF52B81cBB44ED42F4B873B06152A8E9A0b72', 18, 'LPHP', 'LolliDAO PHP')
 ]
 
 const kovanTokenList: Token[] = [
@@ -51,12 +49,12 @@ const kovanTokenList: Token[] = [
 ]
 
 const polygonTokenList: Token[] = [
-  haloUSDC[ChainId.MATIC] as Token,
-  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
-  // new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
-  // new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
-  // new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
+  new Token(ChainId.MATIC, '0x42ca36D100776d61E0D0444EAAB2F10729bf1f84', 6, 'LUSDC', 'LolliDAO USD'),
+  new Token(ChainId.MATIC, '0x2c35134D5De43c68fdB96E0F4464d6f18B8360b9', 2, 'LEUR', 'LolliDAO EUR'),
+  new Token(ChainId.MATIC, '0x5e26C7DC36041D4784EbBF5142674859003Ce57d', 18, 'LPHP', 'LolliDAO PHP'),
+  new Token(ChainId.MATIC, '0x953258D6aAb315c61fD3ebE4c5D76685f77d33cD', 6, 'LSGD', 'LolliDAO SGD'),
+  new Token(ChainId.MATIC, '0x46399488146845E94562F067a178C18dF12473a4', 18, 'LfxPHP', 'LolliDAO fxPHP'),
+  new Token(ChainId.MATIC, '0x6459e4d690AF945c370191e518d3b447f99a7150', 18, 'LtagPHP', 'LolliDAO tagPHP')
 ]
 
 // allows switch of token list when changing networks
