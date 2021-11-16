@@ -14,7 +14,8 @@ export enum TokenSymbol {
   TGBP = 'TGBP',
   TAUD = 'TAUD',
   XSGD = 'XSGD',
-  fxPHP = 'fxPHP'
+  fxPHP = 'fxPHP',
+  tagPHP = 'tagPHP'
 }
 
 export type AssimilatorAddressMap = {
@@ -44,7 +45,8 @@ const mainNetTokenList: Token[] = [
   new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
   new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
   // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
-  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
+  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  new Token(ChainId.MAINNET, '0x7A87104dfeA51853472fFafaD00D43e73284a135', 18, 'tagPHP', 'PHP Stablecoin')
 ]
 
 const kovanTokenList: Token[] = [
@@ -83,7 +85,8 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
   [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
   [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1',
-  [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071'
+  [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
+  [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -96,7 +99,8 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
-  [TokenSymbol.fxPHP]: ethers.constants.AddressZero
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -109,7 +113,8 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
   [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
   [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
-  [TokenSymbol.fxPHP]: ethers.constants.AddressZero
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
