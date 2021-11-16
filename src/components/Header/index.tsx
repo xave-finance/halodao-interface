@@ -500,9 +500,9 @@ export default function Header() {
             <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
               {t('bridge')}
             </StyledNavLink>
-            <StyledNavLink id={`lend-nav-link`} to={'/lend-market'}>
+            {/* <StyledNavLink id={`lend-nav-link`} to={'/lend-market'}>
               {t('lend')}
-            </StyledNavLink>
+            </StyledNavLink> */}
             <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
               {t('vote')}
             </StyledExternalLink>
@@ -603,11 +603,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
           {t('vesting')}
         </NavLink>
       </MenuItem>
-      <MenuItem>
+      {/* <MenuItem>
         <NavLink id={`vesting-nav-link`} to={''} onClick={onClick}>
           {t('lend')}
         </NavLink>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <span onClick={onClick}>
           <ExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>

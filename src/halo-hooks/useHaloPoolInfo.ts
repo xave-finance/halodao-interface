@@ -9,6 +9,7 @@ import { getContract } from 'utils'
 import { Token } from '@sushiswap/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
+import { getCustomTokenSymbol } from 'utils/tokens'
 
 export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { account, library, chainId } = useActiveWeb3React()
@@ -47,9 +48,12 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         CurveContract?.decimals()
       ])
 
+      const token0SymbolProper = getCustomTokenSymbol(chainId, token0Address) || token0Symbol
+      const token1SymbolProper = getCustomTokenSymbol(chainId, token1Address) || token1Symbol
+
       poolsInfo.push({
         pid: map.pid,
-        pair: `${token0Symbol}/${token1Symbol}`,
+        pair: `${token0SymbolProper}/${token1SymbolProper}`,
         address: poolAddress,
         addLiquidityUrl: `https://app.halodao.com/#/pool`,
         liquidity: +formatEther(totalLiquidityValue.total_),
@@ -59,14 +63,14 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
             mainnetAddress: token0Address,
             balance: +formatEther(totalLiquidityValue.individual_[0]),
             weightPercentage: 50,
-            asToken: new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol)
+            asToken: new Token(chainId, token0Address, token0Decimals, token0SymbolProper, token0SymbolProper)
           },
           {
             address: token1Address,
             mainnetAddress: token1Address,
             balance: +formatEther(totalLiquidityValue.individual_[1]),
             weightPercentage: 50,
-            asToken: new Token(chainId, token1Address, token1Decimals, token1Symbol, token1Symbol)
+            asToken: new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
           }
         ],
         asToken: new Token(chainId, poolAddress, curveDecimals, 'HLP', 'HLP'),
