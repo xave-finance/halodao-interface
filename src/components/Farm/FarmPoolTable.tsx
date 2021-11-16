@@ -37,7 +37,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
   const { activePools, inactivePools } = groupPoolsInfo(poolsInfo, chainId)
   const [showInactiveSection, setShowInactiveSection] = useState(false)
   const [showInactiveV0Section, setShowInactiveV0Section] = useState(false)
-  const [showInactiveV1Section, setShowInactiveV1Section] = useState(true)
+  const [showInactiveV1Section, setShowInactiveV1Section] = useState(false)
 
   /**
    * Automatically scroll to a pool card if address is provided

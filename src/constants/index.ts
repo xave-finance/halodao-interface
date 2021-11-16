@@ -587,3 +587,7 @@ export const HALO_REWARDS_MESSAGE = {
   claiming: 'Claiming your rewards',
   unstakeAndClaim: 'Unstaking and claiming'
 }
+
+export const TAGPHP: ChainAddressMap = {
+  [ChainId.MAINNET]: process.env.REACT_APP_TAGPHP_ADDRESS_MAINNET || ZERO_ADDRESS
+}
