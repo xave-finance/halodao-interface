@@ -6,6 +6,9 @@ const CUSTOM_TOKEN_SYMBOLS: {
 } = {
   [ChainId.MAINNET]: {
     [TAGPHP[ChainId.MAINNET]!.toLowerCase()]: 'tagPHP'
+  },
+  [ChainId.MATIC]: {
+    [TAGPHP[ChainId.MATIC]!.toLowerCase()]: 'tagPHP'
   }
 }
 
