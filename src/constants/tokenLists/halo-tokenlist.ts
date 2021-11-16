@@ -1,5 +1,4 @@
 import { ChainId, Token } from '@sushiswap/sdk'
-import { ethers } from 'ethers'
 import { ChainAddressMap, USDC, ZERO_ADDRESS } from '../../constants'
 
 // Supported token symbols
@@ -12,7 +11,14 @@ export enum TokenSymbol {
   TCAD = 'TCAD',
   TGBP = 'TGBP',
   TAUD = 'TAUD',
-  XSGD = 'XSGD'
+  XSGD = 'XSGD',
+  LUSDC = 'LUSDC',
+  LEUR = 'LEUR',
+  LPHP = 'LPHP',
+  LSGD = 'LSGD',
+  LfxPHP = 'LfxPHP',
+  LtagPHP = 'LtagPHP',
+  LLEUR = 'LLEUR'
 }
 
 export type AssimilatorAddressMap = {
@@ -20,27 +26,25 @@ export type AssimilatorAddressMap = {
 }
 // Router addresses
 export const routerAddress: ChainAddressMap = {
-  [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
+  [ChainId.MAINNET]: '0xEcDB730E5a58AC94fbAc7d0E216727D1732DD554',
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
-  [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D'
+  [ChainId.MATIC]: '0xC651c36b0EA5bED3AA2AaA6101e543A3f8345B03'
 }
 
 // USDC in between chains
 export const haloUSDC: { [chainId in ChainId]?: Token } = {
   [ChainId.MAINNET]: USDC,
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17ae75af37d9eb21124f98b04705be906', 6, 'USDC', 'USDC'),
-  [ChainId.MATIC]: new Token(ChainId.MATIC, '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', 6, 'USDC', 'USDC')
+  [ChainId.MATIC]: new Token(ChainId.MATIC, '0x42ca36D100776d61E0D0444EAAB2F10729bf1f84', 6, 'USDC', 'USDC')
 }
 
 // Token Lists
 // Add tokens here to support, divided into different networks
 const mainNetTokenList: Token[] = [
   USDC,
-  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
-  // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  // new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
-  // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
+  new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
+  new Token(ChainId.MAINNET, '0xdb25f211ab05b1c97d595516f45794528a807ad8', 2, 'EUR', 'EUR Stasis'),
+  new Token(ChainId.MAINNET, '0xB0beF52B81cBB44ED42F4B873B06152A8E9A0b72', 18, 'LPHP', 'LolliDAO PHP')
 ]
 
 const kovanTokenList: Token[] = [
@@ -51,12 +55,13 @@ const kovanTokenList: Token[] = [
 ]
 
 const polygonTokenList: Token[] = [
-  haloUSDC[ChainId.MATIC] as Token,
-  new Token(ChainId.MATIC, '0x769434dcA303597C8fc4997Bf3DAB233e961Eda2', 6, 'XSGD', 'Xfers SGD')
-  // new Token(ChainId.MATIC, '0xe4F7761b541668f88d04fe9F2E9DF10CA613aEf7', 18, 'TAUD', 'Wrapped True AUD'),
-  // new Token(ChainId.MATIC, '0x6d3cC56DFC016151eE2613BdDe0e03Af9ba885CC', 18, 'TCAD', 'Wrapped True CAD'),
-  // new Token(ChainId.MATIC, '0x81A123f10C78216d32F8655eb1A88B5E9A3e9f2F', 18, 'TGBP', 'Wrapped True GBP'),
-  // new Token(ChainId.MATIC, '0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756', 18, 'TUSD', 'Wrapped True USD')
+  new Token(ChainId.MATIC, '0x42ca36D100776d61E0D0444EAAB2F10729bf1f84', 6, 'LUSDC', 'LolliDAO USD'),
+  new Token(ChainId.MATIC, '0x2c35134D5De43c68fdB96E0F4464d6f18B8360b9', 2, 'LEUR', 'LolliDAO EUR'),
+  new Token(ChainId.MATIC, '0x5e26C7DC36041D4784EbBF5142674859003Ce57d', 18, 'LPHP', 'LolliDAO PHP'),
+  new Token(ChainId.MATIC, '0x953258D6aAb315c61fD3ebE4c5D76685f77d33cD', 6, 'LSGD', 'LolliDAO SGD'),
+  new Token(ChainId.MATIC, '0xEcA94DCa500c188FFA2C99A4Ee78F7507C88d878', 18, 'LfxPHP', 'LolliDAO fxPHP'),
+  new Token(ChainId.MATIC, '0xacd7c06cBfe3FF0Ec786D6f27D7dd2f91c886e12', 18, 'LtagPHP', 'LolliDAO tagPHP'),
+  new Token(ChainId.MATIC, '0x54c24314949DB0F4fB7da387cc22c78d7C18e9b9', 2, 'LLEUR', 'LolliDAO EUR 2')
 ]
 
 // allows switch of token list when changing networks
@@ -69,39 +74,60 @@ export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
 // Assimilators
 // Add assimilators here to support. These are arranged per base currency per network
 const mainNetAssimilators: AssimilatorAddressMap = {
+  [TokenSymbol.LUSDC]: ZERO_ADDRESS,
+  [TokenSymbol.LEUR]: ZERO_ADDRESS,
+  [TokenSymbol.LPHP]: '0xdEe6071B55Af127cb6399dce407A6864Ce8b0107',
+  [TokenSymbol.LSGD]: ZERO_ADDRESS,
+  [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
+  [TokenSymbol.USDC]: '0xDB70e4cF1eE40Ed01A6eE3E4a200AabBf0facCbC',
+  [TokenSymbol.EURS]: '0x30A67BCbDC32c0882D8730F17ee3Ee15FCCcee18',
+  [TokenSymbol.GBP]: ZERO_ADDRESS,
+  [TokenSymbol.CHF]: ZERO_ADDRESS,
+  [TokenSymbol.TUSD]: ZERO_ADDRESS,
+  [TokenSymbol.TCAD]: ZERO_ADDRESS,
+  [TokenSymbol.TGBP]: ZERO_ADDRESS,
+  [TokenSymbol.TAUD]: ZERO_ADDRESS,
+  [TokenSymbol.XSGD]: '0xd58845Be9D194b5d071Ca1422cE3756A9711784D'
+}
+
+const kovanAssimilators: AssimilatorAddressMap = {
+  [TokenSymbol.LUSDC]: ZERO_ADDRESS,
+  [TokenSymbol.LEUR]: ZERO_ADDRESS,
+  [TokenSymbol.LPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LSGD]: ZERO_ADDRESS,
+  [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
+  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
   [TokenSymbol.USDC]: ZERO_ADDRESS,
   [TokenSymbol.EURS]: ZERO_ADDRESS,
   [TokenSymbol.GBP]: ZERO_ADDRESS,
   [TokenSymbol.CHF]: ZERO_ADDRESS,
   [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: '0x17c3A12F68C95c637055ea65aA90D72813F430d4',
-  [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
-  [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
-  [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1'
-}
-
-const kovanAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0x4a6EF0be792F8C2Ff2f3477Fb9354d0Dbc7797f9',
-  [TokenSymbol.EURS]: '0x3Af71eC189cf9de106b7C4DAC269d6C6d3d37a97',
-  [TokenSymbol.GBP]: '0x6500ACbaF819C520aDA1B5C91cc8aFe0cD91008f',
-  [TokenSymbol.CHF]: '0xa6b02260754c506403E12e9b09211848F6BC9Cc0',
-  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
-  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
-  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
-  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.TCAD]: ZERO_ADDRESS,
+  [TokenSymbol.TGBP]: ZERO_ADDRESS,
+  [TokenSymbol.TAUD]: ZERO_ADDRESS,
+  [TokenSymbol.XSGD]: ZERO_ADDRESS
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0xbf7455b83fd4c6dcF4f544e68DD38670b4Ff07D6',
-  [TokenSymbol.EURS]: ethers.constants.AddressZero,
-  [TokenSymbol.GBP]: ethers.constants.AddressZero,
-  [TokenSymbol.CHF]: ethers.constants.AddressZero,
-  [TokenSymbol.TUSD]: '0x7aBF5B0183631fb7537523c6627D8016408e1509',
-  [TokenSymbol.TAUD]: '0x1bF0990fDB4CABF88aB7f3D412691cE2B425F2Ef',
-  [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
-  [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
-  [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
+  [TokenSymbol.LUSDC]: '0x58713ebBe790b76c0b311901F7e61403319cBE88',
+  [TokenSymbol.LEUR]: '0x1bF1B29b4C8Ce5C2e37c829a1d93d513dE1C8496',
+  [TokenSymbol.LPHP]: '0xc020d12B69BD37a6de78AE0AeDE56e8CbDb700Fd',
+  [TokenSymbol.LSGD]: '0x9b460B09DBC8590Ef6e190B1Da1995bd558e97a1',
+  [TokenSymbol.LfxPHP]: '0x6FedC22EF8d8dD595f4D1D06A076AbcC5bADA972',
+  [TokenSymbol.LtagPHP]: '0xbD82D06ea44EBd2F5df01c4384128C74067253B3',
+  [TokenSymbol.LLEUR]: '0x54534C49A7Ee7e1e084878B28941Dea35FC7790e',
+  [TokenSymbol.USDC]: ZERO_ADDRESS,
+  [TokenSymbol.EURS]: ZERO_ADDRESS,
+  [TokenSymbol.GBP]: ZERO_ADDRESS,
+  [TokenSymbol.CHF]: ZERO_ADDRESS,
+  [TokenSymbol.TUSD]: ZERO_ADDRESS,
+  [TokenSymbol.TCAD]: ZERO_ADDRESS,
+  [TokenSymbol.TGBP]: ZERO_ADDRESS,
+  [TokenSymbol.TAUD]: ZERO_ADDRESS,
+  [TokenSymbol.XSGD]: ZERO_ADDRESS
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook

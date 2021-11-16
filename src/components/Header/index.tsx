@@ -481,9 +481,9 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
-            {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+            <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
               {t('swap')}
-            </StyledNavLink> */}
+            </StyledNavLink>
             <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
               {t('pool')}
             </StyledNavLink>
@@ -576,6 +576,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
   return (
     <>
       <MenuItem>
+        <NavLink id={`swap-nav-link`} to={'/swap'} onClick={onClick}>
+          {t('swap')}
+        </NavLink>
+      </MenuItem>
+      <MenuItem>
         <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
           {t('pool')}
         </NavLink>
@@ -594,18 +599,6 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
         <NavLink id={`vesting-nav-link`} to={'/vesting'} onClick={onClick}>
           {t('vesting')}
         </NavLink>
-      </MenuItem>
-      <MenuItem>
-        <span onClick={onClick}>
-          <ExternalLink
-            id={`swap-nav-link`}
-            href={
-              'https://app.balancer.fi/#/trade/0x70e8de73ce538da2beed35d14187f6959a8eca96/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-            }
-          >
-            {t('swap')}
-          </ExternalLink>
-        </span>
       </MenuItem>
       <MenuItem>
         <span onClick={onClick}>
