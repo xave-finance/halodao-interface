@@ -13,7 +13,8 @@ export enum TokenSymbol {
   TCAD = 'TCAD',
   TGBP = 'TGBP',
   TAUD = 'TAUD',
-  XSGD = 'XSGD'
+  XSGD = 'XSGD',
+  fxPHP = 'fxPHP'
 }
 
 export type AssimilatorAddressMap = {
@@ -41,8 +42,9 @@ const mainNetTokenList: Token[] = [
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
   new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP')
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
   // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
+  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
 ]
 
 const kovanTokenList: Token[] = [
@@ -72,7 +74,7 @@ export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
 // Add assimilators here to support. These are arranged per base currency per network
 // Adding new pairs step 3: Add assimilator
 const mainNetAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: ZERO_ADDRESS,
+  [TokenSymbol.USDC]: '0x311FDdE361e6258e9730c6147aAf584aC0F9c59A',
   [TokenSymbol.EURS]: ZERO_ADDRESS,
   [TokenSymbol.GBP]: ZERO_ADDRESS,
   [TokenSymbol.CHF]: ZERO_ADDRESS,
@@ -80,7 +82,8 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TAUD]: '0x17c3A12F68C95c637055ea65aA90D72813F430d4',
   [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
   [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
-  [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1'
+  [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1',
+  [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -92,7 +95,8 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TAUD]: ethers.constants.AddressZero,
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -104,7 +108,8 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TAUD]: '0x1bF0990fDB4CABF88aB7f3D412691cE2B425F2Ef',
   [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
   [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
-  [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
+  [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
