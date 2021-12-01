@@ -4,7 +4,7 @@ import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { ethers } from 'ethers'
 import { getContract } from 'utils'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import {
   AssimilatorAddressMap,
   haloAssimilators,

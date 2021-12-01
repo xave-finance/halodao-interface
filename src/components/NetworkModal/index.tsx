@@ -1,7 +1,7 @@
 import { NETWORK_ICON, NETWORK_LABEL } from '../../constants/networks'
 import { useModalOpen, useNetworkModalToggle } from '../../state/application/hooks'
 import { ApplicationModal } from '../../state/application/actions'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import React from 'react'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { Box } from 'rebass'

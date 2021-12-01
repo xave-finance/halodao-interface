@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { HALO_REWARDS_V1_ADDRESS, HALO_REWARDS_ADDRESS, HALO_REWARDS_V1_1_ADDRESS } from '../constants'
 
 export enum AmmRewardsVersion {

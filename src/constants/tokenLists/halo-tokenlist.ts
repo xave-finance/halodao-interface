@@ -1,4 +1,4 @@
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { ethers } from 'ethers'
 import { ChainAddressMap, USDC, ZERO_ADDRESS } from '../../constants'
 

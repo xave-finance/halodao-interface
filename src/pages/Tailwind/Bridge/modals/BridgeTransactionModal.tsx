@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ChainId, Currency, Token } from '@sushiswap/sdk'
+import { ChainId, Currency, Token } from '@halodao/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from 'constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'

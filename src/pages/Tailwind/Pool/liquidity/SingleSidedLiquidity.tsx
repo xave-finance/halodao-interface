@@ -1,4 +1,4 @@
-import { TokenAmount, JSBI } from '@sushiswap/sdk'
+import { TokenAmount, JSBI } from '@halodao/sdk'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'

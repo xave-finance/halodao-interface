@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { useActiveWeb3React } from './index'
 import useInterval from 'hooks/useInterval'
 

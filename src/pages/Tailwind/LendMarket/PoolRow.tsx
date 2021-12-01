@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { HALO } from '../../../constants'
 import { PoolData } from './models/PoolData'

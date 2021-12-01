@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { HALO_TOKEN_ADDRESS } from '../constants/index'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 

@@ -6,7 +6,7 @@ import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
 import styled from 'styled-components'
 import { YellowCard } from '../Card'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 const StyledWrapper = styled(YellowCard)`
   border-radius: ${({ theme }) => theme.borderRadius};

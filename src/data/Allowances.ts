@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from '@sushiswap/sdk'
+import { Token, TokenAmount } from '@halodao/sdk'
 import { useMemo } from 'react'
 
 import { useTokenContract } from '../hooks/useContract'

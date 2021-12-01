@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { PoolData, UserLendData } from '../models/PoolData'
 import { HALO, USDT, XSGD } from '../../../../constants'
 

@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { TAGPHP } from '../constants'
 
 const CUSTOM_TOKEN_SYMBOLS: {

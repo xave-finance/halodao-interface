@@ -1,4 +1,4 @@
-import { TokenAmount, Pair, Currency } from '@sushiswap/sdk'
+import { TokenAmount, Pair, Currency } from '@halodao/sdk'
 import { useMemo } from 'react'
 // import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import IUniswapV2PairABI from '@sushiswap/core/build/abi/IUniswapV2Pair.json'

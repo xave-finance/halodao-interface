@@ -9,7 +9,7 @@ import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS, HALO_REWARDS_MANAGER_ADDRESS } from '../constants'
 import { formatNumber } from 'utils/formatNumber'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 const { BigNumber } = ethers
 

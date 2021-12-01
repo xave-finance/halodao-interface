@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ChainId, Token, WETH } from '@sushiswap/sdk'
+import { ChainId, Token, WETH } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider } from './usePoolInfo'

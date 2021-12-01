@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { BALANCER_LPTOKEN_POOL_MAP, BALANCER_LPTOKEN_POOL_MAP_KOVAN } from 'constants/pools'
 import { jsonToGraphQLQuery } from 'json-to-graphql-query'
 

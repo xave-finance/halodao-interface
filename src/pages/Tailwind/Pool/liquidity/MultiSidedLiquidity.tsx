@@ -4,7 +4,7 @@ import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
-import { TokenAmount, JSBI } from '@sushiswap/sdk'
+import { TokenAmount, JSBI } from '@halodao/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
