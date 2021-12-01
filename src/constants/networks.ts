@@ -54,7 +54,8 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
+  [ChainId.MOONBASE]: 'Moonbase',
+  [ChainId.ARBITRUM]: 'Arbitrum'
   //[ChainId.AVALANCHE]: 'Avalanche',
   //[ChainId.FUJI]: 'Fuji',
   //[ChainId.HECO]: 'HECO',
@@ -156,6 +157,17 @@ export const NETWORK_PARAMS: {
     },
     rpcUrls: ['https://rpc.testnet.moonbeam.network'], //['https://matic-mainnet.chainstacklabs.com/'],
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network']
+  },
+  [ChainId.ARBITRUM]: {
+    chainId: '0xA4B1',
+    chainName: 'Arbitrum One',
+    nativeCurrency: {
+      name: 'Arbitrum ETH',
+      symbol: 'AETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://arbiscan.io']
   }
   /*
     [ChainId.HARMONY]: {
@@ -298,5 +310,15 @@ export const NETWORK_SUPPORTED_FEATURES: {
     bridge: false,
     // bridge: true, // testing
     isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.ARBITRUM]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: false
   }
 }

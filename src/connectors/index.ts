@@ -49,7 +49,9 @@ export const injected = new InjectedConnector({
     100, // xdai
     56, // binance smart chain
     97, // binance smart chain testnet
-    1287 // moonbase
+    1287, // moonbase
+    42161, // arbitrum
+    421611 // arbitrum testnet
   ]
 })
 
