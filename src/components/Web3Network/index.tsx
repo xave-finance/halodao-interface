@@ -40,7 +40,9 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
+  [ChainId.MOONBASE]: 'Moonbase',
+  [ChainId.ARBITRUM]: 'Arbitrum',
+  [ChainId.ARBITRUM_TESTNET]: 'Arbitrum Testnet'
 }
 
 function Web3Network(): JSX.Element | null {

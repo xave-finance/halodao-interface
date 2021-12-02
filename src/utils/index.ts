@@ -113,7 +113,18 @@ const builders = {
 
   // token is not yet supported for arbitrum
   arbitrum: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    const prefix = `https://explorer.offchainlabs.com/#`
+    const prefix = `https://arbiscan.io/#`
+    switch (type) {
+      case 'transaction':
+        return `${prefix}/tx/${data}`
+      case 'token':
+        return prefix
+      default:
+        return `${prefix}/${type}/${data}`
+    }
+  },
+  arbitrumTestnet: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
+    const prefix = `https://rinkeby-explorer.arbitrum.io/#`
     switch (type) {
       case 'transaction':
         return `${prefix}/tx/${data}`
@@ -195,6 +206,10 @@ const chains: ChainObject = {
   [ChainId.ARBITRUM]: {
     chainName: 'arbitrum',
     builder: builders.arbitrum
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
+    chainName: 'testnet',
+    builder: builders.arbitrumTestnet
   },
   [ChainId.MOONBASE]: {
     chainName: '',

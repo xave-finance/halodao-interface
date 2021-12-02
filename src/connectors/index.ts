@@ -22,7 +22,9 @@ export const RPC = {
   [ChainId.XDAI]: 'https://rpc.xdaichain.com',
   [ChainId.BSC]: 'https://bsc-dataseed.binance.org/',
   [ChainId.BSC_TESTNET]: 'https://data-seed-prebsc-2-s3.binance.org:8545',
-  [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network'
+  [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network',
+  [ChainId.ARBITRUM]: 'https://arb1.arbitrum.io/rpc',
+  [ChainId.ARBITRUM_TESTNET]: 'https://rinkeby.arbitrum.io/rpc'
 }
 
 export const network = new NetworkConnector({

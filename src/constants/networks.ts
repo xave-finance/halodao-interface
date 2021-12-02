@@ -30,6 +30,7 @@ export const NETWORK_ICON = {
   [ChainId.MATIC_TESTNET]: Matic,
   [ChainId.XDAI]: xDai,
   [ChainId.ARBITRUM]: Arbitrum,
+  [ChainId.ARBITRUM_TESTNET]: Arbitrum,
   [ChainId.MOONBASE]: Moonbeam
   //[ChainId.AVALANCHE]: Avalanche,
   //[ChainId.FUJI]: Avalanche,
@@ -55,7 +56,8 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
   [ChainId.MOONBASE]: 'Moonbase',
-  [ChainId.ARBITRUM]: 'Arbitrum'
+  [ChainId.ARBITRUM]: 'Arbitrum',
+  [ChainId.ARBITRUM_TESTNET]: 'Arbitrum Testnet'
   //[ChainId.AVALANCHE]: 'Avalanche',
   //[ChainId.FUJI]: 'Fuji',
   //[ChainId.HECO]: 'HECO',
@@ -168,6 +170,17 @@ export const NETWORK_PARAMS: {
     },
     rpcUrls: ['https://arb1.arbitrum.io/rpc'],
     blockExplorerUrls: ['https://arbiscan.io']
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
+    chainId: '0x66EEB',
+    chainName: 'Arbitrum Rinkeby',
+    nativeCurrency: {
+      name: 'Arbitrum Rinkeby ETH',
+      symbol: 'ARETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://rinkeby-explorer.arbitrum.io']
   }
   /*
     [ChainId.HARMONY]: {
@@ -312,6 +325,16 @@ export const NETWORK_SUPPORTED_FEATURES: {
     isBridgeCapped: isBridgeCapped === 'true'
   },
   [ChainId.ARBITRUM]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: false
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
     vest: false,
     farm: true,
     pool: true,
