@@ -86,7 +86,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const quoteNumeraire = quoteAmountVal // no need to convert, quote (USDC) is numeraire
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
       const totalNumeraire = quoteNumeraire * multiplier
-      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+      const estimate = await viewDeposit(parseEther(totalNumeraire.toFixed(18)))
 
       let depositPreview = {
         deposit: totalNumeraire,
@@ -119,7 +119,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const baseNumeraire = baseAmountVal * baseRate
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
       const totalNumeraire = baseNumeraire * multiplier
-      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+      const estimate = await viewDeposit(parseEther(totalNumeraire.toFixed(18)))
 
       let depositPreview = {
         deposit: totalNumeraire,
