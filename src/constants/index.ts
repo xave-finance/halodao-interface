@@ -589,5 +589,6 @@ export const HALO_REWARDS_MESSAGE = {
 }
 
 export const TAGPHP: ChainAddressMap = {
-  [ChainId.MAINNET]: process.env.REACT_APP_TAGPHP_ADDRESS_MAINNET || ZERO_ADDRESS
+  [ChainId.MAINNET]: process.env.REACT_APP_TAGPHP_ADDRESS_MAINNET || ZERO_ADDRESS,
+  [ChainId.MATIC]: process.env.REACT_APP_TAGPHP_ADDRESS_MATIC || ZERO_ADDRESS
 }
