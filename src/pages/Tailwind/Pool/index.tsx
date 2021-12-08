@@ -5,6 +5,8 @@ import PageHeaderRight from './PageHeaderRight'
 import PoolColumns from './PoolColumns'
 import {
   LIQUIDITY_POOLS_ADDRESSES,
+  LIQUIDITY_POOLS_ADDRESSES_ARB,
+  LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY,
   LIQUIDITY_POOLS_ADDRESSES_KOVAN,
   LIQUIDITY_POOLS_ADDRESSES_MATIC
 } from 'constants/pools'
@@ -43,6 +45,10 @@ const Pool = () => {
         ? LIQUIDITY_POOLS_ADDRESSES_MATIC
         : chainId === ChainId.KOVAN
         ? LIQUIDITY_POOLS_ADDRESSES_KOVAN
+        : chainId === ChainId.ARBITRUM
+        ? LIQUIDITY_POOLS_ADDRESSES_ARB
+        : chainId === ChainId.ARBITRUM_TESTNET
+        ? LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY
         : LIQUIDITY_POOLS_ADDRESSES
 
     const whitelisted = addresses.filter(address => {

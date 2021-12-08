@@ -10,9 +10,9 @@ export enum AmmRewardsVersion {
 export const getAmmRewardsContractAddress = (chainId?: ChainId, version = AmmRewardsVersion.Latest) => {
   let address: string | undefined = undefined
 
-  if (chainId === ChainId.MATIC) {
+  if (chainId === ChainId.MATIC || chainId === ChainId.ARBITRUM || chainId === ChainId.ARBITRUM_TESTNET) {
     /**
-     * On MATIC, latest & "ONLY" version is AmmRewards v1.0
+     * On MATIC & RBITRUM latest & "ONLY" version is AmmRewards v1.0
      *
      * AmmRewards Changelog:
      * v1.0 - (halo AMM) initial release
