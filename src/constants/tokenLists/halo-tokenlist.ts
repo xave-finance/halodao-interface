@@ -70,7 +70,10 @@ const polygonTokenList: Token[] = [
   new Token(ChainId.MATIC, '0x69a8Aaa4318f4803B3517F78a2ca6c859F5349f3', 18, 'tagPHP', 'PHP Stablecoin')
 ]
 
-const arbTokenList: Token[] = [haloUSDC[ChainId.ARBITRUM] as Token]
+const arbTokenList: Token[] = [
+  haloUSDC[ChainId.ARBITRUM] as Token,
+  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
+]
 
 const arbRinkebyTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM_TESTNET] as Token,

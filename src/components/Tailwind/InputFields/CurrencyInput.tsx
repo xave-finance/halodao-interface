@@ -30,7 +30,6 @@ const TokenInput = ({
   showMax,
   onSelectToken,
   tokenList,
-
   balance
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)
