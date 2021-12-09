@@ -156,7 +156,8 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
-  [TokenSymbol.tagPHP]: ethers.constants.AddressZero
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
 
 const arbRinkebyAssimilators: AssimilatorAddressMap = {
@@ -170,7 +171,8 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
-  [TokenSymbol.tagPHP]: ethers.constants.AddressZero
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
