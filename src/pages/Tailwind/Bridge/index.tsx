@@ -46,6 +46,7 @@ const CurrentPanelContent = () => {
   }
   return <NotSupportedContent />
 }
+
 const Bridge = () => {
   return (
     <PageWrapper className="mb-8">

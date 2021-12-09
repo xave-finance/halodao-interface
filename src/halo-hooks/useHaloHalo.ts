@@ -16,7 +16,8 @@ const { BigNumber } = ethers
 const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  const overrideCurrentProvider = chainId && chainId === ChainId.MATIC ? true : false // user RPCProvider to connect to mainnet if user is in MATIC
+  const overrideCurrentProvider =
+    chainId && [ChainId.MATIC, ChainId.ARBITRUM, ChainId.ARBITRUM_TESTNET].includes(chainId) ? true : false // user RPCProvider to connect to mainnet if user is in MATIC
   const contractChainId = overrideCurrentProvider ? ChainId.MAINNET : chainId
   const haloHaloAddress = chainId ? HALOHALO_ADDRESS[contractChainId as ChainId] : undefined
   const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[contractChainId as ChainId] : undefined
