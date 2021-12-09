@@ -27,7 +27,7 @@ export const routerAddress: ChainAddressMap = {
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D',
   [ChainId.ARBITRUM]: ZERO_ADDRESS,
-  [ChainId.ARBITRUM_TESTNET]: '0x6B2970D6Ebb2Ec5D32924839418514A7b2d1FFb6'
+  [ChainId.ARBITRUM_TESTNET]: '0x303Fe605077f251a123A41b5241a164c49Eba9b5'
 }
 
 // USDC in between chains
@@ -36,7 +36,13 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
   [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17ae75af37d9eb21124f98b04705be906', 6, 'USDC', 'USDC'),
   [ChainId.MATIC]: new Token(ChainId.MATIC, '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', 6, 'USDC', 'USDC'),
   [ChainId.ARBITRUM]: new Token(ChainId.MATIC, ZERO_ADDRESS, 6, 'USDC', 'USDC'),
-  [ChainId.ARBITRUM_TESTNET]: new Token(ChainId.MATIC, '0x7c27A0070b6272Ce27A06059a4E0d4297AD6D2ee', 6, 'USDC', 'USDC')
+  [ChainId.ARBITRUM_TESTNET]: new Token(
+    ChainId.MATIC,
+    '0x85476aB9523168d8143A20Bb873e33Ee7E522FbF',
+    6,
+    'USDC',
+    'Mock USDC'
+  )
 }
 
 // Token Lists
@@ -77,7 +83,7 @@ const arbTokenList: Token[] = [
 
 const arbRinkebyTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM_TESTNET] as Token,
-  new Token(ChainId.MAINNET, '0x6a7531477Da1ff5571EB71649d6EeE2db305375E', 18, 'fxPHP', 'handlePHP')
+  new Token(ChainId.MAINNET, '0xE950eC7Fc508dd86fD9B36671f6B1602007D5B72', 18, 'fxPHP', 'Mock fxPHP')
 ]
 
 // allows switch of token list when changing networks
@@ -149,7 +155,7 @@ const arbAssimilators: AssimilatorAddressMap = {
 }
 
 const arbRinkebyAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.USDC]: '0x4E5b866564AC8695097e881f5CA86B2074BE7857',
+  [TokenSymbol.USDC]: '0xF5383deb3cEFE0f0812Be833DE31d92564F87157',
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
   [TokenSymbol.CHF]: ethers.constants.AddressZero,
@@ -158,7 +164,7 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
-  [TokenSymbol.fxPHP]: '0xa104db68d41c8FC1B7C9aA16B4bdc1504ea0Fc41',
+  [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero
 }
 
