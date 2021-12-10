@@ -168,7 +168,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
     setApproveState(ApproveButtonState.Approving)
     try {
       let tx
-      if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken.address] !== chainId) {
+      if (chainToken && ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address] !== chainId) {
         tx = await giveSecondaryBridgeAllowance(amount)
       } else {
         tx = await giveBridgeAllowance(amount)
@@ -184,7 +184,7 @@ const useBridge = ({ setButtonState, setApproveState }: BridgeProps) => {
 
   const fetchAllowance = useCallback(async () => {
     try {
-      if (chainToken && chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken.address]) {
+      if (chainToken && chainId === ORIGINAL_TOKEN_CHAIN_ID[chainToken[chainId as ChainId].address]) {
         setAllowance(
           await tokenContract?.allowance(account, primaryBridgeContract?.address).then((n: any) => toNumber(n))
         )
