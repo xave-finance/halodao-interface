@@ -28,6 +28,12 @@ const liquidityPoolsAddressesMatic =
 const liquidityPoolsKovan = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_KOVAN || ''
 const liquidityPoolsAddressesKovan =
   liquidityPoolsKovan !== '' ? liquidityPoolsKovan.split(',').map(a => a.toLowerCase()) : []
+const liquidityPoolsArb = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_ARB || ''
+const liquidityPoolsAddressesArb =
+  liquidityPoolsArb !== '' ? liquidityPoolsArb.split(',').map(a => a.toLowerCase()) : []
+const liquidityPoolsArbRinkeby = process.env.REACT_APP_LIQUIDITY_POOL_ADDRESSES_ARB_RINKEBY || ''
+const liquidityPoolsAddressesArbRinkeby =
+  liquidityPoolsArbRinkeby !== '' ? liquidityPoolsArbRinkeby.split(',').map(a => a.toLowerCase()) : []
 
 export const BALANCER_POOLS_ADDRESSES = balancerPoolsAddresses
 export const BALANCER_POOLS_ADDRESSES_KOVAN = balancerPoolsAddressesKovan
@@ -39,6 +45,8 @@ export const SUSHI_POOLS_ADDRESSES_MATIC = sushiPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES = liquidityPoolsAddresses
 export const LIQUIDITY_POOLS_ADDRESSES_MATIC = liquidityPoolsAddressesMatic
 export const LIQUIDITY_POOLS_ADDRESSES_KOVAN = liquidityPoolsAddressesKovan
+export const LIQUIDITY_POOLS_ADDRESSES_ARB = liquidityPoolsAddressesArb
+export const LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY = liquidityPoolsAddressesArbRinkeby
 
 /**
  * Balancer lpToken -> poolAddress mapping
@@ -90,10 +98,17 @@ const inactivePoolsMatic =
 const inactivePoolsRawKovan = process.env.REACT_APP_INACTIVE_POOLS_KOVAN || ''
 const inactivePoolsKovan =
   inactivePoolsRawKovan !== '' ? inactivePoolsRawKovan.split(',').map(a => a.toLowerCase()) : []
+const inactivePoolsRawArb = process.env.REACT_APP_INACTIVE_POOLS_ARB || ''
+const inactivePoolsArb = inactivePoolsRawArb !== '' ? inactivePoolsRawArb.split(',').map(a => a.toLowerCase()) : []
+const inactivePoolsRawArbRinkeby = process.env.REACT_APP_INACTIVE_POOLS_ARB_RINKEBY || ''
+const inactivePoolsArbRinkeby =
+  inactivePoolsRawArbRinkeby !== '' ? inactivePoolsRawArbRinkeby.split(',').map(a => a.toLowerCase()) : []
 
 export const INACTIVE_POOLS = inactivePools
 export const INACTIVE_POOLS_MATIC = inactivePoolsMatic
 export const INACTIVE_POOLS_KOVAN = inactivePoolsKovan
+export const INACTIVE_POOLS_ARB = inactivePoolsArb
+export const INACTIVE_POOLS_ARB_RINKEBY = inactivePoolsArbRinkeby
 
 /**
  * Double estimate pools

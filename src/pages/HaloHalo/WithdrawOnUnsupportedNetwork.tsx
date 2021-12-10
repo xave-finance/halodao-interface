@@ -1,6 +1,6 @@
 import React from 'react'
 import { ExternalLink } from 'react-feather'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 interface WithdrawOnUnsupportedNetworkProps {
   chainId: ChainId

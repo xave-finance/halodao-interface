@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Token, Currency } from '@sushiswap/sdk'
+import { Token, Currency } from '@halodao/sdk'
 import styled from 'styled-components'
 import { TYPE, CloseIcon } from 'theme'
 import Card from 'components/Card'

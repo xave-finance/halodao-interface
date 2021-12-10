@@ -2,7 +2,7 @@ import React from 'react'
 import CurrencyLogo from 'components/CurrencyLogo'
 
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { Currency } from '@sushiswap/sdk'
+import { Currency } from '@halodao/sdk'
 
 // StatCardProps
 interface StatCardProps {

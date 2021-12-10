@@ -1,7 +1,7 @@
 import { NETWORK_ICON, NETWORK_LABEL } from '../../constants/networks'
 import { useModalOpen, useNetworkModalToggle } from '../../state/application/hooks'
 import { ApplicationModal } from '../../state/application/actions'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import React from 'react'
 import { useActiveWeb3React } from 'hooks/useActiveWeb3React'
 import { Box } from 'rebass'
@@ -59,6 +59,8 @@ export default function NetworkModal(): JSX.Element | null {
 
   if (!chainId) return null
 
+  const chainOptions = [ChainId.MAINNET, ChainId.MATIC, ChainId.ARBITRUM]
+
   return (
     <HaloModal isOpen={networkModalOpen} onDismiss={toggleNetworkModal} title="Select a Network">
       <>
@@ -66,18 +68,7 @@ export default function NetworkModal(): JSX.Element | null {
           You are currently browsing <span className="halodao">HALODAO</span> on the{' '}
           <span className="current-network">{NETWORK_LABEL[chainId]}</span> network
         </StyledDescription>
-        {[
-          ChainId.MAINNET,
-          //ChainId.FANTOM,
-          ChainId.BSC,
-          ChainId.MATIC
-          //ChainId.HECO,
-          //ChainId.XDAI,
-          //ChainId.HARMONY,
-          //ChainId.AVALANCHE,
-          //ChainId.OKEX
-          //ChainId.MOONBASE
-        ].map((key: ChainId, i: number) => {
+        {chainOptions.map((key: ChainId, i: number) => {
           if (chainId === key) {
             return (
               <NetworkButton key={i}>

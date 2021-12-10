@@ -1,7 +1,7 @@
 import React from 'react'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { ExternalLink } from 'react-feather'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 interface DepositOnUnsupportedNetworkProps {
   chainId: ChainId

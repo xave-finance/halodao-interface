@@ -6,7 +6,7 @@ import BridgePanel from './BridgePanel'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { NETWORK_SUPPORTED_FEATURES, NETWORK_LABEL } from '../../../constants/networks'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
 
@@ -46,6 +46,7 @@ const CurrentPanelContent = () => {
   }
   return <NotSupportedContent />
 }
+
 const Bridge = () => {
   return (
     <PageWrapper className="mb-8">

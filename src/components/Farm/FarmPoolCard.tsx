@@ -36,7 +36,7 @@ import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
 import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import { JSBI, TokenAmount } from '@halodao/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,

@@ -2223,6 +2223,19 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
+"@halodao/sdk@5.0.0-canary.2-b":
+  version "5.0.0-canary.2-b"
+  resolved "https://registry.yarnpkg.com/@halodao/sdk/-/sdk-5.0.0-canary.2-b.tgz#eb950bb34dd0b035da6206f7e470db797e9fe62f"
+  integrity sha512-7f6rZunSvo76yJRp2gKfqRZwUObxAMt8/k3bi3MuUSulpvmWQ433PWGBjSGGqgl5XIhOvkUa05iM8mF8Kv88kA==
+  dependencies:
+    "@uniswap/v2-core" "^1.0.0"
+    big.js "^5.2.2"
+    decimal.js-light "^2.5.0"
+    jsbi "^3.1.1"
+    tiny-invariant "^1.1.0"
+    tiny-warning "^1.0.3"
+    toformat "^2.0.0"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"
@@ -2938,19 +2951,6 @@
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@sushiswap/default-token-list/-/default-token-list-3.3.0.tgz#022d2ffe0f06bb61372e9cb12f166a40aaa687af"
   integrity sha512-lnBb5MsJQrHMG1/y15xr8iBjtlJNZIPOXW1SjVM4hqPeUkO3MXZfWLuA0HQg9pevI3g6844hzq2fbBnYxizNVQ==
-
-"@sushiswap/sdk@5.0.0-canary.2":
-  version "5.0.0-canary.2"
-  resolved "https://registry.yarnpkg.com/@sushiswap/sdk/-/sdk-5.0.0-canary.2.tgz#8ea978f7c3afaf62b386181c6e430f8039777719"
-  integrity sha512-WaDiaZLQg/vFE34vnrKpUl/rgWo/YRjkwT35p2I02aTjBjKlVtPaLf3IQ/WHFWr20sUXd8VsDZfyQyFx7/B0kw==
-  dependencies:
-    "@uniswap/v2-core" "^1.0.0"
-    big.js "^5.2.2"
-    decimal.js-light "^2.5.0"
-    jsbi "^3.1.1"
-    tiny-invariant "^1.1.0"
-    tiny-warning "^1.0.3"
-    toformat "^2.0.0"
 
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"

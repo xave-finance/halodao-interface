@@ -4,7 +4,7 @@ import { AddressZero } from '@ethersproject/constants'
 import { JsonRpcSigner, Web3Provider, JsonRpcProvider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { abi as IUniswapV2Router02ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router02.json'
-import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, ROUTER_ADDRESS } from '@sushiswap/sdk'
+import { ChainId, JSBI, Percent, Token, CurrencyAmount, Currency, ETHER, ROUTER_ADDRESS } from '@halodao/sdk'
 import { TokenAddressMap } from '../state/lists/hooks'
 import ethers from 'ethers'
 import { RPC } from 'connectors'
@@ -113,7 +113,18 @@ const builders = {
 
   // token is not yet supported for arbitrum
   arbitrum: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
-    const prefix = `https://explorer.offchainlabs.com/#`
+    const prefix = `https://arbiscan.io/#`
+    switch (type) {
+      case 'transaction':
+        return `${prefix}/tx/${data}`
+      case 'token':
+        return prefix
+      default:
+        return `${prefix}/${type}/${data}`
+    }
+  },
+  arbitrumTestnet: (chainName: string, data: string, type: 'transaction' | 'token' | 'address' | 'block') => {
+    const prefix = `https://rinkeby-explorer.arbitrum.io/#`
     switch (type) {
       case 'transaction':
         return `${prefix}/tx/${data}`
@@ -195,6 +206,10 @@ const chains: ChainObject = {
   [ChainId.ARBITRUM]: {
     chainName: 'arbitrum',
     builder: builders.arbitrum
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
+    chainName: 'testnet',
+    builder: builders.arbitrumTestnet
   },
   [ChainId.MOONBASE]: {
     chainName: '',

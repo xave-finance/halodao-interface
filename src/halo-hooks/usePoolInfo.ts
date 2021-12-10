@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useCallback } from 'react'
 import { groupByPoolProvider } from 'utils/poolInfo'

@@ -6,7 +6,7 @@ import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { getCustomTokenSymbol } from 'utils/tokens'
