@@ -16,7 +16,6 @@ const useTokenAllowance = (amountToApprove: TokenAmount, spender?: string): [App
   const fetchAllowance = async () => {
     if (!account || !tokenContract || !spender) return
     try {
-      console.log('allowance call: ', account, spender, tokenContract)
       const res = await tokenContract?.allowance(account, spender)
       const newAllowance = new TokenAmount(amountToApprove.token, res.toString())
       setAllowance(newAllowance)
