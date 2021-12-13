@@ -6,11 +6,12 @@ import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance
 import { AMM_ZAP_ADDRESS } from '../../../../constants'
 import { parseEther } from 'ethers/lib/utils'
 import { useActiveWeb3React } from 'hooks'
-import { ApprovalState, useApproveCallback } from 'hooks/useApproveCallback'
+import { ApprovalState } from 'hooks/useApproveCallback'
 import React, { useEffect, useState } from 'react'
 import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
+import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 
 enum AddLiquidityState {
   NoAmount,
@@ -57,8 +58,8 @@ const SingleSidedLiquidity = ({
 
   const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseAmount !== '' ? baseAmount : '0')))
   const quoteTokenAmount = new TokenAmount(pool.token1, JSBI.BigInt(parseEther(quoteAmount !== '' ? quoteAmount : '0')))
-  const [baseZapApproveState, baseZapApproveCallback] = useApproveCallback(baseTokenAmount, zapAddress)
-  const [quoteZapApproveState, quoteZapApproveCallback] = useApproveCallback(quoteTokenAmount, zapAddress)
+  const [baseZapApproveState, baseZapApproveCallback] = useTokenAllowance(baseTokenAmount, zapAddress)
+  const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
   const quoteZapApproved = quoteZapApproveState === ApprovalState.APPROVED
 
