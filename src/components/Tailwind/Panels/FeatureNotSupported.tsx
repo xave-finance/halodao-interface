@@ -11,7 +11,7 @@ interface FeatureNotSupportedProps {
 const FeatureNotSupported = ({ isIsolated }: FeatureNotSupportedProps) => {
   const { chainId } = useActiveWeb3React()
 
-  const caption = 'Ooops! Sorry this feature is not supported in ' + NETWORK_LABEL[chainId as ChainId] + '.'
+  const caption = `Ooops! Sorry this feature is not supported in ${NETWORK_LABEL[chainId as ChainId]}.`
 
   return (
     <div
