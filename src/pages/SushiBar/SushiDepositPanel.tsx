@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { Pair } from '@sushiswap/sdk'
+import { Pair } from '@halodao/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
-import { ChainId, Currency } from '@sushiswap/sdk'
+import { ChainId, Currency } from '@halodao/sdk'
 import { HALO } from '../../../../constants'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import CurrencyLogo from 'components/CurrencyLogo'

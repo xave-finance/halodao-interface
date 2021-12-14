@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'

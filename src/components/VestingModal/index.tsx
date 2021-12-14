@@ -13,7 +13,7 @@ import { PoolVestingInfo } from 'state/user/actions'
 import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 import { useActiveWeb3React } from '../../hooks'
 import { ExternalLink as ExternalLinkIcon } from 'react-feather'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 const StyledWrapper = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}

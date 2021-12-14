@@ -35,8 +35,8 @@ import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
 import { monthlyReward, apy } from 'utils/poolAPY'
-import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import { ApprovalState } from '../../hooks/useApproveCallback'
+import { JSBI, TokenAmount } from '@halodao/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
@@ -59,6 +59,7 @@ import { MetamaskError } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { Check, GitPullRequest } from 'react-feather'
+import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -481,13 +482,13 @@ export default function FarmPoolCard({
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
   const unclaimedHALO = unclaimedPoolRewards
 
-  // Make use of `useApproveCallback` for checking & setting allowance
+  // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
   const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable-line
 
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
-  const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+  const [approveState, approveCallback] = useTokenAllowance(tokenAmount, rewardsContractAddress)
   const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods

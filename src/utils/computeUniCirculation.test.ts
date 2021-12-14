@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Token, TokenAmount } from '@sushiswap/sdk'
+import { ChainId, JSBI, Token, TokenAmount } from '@halodao/sdk'
 import { BigNumber } from 'ethers'
 import { ZERO_ADDRESS } from '../constants'
 import { computeUniCirculation } from './computeUniCirculation'

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import ReactGA from 'react-ga'
-import { Pair } from '@sushiswap/sdk'
+import { Pair } from '@halodao/sdk'
 import styled from 'styled-components'
 import { darken } from 'polished'
 

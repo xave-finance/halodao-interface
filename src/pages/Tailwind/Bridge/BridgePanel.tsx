@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import ethers from 'ethers'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import BridgeInput from './modals/BridgeInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import SelectedNetworkPanel from 'components/Tailwind/Panels/SelectedNetworkPanel'

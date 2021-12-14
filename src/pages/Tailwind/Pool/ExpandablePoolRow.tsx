@@ -8,7 +8,7 @@ import PoolCardRight from './PoolCardRight'
 import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
 import { formatEther } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
@@ -70,7 +70,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
     setTimeout(() => {
       setReloader((r: number) => r + 1)
     }, 5000)
-  }, [activePopups]); //eslint-disable-line
+  }, [activePopups]) //eslint-disable-line
 
   /**
    * Main logic: fetching pool info

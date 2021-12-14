@@ -7,7 +7,7 @@ import { LatticeConnector } from '@web3-react/lattice-connector'
 
 import { FortmaticConnector } from './Fortmatic'
 import { NetworkConnector } from './NetworkConnector'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 export const RPC = {
   [ChainId.MAINNET]: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`,
@@ -22,7 +22,9 @@ export const RPC = {
   [ChainId.XDAI]: 'https://rpc.xdaichain.com',
   [ChainId.BSC]: 'https://bsc-dataseed.binance.org/',
   [ChainId.BSC_TESTNET]: 'https://data-seed-prebsc-2-s3.binance.org:8545',
-  [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network'
+  [ChainId.MOONBASE]: 'https://rpc.testnet.moonbeam.network',
+  [ChainId.ARBITRUM]: 'https://arb1.arbitrum.io/rpc',
+  [ChainId.ARBITRUM_TESTNET]: 'https://rinkeby.arbitrum.io/rpc'
 }
 
 export const network = new NetworkConnector({
@@ -49,7 +51,9 @@ export const injected = new InjectedConnector({
     100, // xdai
     56, // binance smart chain
     97, // binance smart chain testnet
-    1287 // moonbase
+    1287, // moonbase
+    42161, // arbitrum
+    421611 // arbitrum testnet
   ]
 })
 

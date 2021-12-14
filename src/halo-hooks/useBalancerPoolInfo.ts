@@ -1,7 +1,7 @@
 import { BALANCER_POOL_URL, BALANCER_SUBGRAPH_URL } from '../constants'
 import { useCallback } from 'react'
 import { getBalancerLPTokenAddress, getBalancerPoolAddress, subgraphRequest } from 'utils/balancer'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider, PoolTokenInfo } from './usePoolInfo'

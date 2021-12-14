@@ -1,4 +1,4 @@
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 
 export interface PoolData {
   asset: Token

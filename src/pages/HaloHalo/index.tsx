@@ -27,11 +27,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, AppState } from 'state'
 import EmptyState from 'components/EmptyState'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 import { useActiveWeb3React } from '../../hooks'
 import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
+import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -239,37 +240,48 @@ export default function HaloHalo() {
             </CardSectionWrapper>
           </VoteCard>
         </VoteCardWrapper>
+
         <DepositWrapper>
           <HaloHaloHeader vest={features?.vest} />
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
                 {features?.vest && (
-                  <HaloDepositPanel
-                    label={''}
-                    disableCurrencySelect={true}
-                    customBalanceText={'Available to deposit: '}
-                    id="stake-liquidity-token"
-                    buttonText="Claim RNBW"
-                    cornerRadiusBottomNone={true}
-                  />
+                  <>
+                    <HaloDepositPanel
+                      label={''}
+                      disableCurrencySelect={true}
+                      customBalanceText={'Available to deposit: '}
+                      id="stake-liquidity-token"
+                      buttonText="Claim RNBW"
+                      cornerRadiusBottomNone={true}
+                    />
+                    <HaloHaloWithdrawPanel
+                      label={''}
+                      disableCurrencySelect={true}
+                      customBalanceText={'Available to withdraw: '}
+                      id="withdraw-liquidity-token"
+                      buttonText="Withdraw"
+                      cornerRadiusTopNone={true}
+                    />
+                  </>
                 )}
-                {!features?.vest && <DepositOnUnsupportedNetwork chainId={chainId as ChainId} />}
-                {features?.vest && (
-                  <HaloHaloWithdrawPanel
-                    label={''}
-                    disableCurrencySelect={true}
-                    customBalanceText={'Available to withdraw: '}
-                    id="withdraw-liquidity-token"
-                    buttonText="Withdraw"
-                    cornerRadiusTopNone={true}
-                  />
-                )}
+
                 {!features?.vest && (
-                  <div className="mt-4">
-                    <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
-                  </div>
+                  <>
+                    {chainId === ChainId.ARBITRUM || chainId === ChainId.ARBITRUM_TESTNET ? (
+                      <FeatureNotSupported isIsolated={false} />
+                    ) : (
+                      <>
+                        <DepositOnUnsupportedNetwork chainId={chainId as ChainId} />
+                        <div className="mt-4">
+                          <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
+                        </div>
+                      </>
+                    )}
+                  </>
                 )}
+
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
@@ -280,6 +292,7 @@ export default function HaloHalo() {
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
+
                 {!features?.vest && (
                   <HaloPairCenterContainer>
                     <HaloHaloPairText>(Ethereum mainnet)</HaloHaloPairText>
@@ -289,6 +302,7 @@ export default function HaloHalo() {
             </AutoColumnDeposit>
           </Wrapper>
         </DepositWrapper>
+
         <CardSectionContainer>
           <CardSection>
             <RowBetweenCard>
@@ -301,6 +315,7 @@ export default function HaloHalo() {
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
+
         <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </PageWrapper>
     </>
