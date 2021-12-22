@@ -15,6 +15,7 @@ export enum TokenSymbol {
   TAUD = 'TAUD',
   XSGD = 'XSGD',
   fxPHP = 'fxPHP',
+  fxAUD = 'fxAUD',
   tagPHP = 'tagPHP',
   XIDR = 'XIDR'
 }
@@ -80,12 +81,13 @@ const polygonTokenList: Token[] = [
 
 const arbTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM] as Token,
-  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
+  new Token(ChainId.ARBITRUM, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  new Token(ChainId.ARBITRUM, '0x7E141940932E3D13bfa54B224cb4a16510519308', 18, 'fxAUD', 'handleAUD')
 ]
 
 const arbRinkebyTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM_TESTNET] as Token,
-  new Token(ChainId.MAINNET, '0xE950eC7Fc508dd86fD9B36671f6B1602007D5B72', 18, 'fxPHP', 'Mock fxPHP')
+  new Token(ChainId.ARBITRUM_TESTNET, '0xE950eC7Fc508dd86fD9B36671f6B1602007D5B72', 18, 'fxPHP', 'Mock fxPHP')
 ]
 
 // allows switch of token list when changing networks
@@ -111,6 +113,7 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
   [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1',
   [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D',
   [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
 }
@@ -126,6 +129,7 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
@@ -141,6 +145,7 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
   [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0xAF329A1764cD25d47f088292f802b0c8751dCd19',
   [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
@@ -156,6 +161,7 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
   [TokenSymbol.fxPHP]: '0x9f555A3115C2Da9574c84C4Dfb1617193aA7AFE2',
+  [TokenSymbol.fxAUD]: '0x7Ab404C804Df8f9f8A44A63e3B546bC16E98b5bf',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
@@ -171,6 +177,7 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero
 }
