@@ -24,8 +24,12 @@ SwapDetailsProps) {
     <>
       <div className="flex flex-row justify-start mt-6 px-8 w-container text-sm font-bold">
         <div className="w-1/2 text-secondary-alternate">Price</div>
-        <div className="w-1/2 flex justify-end">
-          {price ? `${formatNumber(price, NumberFormat.long)} ${toCurrency}/${fromCurrency}` : '--'}
+        <div
+          className={`
+            ${!price && 'animate-pulse bg-primary h-4 w-36 rounded'} w-1/2 flex justify-end
+          `}
+        >
+          {price ? `${formatNumber(price, NumberFormat.long)} ${toCurrency}/${fromCurrency}` : ''}
         </div>
       </div>
       <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">

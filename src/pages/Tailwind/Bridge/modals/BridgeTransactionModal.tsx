@@ -102,26 +102,40 @@ const BridgeTransactionModal = ({
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Estimated lower bound shuttle fee</div>
               <div>
-                <div>
-                  {lowerBoundFee.toFixed(2)} {token.symbol}
+                <div
+                  className={`
+            ${!lowerBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
+          `}
+                >
+                  {lowerBoundFee ? lowerBoundFee.toFixed(2) + ' ' + token.symbol : ''}
                 </div>
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Estimated upper bound shuttle fee</div>
               <div>
-                <div>
-                  {upperBoundFee.toFixed(2)} {token.symbol}
+                <div
+                  className={`
+            ${!upperBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
+          `}
+                >
+                  {upperBoundFee ? lowerBoundFee.toFixed(2) + ' ' + token.symbol : ''}
                 </div>
               </div>
             </div>
-            <div className="border-b border-black w-full"></div>
+            <div className="border-b border-black w-full" />
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Amount after fees</div>
               <div>
-                <div>
-                  {(Number(amount) - upperBoundFee).toFixed(2)} ~ {(Number(amount) - lowerBoundFee).toFixed(2)}{' '}
-                  {token.symbol}
+                <div
+                  className={`
+                    ${!upperBoundFee && 'animate-pulse bg-primary mt-1 h-4 w-36 rounded'} flex justify-end
+                  `}
+                >
+                  {upperBoundFee
+                    ? `${(Number(amount) - upperBoundFee).toFixed(2)} ~ ${(Number(amount) - lowerBoundFee).toFixed(2)} 
+                  ${token.symbol}`
+                    : ''}
                 </div>
               </div>
             </div>
