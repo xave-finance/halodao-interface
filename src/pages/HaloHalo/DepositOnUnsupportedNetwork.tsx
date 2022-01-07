@@ -15,7 +15,7 @@ const DepositOnUnsupportedNetwork = ({ chainId }: DepositOnUnsupportedNetworkPro
         icon={<ExternalLink />}
         state={PrimaryButtonState.Enabled}
         onClick={() => {
-          if (chainId === ChainId.MATIC) {
+          if (chainId === ChainId.MATIC || chainId === ChainId.ARBITRUM || chainId === ChainId.ARBITRUM_TESTNET) {
             window.location.href =
               'https://app.sushi.com/swap?inputCurrency=0x18e7bdb379928a651f093ef1bc328889b33a560c&outputCurrency=0xc104e54803aba12f7a171a49ddc333da39f47193'
           }

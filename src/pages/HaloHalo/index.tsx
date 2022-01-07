@@ -269,7 +269,7 @@ export default function HaloHalo() {
 
                 {!features?.vest && (
                   <>
-                    {chainId === ChainId.ARBITRUM || chainId === ChainId.ARBITRUM_TESTNET ? (
+                    {chainId === null ? (
                       <FeatureNotSupported isIsolated={false} />
                     ) : (
                       <>
