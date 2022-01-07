@@ -632,7 +632,7 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
 
   return (
     <>
-      {chainId && [1, 3, 4, 5, 42, 137].includes(chainId) && (
+      {chainId && [1, 3, 4, 5, 42, 137, 42161].includes(chainId) && (
         <UNIWrapper onClick={onClickHandler}>
           <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && (
