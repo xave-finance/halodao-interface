@@ -125,6 +125,10 @@ export default function CurrencyInputPanel({
       if (!txHash) {
         setRequestedApproval(false)
       }
+      if (txHash.code === '4001') {
+        setRequestedApproval(false)
+        setButtonState(ButtonHaloStates.NotApproved)
+      }
     } catch (e) {
       console.log(e)
     }
@@ -154,6 +158,7 @@ export default function CurrencyInputPanel({
     }
     try {
       const tx = await enter(amount)
+      setButtonState(ButtonHaloStates.Approving)
       await tx.wait()
     } catch (e) {
       console.log(e)
