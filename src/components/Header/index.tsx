@@ -603,6 +603,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
           {t('vesting')}
         </NavLink>
       </MenuItem>
+      <MenuItem>
+        <NavLink id={`bridge-nav-link`} to={'/bridge'} onClick={onClick}>
+          {t('bridge')}
+        </NavLink>
+      </MenuItem>
       {/* <MenuItem>
         <NavLink id={`vesting-nav-link`} to={''} onClick={onClick}>
           {t('lend')}
