@@ -12,6 +12,8 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import ErrorContent from "../../../../components/Tailwind/ErrorContent/TransactionErrorContent";
+import BaseModal from "../../../../components/Tailwind/Modals/BaseModal";
 
 enum AddLiquidityState {
   NoAmount,
@@ -62,6 +64,12 @@ const SingleSidedLiquidity = ({
   const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
   const quoteZapApproved = quoteZapApproveState === ApprovalState.APPROVED
+  const [hasError, sethasError] = useState(false)
+  const [objectError, setobjectError] = useState({
+    code: 0,
+    data: '',
+    message: ''
+  })
 
   const onBaseInputUpdate = async (val: string) => {
     setZapInput(val)
@@ -72,14 +80,24 @@ const SingleSidedLiquidity = ({
     let calcQuoteAmount = 0
     const zapFromBase = selectedToken === pool.token0
 
-    if (zapFromBase) {
-      const swapAmount = await calcSwapAmountForZapFromBase(val)
-      calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
-      calcBaseAmount = Number(val) - Number(swapAmount)
-    } else {
-      const swapAmount = await calcSwapAmountForZapFromQuote(val)
-      calcBaseAmount = Number(await viewTargetSwap(swapAmount))
-      calcQuoteAmount = Number(val) - Number(swapAmount)
+    try {
+      if (zapFromBase) {
+        const swapAmount = await calcSwapAmountForZapFromBase(val)
+        calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
+        calcBaseAmount = Number(val) - Number(swapAmount)
+      } else {
+        const swapAmount = await calcSwapAmountForZapFromQuote(val)
+        calcBaseAmount = Number(await viewTargetSwap(swapAmount))
+        calcQuoteAmount = Number(val) - Number(swapAmount)
+      }
+    } catch (e) {
+      sethasError(true)
+      setobjectError({
+        code: e.code,
+        data: e.data.data,
+        message: e.data.message
+      })
+      setMainState(AddLiquidityState.Disabled)
     }
 
     setBaseAmount(calcBaseAmount.toString())
@@ -122,8 +140,13 @@ const SingleSidedLiquidity = ({
 
   return (
     <>
-      <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">Swaps will be carried out for you</div>
 
+      { hasError &&
+        <BaseModal isVisible={hasError} onDismiss={ () => {sethasError(false)}}>
+          {<ErrorContent errorObject={objectError} closeError={ () => { sethasError(false) }} />}
+        </BaseModal>
+      }
+      <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">Swaps will be carried out for you</div>
       <div className="mt-4">
         <CurrencyInput
           canSelectToken={true}
