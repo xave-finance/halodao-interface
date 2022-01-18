@@ -128,7 +128,7 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: "0x06ccbFc8992a26c8CebDDd5a07fFCAf208b8b0B3",
+  [TokenSymbol.fxAUD]: '0x06ccbFc8992a26c8CebDDd5a07fFCAf208b8b0B3',
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero
