@@ -3,7 +3,7 @@ import React from 'react'
 import BunnyAnnouncement from 'assets/svg/bunny-announcement.svg'
 import styled from 'styled-components'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
-import {ChainId} from "@halodao/sdk";
+import { ChainId } from '@halodao/sdk'
 
 interface ErrorProps {
   errorObject: ErrorMessageObject
@@ -43,7 +43,8 @@ const ErrorContent = ({ errorObject, closeError }: ErrorProps) => {
         {message} Please show this error message {errorObject.message} to the team on Discord.
       </div>
 
-      <ReportOnDiscordButton className={`
+      <ReportOnDiscordButton
+        className={`
         mt-10
         flex items-center justify-center
         font-bold text-white
@@ -51,11 +52,22 @@ const ErrorContent = ({ errorObject, closeError }: ErrorProps) => {
         rounded
         bg-orange
         cursor-pointer
-        hover:bg-orange-hover`} onClick={() => { window.location.href =
-          'https://discord.com/invite/halodao'
-      }} >Report Error on Discord</ReportOnDiscordButton>
+        hover:bg-orange-hover`}
+        onClick={() => {
+          window.location.href = 'https://discord.com/invite/halodao'
+        }}
+      >
+        Report Error on Discord
+      </ReportOnDiscordButton>
       <div className="flex justify-center items-center">
-        <RetryTransactionLink className="mt-4" onClick={() => {closeError()}}>Retry Transaction</RetryTransactionLink>
+        <RetryTransactionLink
+          className="mt-4"
+          onClick={() => {
+            closeError()
+          }}
+        >
+          Retry Transaction
+        </RetryTransactionLink>
       </div>
     </div>
   )

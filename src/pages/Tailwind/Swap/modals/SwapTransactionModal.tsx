@@ -185,7 +185,9 @@ const SwapTransactionModal = ({
       {swapTransactionModalState === ModalState.NotConfirmed && <ConfirmContent />}
       {swapTransactionModalState === ModalState.InProgress && <InProgressContent />}
       {swapTransactionModalState === ModalState.Successful && <SuccessContent />}
-      {swapTransactionModalState === ModalState.Failed && <ErrorContent errorObject={message} closeError={dismissGracefully} />}
+      {swapTransactionModalState === ModalState.Failed && (
+        <ErrorContent errorObject={message} closeError={dismissGracefully} />
+      )}
     </BaseModal>
   )
 }
