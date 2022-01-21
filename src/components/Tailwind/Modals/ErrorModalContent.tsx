@@ -1,6 +1,5 @@
 import React from 'react'
-import OrangeWarningIcon from "../../../assets/svg/orange-warning-icon.svg";
-
+import OrangeWarningIcon from '../../../assets/svg/orange-warning-icon.svg'
 
 interface ErrorModalContentProps {
   message: string
