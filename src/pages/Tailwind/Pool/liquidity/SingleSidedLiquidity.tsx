@@ -12,8 +12,8 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
-import ErrorContent from "../../../../components/Tailwind/ErrorContent/TransactionErrorContent";
-import BaseModal from "../../../../components/Tailwind/Modals/BaseModal";
+import ErrorContent from '../../../../components/Tailwind/ErrorContent/TransactionErrorContent'
+import BaseModal from '../../../../components/Tailwind/Modals/BaseModal'
 
 enum AddLiquidityState {
   NoAmount,
@@ -140,12 +140,23 @@ const SingleSidedLiquidity = ({
 
   return (
     <>
-
-      { hasError &&
-        <BaseModal isVisible={hasError} onDismiss={ () => {sethasError(false)}}>
-          {<ErrorContent errorObject={objectError} closeError={ () => { sethasError(false) }} />}
+      {hasError && (
+        <BaseModal
+          isVisible={hasError}
+          onDismiss={() => {
+            sethasError(false)
+          }}
+        >
+          {
+            <ErrorContent
+              errorObject={objectError}
+              closeError={() => {
+                sethasError(false)
+              }}
+            />
+          }
         </BaseModal>
-      }
+      )}
       <div className="mt-2 text-right italic text-xs text-gray-400 md:hidden">Swaps will be carried out for you</div>
       <div className="mt-4">
         <CurrencyInput
