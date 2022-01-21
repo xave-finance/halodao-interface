@@ -149,6 +149,7 @@ export default function CurrencyInputPanel({
   const deposit = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
+    setButtonState(ButtonHaloStates.Approving)
 
     let amount: BalanceProps | undefined
     if (maxSelected) {
