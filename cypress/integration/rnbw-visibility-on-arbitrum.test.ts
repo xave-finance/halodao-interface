@@ -1,4 +1,4 @@
-describe('RNBW Visibility testing in Arbitrum Network', function() {
+describe('RNBW Visibility testing in Kovan Network', function() {
   it('Visit Home page of Halo Dao', function() {
     cy.visit('/')
   })
