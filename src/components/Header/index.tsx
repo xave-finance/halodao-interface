@@ -25,7 +25,7 @@ import { useURLWarningVisible } from 'state/user/hooks'
 import { isMobile } from 'react-device-detect'
 
 const isProd = process.env.NODE_ENV === 'production'
-const lendingMarketUrl = isProd ? 'https://lending.app.halodao.com' : 'https://dev.lending.app.halodao.com'
+const lendingMarketUrl = isProd ? 'https://app.lending.halodao.com' : 'https://dev.app.lending.halodao.com'
 
 const Wrapper = styled.div`
   width: 100%;
