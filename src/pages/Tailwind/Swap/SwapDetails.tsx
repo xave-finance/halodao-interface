@@ -34,7 +34,13 @@ SwapDetailsProps) {
       </div>
       <div className="flex flex-row justify-start mt-2 px-8 w-container text-sm font-bold">
         <div className="w-1/2 text-secondary-alternate">Minimum Received</div>
-        <div className="w-1/2 flex justify-end">{minimumReceived ? `${minimumReceived} ${toCurrency}` : '--'}</div>
+        <div
+          className={`
+            ${!minimumReceived && 'animate-pulse bg-primary h-4 w-36 rounded'} w-1/2 flex justify-end
+          `}
+        >
+          {minimumReceived ? `${minimumReceived} ${toCurrency}` : ' '}
+        </div>
       </div>
 
       {/*

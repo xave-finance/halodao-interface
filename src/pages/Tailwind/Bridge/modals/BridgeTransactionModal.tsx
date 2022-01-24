@@ -95,8 +95,12 @@ const BridgeTransactionModal = ({
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2 font-bold">
               <div className="text-secondary-alternate">Gas fee (estimated)</div>
-              <div>
-                {estimatedGas} {Currency.getNativeCurrencySymbol(originChainId)}{' '}
+              <div
+                className={`
+                    ${!estimatedGas && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
+                `}
+              >
+                {estimatedGas && `${estimatedGas} ${Currency.getNativeCurrencySymbol(originChainId)}`}
               </div>
             </div>
             <div className="flex justify-between mb-2 font-bold">
@@ -104,10 +108,10 @@ const BridgeTransactionModal = ({
               <div>
                 <div
                   className={`
-            ${!lowerBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
-          `}
+                    ${!lowerBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
+                  `}
                 >
-                  {lowerBoundFee ? lowerBoundFee.toFixed(2) + ' ' + token.symbol : ''}
+                  {lowerBoundFee ? `${lowerBoundFee.toFixed(2)} ${token.symbol}` : ''}
                 </div>
               </div>
             </div>
@@ -116,10 +120,10 @@ const BridgeTransactionModal = ({
               <div>
                 <div
                   className={`
-            ${!upperBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
-          `}
+                    ${!upperBoundFee && 'animate-pulse bg-primary h-4 w-20 rounded'} flex justify-end
+                  `}
                 >
-                  {upperBoundFee ? lowerBoundFee.toFixed(2) + ' ' + token.symbol : ''}
+                  {upperBoundFee ? `${upperBoundFee.toFixed(2)} ${token.symbol}` : ''}
                 </div>
               </div>
             </div>
