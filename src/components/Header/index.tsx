@@ -641,7 +641,7 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
   return (
     <>
       {chainId && [1, 3, 4, 5, 42, 137].includes(chainId) && (
-        <UNIWrapper onClick={onClickHandler}>
+        <UNIWrapper onClick={onClickHandler} data-testid="rnbw-balance">
           <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && (
               <TYPE.white
