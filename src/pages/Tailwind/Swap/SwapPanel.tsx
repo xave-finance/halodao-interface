@@ -50,11 +50,11 @@ const SwapPanel = () => {
     price,
     toMinimumAmount,
     fromMinimumAmount,
+    isLoadingMinimumAmount,
     approve,
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
-
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -311,6 +311,7 @@ const SwapPanel = () => {
           toCurrency={toCurrency.symbol}
           fromCurrency={fromCurrency.symbol}
           minimumReceived={toMinimumAmount}
+          isLoadingMinimumAmount={isLoadingMinimumAmount}
         />
       </>
     )
@@ -426,6 +427,7 @@ const SwapPanel = () => {
         fromAmount={fromInputValue}
         toAmount={toInputValue}
         minimumAmount={toMinimumAmount || '0'}
+        isLoadingMinimumAmount={isLoadingMinimumAmount}
         price={price || 0}
         onSwap={async () => {
           const txn = await swapToken(fromInputValue, txDeadline, slippage)

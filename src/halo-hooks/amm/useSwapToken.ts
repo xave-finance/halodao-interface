@@ -36,6 +36,7 @@ export const useSwapToken = (
   const [fromAmountBalance, setFromAmountBalance] = useState('0')
   const [toMinimumAmount, setToMinimumAmount] = useState<string | undefined>()
   const [fromMinimumAmount, setFromMinimumAmount] = useState<string | undefined>()
+  const [isLoadingMinimumAmount, setIsLoadingMinimumAmount] = useState(false)
   const [allowance, setAllowance] = useState('0')
   const addTransaction = useTransactionAdder()
 
@@ -121,7 +122,7 @@ export const useSwapToken = (
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
       // currencySide is the unknown
-
+      setIsLoadingMinimumAmount(true)
       const CurveContract = await getRouter()
 
       if (!CurveContract || !chainId) return
@@ -151,6 +152,7 @@ export const useSwapToken = (
       } catch (e) {
         setButtonState(SwapButtonState.InsufficientLiquidity)
       }
+      setIsLoadingMinimumAmount(false)
     },
     [
       fromCurrency.address,
@@ -252,6 +254,7 @@ export const useSwapToken = (
     price,
     toMinimumAmount,
     fromMinimumAmount,
+    isLoadingMinimumAmount,
     allowance,
     approve,
     swapToken,
