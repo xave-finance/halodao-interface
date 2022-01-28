@@ -60,6 +60,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { useMyBalance } from '../../halo-hooks/amm/useMyBalance'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1rem;
@@ -393,7 +394,7 @@ const RewardsChild = styled.div`
     font-weight: bold;
   }
 
-  & .balance {
+  & . ce {
     font-family: 'Fredoka One';
     font-size: 36px;
   }
@@ -459,7 +460,8 @@ export default function FarmPoolCard({
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
 
   // Get user BPT balance
-  const bptBalanceAmount = useTokenBalance(poolInfo.address)
+  const bptBalanceAmountUnset = useMyBalance(poolInfo.address)
+  const bptBalanceAmount = { value: BigNumber.from(bptBalanceAmountUnset), decimals: 18 }
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT

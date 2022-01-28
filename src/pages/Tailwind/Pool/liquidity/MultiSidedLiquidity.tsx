@@ -4,11 +4,15 @@ import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
-import { TokenAmount, JSBI } from '@halodao/sdk'
+import { TokenAmount, JSBI, ChainId, Token } from '@halodao/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { useMyBalance } from '../../../../halo-hooks/amm/useMyBalance'
+import { haloTokenList } from '../../../../constants/tokenLists/halo-tokenlist'
+import { HALO } from '../../../../constants'
+import { useWeb3React } from '@web3-react/core'
 
 enum AddLiquidityState {
   NoAmount,
@@ -22,6 +26,8 @@ enum AddLiquidityState {
 interface MultiSidedLiquidityProps {
   pool: PoolData
   balances: Array<TokenAmount | undefined>
+  baseInput: string
+  quoteInput: string
   onBaseAmountChanged: (baseAmount: string) => void
   onQuoteAmountChanged: (quoteAmount: string) => void
   onDeposit: () => void
@@ -32,6 +38,8 @@ interface MultiSidedLiquidityProps {
 const MultiSidedLiquidity = ({
   pool,
   balances,
+  baseInput,
+  quoteInput,
   onBaseAmountChanged,
   onQuoteAmountChanged,
   onDeposit,
@@ -40,8 +48,8 @@ const MultiSidedLiquidity = ({
 }: MultiSidedLiquidityProps) => {
   const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
-  const [baseInput, setBaseInput] = useState('')
-  const [quoteInput, setQuoteInput] = useState('')
+  // const [baseInput, setBaseInput] = useState('')
+  // const [quoteInput, setQuoteInput] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
   const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
@@ -49,33 +57,46 @@ const MultiSidedLiquidity = ({
     pool.token0,
     pool.token1
   )
-
   const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useTokenAllowance(baseTokenAmount, pool.address)
   const quoteTokenAmount = new TokenAmount(pool.token1, JSBI.BigInt(parseEther(quoteInput !== '' ? quoteInput : '0')))
   const [quoteApproveState, quoteApproveCallback] = useTokenAllowance(quoteTokenAmount, pool.address)
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
+  const { chainId } = useWeb3React()
+  const [toCurrency, setToCurrency] = useState(
+    chainId ? (haloTokenList[chainId as ChainId] as Token[])[0] : (HALO[ChainId.MAINNET] as Token)
+  )
+  const [fromCurrency, setFromCurrency] = useState(
+    chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
+  )
+  const base = useMyBalance(toCurrency.address, true)
+  const quote = useMyBalance(fromCurrency.address, true)
 
+  useEffect(() => {
+    setFromCurrency(pool.token0)
+    setToCurrency(pool.token1)
+  }, [pool.token0, pool.token1])
   /**
    * Update quote amount upon entering base amount
    **/
   const onBaseInputUpdate = async (val: string) => {
-    setBaseInput(val)
+    // setBaseInput(val)
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
     setErrorMessage(undefined)
 
     if (val !== '') {
       const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-      setQuoteInput(quote)
+      // setQuoteInput(quote)
       onQuoteAmountChanged(quote)
 
       if (Number(base) > Number(val)) {
         setErrorMessage(t('error-liquidity-estimates-changed'))
       }
     } else {
-      setQuoteInput('')
+      // setQuoteInput('')
+      onQuoteAmountChanged('')
     }
   }
 
@@ -83,21 +104,22 @@ const MultiSidedLiquidity = ({
    * Update base amount upon entering quote amount
    **/
   const onQuoteInputUpdate = async (val: string) => {
-    setQuoteInput(val)
+    // setQuoteInput(val)
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
     setErrorMessage(undefined)
 
     if (val !== '') {
       const { base, quote } = await previewDepositGivenQuote(val)
-      setBaseInput(base)
+      // setBaseInput(base)
       onBaseAmountChanged(base)
 
       if (Number(quote) > Number(val)) {
         setErrorMessage(t('error-liquidity-estimates-changed'))
       }
     } else {
-      setBaseInput('')
+      // setBaseInput('')
+      onBaseAmountChanged('')
     }
   }
 
@@ -129,6 +151,7 @@ const MultiSidedLiquidity = ({
         <CurrencyInput
           canSelectToken={false}
           currency={pool.token0}
+          balance={quote}
           value={baseInput}
           didChangeValue={val => onBaseInputUpdate(val)}
           showBalance={true}
@@ -139,6 +162,7 @@ const MultiSidedLiquidity = ({
         <CurrencyInput
           canSelectToken={false}
           currency={pool.token1}
+          balance={base}
           value={quoteInput}
           didChangeValue={val => onQuoteInputUpdate(val)}
           showBalance={true}

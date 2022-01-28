@@ -32,6 +32,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
+  onSuccess: () => void
 }
 
 const AddLiquityModal = ({
@@ -43,7 +44,8 @@ const AddLiquityModal = ({
   zapAmount,
   slippage,
   isVisible,
-  onDismiss
+  onDismiss,
+  onSuccess
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
   const { getFutureTime } = useTime()
@@ -142,6 +144,9 @@ const AddLiquityModal = ({
     setPoolShare(0)
     setErrorMessage(undefined)
     onDismiss()
+    if (state === AddLiquityModalState.Successful) {
+      onSuccess()
+    }
   }
 
   const logGAEvent = () => {

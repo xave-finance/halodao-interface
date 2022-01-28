@@ -115,7 +115,6 @@ const SwapPanel = () => {
   }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances])
 
   useEffect(() => {
-    console.log(allowance)
     if (allowance && Number(allowance) > 0) {
       setApproveState(ApproveButtonState.Approved)
       setButtonState(SwapButtonState.Swap)
@@ -151,7 +150,11 @@ const SwapPanel = () => {
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title="Swap"
-          state={PrimaryButtonState.Enabled}
+          state={
+            fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0
+              ? PrimaryButtonState.Enabled
+              : PrimaryButtonState.Disabled
+          }
           onClick={() => {
             setTimeLeft(60)
             setIsExpired(false)
@@ -333,7 +336,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={fromCurrency}
-                value={fromInputValue}
+                value={fromInputValue == "0.0" ? '' : fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
@@ -384,7 +387,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={toCurrency}
-                value={toInputValue}
+                value={toInputValue == "0.0" ? '' : toInputValue}
                 canSelectToken={true}
                 didChangeValue={val => {
                   if (approveState === ApproveButtonState.Approved) {
@@ -432,6 +435,8 @@ const SwapPanel = () => {
           if (txn) {
             setTxhash(txn.hash)
             setSwapTransactionModalState(ModalState.Successful)
+            setToInputValue('')
+            setFromInputValue('')
           }
 
           if (txn === 4001 || !txn) {

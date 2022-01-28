@@ -45,6 +45,8 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         <MultiSidedLiquidity
           pool={pool}
           balances={balances}
+          baseInput={baseAmount}
+          quoteInput={quoteAmount}
           onBaseAmountChanged={setBaseAmount}
           onQuoteAmountChanged={setQuoteAmount}
           onDeposit={() => setShowModal(true)}
@@ -65,7 +67,13 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
 
       <AddLiquityModal
         isVisible={showModal}
-        onDismiss={() => setShowModal(false)}
+        onDismiss={() => {
+          setShowModal(false)
+        }}
+        onSuccess={() => {
+          setBaseAmount('')
+          setQuoteAmount('')
+        }}
         pool={pool}
         baseAmount={baseAmount}
         quoteAmount={quoteAmount}
