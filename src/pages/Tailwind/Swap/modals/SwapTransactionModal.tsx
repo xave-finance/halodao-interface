@@ -20,6 +20,7 @@ interface SwapTransactionModalProps {
   minimumAmount: string
   isLoadingMinimumAmount: boolean
   price: number
+  isLoadingPrice: boolean
   onSwap: () => void
   onPriceUpdate: () => void
   onDismiss: () => void
@@ -41,6 +42,7 @@ const SwapTransactionModal = ({
   minimumAmount,
   isLoadingMinimumAmount,
   price,
+  isLoadingPrice,
   onSwap,
   onPriceUpdate,
   onDismiss,
@@ -105,6 +107,7 @@ const SwapTransactionModal = ({
         </div>
         <SwapDetails
           price={price}
+          isLoadingPrice={isLoadingPrice}
           toCurrency={toCurrency.symbol}
           fromCurrency={fromCurrency.symbol}
           minimumReceived={minimumAmount}

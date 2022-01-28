@@ -31,6 +31,7 @@ export const useSwapToken = (
 ) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false)
   const { getFutureTime } = useTime()
   const [toAmountBalance, setToAmountBalance] = useState('0')
   const [fromAmountBalance, setFromAmountBalance] = useState('0')
@@ -96,7 +97,7 @@ export const useSwapToken = (
 
   const getPrice = useCallback(async () => {
     if (!chainId || !library) return
-
+    setIsLoadingPrice(true)
     try {
       const toTokenAssimilatorContract = getContract(
         (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[toCurrency.symbol as TokenSymbol],
@@ -117,6 +118,7 @@ export const useSwapToken = (
     } catch (e) {
       console.log(e)
     }
+    setIsLoadingPrice(false)
   }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
 
   const getMinimumAmount = useCallback(
@@ -252,6 +254,7 @@ export const useSwapToken = (
     getPrice,
     getMinimumAmount,
     price,
+    isLoadingPrice,
     toMinimumAmount,
     fromMinimumAmount,
     isLoadingMinimumAmount,

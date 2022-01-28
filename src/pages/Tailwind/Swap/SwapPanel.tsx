@@ -48,6 +48,7 @@ const SwapPanel = () => {
     toAmountBalance,
     fromAmountBalance,
     price,
+    isLoadingPrice,
     toMinimumAmount,
     fromMinimumAmount,
     isLoadingMinimumAmount,
@@ -308,6 +309,7 @@ const SwapPanel = () => {
         <CurrentButtonContent />
         <SwapDetails
           price={price}
+          isLoadingPrice={isLoadingPrice}
           toCurrency={toCurrency.symbol}
           fromCurrency={fromCurrency.symbol}
           minimumReceived={toMinimumAmount}
@@ -429,6 +431,7 @@ const SwapPanel = () => {
         minimumAmount={toMinimumAmount || '0'}
         isLoadingMinimumAmount={isLoadingMinimumAmount}
         price={price || 0}
+        isLoadingPrice={isLoadingPrice}
         onSwap={async () => {
           const txn = await swapToken(fromInputValue, txDeadline, slippage)
           if (txn) {
