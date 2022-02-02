@@ -15,6 +15,7 @@ const FeatureNotSupported = ({ isIsolated }: FeatureNotSupportedProps) => {
 
   return (
     <div
+      id="unsupported_vesting_component"
       className={`
         flex items-center
         ${isIsolated ? 'py-6 px-8 border border-primary-hover shadow-md rounded-card bg-white' : ''}
