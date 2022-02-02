@@ -12,6 +12,7 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
 import HaloHalo from '../../assets/images/xrnbw-token.png'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import FarmPoolCardNew from './FarmPoolCardNew'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
@@ -19,7 +20,7 @@ const DashboardRow = styled(Row)`
   `};
   flex-direction: row;
   align-items: start;
-  margin: 1.5 rem;
+  gap: 6px;
 `
 
 const InfoRow = styled(Row)`
@@ -62,83 +63,17 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
 
   return (
     <DashboardRow>
-      <InfoRow>
-        <StakeCard>
-          <InfoTitleRow>
-            <TYPE.subHeader
-              style={{
-                letterSpacing: '0.1em',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                justifySelf: 'flex-start'
-              }}
-            >
-              {t('poolSummaryStakeable')}
-            </TYPE.subHeader>
-          </InfoTitleRow>
-          <Row>
-            <TYPE.body
-              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
-              id="text-stakeable-value"
-            >
-              {summary.stakeableValue}
-            </TYPE.body>
-          </Row>
-        </StakeCard>
-        <StakeCard>
-          <InfoTitleRow>
-            <TYPE.subHeader
-              style={{
-                letterSpacing: '0.1em',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                justifySelf: 'flex-start'
-              }}
-            >
-              {t('poolSummaryStaked')}
-            </TYPE.subHeader>
-          </InfoTitleRow>
-          <Row>
-            <TYPE.body
-              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
-              id="text-staked-value"
-            >
-              {summary.stakedValue}
-            </TYPE.body>
-          </Row>
-        </StakeCard>
-      </InfoRow>
       <Row>
-        <EarnCard>
-          <HideSmall>
-            <Row>
-              <img style={{ marginBottom: '0.5rem' }} width={'85px'} src={HaloHalo} alt="xRNBW" />
-            </Row>
-          </HideSmall>
-          <EarnedTitleRow>
-            <TYPE.subHeader
-              style={{
-                letterSpacing: '0.1em',
-                fontWeight: 800,
-                textTransform: 'uppercase',
-                fontSize: '0.75rem',
-                justifySelf: 'flex-start'
-              }}
-            >
-              {t('poolSummaryHaloEarned')}
-            </TYPE.subHeader>
-          </EarnedTitleRow>
-          <Row>
-            <TYPE.body
-              style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
-              id="text-halo-earned"
-            >
-              {summary.haloEarned}
-            </TYPE.body>
-          </Row>
-        </EarnCard>
+        <FarmPoolCardNew title={'Total Value Locked (USD)'} tokenPrice={'test'} header={true} />
+      </Row>
+      <Row>
+        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
+      </Row>
+      <Row>
+        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
+      </Row>
+      <Row>
+        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
       </Row>
     </DashboardRow>
   )

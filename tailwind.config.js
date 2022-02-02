@@ -19,7 +19,8 @@ module.exports = {
           gradientVia: '#5521B6',
           gradientTo: '#2DB7C4',
           gray: '#828282',
-          lightGray: '#BDBDBD'
+          lightGray: '#BDBDBD',
+          purple: '#471BB2'
         },
         secondary: {
           DEFAULT: '#A38DD8',

@@ -24,7 +24,7 @@ const FarmSummaryRow = styled(Row)`
     flex-direction: column;
   `};
   flex-direction: row;
-  align-items: start;
+  align-items: center;
 `
 
 const HeaderRow = styled(RowBetween)`
@@ -35,7 +35,7 @@ const HeaderRow = styled(RowBetween)`
     flex-direction: column;
   `};
   flex-direction: column;
-  width: 60%;
+  width: 50%;
   padding-right: 2rem;
 `
 
@@ -174,6 +174,7 @@ const Farm = () => {
           </HeaderRow>
           <Row>
             <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
+            <br />
           </Row>
         </FarmSummaryRow>
         <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
