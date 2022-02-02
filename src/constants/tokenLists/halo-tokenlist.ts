@@ -17,7 +17,8 @@ export enum TokenSymbol {
   fxAUD = 'fxAUD',
   fxPHP = 'fxPHP',
   tagPHP = 'tagPHP',
-  XIDR = 'XIDR'
+  XIDR = 'XIDR',
+  fxAUD = 'fxAUD'
 }
 
 export type AssimilatorAddressMap = {
@@ -28,7 +29,7 @@ export const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
   [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D',
-  [ChainId.ARBITRUM]: '0xf7E8Ab78dC91a4FdDA1DFba6c81bAF1870d2D957',
+  [ChainId.ARBITRUM]: '0xDFEa5ECCbB7D61D49dFa702ed8FeC4EC48944719',
   [ChainId.ARBITRUM_TESTNET]: '0x303Fe605077f251a123A41b5241a164c49Eba9b5'
 }
 
@@ -54,12 +55,12 @@ const mainNetTokenList: Token[] = [
   USDC,
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
-  new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
+  // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP')
   // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
-  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  // new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
   // new Token(ChainId.MAINNET, '0x7A87104dfeA51853472fFafaD00D43e73284a135', 18, 'tagPHP', 'PHP Stablecoin')
-  new Token(ChainId.MAINNET, '0xebF2096E01455108bAdCbAF86cE30b6e5A72aa52', 6, 'XIDR', 'StraitsX: XIDR Token')
+  // new Token(ChainId.MAINNET, '0xebF2096E01455108bAdCbAF86cE30b6e5A72aa52', 6, 'XIDR', 'StraitsX: XIDR Token')
 ]
 
 const kovanTokenList: Token[] = [
@@ -82,12 +83,13 @@ const polygonTokenList: Token[] = [
 
 const arbTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM] as Token,
-  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
+  new Token(ChainId.ARBITRUM, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  new Token(ChainId.ARBITRUM, '0x7E141940932E3D13bfa54B224cb4a16510519308', 18, 'fxAUD', 'handleAUD')
 ]
 
 const arbRinkebyTokenList: Token[] = [
   haloUSDC[ChainId.ARBITRUM_TESTNET] as Token,
-  new Token(ChainId.MAINNET, '0xE950eC7Fc508dd86fD9B36671f6B1602007D5B72', 18, 'fxPHP', 'Mock fxPHP')
+  new Token(ChainId.ARBITRUM_TESTNET, '0xE950eC7Fc508dd86fD9B36671f6B1602007D5B72', 18, 'fxPHP', 'Mock fxPHP')
 ]
 
 // allows switch of token list when changing networks
@@ -115,7 +117,8 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
   [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D',
-  [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed'
+  [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -131,7 +134,8 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxAUD]: '0x06ccbFc8992a26c8CebDDd5a07fFCAf208b8b0B3',
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
-  [TokenSymbol.XIDR]: ethers.constants.AddressZero
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -147,7 +151,8 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0xAF329A1764cD25d47f088292f802b0c8751dCd19',
-  [TokenSymbol.XIDR]: ethers.constants.AddressZero
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
 }
 
 const arbAssimilators: AssimilatorAddressMap = {
@@ -163,7 +168,8 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x9f555A3115C2Da9574c84C4Dfb1617193aA7AFE2',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
-  [TokenSymbol.XIDR]: ethers.constants.AddressZero
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: '0x7Ab404C804Df8f9f8A44A63e3B546bC16E98b5bf'
 }
 
 const arbRinkebyAssimilators: AssimilatorAddressMap = {
@@ -179,7 +185,8 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
-  [TokenSymbol.XIDR]: ethers.constants.AddressZero
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
