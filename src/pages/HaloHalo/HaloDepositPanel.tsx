@@ -22,6 +22,8 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
+import BaseModal from '../../components/Tailwind/Modals/BaseModal'
+import ErrorModalContent from '../../components/Modal/ErrorModalContent'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -96,6 +98,12 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+  const [error, setError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const dismissErrorModal = () => {
+    setError(false)
+    setErrorMessage('')
+  }
 
   // Updating the state of stake button
   useEffect(() => {
@@ -118,19 +126,17 @@ export default function CurrencyInputPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     try {
-      setRequestedApproval(true)
+      setButtonState(ButtonHaloStates.Approving)
       const txHash = await approve()
-      console.log(txHash)
       // user rejected tx or didn't go thru
-      if (!txHash) {
-        setRequestedApproval(false)
-      }
-      if (txHash.code === '4001') {
+      if (txHash?.code === 4001) {
         setRequestedApproval(false)
         setButtonState(ButtonHaloStates.NotApproved)
+        console.clear()
       }
     } catch (e) {
-      console.log(e)
+      setError(true)
+      setErrorMessage(e?.toString())
     }
   }, [approve, setRequestedApproval])
 
@@ -147,6 +153,7 @@ export default function CurrencyInputPanel({
 
   // handles actual deposit
   const deposit = async () => {
+    setRequestedApproval(true)
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
     setButtonState(ButtonHaloStates.Approving)
@@ -160,13 +167,19 @@ export default function CurrencyInputPanel({
     try {
       const tx = await enter(amount)
       setButtonState(ButtonHaloStates.Approving)
-      await tx.wait()
+      if (!tx || tx.code === 4001) {
+        setButtonState(ButtonHaloStates.Approved)
+        console.clear()
+      } else {
+        await tx.wait()
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        setDepositValue('')
+      }
     } catch (e) {
-      console.log(e)
+      setError(true)
+      setErrorMessage(e?.toString())
     }
-    setPendingTx(false)
-    setButtonState(ButtonHaloStates.Disabled)
-    setDepositValue('')
     /** log deposit in GA
      */
     ReactGA.event({
@@ -293,6 +306,19 @@ export default function CurrencyInputPanel({
           </Column>
         </Container>
       </InputPanel>
+      <BaseModal
+        isVisible={error}
+        onDismiss={() => {
+          dismissErrorModal()
+        }}
+      >
+        <ErrorModalContent
+          message={errorMessage}
+          closeError={() => {
+            dismissErrorModal()
+          }}
+        />
+      </BaseModal>
     </>
   )
 }

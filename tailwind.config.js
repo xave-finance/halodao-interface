@@ -42,6 +42,9 @@ module.exports = {
         success: {
           DEFAULT: '#1BB233',
           alternate: '#56A86A'
+        },
+        orange: {
+          DEFAULT: '#ff5f37'
         }
       },
       maxWidth: {
