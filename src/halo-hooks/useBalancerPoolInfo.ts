@@ -84,7 +84,8 @@ export const useBalancerPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         tokens: poolTokensInfo,
         asToken: LPToken,
         allocPoint: 0,
-        provider: PoolProvider.Balancer
+        provider: PoolProvider.Balancer,
+        rewarderAddress: ''
       })
     }
 

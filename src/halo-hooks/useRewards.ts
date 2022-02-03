@@ -1,4 +1,4 @@
-import { useHALORewardsContract } from 'hooks/useContract'
+import { useHALORewardsContract, useHALORewarderContract } from 'hooks/useContract'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -9,6 +9,8 @@ import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { useToken } from '../hooks/Tokens'
+import { PoolInfo } from './usePoolInfo'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -222,4 +224,64 @@ export const useAllocPoints = (poolAddresses: string[], rewardsVersion = AmmRewa
   }, [poolAddresses, fetchAllocPoint])
 
   return allocPoint
+}
+
+interface RewarderToken {
+  amount: number
+  tokenName: string
+  tokenAddress: string
+  multiplier: number
+}
+
+export const useRewarderPendingToken = (poolInfo: PoolInfo) => {
+  const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>({
+    amount: 0,
+    tokenName: '',
+    tokenAddress: '',
+    multiplier: 0
+  })
+  const { account } = useActiveWeb3React()
+  const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
+
+  const rewarder = useHALORewarderContract(
+    poolInfo.rewarderAddress !== ZERO_ADDRESS ? poolInfo.rewarderAddress : undefined
+  )
+  const token = useToken(pendingRewarderToken.tokenAddress === '' ? undefined : pendingRewarderToken.tokenAddress)
+
+  const fetchRewarderToken = useCallback(async () => {
+    try {
+      if (!ammRewards || !rewarder) return
+
+      const rewardAmount = await ammRewards.pendingRewardToken(poolInfo.pid, account)
+      const _pendingRewarderToken = await rewarder.pendingTokens(poolInfo.pid, account, rewardAmount)
+      const multiplier = await rewarder.getRewardMultiplier()
+
+      setPendingRewarderToken({
+        amount: parseFloat(formatEther(_pendingRewarderToken.rewardAmounts[0].toString())),
+        tokenName: token?.symbol || '',
+        tokenAddress: _pendingRewarderToken.rewardTokens[0],
+        multiplier: parseFloat(formatEther(multiplier.toString())) / 1000
+      })
+    } catch (err) {
+      console.error(`Error fetching rewarder: `, err)
+    }
+  }, [ammRewards, rewarder, poolInfo, token])
+
+  useEffect(() => {
+    fetchRewarderToken()
+  }, [fetchRewarderToken])
+
+  return pendingRewarderToken
+}
+
+export const usePoolHasRewarder = (poolsInfo: PoolInfo[]) => {
+  const poolIds = useMemo(() => {
+    return poolsInfo.map(pid => [String(pid.pid)])
+  }, [poolsInfo])
+  const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
+  const data = useSingleContractMultipleData(ammRewards, 'rewarder', poolIds)
+
+  return poolsInfo.map((poolInfo, index) => {
+    return { ...poolInfo, rewarderAddress: data[index].result?.[0] || '' }
+  })
 }

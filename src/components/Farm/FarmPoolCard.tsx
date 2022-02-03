@@ -26,15 +26,15 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
-import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import { TokenPrice, useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
-import { monthlyReward, apy } from 'utils/poolAPY'
+import { monthlyReward, apy, rewardMonthUSDValue } from 'utils/poolAPY'
 import { ApprovalState } from '../../hooks/useApproveCallback'
 import { JSBI, TokenAmount } from '@halodao/sdk'
 import {
@@ -42,7 +42,8 @@ import {
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
-  useTotalAllocPoint
+  useTotalAllocPoint,
+  useRewarderPendingToken
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -58,11 +59,12 @@ import { consoleLog } from 'utils/simpleLogger'
 import { MetamaskError } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
-import { Check, GitPullRequest } from 'react-feather'
+import { AlertCircle, Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { MouseoverTooltip } from '../Tooltip'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
-  padding: 1rem;
+  padding: 1.5rem;
   margin: 0 -1rem;
   cursor: pointer;
   border: 1px solid transparent;
@@ -88,7 +90,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
 `
 
 const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  border: none
+  border: none;
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
   overflow: visible;
@@ -218,15 +220,14 @@ export const StyledCardBoxWeb = styled(RowBetween)`
 `
 
 export const StyledButtonWidth = styled(ButtonOutlined)`
-  margin: 0,
-  minWidth: 0,
-  display: "flex",
+  margin: 0;
+  minwidth: 0;
+  display: 'flex';
   padding: 0
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
     border: 0;
-  `}
+  `};
 `
 
 const ExpandedCard = styled.div`
@@ -482,6 +483,9 @@ export default function FarmPoolCard({
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
   const unclaimedHALO = unclaimedPoolRewards
 
+  // Get user earned rewarder
+  const rewarderToken = useRewarderPendingToken(poolInfo)
+
   // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
@@ -499,7 +503,7 @@ export default function FarmPoolCard({
   const addTransaction = useTransactionAdder()
 
   /**
-   * APY computation
+   * APY computation Rewards
    */
   const rewardTokenPerSecond = useRewardTokenPerSecond(rewardsVersion)
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
@@ -514,6 +518,37 @@ export default function FarmPoolCard({
 
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
+
+  /**
+   * APR computation Rewarder
+   */
+  const [rewarderAPR, setRewarderAPR] = useState(0)
+  const [rewarderAddress, setRewarderAddress] = useState<string[]>([])
+  const rewarderTokenUsdPrice = useTokenPrice(rewarderAddress)
+
+  useEffect(() => {
+    const rewarderRewardTokenPerSecond = rewardTokenPerSecond * rewarderToken.multiplier
+    const expectedMonthlyRewarder = monthlyReward(rewarderRewardTokenPerSecond)
+    setRewarderAddress([rewarderToken.tokenAddress])
+    const monthlyRewardsInUsd = rewardMonthUSDValue(
+      allocPoint,
+      totalAllocPoint,
+      expectedMonthlyRewarder,
+      rewarderTokenUsdPrice[rewarderAddress[0]]
+    )
+    const monthlyInterest = monthlyRewardsInUsd / stakedLiquidity
+    setRewarderAPR(monthlyInterest * 12)
+  }, [rewarderToken])
+
+  const [accumulativeTotal, setAccumulativeTotal] = useState('')
+
+  useEffect(() => {
+    const total = rawAPY === 0 ? t('new') : rawAPY + (isNaN(rewarderAPR) ? 0 : rewarderAPR)
+    setAccumulativeTotal(total === t('new') ? total : `${formatNumber(total, NumberFormat.long)}%`)
+  }, [rewarderAPR, rawAPY])
+
+  const poolHasRewarder =
+    poolInfo.rewarderAddress !== '' && poolInfo.rewarderAddress !== ZERO_ADDRESS && rewarderToken.tokenName !== ''
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -802,9 +837,28 @@ export default function FarmPoolCard({
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="11%">
+          <StyledRowFixed width="16%">
             <LabelText className="first">{t('apr')}:</LabelText>
-            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
+            <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
+            {poolHasRewarder && (
+              <MouseoverTooltip
+                text={
+                  <div>
+                    <div>APR Breakdown :</div>
+                    <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
+                      <li>{poolAPY} xRNBW</li>
+                      <li>
+                        {rewarderAPR === 0 ? t('new') : `${formatNumber(rewarderAPR, NumberFormat.long)}%`} &nbsp;
+                        {rewarderToken.tokenName}
+                      </li>
+                    </ul>
+                  </div>
+                }
+                placement={'top'}
+              >
+                <AlertCircle size={'16'} />
+              </MouseoverTooltip>
+            )}
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -828,7 +882,14 @@ export default function FarmPoolCard({
               ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
                 <>0 xRNBW</>
               ) : (
-                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                <div>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</div>
+              )}
+              {poolHasRewarder && (
+                <div style={{ marginLeft: '-13px' }}>
+                  {' + '}
+                  {formatNumber(rewarderToken.amount, isActivePool ? undefined : NumberFormat.short)}{' '}
+                  {rewarderToken.tokenName}
+                </div>
               )}
             </StyledTextForValue>
           </StyledRowFixed>
