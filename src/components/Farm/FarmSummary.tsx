@@ -6,17 +6,16 @@ import { IndigoCard } from '../Card'
 import { RowBetween } from 'components/Row'
 import { transparentize } from 'polished'
 import styled from 'styled-components'
-import { TYPE, HideSmall } from 'theme'
 import useFarmSummary from 'halo-hooks/useFarmSummary'
 import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
-import HaloHalo from '../../assets/images/xrnbw-token.png'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
-import FarmPoolCardNew from './FarmPoolCardNew'
+import GradientCard from './GradientCard'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     flex-direction: column;
+    margin-bottom: 10px;
   `};
   flex-direction: row;
   align-items: start;
@@ -57,6 +56,18 @@ interface FarmSummaryProps {
   tokenPrice: TokenPrice
 }
 
+const FarmCardParent = styled.div`
+  max-width: 175px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+      max-width: unset;
+    `};
+  height: 118px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+      height: calc(118px - 54px);
+    `};
+  width: 100%;
+`
+
 const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
   const summary = useFarmSummary(poolsInfo, tokenPrice)
   const { t } = useTranslation()
@@ -64,16 +75,24 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
   return (
     <DashboardRow>
       <Row>
-        <FarmPoolCardNew title={'Total Value Locked (USD)'} tokenPrice={'test'} header={true} />
+        <FarmCardParent>
+          <GradientCard title="Total Value Locked (USD)" value={'5000.003'} header={true} />
+        </FarmCardParent>
       </Row>
       <Row>
-        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
+        <FarmCardParent>
+          <GradientCard title={t('poolSummaryHaloEarned')} value={summary.haloEarned} header={true} />
+        </FarmCardParent>
       </Row>
       <Row>
-        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
+        <FarmCardParent>
+          <GradientCard title={t('poolSummaryStakeable')} value={summary.stakeableValue} header={true} />
+        </FarmCardParent>
       </Row>
       <Row>
-        <FarmPoolCardNew title={'sample'} tokenPrice={'test'} header={true} />
+        <FarmCardParent>
+          <GradientCard title={t('poolSummaryStaked')} value={summary.stakedValue} header={true} />
+        </FarmCardParent>
       </Row>
     </DashboardRow>
   )
