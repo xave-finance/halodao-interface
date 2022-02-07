@@ -394,7 +394,7 @@ const RewardsChild = styled.div`
     font-weight: bold;
   }
 
-  & . ce {
+  & .balance {
     font-family: 'Fredoka One';
     font-size: 36px;
   }
