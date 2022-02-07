@@ -336,7 +336,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={fromCurrency}
-                value={fromInputValue == "0.0" ? '' : fromInputValue}
+                value={fromInputValue == '0.0' ? '' : fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
@@ -387,7 +387,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={toCurrency}
-                value={toInputValue == "0.0" ? '' : toInputValue}
+                value={toInputValue == '0.0' ? '' : toInputValue}
                 canSelectToken={true}
                 didChangeValue={val => {
                   if (approveState === ApproveButtonState.Approved) {
