@@ -20,6 +20,7 @@ import { transparentize } from 'polished'
 import xRnbwTokenIcon from '../../assets/svg/xrnbw-token.svg'
 import RnbwTokenIcon from '../../assets/svg/rnbw-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import useEpochCountdown from 'halo-hooks/useEpochCountdown'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
@@ -33,6 +34,7 @@ import { useActiveWeb3React } from '../../hooks'
 import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
+import contains from '@popperjs/core/lib/dom-utils/contains'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -202,6 +204,10 @@ export default function HaloHalo() {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
+  const epochCountdown = useEpochCountdown()
+  // useEffect(() => {
+  //   console.log('epoch', epochCountdown)
+  // }, [epochCountdown])
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
