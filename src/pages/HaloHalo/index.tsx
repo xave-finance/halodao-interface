@@ -205,9 +205,9 @@ export default function HaloHalo() {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
   const epochCountdown = useEpochCountdown()
-  // useEffect(() => {
-  //   console.log('epoch', epochCountdown)
-  // }, [epochCountdown])
+  useEffect(() => {
+    console.log('epoch', epochCountdown)
+  }, [epochCountdown])
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
