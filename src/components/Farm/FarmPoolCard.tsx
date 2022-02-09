@@ -14,7 +14,7 @@ import {
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
-import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText, HideMedium } from 'theme'
+import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import styled from 'styled-components'
@@ -58,11 +58,17 @@ import { consoleLog } from 'utils/simpleLogger'
 import { MetamaskError } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
-import { AlertCircle, Check, GitPullRequest } from 'react-feather'
+import { Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import APRAlertIcon from '../../assets/svg/alert-circle.svg'
 import { MouseoverTooltip } from '../Tooltip'
 
+const ShowOnlyInSmallDevices = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    display: block;
+  `};
+`
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   transition: border 100ms ease-in;
   height: auto;
@@ -238,10 +244,11 @@ const ManageCloseButton = styled(ManageCloseButtonAlt)`
 
 const LineSeparator = styled.div`
   display: none;
+  margin-top: 10px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     display: block;
     border-bottom: 1px solid #471BB2;
-    margin: 10px 30px 0;
+    margin: 0 8px 15px;
   `};
 `
 
@@ -283,6 +290,12 @@ const ExpandedCard = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border: none;
     margin-top: 0;
+    border-radius: unset;
+    border: unset;
+    margin-top: unset;
+    box-shadow: unset;
+    margin: -10px;
+    background-color: transparent;
   `}
 `
 
@@ -294,14 +307,18 @@ const GetBPTButton = styled(ExternalLink)`
   margin-bottom: 4px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    border: 1px solid #518CFF;
-    box-sizing: border-box;
-    border-radius: 20px;
-    padding: 0.5rem;
     width: 100%;
     margin-bottom: 0.5rem;
-    text-align: center;
+    text-align: left;
     text-decoration: none;
+    
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 130%;
+    text-decoration-line: underline;
+    color: #518CFF;
   `};
 
   & img {
@@ -316,11 +333,11 @@ const GetBPTButton = styled(ExternalLink)`
 const StakeUnstakeContainer = styled.div`
   display: flex;
   flex-direction: row;
-  padding: 20px 30px 0 30px;
+  padding: 20px 60px 0 60px;
   justify-content: space-between;
-
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
+    padding: 0 16px;
   `};
 `
 
@@ -343,10 +360,11 @@ const HideSmallFullWidth = styled(HideSmall)`
 `
 
 const BannerContainer = styled(RowFlat)`
-  padding: 20px 30px;
-
+  padding: 20px 60px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding-top: 0;
+    padding: 0 16px;
+    margin-bottom: 0.6rem;
   `};
 `
 
@@ -383,7 +401,7 @@ const RewardsContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 20px 30px;
-  justify-content: space-between;
+  //justify-content: space-between;
   background: #15006d;
   color: white;
   align-items: center;
@@ -393,6 +411,8 @@ const RewardsContainer = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
     align-items: flex-start;
+    padding: 16px;
+    padding-bottom: 8px;
   `};
 `
 
@@ -450,7 +470,6 @@ const ClaimButton = styled(ButtonOutlined)`
   color: ${({ theme }) => theme.text1};
   border-radius: 10px;
   font-weight: bold;
-  width: 100%:
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
   `};
@@ -937,194 +956,385 @@ export default function FarmPoolCard({
             )}
           </StyledRowFixed>
         </StyledFixedHeightRowCustom>
+        {showMore && (
+          <ShowOnlyInSmallDevices>
+            <ExpandedCard>
+              <LineSeparator />
+              <StakeUnstakeContainer>
+                <StakeUnstakeChild>
+                  <FixedHeightRow>
+                    <TYPE.label>
+                      BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                    </TYPE.label>
+                  </FixedHeightRow>
+                  <RowFlat>
+                    <GetBPTButton href={poolInfo.addLiquidityUrl}>
+                      {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
+                      <img src={LinkIcon} alt="Link Icon" />
+                    </GetBPTButton>
+                  </RowFlat>
+                  <RowFlat>
+                    <NumericalInput
+                      style={{
+                        width: '100%'
+                      }}
+                      value={stakeAmount}
+                      onUserInput={amount => setStakeAmount(amount)}
+                      id="stake-input"
+                      disabled={!isActivePool}
+                    />
+                    <ButtonMax
+                      onClick={() => {
+                        setStakeAmount(`${toFixed(bptBalance, 8)}`)
+                      }}
+                      disabled={!isActivePool}
+                    >
+                      {t('max')}
+                    </ButtonMax>
+                  </RowFlat>
+                  <Column>
+                    <ButtonHalo
+                      id="stake-button"
+                      disabled={
+                        [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                          stakeButtonState
+                        ) || !isActivePool
+                      }
+                      onClick={() => {
+                        if (stakeButtonState === ButtonHaloStates.Approved) {
+                          stakeLpToken()
+                        } else {
+                          approveStakeAmount()
+                        }
+                      }}
+                    >
+                      {!isActivePool ? (
+                        <>{t('staking disabled')}</>
+                      ) : (
+                        <>
+                          {(stakeButtonState === ButtonHaloStates.Disabled ||
+                            stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                          {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                          {stakeButtonState === ButtonHaloStates.Approving && (
+                            <>
+                              {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                              <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                            </>
+                          )}
+                          {stakeButtonState === ButtonHaloStates.TxInProgress && (
+                            <>
+                              {stakingMessage}&nbsp;
+                              <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                            </>
+                          )}
+                        </>
+                      )}
+                    </ButtonHalo>
+                    {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
+                      <ErrorText>{t('insufficientFunds')}</ErrorText>
+                    )}
+                  </Column>
+                </StakeUnstakeChild>
+                <StakeUnstakeChild>
+                  <FixedHeightRow>
+                    <TYPE.label>
+                      STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                    </TYPE.label>
+                  </FixedHeightRow>
+                  <HideSmallFullWidth>
+                    <Row height={23}>&nbsp;</Row>
+                  </HideSmallFullWidth>
+                  <RowFlat>
+                    <NumericalInput
+                      style={{
+                        width: '100%'
+                      }}
+                      value={unstakeAmount}
+                      onUserInput={amount => setUnstakeAmount(amount)}
+                      id="unstake-input"
+                    />
+                    <ButtonMax
+                      onClick={() => {
+                        setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
+                      }}
+                    >
+                      {t('max')}
+                    </ButtonMax>
+                  </RowFlat>
+                  <Column>
+                    <ButtonHaloOutlined
+                      id="unstake-button"
+                      disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                        unstakeButtonState
+                      )}
+                      onClick={unstakeLpToken}
+                    >
+                      {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
+                        unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
+                      {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
+                        <>
+                          {unstakingMessage}&nbsp;
+                          <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                    </ButtonHaloOutlined>
+                    {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
+                      <ErrorText>{t('insufficientFunds')}</ErrorText>
+                    )}
+                  </Column>
+                </StakeUnstakeChild>
+              </StakeUnstakeContainer>
+
+              <BannerContainer>
+                <Banner>
+                  <Text>
+                    {t('tokenCardRewardDescription')} Learn{' '}
+                    <a
+                      href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      more
+                    </a>{' '}
+                    about Vesting.
+                  </Text>
+                  <HideSmall>
+                    <img src={BunnyMoon} alt="Bunny Moon" />
+                  </HideSmall>
+                </Banner>
+              </BannerContainer>
+
+              <RewardsContainer>
+                <RewardsChild>
+                  <img src={BunnyRewards} alt="Bunny Rewards" />
+                </RewardsChild>
+                <RewardsChild className="main">
+                  <Text className="label">{poolInfo.pair} Rewards:</Text>
+                  <Text className="balance">
+                    {showMigrateButton && alreadyMigrated ? (
+                      <>0 xRNBW </>
+                    ) : (
+                      <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                    )}
+                  </Text>
+                </RewardsChild>
+                <RewardsChild>
+                  <ClaimButton
+                    onClick={showMigrateButton ? handleMigrate : handleClaim}
+                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                      harvestButtonState
+                    )}
+                  >
+                    {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                    &nbsp;&nbsp;
+                    {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                    ) : showMigrateButton && alreadyMigrated ? (
+                      <Check size={16} />
+                    ) : showMigrateButton && !alreadyMigrated ? (
+                      <GitPullRequest size={16} />
+                    ) : (
+                      <img src={ArrowRight} alt="Harvest icon" />
+                    )}
+                  </ClaimButton>
+                </RewardsChild>
+                <RewardsChild className="close">
+                  <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
+                </RewardsChild>
+              </RewardsContainer>
+            </ExpandedCard>
+          </ShowOnlyInSmallDevices>
+        )}
       </CustomColumn>
       {/* Pool Row expanded */}
       {showMore && (
-        <ExpandedCard>
-          <LineSeparator />
-          <StakeUnstakeContainer>
-            <StakeUnstakeChild>
-              <FixedHeightRow>
-                <TYPE.label>
-                  BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
-                </TYPE.label>
-              </FixedHeightRow>
-              <RowFlat>
-                <GetBPTButton href={poolInfo.addLiquidityUrl}>
-                  {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
-                  <img src={LinkIcon} alt="Link Icon" />
-                </GetBPTButton>
-              </RowFlat>
-              <RowFlat>
-                <NumericalInput
-                  style={{
-                    width: '100%'
-                  }}
-                  value={stakeAmount}
-                  onUserInput={amount => setStakeAmount(amount)}
-                  id="stake-input"
-                  disabled={!isActivePool}
-                />
-                <ButtonMax
-                  onClick={() => {
-                    setStakeAmount(`${toFixed(bptBalance, 8)}`)
-                  }}
-                  disabled={!isActivePool}
-                >
-                  {t('max')}
-                </ButtonMax>
-              </RowFlat>
-              <Column>
-                <ButtonHalo
-                  id="stake-button"
-                  disabled={
-                    [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
-                      stakeButtonState
-                    ) || !isActivePool
-                  }
-                  onClick={() => {
-                    if (stakeButtonState === ButtonHaloStates.Approved) {
-                      stakeLpToken()
-                    } else {
-                      approveStakeAmount()
+        <HideSmall>
+          <ExpandedCard>
+            <LineSeparator />
+            <StakeUnstakeContainer>
+              <StakeUnstakeChild>
+                <FixedHeightRow>
+                  <TYPE.label>
+                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                  </TYPE.label>
+                </FixedHeightRow>
+                <RowFlat>
+                  <GetBPTButton href={poolInfo.addLiquidityUrl}>
+                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
+                    <img src={LinkIcon} alt="Link Icon" />
+                  </GetBPTButton>
+                </RowFlat>
+                <RowFlat>
+                  <NumericalInput
+                    style={{
+                      width: '100%'
+                    }}
+                    value={stakeAmount}
+                    onUserInput={amount => setStakeAmount(amount)}
+                    id="stake-input"
+                    disabled={!isActivePool}
+                  />
+                  <ButtonMax
+                    onClick={() => {
+                      setStakeAmount(`${toFixed(bptBalance, 8)}`)
+                    }}
+                    disabled={!isActivePool}
+                  >
+                    {t('max')}
+                  </ButtonMax>
+                </RowFlat>
+                <Column>
+                  <ButtonHalo
+                    id="stake-button"
+                    disabled={
+                      [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                        stakeButtonState
+                      ) || !isActivePool
                     }
-                  }}
-                >
-                  {!isActivePool ? (
-                    <>{t('staking disabled')}</>
+                    onClick={() => {
+                      if (stakeButtonState === ButtonHaloStates.Approved) {
+                        stakeLpToken()
+                      } else {
+                        approveStakeAmount()
+                      }
+                    }}
+                  >
+                    {!isActivePool ? (
+                      <>{t('staking disabled')}</>
+                    ) : (
+                      <>
+                        {(stakeButtonState === ButtonHaloStates.Disabled ||
+                          stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                        {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                        {stakeButtonState === ButtonHaloStates.Approving && (
+                          <>
+                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                        {stakeButtonState === ButtonHaloStates.TxInProgress && (
+                          <>
+                            {stakingMessage}&nbsp;
+                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                          </>
+                        )}
+                      </>
+                    )}
+                  </ButtonHalo>
+                  {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
+                    <ErrorText>{t('insufficientFunds')}</ErrorText>
+                  )}
+                </Column>
+              </StakeUnstakeChild>
+              <StakeUnstakeChild>
+                <FixedHeightRow>
+                  <TYPE.label>
+                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                  </TYPE.label>
+                </FixedHeightRow>
+                <HideSmallFullWidth>
+                  <Row height={23}>&nbsp;</Row>
+                </HideSmallFullWidth>
+                <RowFlat>
+                  <NumericalInput
+                    style={{
+                      width: '100%'
+                    }}
+                    value={unstakeAmount}
+                    onUserInput={amount => setUnstakeAmount(amount)}
+                    id="unstake-input"
+                  />
+                  <ButtonMax
+                    onClick={() => {
+                      setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
+                    }}
+                  >
+                    {t('max')}
+                  </ButtonMax>
+                </RowFlat>
+                <Column>
+                  <ButtonHaloOutlined
+                    id="unstake-button"
+                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                      unstakeButtonState
+                    )}
+                    onClick={unstakeLpToken}
+                  >
+                    {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
+                      unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
+                    {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
+                      <>
+                        {unstakingMessage}&nbsp;
+                        <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
+                      </>
+                    )}
+                  </ButtonHaloOutlined>
+                  {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
+                    <ErrorText>{t('insufficientFunds')}</ErrorText>
+                  )}
+                </Column>
+              </StakeUnstakeChild>
+            </StakeUnstakeContainer>
+
+            <BannerContainer>
+              <Banner>
+                <Text>
+                  {t('tokenCardRewardDescription')} Learn{' '}
+                  <a
+                    href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    more
+                  </a>{' '}
+                  about Vesting.
+                </Text>
+                <HideSmall>
+                  <img src={BunnyMoon} alt="Bunny Moon" />
+                </HideSmall>
+              </Banner>
+            </BannerContainer>
+
+            <RewardsContainer>
+              <RewardsChild>
+                <img src={BunnyRewards} alt="Bunny Rewards" />
+              </RewardsChild>
+              <RewardsChild className="main">
+                <Text className="label">{poolInfo.pair} Rewards:</Text>
+                <Text className="balance">
+                  {showMigrateButton && alreadyMigrated ? (
+                    <>0 xRNBW </>
                   ) : (
-                    <>
-                      {(stakeButtonState === ButtonHaloStates.Disabled ||
-                        stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
-                      {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
-                      {stakeButtonState === ButtonHaloStates.Approving && (
-                        <>
-                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                          <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                      {stakeButtonState === ButtonHaloStates.TxInProgress && (
-                        <>
-                          {stakingMessage}&nbsp;
-                          <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                        </>
-                      )}
-                    </>
+                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
                   )}
-                </ButtonHalo>
-                {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
-                  <ErrorText>{t('insufficientFunds')}</ErrorText>
-                )}
-              </Column>
-            </StakeUnstakeChild>
-            <StakeUnstakeChild>
-              <FixedHeightRow>
-                <TYPE.label>
-                  STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
-                </TYPE.label>
-              </FixedHeightRow>
-              <HideSmallFullWidth>
-                <Row height={23}>&nbsp;</Row>
-              </HideSmallFullWidth>
-              <RowFlat>
-                <NumericalInput
-                  style={{
-                    width: '100%'
-                  }}
-                  value={unstakeAmount}
-                  onUserInput={amount => setUnstakeAmount(amount)}
-                  id="unstake-input"
-                />
-                <ButtonMax
-                  onClick={() => {
-                    setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
-                  }}
-                >
-                  {t('max')}
-                </ButtonMax>
-              </RowFlat>
-              <Column>
-                <ButtonHaloOutlined
-                  id="unstake-button"
+                </Text>
+              </RewardsChild>
+              <RewardsChild>
+                <ClaimButton
+                  onClick={showMigrateButton ? handleMigrate : handleClaim}
                   disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                    unstakeButtonState
+                    harvestButtonState
                   )}
-                  onClick={unstakeLpToken}
                 >
-                  {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
-                    unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
-                  {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
-                    <>
-                      {unstakingMessage}&nbsp;
-                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
-                    </>
+                  {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                  &nbsp;&nbsp;
+                  {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                    <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                  ) : showMigrateButton && alreadyMigrated ? (
+                    <Check size={16} />
+                  ) : showMigrateButton && !alreadyMigrated ? (
+                    <GitPullRequest size={16} />
+                  ) : (
+                    <img src={ArrowRight} alt="Harvest icon" />
                   )}
-                </ButtonHaloOutlined>
-                {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
-                  <ErrorText>{t('insufficientFunds')}</ErrorText>
-                )}
-              </Column>
-            </StakeUnstakeChild>
-          </StakeUnstakeContainer>
-
-          <BannerContainer>
-            <Banner>
-              <Text>
-                {t('tokenCardRewardDescription')} Learn{' '}
-                <a
-                  href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  more
-                </a>{' '}
-                about Vesting.
-              </Text>
-              <HideSmall>
-                <img src={BunnyMoon} alt="Bunny Moon" />
-              </HideSmall>
-            </Banner>
-          </BannerContainer>
-
-          <RewardsContainer>
-            <RewardsChild>
-              <img src={BunnyRewards} alt="Bunny Rewards" />
-            </RewardsChild>
-            <RewardsChild className="main">
-              <Text className="label">{poolInfo.pair} Rewards:</Text>
-              <Text className="balance">
-                {showMigrateButton && alreadyMigrated ? (
-                  <>0 xRNBW </>
-                ) : (
-                  <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
-                )}
-              </Text>
-            </RewardsChild>
-            <RewardsChild>
-              <ClaimButton
-                onClick={showMigrateButton ? handleMigrate : handleClaim}
-                disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                  harvestButtonState
-                )}
-              >
-                {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
-                &nbsp;&nbsp;
-                {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
-                  <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                ) : showMigrateButton && alreadyMigrated ? (
-                  <Check size={16} />
-                ) : showMigrateButton && !alreadyMigrated ? (
-                  <GitPullRequest size={16} />
-                ) : (
-                  <img src={ArrowRight} alt="Harvest icon" />
-                )}
-              </ClaimButton>
-            </RewardsChild>
-            <RewardsChild className="close">
-              <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
-            </RewardsChild>
-          </RewardsContainer>
-        </ExpandedCard>
+                </ClaimButton>
+              </RewardsChild>
+              <RewardsChild className="close">
+                <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
+              </RewardsChild>
+            </RewardsContainer>
+          </ExpandedCard>
+        </HideSmall>
       )}
     </div>
   )
