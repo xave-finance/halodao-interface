@@ -129,6 +129,7 @@ export default function CurrencyInputPanel({
       setButtonState(ButtonHaloStates.Approving)
       const txHash = await approve()
       // user rejected tx or didn't go thru
+      await txHash.wait()
       if (txHash?.code === 4001) {
         setRequestedApproval(false)
         setButtonState(ButtonHaloStates.NotApproved)
