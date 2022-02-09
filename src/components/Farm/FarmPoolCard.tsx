@@ -14,7 +14,7 @@ import {
 import Column, { AutoColumn } from '../Column'
 import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
-import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText } from 'theme'
+import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText, HideMedium } from 'theme'
 import NumericalInput from 'components/NumericalInput'
 import { GreyCard } from '../Card'
 import styled from 'styled-components'
@@ -58,18 +58,14 @@ import { consoleLog } from 'utils/simpleLogger'
 import { MetamaskError } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
-import { Check, GitPullRequest } from 'react-feather'
+import { AlertCircle, Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import APRAlertIcon from '../../assets/svg/alert-circle.svg'
+import { MouseoverTooltip } from '../Tooltip'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
-  padding: 1rem;
-  margin: 0 -1rem;
-  cursor: pointer;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  width: auto;
   transition: border 100ms ease-in;
-
+  height: auto;
   &.inactive:hover {
     border-color: ${({ theme }) => theme.primary1};
   }
@@ -78,7 +74,6 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
-    padding: 0 30px 20px;
     cursor: default;
 
     &.inactive:hover {
@@ -88,12 +83,12 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
 `
 
 const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  border: none
-  background: ${({ theme }) => transparentize(0.6, theme.bg1)};
-  position: relative;
-  overflow: visible;
-  padding: 5px 0 5px 0;
-  border-radius: 0px;
+  // border: none
+  // background: ${({ theme }) => transparentize(0.6, theme.bg1)};
+  // position: relative;
+  // overflow: visible;
+  // padding: 5px 0 5px 0;
+  // border-radius: 0px;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     background: #ffffff;
@@ -113,11 +108,12 @@ const StyledCard = styled(GreyCard)<{ bgColor: any }>`
 const StyledRowFixed = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     flex-direction: column;
-    margin-top: 0.5rem;
-    align-items: flex-start;
+    align-items: center;
     justify-content: flex-start;
     width: 100%;
-
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 1rem;
     &:first-of-type {
       flex-direction: row;
       align-items: center;
@@ -135,11 +131,49 @@ const StyledRowFixed = styled(RowFixed)`
   `};
 `
 
+const StyledRowFixedBlocked = styled(RowFixed)`
+  display: block;
+  //width: 100%;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+  `};
+`
+
 const StyledTextForValue = styled(Text)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     line-height: 130%;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    color: #000000;
   `};
   font-size: 16px;
+`
+
+const StyledTextForValueEarned = styled(StyledTextForValue)`
+  display: inline;
+  margin-left: -15px !important;
+  margin-right: 15px !important;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    margin-left: -40px !important;
+    margin-right: 40px !important;
+  `};
+`
+
+const StyledTextForAPR = styled(RowFixed)`
+  display: flex;
+  margin-right: 0.3rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`  
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 130%;
+    color: #000000;
+  `};
 `
 
 const LabelText = styled(Text)`
@@ -150,32 +184,18 @@ const LabelText = styled(Text)`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     display: block;
+    margin-top: unset !important;
+    font-family: Open Sans;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    text-transform: uppercase;
+    color: #838383;
   `};
   &.first {
     margin-top: 0 !important;
   }
-`
-
-const ManageCloseButton = styled(ButtonOutlined)`
-  width: 100%;
-  padding: 4px 8px;
-  border-radius: 5px;
-  font-weight: 700;
-  font-size: 16px;
-
-  :hover {
-    background: ${({ theme }) => theme.text4};
-    color: white;
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    background: ${({ theme }) => theme.text4};
-    color: white;
-    width: 100%;
-    border-radius: 4px;
-    padding: 6px 12px;
-    font-weight: 900;
-  `};
 `
 
 const ManageCloseButtonAlt = styled(ButtonText)`
@@ -194,6 +214,28 @@ const ManageCloseButtonAlt = styled(ButtonText)`
   `};
 `
 
+const ManageCloseButton = styled(ManageCloseButtonAlt)`
+  // width: 100%;
+  // padding: 4px 8px;
+  // //border-radius: 5px;
+  // font-weight: 700;
+  // font-size: 16px;
+  // border: none;
+  // &:hover {
+  //   opacity: 0.6;
+  //   border: none;
+  // }
+  //
+  // ${({ theme }) => theme.mediaWidth.upToSmall`
+  //   background: ${({ theme }) => theme.text4};
+  //   color: white;
+  //   width: 100%;
+  //   border-radius: 4px;
+  //   padding: 6px 12px;
+  //   font-weight: 900;
+  // `};
+`
+
 const LineSeparator = styled.div`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -204,7 +246,6 @@ const LineSeparator = styled.div`
 `
 
 export const StyledFixedHeightRowWeb = styled(RowBetween)`
-  height: 24px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
     height: 0;
   `};
@@ -236,7 +277,7 @@ const ExpandedCard = styled.div`
   background-color: #ffffff;
   border-radius: 5px;
   border: 1px solid #15006d;
-  margin-top: 12px;
+  margin-top: 0.5rem;
   box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -298,7 +339,7 @@ const StakeUnstakeChild = styled.div`
 `
 
 const HideSmallFullWidth = styled(HideSmall)`
-  width: 100%;
+  //width: 100%;
 `
 
 const BannerContainer = styled(RowFlat)`
@@ -404,12 +445,12 @@ const RewardsChild = styled.div`
 `
 
 const ClaimButton = styled(ButtonOutlined)`
+  width: 234px;
   background: white;
   color: ${({ theme }) => theme.text1};
   border-radius: 10px;
   font-weight: bold;
-  width: 234px;
-
+  width: 100%:
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
   `};
@@ -422,6 +463,11 @@ const ClaimButton = styled(ButtonOutlined)`
   }
   &:active {
     box-shadow: 0 0 0 1px #2700ce;
+  }
+  &:disabled {
+    opacity: unset;
+    background: white;
+    cursor: not-allowed;
   }
 
   img {
@@ -777,13 +823,36 @@ export default function FarmPoolCard({
     })
   }
 
+  const CustomColumn = styled(AutoColumn)`
+    padding: 8px;
+    min-height: 58px;
+    background: #ffffff;
+    border-radius: 5px;
+    align-items: center;
+    cursor: pointer;
+    //border-color: ${showMore ? `#15006d` : '1px solid rgba(131, 131, 131, 0.5)'}
+    &:hover{
+      background: #FFFFFF;
+      border: 1px solid #15006D;
+      box-sizing: border-box;
+      box-shadow: 0px 8px 8px rgba(27, 20, 100, 0.2);
+      border-radius: 5px;
+      transition: 0.5s;
+    }
+    border-color: red;
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+        border-color: #471bb2 !important;
+    `};
+  `
+
+  const AprIconWrapper = styled.img`
+    apralerticonwidth: 16px;
+    height: 16px;
+  `
+
   return (
-    <StyledCard
-      id={`pool-${poolInfo.address.toLowerCase()}`}
-      bgColor="#ffffff"
-      className={'pool-card ' + (showMore ? 'expanded' : 'default')}
-    >
-      <AutoColumn>
+    <div id={`pool-${poolInfo.address.toLowerCase()}`} className={'pool-card ' + (showMore ? 'expanded' : 'default')}>
+      <CustomColumn style={{ border: `${showMore ? '1px solid #15006D' : '1px solid rgba(131, 131, 131, 0.5)'}` }}>
         {/* Pool Row default */}
         <StyledFixedHeightRowCustom
           className={showMore ? 'active' : 'inactive'}
@@ -804,7 +873,23 @@ export default function FarmPoolCard({
           </StyledRowFixed>
           <StyledRowFixed width="11%">
             <LabelText className="first">{t('apr')}:</LabelText>
-            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
+            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <StyledTextForAPR>{isActivePool ? poolAPY : t('inactive')}</StyledTextForAPR>
+              <MouseoverTooltip
+                text={
+                  <div>
+                    <div>APR Breakdown :</div>
+                    <ul style={{ marginLeft: '1.1rem', listStyle: 'unset' }}>
+                      <li>{Math.floor(Math.random() * (1000 - 100) + 100) / 100}% xRNBW</li>
+                      <li>{Math.floor(Math.random() * (1000 - 100) + 100) / 100}% TKN</li>
+                    </ul>
+                  </div>
+                }
+                placement={'top'}
+              >
+                <AprIconWrapper src={APRAlertIcon} />
+              </MouseoverTooltip>
+            </div>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -822,15 +907,19 @@ export default function FarmPoolCard({
           </StyledRowFixed>
           <StyledRowFixed width="16%">
             <LabelText>{t('earned')}:</LabelText>
-            <StyledTextForValue>
-              {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</u>
-              ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
-                <>0 xRNBW</>
-              ) : (
-                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
-              )}
-            </StyledTextForValue>
+            <div>
+              <StyledTextForValue>
+                {hasPendingRewardTokenError ? (
+                  <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</u>
+                ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
+                  <>0 xRNBW</>
+                ) : (
+                  <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                )}
+              </StyledTextForValue>
+              <StyledTextForValueEarned>+</StyledTextForValueEarned>
+              <StyledTextForValue style={{ display: 'inline' }}>4.5 TKN</StyledTextForValue>
+            </div>
           </StyledRowFixed>
           <StyledRowFixed width="8%" justify="flex-end">
             {account && (
@@ -848,197 +937,195 @@ export default function FarmPoolCard({
             )}
           </StyledRowFixed>
         </StyledFixedHeightRowCustom>
-
-        {/* Pool Row expanded */}
-        {showMore && (
-          <ExpandedCard>
-            <LineSeparator />
-
-            <StakeUnstakeContainer>
-              <StakeUnstakeChild>
-                <FixedHeightRow>
-                  <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
-                  </TYPE.label>
-                </FixedHeightRow>
-                <RowFlat>
-                  <GetBPTButton href={poolInfo.addLiquidityUrl}>
-                    {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
-                    <img src={LinkIcon} alt="Link Icon" />
-                  </GetBPTButton>
-                </RowFlat>
-                <RowFlat>
-                  <NumericalInput
-                    style={{
-                      width: '100%'
-                    }}
-                    value={stakeAmount}
-                    onUserInput={amount => setStakeAmount(amount)}
-                    id="stake-input"
-                    disabled={!isActivePool}
-                  />
-                  <ButtonMax
-                    onClick={() => {
-                      setStakeAmount(`${toFixed(bptBalance, 8)}`)
-                    }}
-                    disabled={!isActivePool}
-                  >
-                    {t('max')}
-                  </ButtonMax>
-                </RowFlat>
-                <Column>
-                  <ButtonHalo
-                    id="stake-button"
-                    disabled={
-                      [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
-                        stakeButtonState
-                      ) || !isActivePool
-                    }
-                    onClick={() => {
-                      if (stakeButtonState === ButtonHaloStates.Approved) {
-                        stakeLpToken()
-                      } else {
-                        approveStakeAmount()
-                      }
-                    }}
-                  >
-                    {!isActivePool ? (
-                      <>{t('staking disabled')}</>
-                    ) : (
-                      <>
-                        {(stakeButtonState === ButtonHaloStates.Disabled ||
-                          stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
-                        {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
-                        {stakeButtonState === ButtonHaloStates.Approving && (
-                          <>
-                            {HALO_REWARDS_MESSAGE.approving}&nbsp;
-                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                          </>
-                        )}
-                        {stakeButtonState === ButtonHaloStates.TxInProgress && (
-                          <>
-                            {stakingMessage}&nbsp;
-                            <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
-                          </>
-                        )}
-                      </>
-                    )}
-                  </ButtonHalo>
-                  {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
-                    <ErrorText>{t('insufficientFunds')}</ErrorText>
-                  )}
-                </Column>
-              </StakeUnstakeChild>
-              <StakeUnstakeChild>
-                <FixedHeightRow>
-                  <TYPE.label>
-                    STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
-                  </TYPE.label>
-                </FixedHeightRow>
-                <HideSmallFullWidth>
-                  <Row height={23}>&nbsp;</Row>
-                </HideSmallFullWidth>
-                <RowFlat>
-                  <NumericalInput
-                    style={{
-                      width: '100%'
-                    }}
-                    value={unstakeAmount}
-                    onUserInput={amount => setUnstakeAmount(amount)}
-                    id="unstake-input"
-                  />
-                  <ButtonMax
-                    onClick={() => {
-                      setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
-                    }}
-                  >
-                    {t('max')}
-                  </ButtonMax>
-                </RowFlat>
-                <Column>
-                  <ButtonHaloOutlined
-                    id="unstake-button"
-                    disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                      unstakeButtonState
-                    )}
-                    onClick={unstakeLpToken}
-                  >
-                    {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
-                      unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
-                    {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
-                      <>
-                        {unstakingMessage}&nbsp;
-                        <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
-                      </>
-                    )}
-                  </ButtonHaloOutlined>
-                  {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
-                    <ErrorText>{t('insufficientFunds')}</ErrorText>
-                  )}
-                </Column>
-              </StakeUnstakeChild>
-            </StakeUnstakeContainer>
-
-            <BannerContainer>
-              <Banner>
-                <Text>
-                  {t('tokenCardRewardDescription')} Learn{' '}
-                  <a
-                    href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    more
-                  </a>{' '}
-                  about Vesting.
-                </Text>
-                <HideSmall>
-                  <img src={BunnyMoon} alt="Bunny Moon" />
-                </HideSmall>
-              </Banner>
-            </BannerContainer>
-
-            <RewardsContainer>
-              <RewardsChild>
-                <img src={BunnyRewards} alt="Bunny Rewards" />
-              </RewardsChild>
-              <RewardsChild className="main">
-                <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">
-                  {showMigrateButton && alreadyMigrated ? (
-                    <>0 xRNBW </>
-                  ) : (
-                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
-                  )}
-                </Text>
-              </RewardsChild>
-              <RewardsChild>
-                <ClaimButton
-                  onClick={showMigrateButton ? handleMigrate : handleClaim}
-                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
-                    harvestButtonState
-                  )}
+      </CustomColumn>
+      {/* Pool Row expanded */}
+      {showMore && (
+        <ExpandedCard>
+          <LineSeparator />
+          <StakeUnstakeContainer>
+            <StakeUnstakeChild>
+              <FixedHeightRow>
+                <TYPE.label>
+                  BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                </TYPE.label>
+              </FixedHeightRow>
+              <RowFlat>
+                <GetBPTButton href={poolInfo.addLiquidityUrl}>
+                  {t('getTokens').replace('%s', tokenSymbolForPool(poolInfo.address, chainId))}
+                  <img src={LinkIcon} alt="Link Icon" />
+                </GetBPTButton>
+              </RowFlat>
+              <RowFlat>
+                <NumericalInput
+                  style={{
+                    width: '100%'
+                  }}
+                  value={stakeAmount}
+                  onUserInput={amount => setStakeAmount(amount)}
+                  id="stake-input"
+                  disabled={!isActivePool}
+                />
+                <ButtonMax
+                  onClick={() => {
+                    setStakeAmount(`${toFixed(bptBalance, 8)}`)
+                  }}
+                  disabled={!isActivePool}
                 >
-                  {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
-                  &nbsp;&nbsp;
-                  {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
-                    <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
-                  ) : showMigrateButton && alreadyMigrated ? (
-                    <Check size={16} />
-                  ) : showMigrateButton && !alreadyMigrated ? (
-                    <GitPullRequest size={16} />
+                  {t('max')}
+                </ButtonMax>
+              </RowFlat>
+              <Column>
+                <ButtonHalo
+                  id="stake-button"
+                  disabled={
+                    [ButtonHaloStates.Disabled, ButtonHaloStates.Approving, ButtonHaloStates.TxInProgress].includes(
+                      stakeButtonState
+                    ) || !isActivePool
+                  }
+                  onClick={() => {
+                    if (stakeButtonState === ButtonHaloStates.Approved) {
+                      stakeLpToken()
+                    } else {
+                      approveStakeAmount()
+                    }
+                  }}
+                >
+                  {!isActivePool ? (
+                    <>{t('staking disabled')}</>
                   ) : (
-                    <img src={ArrowRight} alt="Harvest icon" />
+                    <>
+                      {(stakeButtonState === ButtonHaloStates.Disabled ||
+                        stakeButtonState === ButtonHaloStates.Approved) && <>{t('stake')}</>}
+                      {stakeButtonState === ButtonHaloStates.NotApproved && <>{t('approve')}</>}
+                      {stakeButtonState === ButtonHaloStates.Approving && (
+                        <>
+                          {HALO_REWARDS_MESSAGE.approving}&nbsp;
+                          <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                      {stakeButtonState === ButtonHaloStates.TxInProgress && (
+                        <>
+                          {stakingMessage}&nbsp;
+                          <CustomLightSpinner src={Spinner} alt="loader" size={'15px'} />{' '}
+                        </>
+                      )}
+                    </>
                   )}
-                </ClaimButton>
-              </RewardsChild>
-              <RewardsChild className="close">
-                <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
-              </RewardsChild>
-            </RewardsContainer>
-          </ExpandedCard>
-        )}
-      </AutoColumn>
-    </StyledCard>
+                </ButtonHalo>
+                {parseFloat(stakeAmount) > 0 && parseFloat(stakeAmount) > bptBalance && (
+                  <ErrorText>{t('insufficientFunds')}</ErrorText>
+                )}
+              </Column>
+            </StakeUnstakeChild>
+            <StakeUnstakeChild>
+              <FixedHeightRow>
+                <TYPE.label>
+                  STAKED: {formatNumber(bptStaked)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                </TYPE.label>
+              </FixedHeightRow>
+              <HideSmallFullWidth>
+                <Row height={23}>&nbsp;</Row>
+              </HideSmallFullWidth>
+              <RowFlat>
+                <NumericalInput
+                  style={{
+                    width: '100%'
+                  }}
+                  value={unstakeAmount}
+                  onUserInput={amount => setUnstakeAmount(amount)}
+                  id="unstake-input"
+                />
+                <ButtonMax
+                  onClick={() => {
+                    setUnstakeAmount(`${toFixed(bptStaked, 8)}`)
+                  }}
+                >
+                  {t('max')}
+                </ButtonMax>
+              </RowFlat>
+              <Column>
+                <ButtonHaloOutlined
+                  id="unstake-button"
+                  disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                    unstakeButtonState
+                  )}
+                  onClick={unstakeLpToken}
+                >
+                  {(unstakeButtonState === ButtonHaloSimpleStates.Disabled ||
+                    unstakeButtonState === ButtonHaloSimpleStates.Enabled) && <>{t('unstake')}</>}
+                  {unstakeButtonState === ButtonHaloSimpleStates.TxInProgress && (
+                    <>
+                      {unstakingMessage}&nbsp;
+                      <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />{' '}
+                    </>
+                  )}
+                </ButtonHaloOutlined>
+                {parseFloat(unstakeAmount) > 0 && parseFloat(unstakeAmount) > bptStaked && (
+                  <ErrorText>{t('insufficientFunds')}</ErrorText>
+                )}
+              </Column>
+            </StakeUnstakeChild>
+          </StakeUnstakeContainer>
+
+          <BannerContainer>
+            <Banner>
+              <Text>
+                {t('tokenCardRewardDescription')} Learn{' '}
+                <a
+                  href="https://docs.halodao.com/products/rainbow-pool/how-vesting-works"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  more
+                </a>{' '}
+                about Vesting.
+              </Text>
+              <HideSmall>
+                <img src={BunnyMoon} alt="Bunny Moon" />
+              </HideSmall>
+            </Banner>
+          </BannerContainer>
+
+          <RewardsContainer>
+            <RewardsChild>
+              <img src={BunnyRewards} alt="Bunny Rewards" />
+            </RewardsChild>
+            <RewardsChild className="main">
+              <Text className="label">{poolInfo.pair} Rewards:</Text>
+              <Text className="balance">
+                {showMigrateButton && alreadyMigrated ? (
+                  <>0 xRNBW </>
+                ) : (
+                  <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                )}
+              </Text>
+            </RewardsChild>
+            <RewardsChild>
+              <ClaimButton
+                onClick={showMigrateButton ? handleMigrate : handleClaim}
+                disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
+                  harvestButtonState
+                )}
+              >
+                {t(showMigrateButton ? (alreadyMigrated ? 'migrated' : 'migrate') : 'harvest')}
+                &nbsp;&nbsp;
+                {harvestButtonState === ButtonHaloSimpleStates.TxInProgress ? (
+                  <CustomLightSpinner src={SpinnerPurple} alt="loader" size={'15px'} />
+                ) : showMigrateButton && alreadyMigrated ? (
+                  <Check size={16} />
+                ) : showMigrateButton && !alreadyMigrated ? (
+                  <GitPullRequest size={16} />
+                ) : (
+                  <img src={ArrowRight} alt="Harvest icon" />
+                )}
+              </ClaimButton>
+            </RewardsChild>
+            <RewardsChild className="close">
+              <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
+            </RewardsChild>
+          </RewardsContainer>
+        </ExpandedCard>
+      )}
+    </div>
   )
 }

@@ -38,7 +38,21 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
   const [showInactiveSection, setShowInactiveSection] = useState(false)
   const [showInactiveV0Section, setShowInactiveV0Section] = useState(false)
   const [showInactiveV1Section, setShowInactiveV1Section] = useState(false)
-
+  const InactivePoolsParent = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  `
+  const CustomTHHeader = styled(TYPE.thHeader)`
+    font-family: Open Sans !important;
+    justify-self: flex-start;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 22px;
+    text-transform: uppercase;
+    color: #838383;
+  `
   /**
    * Automatically scroll to a pool card if address is provided
    * @TODO: not currently working because the pool cards takes a long time to fully load
@@ -61,35 +75,34 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
           <HideSmall>
             <Card
               style={{
-                padding: '2rem 0 0.5rem'
+                padding: '2rem 0px 0px 0.7rem'
               }}
             >
               <AutoColumn>
                 <RowBetween>
                   <RowFixed width="18%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('pool')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="11%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('apr')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="18%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalPoolValue')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('totalPoolValue')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="13%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('stakeable')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="16%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('valueStaked')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="16%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
+                    <CustomTHHeader>{t('earned')}</CustomTHHeader>
                   </RowFixed>
                   <RowFixed width="8%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>
           </HideSmall>
-
           {activePools.map(poolInfo => {
             return (
               <FarmPoolCard
@@ -101,7 +114,6 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
               />
             )
           })}
-
           {activePools.length === 0 && (
             <div>
               <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
@@ -110,7 +122,6 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
               <div className="animate-pulse bg-primary-lighter h-7 rounded my-4"></div>
             </div>
           )}
-
           {inactivePools.length > 0 && (
             <InactivePools>
               <TYPE.thHeader
@@ -127,7 +138,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                 </div>
               </TYPE.thHeader>
               {showInactiveSection && (
-                <>
+                <InactivePoolsParent>
                   {inactivePools.map(poolInfo => {
                     return (
                       <FarmPoolCard
@@ -138,11 +149,10 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                       />
                     )
                   })}
-                </>
+                </InactivePoolsParent>
               )}
             </InactivePools>
           )}
-
           {v1PoolsInfo.length > 0 && (
             <InactivePools>
               <TYPE.thHeader
@@ -159,7 +169,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                 </div>
               </TYPE.thHeader>
               {showInactiveV1Section && (
-                <>
+                <InactivePoolsParent>
                   {v1PoolsInfo.map(poolInfo => {
                     return (
                       <FarmPoolCard
@@ -171,11 +181,10 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                       />
                     )
                   })}
-                </>
+                </InactivePoolsParent>
               )}
             </InactivePools>
           )}
-
           {v0PoolsInfo.length > 0 && (
             <InactivePools>
               <TYPE.thHeader
@@ -192,7 +201,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                 </div>
               </TYPE.thHeader>
               {showInactiveV0Section && (
-                <>
+                <InactivePoolsParent>
                   {v0PoolsInfo.map(poolInfo => {
                     return (
                       <FarmPoolCard
@@ -204,7 +213,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                       />
                     )
                   })}
-                </>
+                </InactivePoolsParent>
               )}
             </InactivePools>
           )}

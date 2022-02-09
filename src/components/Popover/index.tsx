@@ -8,16 +8,24 @@ import Portal from '@reach/portal'
 
 const PopoverContainer = styled.div<{ show: boolean }>`
   z-index: 9999;
-
   visibility: ${props => (props.show ? 'visible' : 'hidden')};
   opacity: ${props => (props.show ? 1 : 0)};
   transition: visibility 150ms linear, opacity 150ms linear;
-
-  background: ${({ theme }) => theme.bg2};
-  border: 1px solid ${({ theme }) => theme.bg3};
   box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.9, theme.shadow1)};
-  color: ${({ theme }) => theme.text2};
-  border-radius: 8px;
+  color: ${({ theme }) => theme.text1};
+  width: 139px;
+  height: 75px;
+  background: #ffffff;
+  border: 1px solid #471bb2;
+  box-sizing: border-box;
+  border-radius: 5px;
+
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 130%;
+  color: #333333;
 `
 
 const ReferenceElement = styled.div`
@@ -36,9 +44,9 @@ const Arrow = styled.div`
     z-index: 9998;
 
     content: '';
-    border: 1px solid ${({ theme }) => theme.bg3};
+    border: 1px solid ${({ theme }) => theme.bg2};
     transform: rotate(45deg);
-    background: ${({ theme }) => theme.bg2};
+    background: ${({ theme }) => theme.white};
   }
 
   &.arrow-top {
