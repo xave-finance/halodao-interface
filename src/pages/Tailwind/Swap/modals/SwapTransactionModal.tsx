@@ -10,6 +10,8 @@ import ArrowDownIcon from 'assets/svg/arrow-down-icon.svg'
 import WarningIcon from 'assets/svg/warning-icon-purple.svg'
 import { getExplorerLink } from '../../../../utils'
 import { ModalState } from 'constants/buttonStates'
+import ErrorContent from 'components/Tailwind/ErrorContent/TransactionErrorContent'
+import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 
 interface SwapTransactionModalProps {
   isVisible: boolean
@@ -56,6 +58,7 @@ const SwapTransactionModal = ({
     onDismiss()
   }
 
+  const { getErrorMessage, message } = useErrorMessage()
   const ConfirmContent = () => {
     return (
       <>
@@ -117,7 +120,9 @@ const SwapTransactionModal = ({
               try {
                 await onSwap()
               } catch (e) {
-                setSwapTransactionModalState(ModalState.NotConfirmed)
+                setSwapTransactionModalState(ModalState.Failed)
+                getErrorMessage(e as ErrorMessageObject)
+                console.log(e)
               }
               setIsExpired(false)
             }}
@@ -180,6 +185,9 @@ const SwapTransactionModal = ({
       {swapTransactionModalState === ModalState.NotConfirmed && <ConfirmContent />}
       {swapTransactionModalState === ModalState.InProgress && <InProgressContent />}
       {swapTransactionModalState === ModalState.Successful && <SuccessContent />}
+      {swapTransactionModalState === ModalState.Failed && (
+        <ErrorContent errorObject={message} closeError={dismissGracefully} />
+      )}
     </BaseModal>
   )
 }

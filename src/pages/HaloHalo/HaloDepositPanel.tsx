@@ -23,7 +23,7 @@ import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import BaseModal from '../../components/Tailwind/Modals/BaseModal'
-import ErrorModalContent from '../../components/Modal/ErrorModalContent'
+import ErrorModalContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -129,11 +129,12 @@ export default function CurrencyInputPanel({
       setButtonState(ButtonHaloStates.Approving)
       const txHash = await approve()
       // user rejected tx or didn't go thru
-      await txHash.wait()
       if (txHash?.code === 4001) {
         setRequestedApproval(false)
         setButtonState(ButtonHaloStates.NotApproved)
         console.clear()
+      } else {
+        await txHash.wait()
       }
     } catch (e) {
       setError(true)
@@ -314,7 +315,7 @@ export default function CurrencyInputPanel({
         }}
       >
         <ErrorModalContent
-          message={errorMessage}
+          singleErrorMessage={errorMessage}
           closeError={() => {
             dismissErrorModal()
           }}
