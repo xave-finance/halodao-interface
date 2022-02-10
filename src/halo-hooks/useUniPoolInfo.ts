@@ -91,8 +91,7 @@ export const useUniPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         ],
         asToken: new Token(chainId, poolAddress, 18, 'UNI_V2', 'UNI_V2'),
         allocPoint: 0,
-        provider: PoolProvider.Uni,
-        rewarderAddress: ''
+        provider: PoolProvider.Uni
       })
 
       tokenAddresses.push(token1Address)

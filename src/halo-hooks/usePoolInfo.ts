@@ -24,7 +24,7 @@ export type PoolInfo = {
   asToken: Token
   allocPoint: number
   provider: PoolProvider
-  rewarderAddress: string
+  rewarderAddress?: string
 }
 
 export type PoolTokenInfo = {

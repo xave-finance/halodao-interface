@@ -234,19 +234,14 @@ interface RewarderToken {
 }
 
 export const useRewarderPendingToken = (poolInfo: PoolInfo) => {
-  const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>({
-    amount: 0,
-    tokenName: '',
-    tokenAddress: '',
-    multiplier: 0
-  })
+  const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>()
   const { account } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
 
   const rewarder = useHALORewarderContract(
     poolInfo.rewarderAddress !== ZERO_ADDRESS ? poolInfo.rewarderAddress : undefined
   )
-  const token = useToken(pendingRewarderToken.tokenAddress === '' ? undefined : pendingRewarderToken.tokenAddress)
+  const token = useToken(pendingRewarderToken?.tokenAddress === '' ? undefined : pendingRewarderToken?.tokenAddress)
 
   const fetchRewarderToken = useCallback(async () => {
     try {
@@ -265,23 +260,11 @@ export const useRewarderPendingToken = (poolInfo: PoolInfo) => {
     } catch (err) {
       console.error(`Error fetching rewarder: `, err)
     }
-  }, [ammRewards, rewarder, poolInfo, token])
+  }, [ammRewards, rewarder, poolInfo, token]) //eslint-disable-line
 
   useEffect(() => {
     fetchRewarderToken()
   }, [fetchRewarderToken])
 
   return pendingRewarderToken
-}
-
-export const usePoolHasRewarder = (poolsInfo: PoolInfo[]) => {
-  const poolIds = useMemo(() => {
-    return poolsInfo.map(pid => [String(pid.pid)])
-  }, [poolsInfo])
-  const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
-  const data = useSingleContractMultipleData(ammRewards, 'rewarder', poolIds)
-
-  return poolsInfo.map((poolInfo, index) => {
-    return { ...poolInfo, rewarderAddress: data[index].result?.[0] || '' }
-  })
 }

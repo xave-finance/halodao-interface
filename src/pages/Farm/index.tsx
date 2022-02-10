@@ -6,7 +6,7 @@ import Row, { RowBetween } from '../../components/Row'
 import { AutoColumn } from '../../components/Column'
 import FarmSummary from 'components/Farm/FarmSummary'
 import EmptyState from 'components/EmptyState'
-import { useLPTokenAddresses, useAllocPoints, usePoolHasRewarder } from 'halo-hooks/useRewards'
+import { useLPTokenAddresses, useAllocPoints } from 'halo-hooks/useRewards'
 import { PoolInfo, usePoolInfo } from 'halo-hooks/usePoolInfo'
 import FarmPoolTable from 'components/Farm/FarmPoolTable'
 import { useTokenPrice } from 'halo-hooks/useTokenPrice'
@@ -94,12 +94,6 @@ const Farm = () => {
   const fetchPoolInfo = usePoolInfo(lpTokenAddresses)
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const allocPoints = useAllocPoints(lpTokenAddresses)
-
-  const rewarder = usePoolHasRewarder(poolsInfo)
-
-  useEffect(() => {
-    setPoolsInfo(rewarder)
-  }, [rewarder])
 
   useEffect(() => {
     setPoolsInfo([])

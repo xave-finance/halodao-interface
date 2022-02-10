@@ -110,8 +110,7 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         ],
         asToken: new Token(chainId, poolAddress, 18, 'SLP', 'SLP'),
         allocPoint: 0,
-        provider: PoolProvider.Sushi,
-        rewarderAddress: ''
+        provider: PoolProvider.Sushi
       })
 
       tokenAddresses.push(token1Address)
