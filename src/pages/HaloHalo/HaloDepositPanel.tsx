@@ -118,15 +118,21 @@ export default function CurrencyInputPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     try {
-      setRequestedApproval(true)
+      setButtonState(ButtonHaloStates.Approving)
       const txHash = await approve()
-      console.log(txHash)
       // user rejected tx or didn't go thru
-      if (!txHash) {
+      if (txHash?.code === 4001) {
         setRequestedApproval(false)
+        setButtonState(ButtonHaloStates.NotApproved)
+        console.clear()
+      } else {
+        await txHash.wait()
       }
     } catch (e) {
+      setRequestedApproval(false)
+      setButtonState(ButtonHaloStates.NotApproved)
       console.log(e)
+      console.clear()
     }
   }, [approve, setRequestedApproval])
 
@@ -143,8 +149,10 @@ export default function CurrencyInputPanel({
 
   // handles actual deposit
   const deposit = async () => {
+    setRequestedApproval(true)
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
+    setButtonState(ButtonHaloStates.Approving)
 
     let amount: BalanceProps | undefined
     if (maxSelected) {
@@ -154,13 +162,22 @@ export default function CurrencyInputPanel({
     }
     try {
       const tx = await enter(amount)
-      await tx.wait()
+      setButtonState(ButtonHaloStates.Approving)
+      if (tx?.code === 4001) {
+        // setButtonState(ButtonHaloStates.NotApproved)
+        setButtonState(ButtonHaloStates.Approved)
+        console.clear()
+      } else {
+        await tx.wait()
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        setDepositValue('')
+      }
     } catch (e) {
+      // setButtonState(ButtonHaloStates.NotApproved)
+      setButtonState(ButtonHaloStates.Approved)
       console.log(e)
     }
-    setPendingTx(false)
-    setButtonState(ButtonHaloStates.Disabled)
-    setDepositValue('')
     /** log deposit in GA
      */
     ReactGA.event({
