@@ -77,18 +77,17 @@ const SingleSidedLiquidity = ({
     let calcBaseAmount = 0
     let calcQuoteAmount = 0
     const zapFromBase = selectedToken === pool.token0
-
     if (zapFromBase) {
       try {
         const swapAmount = await calcSwapAmountForZapFromBase(val)
         calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
         calcBaseAmount = Number(val) - Number(swapAmount)
       } catch (e) {
-        const shortedMessage = e.data.originalError.message
+        console.clear()
         ErrorHandler({
-          code: e.data.originalError.code,
-          data: e.data.originalError.data,
-          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+          code: e.code,
+          data: e.data?.originalError?.data,
+          message: e.message
         })
       }
     } else {
@@ -97,11 +96,11 @@ const SingleSidedLiquidity = ({
         calcBaseAmount = Number(await viewTargetSwap(swapAmount))
         calcQuoteAmount = Number(val) - Number(swapAmount)
       } catch (e) {
-        const shortedMessage = e.data.originalError.message
+        console.clear()
         ErrorHandler({
-          code: e.data.originalError.code,
-          data: e.data.originalError.data,
-          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+          code: e.code,
+          data: e.data?.originalError?.data,
+          message: e.message
         })
       }
     }
