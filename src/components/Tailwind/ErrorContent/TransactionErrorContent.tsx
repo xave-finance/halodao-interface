@@ -1,9 +1,7 @@
 import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 import React from 'react'
-import BunnyAnnouncement from 'assets/svg/bunny-announcement.svg'
 import styled from 'styled-components'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
-import { ChainId } from '@halodao/sdk'
 
 interface ErrorProps {
   errorObject: ErrorMessageObject

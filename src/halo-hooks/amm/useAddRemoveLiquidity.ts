@@ -49,7 +49,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         console.log(getErrorMessage(e as ErrorMessageObject))
       }
     },
-    [CurveContract, token0, token1, addTransaction]
+    [CurveContract, token0, token1, addTransaction, getErrorMessage]
   )
 
   const viewWithdraw = useCallback(

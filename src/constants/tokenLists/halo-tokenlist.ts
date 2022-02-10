@@ -14,7 +14,6 @@ export enum TokenSymbol {
   TGBP = 'TGBP',
   TAUD = 'TAUD',
   XSGD = 'XSGD',
-  fxAUD = 'fxAUD',
   fxPHP = 'fxPHP',
   tagPHP = 'tagPHP',
   XIDR = 'XIDR',
