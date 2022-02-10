@@ -66,6 +66,7 @@ const kovanTokenList: Token[] = [
   haloUSDC[ChainId.KOVAN] as Token,
   new Token(ChainId.KOVAN, '0x7bcFAF04C9BAD18e3A823740E0683A36426BB0Fe', 2, 'EURS', 'EURS Stasis Coin'),
   new Token(ChainId.KOVAN, '0x6d2dCe898dC56B1F26B8053995E7096804cd3fD5', 18, 'GBP', 'GBP'),
+  new Token(ChainId.KOVAN, '0xbd0b2de0bfB25b78d65Ff5c667E5231fbDF42cda', 18, 'fxAUD', 'fxAUD'),
   new Token(ChainId.KOVAN, '0xE9958574866587c391735b7e7CE0D79432d3b9d0', 18, 'CHF', 'Jarvis Synthetic Swiss Franc')
 ]
 
@@ -112,6 +113,7 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
   [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
   [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1',
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
   [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D',
   [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
@@ -128,6 +130,7 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: '0x06ccbFc8992a26c8CebDDd5a07fFCAf208b8b0B3',
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
@@ -144,6 +147,7 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
   [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
   [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0xAF329A1764cD25d47f088292f802b0c8751dCd19',
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
@@ -160,6 +164,7 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x9f555A3115C2Da9574c84C4Dfb1617193aA7AFE2',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
@@ -176,6 +181,7 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,

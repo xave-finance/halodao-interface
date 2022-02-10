@@ -8,6 +8,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
 import { useActiveWeb3React } from 'hooks'
 import { consoleLog } from 'utils/simpleLogger'
+import useErrorMessage, { ErrorMessageObject } from '../useErrorMessage'
 
 const THRESHOLD = 0.00001
 
@@ -15,6 +16,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
   const { chainId } = useActiveWeb3React()
   const CurveContract = useContract(address, CURVE_ABI, true)
   const addTransaction = useTransactionAdder()
+  const { getErrorMessage } = useErrorMessage()
 
   const viewDeposit = useCallback(
     async (amount: BigNumber) => {
@@ -36,13 +38,18 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
-      const tx = await CurveContract?.deposit(amount, deadline)
-      addTransaction(tx, {
-        summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
-      })
-      return tx
+      try {
+        const tx = await CurveContract?.deposit(amount, deadline)
+        addTransaction(tx, {
+          summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
+        })
+        return tx
+      } catch (e) {
+        console.log(e)
+        console.log(getErrorMessage(e as ErrorMessageObject))
+      }
     },
-    [CurveContract, token0, token1, addTransaction]
+    [CurveContract, token0, token1, addTransaction, getErrorMessage]
   )
 
   const viewWithdraw = useCallback(
