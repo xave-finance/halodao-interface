@@ -72,7 +72,7 @@ const useEpochCountdown = () => {
     })
   }, [lastEpoch])
 
-  useInterval(getNextEpoch, 60000)
+  useInterval(getNextEpoch, 1000)
   return nextReleaseDate
 }
 
