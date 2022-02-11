@@ -1,6 +1,8 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import useInterval from '../hooks/useInterval'
 import { useCallback, useState } from 'react'
+import { HALODAO_EXCHANGE_SUBGRAPH } from '../constants'
+import { ChainId } from '@halodao/sdk'
 
 interface CurrentEpoch {
   days: number
@@ -8,6 +10,7 @@ interface CurrentEpoch {
   minutes: number
   seconds: number
 }
+
 const useEpochCountdown = () => {
   const [nextReleaseDate, setNextReleaseDate] = useState<CurrentEpoch>({
     days: 0,
@@ -16,7 +19,7 @@ const useEpochCountdown = () => {
     seconds: 0
   })
   const [lastEpoch, setLasEpoch] = useState(0)
-  const APIURL = 'https://api.thegraph.com/subgraphs/name/geonellov/rewardsv2'
+  const APIURL = HALODAO_EXCHANGE_SUBGRAPH[ChainId.MAINNET]
 
   const epochQuery = `
     query {
@@ -61,10 +64,10 @@ const useEpochCountdown = () => {
     const distance = nextReleaseDate.getTime() - dateNow
 
     // Time calculations for days, hours, minutes and seconds
-    const days = Math.floor(distance / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+    const days = distance <= 0 ? 0 : Math.floor(distance / (1000 * 60 * 60 * 24))
+    const hours = distance <= 0 ? 0 : Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = distance <= 0 ? 0 : Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = distance <= 0 ? 0 : Math.floor((distance % (1000 * 60)) / 1000)
 
     setNextReleaseDate({
       days: days,
