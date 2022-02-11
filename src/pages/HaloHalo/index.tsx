@@ -20,6 +20,7 @@ import { transparentize } from 'polished'
 import xRnbwTokenIcon from '../../assets/svg/xrnbw-token.svg'
 import RnbwTokenIcon from '../../assets/svg/rnbw-token.svg'
 import useHaloHalo from 'halo-hooks/useHaloHalo'
+import useEpochCountdown from 'halo-hooks/useEpochCountdown'
 import VestingModal from 'components/VestingModal'
 import { useVestingModalToggle } from 'state/application/hooks'
 import { PoolVestingInfo, removePoolToHarvest } from 'state/user/actions'
@@ -96,7 +97,7 @@ const AutoColumnVesting = styled.div`
 
 const AutoColumnDeposit = styled.div`
   ${AutoColumn} {
-    padding: '10px 0 10px 0';
+    padding: 10px 0 10px 0;
   }
 `
 
@@ -202,6 +203,7 @@ export default function HaloHalo() {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
+  const epochCountdown = useEpochCountdown()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
