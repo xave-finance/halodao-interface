@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { HALODAO_EXCHANGE_SUBGRAPH } from '../constants'
 import { ChainId } from '@halodao/sdk'
 
-interface CurrentEpoch {
+export interface CurrentEpoch {
   days: number
   hours: number
   minutes: number
