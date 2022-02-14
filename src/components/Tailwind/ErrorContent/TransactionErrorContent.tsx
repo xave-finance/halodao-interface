@@ -1,10 +1,9 @@
-import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 import React from 'react'
 import styled from 'styled-components'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 
 interface ErrorProps {
-  errorObject: ErrorMessageObject
+  message: string
   closeError: () => void
 }
 
@@ -15,7 +14,7 @@ const ReportOnDiscordButton = styled.button`
 `
 
 const RetryTransactionLink = styled.button`
-  font-family: serif, Open Sans;
+  font-family: Open Sans;
   font-style: normal;
   font-weight: bold;
   font-size: 16px;
@@ -26,18 +25,14 @@ const RetryTransactionLink = styled.button`
   background: transparent;
 `
 
-const ErrorContent = ({ errorObject, closeError }: ErrorProps) => {
-  const { getErrorMessage, message } = useErrorMessage()
-  getErrorMessage(errorObject)
+const ErrorContent = ({ message, closeError }: ErrorProps) => {
   return (
     <div className="p-4">
       <div className="pt-12 pb-6 flex justify-center">
         <img src={OrangeWarningIcon} alt="" />
       </div>
       <div className="flex justify-center font-semibold text-2xl mb-2">Transaction Failed</div>
-      <div className="text-center font-semibold">
-        {message} Please show this error message {errorObject.message} to the team on Discord.
-      </div>
+      <div className="text-center font-semibold">{message}</div>
 
       <ReportOnDiscordButton
         className={`
