@@ -2,6 +2,11 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CurveErrorMessage, GeneralErrorMessage } from '../constants/errors'
 
+export enum GeneralError {
+  SubtractionOverflow = 'SafeMath: subtraction overflow',
+  MetamaskRejection = 'User denied transaction signature.'
+}
+
 export type ErrorMessageObject = {
   code: number
   data: string
@@ -68,6 +73,12 @@ const useErrorMessage = () => {
           break
         case GeneralErrorMessage.MetamaskRejection:
           setMessage(t('errorMessageMetamaskRejection'))
+          break
+        case GeneralError.SubtractionOverflow:
+          setMessage(t('SubtractionOverflowErrorMessage'))
+          break
+        case GeneralError.MetamaskRejection:
+          setMessage(t('MetamaskRejectionErrorMessage'))
           break
       }
     },

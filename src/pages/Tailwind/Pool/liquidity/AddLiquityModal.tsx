@@ -15,6 +15,7 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
+import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -32,6 +33,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
+  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
 }
 
 const AddLiquityModal = ({
@@ -43,7 +45,8 @@ const AddLiquityModal = ({
   zapAmount,
   slippage,
   isVisible,
-  onDismiss
+  onDismiss,
+  ErrorStateSetter
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
   const { getFutureTime } = useTime()
@@ -72,6 +75,27 @@ const AddLiquityModal = ({
     pool.token0,
     pool.token1
   )
+  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
+    ErrorStateSetter({ code, data, message })
+  }
+
+  const ExecuteErrorHandler = (e: Record<string, any>) => {
+    if (e?.code === 4001 || e?.code === -32603) {
+      const shortedMessage = e.message
+      ErrorHandler({
+        code: e.code,
+        data: '',
+        message: shortedMessage?.replace(/^([^ ]+ ){3}/, '')
+      })
+      return
+    }
+    const shortedMessage = e.data.message
+    ErrorHandler({
+      code: e.data.code,
+      data: e.data.data,
+      message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
+    })
+  }
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -199,6 +223,7 @@ const AddLiquityModal = ({
       ) {
         setErrorMessage(t('error-liquidity-zap-reverted'))
       }
+      ExecuteErrorHandler(err)
     }
   }
 
