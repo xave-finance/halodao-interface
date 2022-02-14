@@ -120,10 +120,12 @@ export default function CurrencyInputPanel({
     try {
       setRequestedApproval(true)
       const txHash = await approve()
-      console.log(txHash)
       // user rejected tx or didn't go thru
-      if (!txHash) {
+      if (txHash.code === 4001 || txHash.code === -32603) {
         setRequestedApproval(false)
+      } else {
+        setRequestedApproval(true)
+        await txHash.wait()
       }
     } catch (e) {
       console.log(e)

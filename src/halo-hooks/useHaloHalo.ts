@@ -81,7 +81,8 @@ const useHaloHalo = () => {
   const approve = useCallback(async () => {
     try {
       const tx = await haloContract?.approve(halohaloContract?.address, ethers.constants.MaxUint256.toString())
-      return addTransaction(tx, { summary: 'Approve' })
+      addTransaction(tx, { summary: 'Approve' })
+      return tx
     } catch (e) {
       return e
     }

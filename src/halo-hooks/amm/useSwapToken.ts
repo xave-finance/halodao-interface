@@ -31,11 +31,13 @@ export const useSwapToken = (
 ) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
+  const [isLoadingPrice, setIsLoadingPrice] = useState(false)
   const { getFutureTime } = useTime()
   const [toAmountBalance, setToAmountBalance] = useState('0')
   const [fromAmountBalance, setFromAmountBalance] = useState('0')
   const [toMinimumAmount, setToMinimumAmount] = useState<string | undefined>()
   const [fromMinimumAmount, setFromMinimumAmount] = useState<string | undefined>()
+  const [isLoadingMinimumAmount, setIsLoadingMinimumAmount] = useState(false)
   const [allowance, setAllowance] = useState('0')
   const addTransaction = useTransactionAdder()
 
@@ -95,7 +97,7 @@ export const useSwapToken = (
 
   const getPrice = useCallback(async () => {
     if (!chainId || !library) return
-
+    setIsLoadingPrice(true)
     try {
       const toTokenAssimilatorContract = getContract(
         (haloAssimilators[chainId as ChainId] as AssimilatorAddressMap)[toCurrency.symbol as TokenSymbol],
@@ -116,12 +118,13 @@ export const useSwapToken = (
     } catch (e) {
       console.log(e)
     }
+    setIsLoadingPrice(false)
   }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
 
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
       // currencySide is the unknown
-
+      setIsLoadingMinimumAmount(true)
       const CurveContract = await getRouter()
 
       if (!CurveContract || !chainId) return
@@ -151,6 +154,7 @@ export const useSwapToken = (
       } catch (e) {
         setButtonState(SwapButtonState.InsufficientLiquidity)
       }
+      setIsLoadingMinimumAmount(false)
     },
     [
       fromCurrency.address,
@@ -250,8 +254,10 @@ export const useSwapToken = (
     getPrice,
     getMinimumAmount,
     price,
+    isLoadingPrice,
     toMinimumAmount,
     fromMinimumAmount,
+    isLoadingMinimumAmount,
     allowance,
     approve,
     swapToken,

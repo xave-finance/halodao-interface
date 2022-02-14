@@ -24,6 +24,9 @@ import { CSSTransitionGroup } from 'react-transition-group'
 import { useURLWarningVisible } from 'state/user/hooks'
 import { isMobile } from 'react-device-detect'
 
+const isProd = process.env.NODE_ENV === 'production'
+const lendingMarketUrl = isProd ? 'https://app.lending.halodao.com' : 'https://dev.app.lending.halodao.com'
+
 const Wrapper = styled.div`
   width: 100%;
 
@@ -497,12 +500,12 @@ export default function Header() {
             <StyledNavLink id={`vesting-nav-link`} to={'/vesting'}>
               {t('vesting')}
             </StyledNavLink>
+            <StyledExternalLink id={`lend-nav-link`} href={lendingMarketUrl} target="_self">
+              {t('lend')}
+            </StyledExternalLink>
             <StyledNavLink id={`bridge-nav-link`} to={'/bridge'}>
               {t('bridge')}
             </StyledNavLink>
-            {/* <StyledNavLink id={`lend-nav-link`} to={'/lend-market'}>
-              {t('lend')}
-            </StyledNavLink> */}
             <StyledExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
               {t('vote')}
             </StyledExternalLink>
@@ -603,11 +606,16 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
           {t('vesting')}
         </NavLink>
       </MenuItem>
-      {/* <MenuItem>
-        <NavLink id={`vesting-nav-link`} to={''} onClick={onClick}>
+      <MenuItem>
+        <ExternalLink id={`lend-nav-link`} href={lendingMarketUrl} target="_self">
           {t('lend')}
+        </ExternalLink>
+      </MenuItem>
+      <MenuItem>
+        <NavLink id={`bridge-nav-link`} to={'/bridge'} onClick={onClick}>
+          {t('bridge')}
         </NavLink>
-      </MenuItem> */}
+      </MenuItem>
       <MenuItem>
         <span onClick={onClick}>
           <ExternalLink id={`vote-nav-link`} href={'https://snapshot.org/#/halodao.eth'}>
@@ -632,8 +640,8 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
 
   return (
     <>
-      {chainId && [1, 3, 4, 5, 42, 137].includes(chainId) && (
-        <UNIWrapper onClick={onClickHandler}>
+      {chainId && [1, 3, 4, 5, 42, 137, 42161, 421611].includes(chainId) && (
+        <UNIWrapper id="rainbow" onClick={onClickHandler}>
           <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && (
               <TYPE.white
