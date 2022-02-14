@@ -12,6 +12,7 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquidityState {
   NoAmount,
@@ -31,6 +32,7 @@ interface SingleSidedLiquidityProps {
   onSlippageChanged: (slippage: string) => void
   onDeposit: () => void
   isAddLiquidityEnabled: boolean
+  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
 }
 
 const SingleSidedLiquidity = ({
@@ -40,7 +42,8 @@ const SingleSidedLiquidity = ({
   onIsGivenBaseChanged,
   onSlippageChanged,
   onDeposit,
-  isAddLiquidityEnabled
+  isAddLiquidityEnabled,
+  ErrorStateSetter
 }: SingleSidedLiquidityProps) => {
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [selectedToken, setSelectedToken] = useState(pool.token0)
@@ -62,6 +65,9 @@ const SingleSidedLiquidity = ({
   const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
   const quoteZapApproved = quoteZapApproveState === ApprovalState.APPROVED
+  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
+    ErrorStateSetter({ code, data, message })
+  }
 
   const onBaseInputUpdate = async (val: string) => {
     setZapInput(val)
@@ -73,13 +79,31 @@ const SingleSidedLiquidity = ({
     const zapFromBase = selectedToken === pool.token0
 
     if (zapFromBase) {
-      const swapAmount = await calcSwapAmountForZapFromBase(val)
-      calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
-      calcBaseAmount = Number(val) - Number(swapAmount)
+      try {
+        const swapAmount = await calcSwapAmountForZapFromBase(val)
+        calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
+        calcBaseAmount = Number(val) - Number(swapAmount)
+      } catch (e) {
+        const shortedMessage = e.data.originalError.message
+        ErrorHandler({
+          code: e.data.originalError.code,
+          data: e.data.originalError.data,
+          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+        })
+      }
     } else {
-      const swapAmount = await calcSwapAmountForZapFromQuote(val)
-      calcBaseAmount = Number(await viewTargetSwap(swapAmount))
-      calcQuoteAmount = Number(val) - Number(swapAmount)
+      try {
+        const swapAmount = await calcSwapAmountForZapFromQuote(val)
+        calcBaseAmount = Number(await viewTargetSwap(swapAmount))
+        calcQuoteAmount = Number(val) - Number(swapAmount)
+      } catch (e) {
+        const shortedMessage = e.data.originalError.message
+        ErrorHandler({
+          code: e.data.originalError.code,
+          data: e.data.originalError.data,
+          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+        })
+      }
     }
 
     setBaseAmount(calcBaseAmount.toString())
