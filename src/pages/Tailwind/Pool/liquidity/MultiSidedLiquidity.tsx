@@ -9,6 +9,7 @@ import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquidityState {
   NoAmount,
@@ -27,6 +28,7 @@ interface MultiSidedLiquidityProps {
   onDeposit: () => void
   onIsGivenBaseChanged: (isGivenBase: boolean) => void
   isAddLiquidityEnabled: boolean
+  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
 }
 
 const MultiSidedLiquidity = ({
@@ -36,7 +38,8 @@ const MultiSidedLiquidity = ({
   onQuoteAmountChanged,
   onDeposit,
   onIsGivenBaseChanged,
-  isAddLiquidityEnabled
+  isAddLiquidityEnabled,
+  ErrorStateSetter
 }: MultiSidedLiquidityProps) => {
   const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
@@ -56,6 +59,9 @@ const MultiSidedLiquidity = ({
   const [quoteApproveState, quoteApproveCallback] = useTokenAllowance(quoteTokenAmount, pool.address)
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
+  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
+    ErrorStateSetter({ code, data, message })
+  }
 
   /**
    * Update quote amount upon entering base amount
@@ -67,12 +73,21 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-      setQuoteInput(quote)
-      onQuoteAmountChanged(quote)
+      try {
+        const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+        setQuoteInput(quote)
+        onQuoteAmountChanged(quote)
 
-      if (Number(base) > Number(val)) {
-        setErrorMessage(t('error-liquidity-estimates-changed'))
+        if (Number(base) > Number(val)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        const shortedMessage = e.data.originalError.message
+        ErrorHandler({
+          code: e.data.originalError.code,
+          data: e.data.originalError.data,
+          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+        })
       }
     } else {
       setQuoteInput('')
