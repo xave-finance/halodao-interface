@@ -43,7 +43,7 @@ import {
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
   useTotalAllocPoint,
-  useRewarderPendingToken
+  useUnclaimedRewarderRewardsPerPool
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -484,7 +484,7 @@ export default function FarmPoolCard({
   const unclaimedHALO = unclaimedPoolRewards
 
   // Get user earned rewarder
-  const rewarderToken = useRewarderPendingToken(poolInfo)
+  const rewarderToken = useUnclaimedRewarderRewardsPerPool(poolInfo)
 
   // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)

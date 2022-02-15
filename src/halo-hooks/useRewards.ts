@@ -233,7 +233,7 @@ interface RewarderToken {
   multiplier: number
 }
 
-export const useRewarderPendingToken = (poolInfo: PoolInfo) => {
+export const useUnclaimedRewarderRewardsPerPool = (poolInfo: PoolInfo) => {
   const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>()
   const { account } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
