@@ -330,6 +330,11 @@ export const BALANCER_SUBGRAPH_URL = {
   [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL_KOVAN
 }
 
+// Halodao Exchange URL
+export const HALODAO_EXCHANGE_SUBGRAPH = {
+  [ChainId.MAINNET]: process.env.REACT_APP_HALODAO_EXCHANGE_SUBGRAPH_URL
+}
+
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
 export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
