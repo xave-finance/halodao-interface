@@ -248,8 +248,8 @@ export const useRewarderPendingToken = (poolInfo: PoolInfo) => {
       if (!ammRewards || !rewarder) return
 
       const rewardAmount = await ammRewards.pendingRewardToken(poolInfo.pid, account)
-      const _pendingRewarderToken = await rewarder.pendingTokens(poolInfo.pid, account, rewardAmount)
-      const multiplier = await rewarder.getRewardMultiplier()
+      const _pendingRewarderToken = await rewarder.viewPendingTokens(poolInfo.pid, account, rewardAmount)
+      const multiplier = await rewarder.rewardMultiplier()
 
       setPendingRewarderToken({
         amount: parseFloat(formatEther(_pendingRewarderToken.rewardAmounts[0].toString())),
