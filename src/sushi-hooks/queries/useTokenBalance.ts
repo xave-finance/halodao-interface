@@ -17,7 +17,7 @@ export interface BalanceProps {
 const useTokenBalance = (tokenAddress?: string, accountAddress?: string) => {
   const [balance, setBalance] = useState<BalanceProps>({ value: BigNumber.from(0), decimals: 18 })
   const { account } = useActiveWeb3React()
-  const [targetAddress, setTargetAddress] = useState(accountAddress ?? account)
+  const [targetAddress, setTargetAddress] = useState(account)
   const currentBlockNumber = useBlockNumber()
   const addressCheckSum = isAddress(tokenAddress)
   const tokenContract = useContract(addressCheckSum, ERC20_ABI, false)
@@ -37,8 +37,8 @@ const useTokenBalance = (tokenAddress?: string, accountAddress?: string) => {
   }
 
   useEffect(() => {
-    setTargetAddress(account)
-  }, [account])
+    setTargetAddress(accountAddress ?? account)
+  }, [account, accountAddress])
 
   const fetchBalance = useCallback(async () => {
     const balance = await getBalance(tokenContract, targetAddress)
