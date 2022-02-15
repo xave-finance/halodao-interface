@@ -18,6 +18,7 @@ import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskError } from 'constants/errors'
+import { useMyBalance } from '../../../halo-hooks/amm/useMyBalance'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -45,8 +46,8 @@ const SwapPanel = () => {
     getPrice,
     getMinimumAmount,
     getTokenBalance,
-    toAmountBalance,
-    fromAmountBalance,
+    // toAmountBalance,
+    // fromAmountBalance,
     price,
     isLoadingPrice,
     toMinimumAmount,
@@ -56,6 +57,13 @@ const SwapPanel = () => {
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
+
+  const fromBalance = useMyBalance(toCurrency.address, true)
+  const toBalance = useMyBalance(fromCurrency.address, true)
+
+  const toAmountBalance = fromBalance.balance
+  const fromAmountBalance = toBalance.balance
+
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -86,9 +94,11 @@ const SwapPanel = () => {
   }, [timeLeft])
 
   const updateBalances = useCallback(async () => {
-    await getTokenBalance(CurrencySide.TO_CURRENCY)
-    await getTokenBalance(CurrencySide.FROM_CURRENCY)
-  }, [getTokenBalance])
+    // await getTokenBalance(CurrencySide.TO_CURRENCY)
+    // await getTokenBalance(CurrencySide.FROM_CURRENCY)
+    fromBalance.getUpdatedBalance()
+    toBalance.getUpdatedBalance()
+  }, [fromBalance, toBalance])
 
   useEffect(() => {
     getPrice()

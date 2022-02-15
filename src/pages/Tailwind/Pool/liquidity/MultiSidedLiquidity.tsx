@@ -70,12 +70,21 @@ const MultiSidedLiquidity = ({
   const [fromCurrency, setFromCurrency] = useState(
     chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
   )
-  const base = useMyBalance(toCurrency.address, true)
-  const quote = useMyBalance(fromCurrency.address, true)
 
+  const fromBalance = useMyBalance(toCurrency.address, true)
+  const toBalance = useMyBalance(fromCurrency.address, true)
+
+  const base = fromBalance.balance
+  const quote = toBalance.balance
+
+  /**
+   * Update Pool and balance
+   **/
   useEffect(() => {
     setFromCurrency(pool.token0)
     setToCurrency(pool.token1)
+    toBalance.getUpdatedBalance()
+    fromBalance.getUpdatedBalance()
   }, [pool.token0, pool.token1])
   /**
    * Update quote amount upon entering base amount

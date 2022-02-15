@@ -89,7 +89,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
 `
 
 const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  border: none
+  border: none;
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
   overflow: visible;
@@ -219,10 +219,10 @@ export const StyledCardBoxWeb = styled(RowBetween)`
 `
 
 export const StyledButtonWidth = styled(ButtonOutlined)`
-  margin: 0,
-  minWidth: 0,
-  display: "flex",
-  padding: 0
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  padding: 0;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -461,7 +461,7 @@ export default function FarmPoolCard({
 
   // Get user BPT balance
   const bptBalanceAmountUnset = useMyBalance(poolInfo.address)
-  const bptBalanceAmount = { value: BigNumber.from(bptBalanceAmountUnset), decimals: 18 }
+  const bptBalanceAmount = { value: BigNumber.from(bptBalanceAmountUnset.balance), decimals: 18 }
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
@@ -625,6 +625,7 @@ export default function FarmPoolCard({
     try {
       const tx = await deposit(poolInfo.pid, parseEther(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
+      bptBalanceAmountUnset.getUpdatedBalance()
     } catch (e) {
       console.error('Stake error: ', e)
     }
