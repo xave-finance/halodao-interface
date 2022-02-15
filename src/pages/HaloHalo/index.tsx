@@ -34,6 +34,7 @@ import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 import EventInfoCard from '../../components/Tailwind/Cards/EventInfoCard'
+import useEpochCountdown from '../../halo-hooks/useEpochCountdown'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1050px;
@@ -268,6 +269,7 @@ export default function HaloHalo() {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
+  const epochCountdown = useEpochCountdown()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page

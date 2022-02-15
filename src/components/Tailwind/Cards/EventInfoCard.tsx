@@ -122,6 +122,13 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
         text-align: center
     `};
   `
+  const ConvertToString = (x: any) => {
+    return x.toString()
+  }
+  const IfDoubleDigit = (str: string) => {
+    const strLength = str.length
+    return strLength === 1
+  }
   return (
     <>
       <GradientCard>
@@ -133,15 +140,24 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
                 <CountDown>
                   <div>
                     <p>Days</p>
-                    <h2>{countdown?.days === 0 ? '00' : countdown?.days}</h2>
+                    <h2>{IfDoubleDigit(ConvertToString(countdown?.days)) ? `0${countdown?.days}` : countdown?.days}</h2>
                   </div>
                   <div>
                     <p>Hours</p>
-                    <h2>{countdown?.hours === 0 ? '00' : countdown?.hours}</h2>
+                    <h2>
+                      <h2>
+                        {' '}
+                        {IfDoubleDigit(ConvertToString(countdown?.hours)) ? `0${countdown?.hours}` : countdown?.hours}
+                      </h2>
+                    </h2>
                   </div>
                   <div>
                     <p>Minutes</p>
-                    <h2>{countdown?.minutes}</h2>
+                    <h2>
+                      {IfDoubleDigit(ConvertToString(countdown?.minutes))
+                        ? `0${countdown?.minutes}`
+                        : countdown?.minutes}
+                    </h2>
                   </div>
                   {/*<div>*/}
                   {/*  <p>Seconds</p>*/}
