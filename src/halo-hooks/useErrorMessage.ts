@@ -23,7 +23,7 @@ export enum CurveError {
 
 export enum GeneralError {
   SubtractionOverflow = 'SafeMath: subtraction overflow',
-  MetamaskRejection = 'User denied transaction signature.'
+  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.'
 }
 
 export type ErrorMessageObject = {
