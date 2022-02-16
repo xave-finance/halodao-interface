@@ -345,7 +345,6 @@ export default function CurrencyInputPanel({
             )}
           </Column>
         </Container>
-        {hasError && <span style={{ color: 'red' }}>Open an error modal!</span>}
       </InputPanel>
       {hasError && (
         <BaseModal
