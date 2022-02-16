@@ -26,7 +26,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -343,7 +343,7 @@ const RewardsContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 20px 30px;
-  justify-content: space-between;
+  justify-content: space-around;
   background: #15006d;
   color: white;
   align-items: center;
@@ -355,7 +355,16 @@ const RewardsContainer = styled.div`
     align-items: flex-start;
   `};
 `
-
+const RewardsChildFlex = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+const RewardsChildFlexContainer = styled(RewardsChildFlex)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8em;
+`
 const RewardsChild = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -397,6 +406,12 @@ const RewardsChild = styled.div`
   & .balance {
     font-family: 'Fredoka One';
     font-size: 36px;
+  }
+
+  & .rewarder {
+    font-family: 'Fredoka One';
+    font-size: 28px;
+    padding-bottom: 5px;
   }
 
   a {
@@ -486,6 +501,10 @@ export default function FarmPoolCard({
   // Get user earned rewarder
   const rewarderToken = useUnclaimedRewarderRewardsPerPool(poolInfo)
 
+  useEffect(() => {
+    console.log(poolInfo.pid, rewarderToken)
+  }, [rewarderToken])
+
   // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
@@ -542,11 +561,11 @@ export default function FarmPoolCard({
   const [accumulativeTotal, setAccumulativeTotal] = useState('')
 
   useEffect(() => {
-    const total = rawAPY === 0 ? t('new') : rawAPY + (rewarderAPR === undefined ? 0 : rewarderAPR)
+    const total = rawAPY === 0 ? t('new') : rawAPY + (!rewarderAPR || rewarderAPR === Infinity ? 0 : rewarderAPR)
     setAccumulativeTotal(total === t('new') ? total : `${formatNumber(total, NumberFormat.long)}%`)
   }, [rewarderAPR, rawAPY, t])
 
-  const poolHasRewarder = poolInfo?.rewarderAddress && rewarderToken?.tokenName !== ''
+  const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -846,11 +865,10 @@ export default function FarmPoolCard({
                     <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
                       <li>{poolAPY} xRNBW</li>
                       <li>
-                        {rewarderAPR === 0
+                        {!rewarderAPR || rewarderAPR === Infinity
                           ? t('new')
-                          : rewarderAPR && `${formatNumber(rewarderAPR, NumberFormat.long)}%`}{' '}
-                        &nbsp;
-                        {rewarderToken?.tokenName}
+                          : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
+                        &nbsp; {rewarderToken?.tokenName}
                       </li>
                     </ul>
                   </div>
@@ -1065,15 +1083,28 @@ export default function FarmPoolCard({
               <RewardsChild>
                 <img src={BunnyRewards} alt="Bunny Rewards" />
               </RewardsChild>
-              <RewardsChild className="main">
-                <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">
-                  {showMigrateButton && alreadyMigrated ? (
-                    <>0 xRNBW </>
-                  ) : (
-                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+              <RewardsChild className="">
+                <RewardsChildFlexContainer>
+                  <RewardsChildFlex>
+                    <Text className="label">{poolInfo.pair} Rewards:</Text>
+                    <Text className="balance">
+                      {showMigrateButton && alreadyMigrated ? (
+                        <>0 xRNBW </>
+                      ) : (
+                        <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                      )}
+                    </Text>
+                  </RewardsChildFlex>
+                  {poolHasRewarder && (
+                    <Text className="rewarder">
+                      {' + '}
+                      {rewarderToken &&
+                        formatNumber(rewarderToken.amount, isActivePool ? undefined : NumberFormat.short)}
+                      &nbsp;
+                      {rewarderToken?.tokenName}
+                    </Text>
                   )}
-                </Text>
+                </RewardsChildFlexContainer>
               </RewardsChild>
               <RewardsChild>
                 <ClaimButton
