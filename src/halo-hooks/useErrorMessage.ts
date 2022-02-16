@@ -4,7 +4,7 @@ import { CurveErrorMessage, GeneralErrorMessage } from '../constants/errors'
 
 export enum GeneralError {
   SubtractionOverflow = 'SafeMath: subtraction overflow',
-  MetamaskRejection = 'User denied transaction signature.'
+  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.'
 }
 
 export type ErrorMessageObject = {
