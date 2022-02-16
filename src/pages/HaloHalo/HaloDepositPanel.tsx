@@ -23,6 +23,9 @@ import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
+import BaseModal from '../../components/Tailwind/Modals/BaseModal'
+import ErrorContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
+import useErrorMessage from '../../halo-hooks/useErrorMessage'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -98,6 +101,12 @@ export default function CurrencyInputPanel({
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [hasError, sethasError] = useState(false)
+  const { message, getErrorMessage } = useErrorMessage()
+  const [objectErrorMessage, setObjectErrorMessage] = useState({
+    code: 0,
+    data: '',
+    message: ''
+  })
 
   // Updating the state of stake button
   useEffect(() => {
@@ -128,13 +137,18 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
         console.clear()
+        getErrorMessage({
+          code: txHash.code,
+          data: '',
+          message: txHash.message
+        })
+        setObjectErrorMessage({
+          code: txHash.code,
+          data: '',
+          message: txHash.message
+        })
         setRequestedApproval(false)
         sethasError(true)
-        // execute ui error modal
-        setTimeout(() => {
-          sethasError(false)
-        }, 3000)
-        // ----------------------
       } else {
         await txHash.wait()
         setRequestedApproval(true)
@@ -145,11 +159,17 @@ export default function CurrencyInputPanel({
       console.clear()
       setRequestedApproval(false)
       sethasError(true)
-      // execute ui error modal
-      setTimeout(() => {
-        sethasError(false)
-      }, 3000)
-      // ----------------------
+      const shortedMessage = e.data.message
+      getErrorMessage({
+        code: e.data.code,
+        data: e.data.data,
+        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
+      })
+      setObjectErrorMessage({
+        code: e.data.code,
+        data: e.data.data,
+        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
+      })
     }
   }, [approve, setRequestedApproval])
 
@@ -181,15 +201,10 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
+        setObjectErrorMessage(tx)
         setPendingTx(false)
         setButtonState(ButtonHaloStates.Disabled)
         sethasError(true)
-        // execute ui error modal
-        setTimeout(() => {
-          sethasError(false)
-        }, 3000)
-        // ----------------------
       } else {
         await tx.wait()
         setPendingTx(false)
@@ -202,12 +217,7 @@ export default function CurrencyInputPanel({
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
-      console.clear()
-      // execute ui error modal
-      setTimeout(() => {
-        sethasError(false)
-      }, 3000)
-      // ----------------------
+      setObjectErrorMessage(e.data)
     }
     /** log deposit in GA
      */
@@ -336,6 +346,23 @@ export default function CurrencyInputPanel({
         </Container>
         {hasError && <span style={{ color: 'red' }}>Open an error modal!</span>}
       </InputPanel>
+      {hasError && (
+        <BaseModal
+          isVisible={hasError}
+          onDismiss={() => {
+            sethasError(false)
+          }}
+        >
+          {
+            <ErrorContent
+              objectError={objectErrorMessage}
+              onDismiss={() => {
+                sethasError(false)
+              }}
+            />
+          }
+        </BaseModal>
+      )}
     </>
   )
 }
