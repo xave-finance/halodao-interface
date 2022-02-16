@@ -214,6 +214,7 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
+      console.clear()
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
