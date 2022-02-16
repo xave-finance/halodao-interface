@@ -22,6 +22,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
+import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -96,6 +97,7 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
+  const [hasError, sethasError] = useState(false)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -121,14 +123,33 @@ export default function CurrencyInputPanel({
       setRequestedApproval(true)
       const txHash = await approve()
       // user rejected tx or didn't go thru
-      if (txHash.code === 4001 || txHash.code === -32603) {
+      if (
+        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      ) {
+        console.clear()
         setRequestedApproval(false)
+        sethasError(true)
+        // execute ui error modal
+        setTimeout(() => {
+          sethasError(false)
+        }, 3000)
+        // ----------------------
       } else {
-        setRequestedApproval(true)
         await txHash.wait()
+        setRequestedApproval(true)
+        sethasError(false)
       }
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      console.clear()
+      setRequestedApproval(false)
+      sethasError(true)
+      // execute ui error modal
+      setTimeout(() => {
+        sethasError(false)
+      }, 3000)
+      // ----------------------
     }
   }, [approve, setRequestedApproval])
 
@@ -156,13 +177,38 @@ export default function CurrencyInputPanel({
     }
     try {
       const tx = await enter(amount)
-      await tx.wait()
+      if (
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      ) {
+        console.clear()
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        sethasError(true)
+        // execute ui error modal
+        setTimeout(() => {
+          sethasError(false)
+        }, 3000)
+        // ----------------------
+      } else {
+        await tx.wait()
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        setDepositValue('')
+        sethasError(false)
+      }
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      setPendingTx(false)
+      setButtonState(ButtonHaloStates.Disabled)
+      sethasError(true)
+      console.clear()
+      // execute ui error modal
+      setTimeout(() => {
+        sethasError(false)
+      }, 3000)
+      // ----------------------
     }
-    setPendingTx(false)
-    setButtonState(ButtonHaloStates.Disabled)
-    setDepositValue('')
     /** log deposit in GA
      */
     ReactGA.event({
@@ -288,6 +334,7 @@ export default function CurrencyInputPanel({
             )}
           </Column>
         </Container>
+        {hasError && <span style={{ color: 'red' }}>Open an error modal!</span>}
       </InputPanel>
     </>
   )
