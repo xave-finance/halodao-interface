@@ -23,12 +23,9 @@ import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
-<<<<<<< features/hdev-264-ui-for-handling-errors-and-warnings
 import BaseModal from '../../components/Tailwind/Modals/BaseModal'
 import ErrorContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
 import useErrorMessage from '../../halo-hooks/useErrorMessage'
-=======
->>>>>>> Setup Error Handlers for vesting Page
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
