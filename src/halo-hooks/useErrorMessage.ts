@@ -21,6 +21,11 @@ export enum CurveError {
   // check the other failed
 }
 
+export enum GeneralError {
+  SubtractionOverflow = 'SafeMath: subtraction overflow',
+  MetamaskRejection = 'User denied transaction signature.'
+}
+
 export type ErrorMessageObject = {
   code: number
   data: string
@@ -81,6 +86,12 @@ const useErrorMessage = () => {
           break
         case CurveError.CADCTransferFailed:
           setMessage(t('curveERC20TransferFailedMessage'))
+          break
+        case GeneralError.SubtractionOverflow:
+          setMessage(t('SubtractionOverflowErrorMessage'))
+          break
+        case GeneralError.MetamaskRejection:
+          setMessage(t('MetamaskRejectionErrorMessage'))
           break
       }
     },
