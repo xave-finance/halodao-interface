@@ -144,4 +144,7 @@
   "curveAmountTooLargeErrorMessage": "This amount is too large to swap.",
   "curveSwapFailedErrorMessage": "Swap failed. Please try again",
   "curveSwapHaltErrorMessage": "Pool has reached maximum inbalance. Swap back towards ideal ratios at cheaper fees.",
-  "curveERC20TransferFailedMessage": "ERC20 transfer failed."
+  "curveERC20TransferFailedMessage": "ERC20 transfer failed.",
+  "SubtractionOverflowErrorMessage": "Overflow Issue",
+  "MetamaskRejectionErrorMessage": "Metamask Rejection"
+}
