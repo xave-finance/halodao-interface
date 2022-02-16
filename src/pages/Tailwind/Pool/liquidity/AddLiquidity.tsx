@@ -26,6 +26,11 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [errors, setErrors] = useState<ErrorMessageObject>({ code: 0, data: '', message: '' })
   const [hasError, sethasError] = useState(false)
   const { message, getErrorMessage } = useErrorMessage()
+  const [setObjectErrorMessage] = useState({
+    code: 0,
+    data: '',
+    message: ''
+  })
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
@@ -101,6 +106,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         >
           {
             <ErrorContent
+              objectError={errors}
               message={message}
               closeError={() => {
                 sethasError(false)

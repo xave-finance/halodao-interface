@@ -82,11 +82,11 @@ const MultiSidedLiquidity = ({
           setErrorMessage(t('error-liquidity-estimates-changed'))
         }
       } catch (e) {
-        const shortedMessage = e.data.originalError.message
+        console.clear()
         ErrorHandler({
-          code: e.data.originalError.code,
-          data: e.data.originalError.data,
-          message: shortedMessage.replace(/^([^ ]+ ){2}/, '')
+          code: e.code,
+          data: e.data?.originalError?.data,
+          message: e.message
         })
       }
     } else {
