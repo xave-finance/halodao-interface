@@ -81,11 +81,10 @@ const AddLiquityModal = ({
 
   const ExecuteErrorHandler = (e: Record<string, any>) => {
     if (e?.code === 4001 || e?.code === -32603) {
-      const shortedMessage = e.message
       ErrorHandler({
         code: e.code,
         data: '',
-        message: shortedMessage?.replace(/^([^ ]+ ){3}/, '')
+        message: e.message
       })
       return
     }

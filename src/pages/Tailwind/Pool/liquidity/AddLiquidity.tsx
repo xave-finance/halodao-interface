@@ -101,6 +101,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         >
           {
             <ErrorContent
+              objectError={errors}
               message={message}
               closeError={() => {
                 sethasError(false)
