@@ -257,7 +257,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
     } catch (err) {
       console.error(`Error fetching rewarder: `, err)
     }
-  }, [ammRewards, rewarder, poolID, token]) //eslint-disable-line
+  }, [ammRewards, rewarder, token, poolID]) //eslint-disable-line
 
   useEffect(() => {
     fetchRewarderToken()
