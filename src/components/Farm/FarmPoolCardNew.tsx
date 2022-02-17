@@ -27,7 +27,6 @@ const FarmCard = styled.div`
   `};
 `
 const FarmPoolCardNew = ({ title, tokenPrice, header }: FarmPoolCardNewProps) => {
-  // @ts-ignore
   return (
     <>
       <FarmCard>
