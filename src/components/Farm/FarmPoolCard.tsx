@@ -43,7 +43,8 @@ import {
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
   useTotalAllocPoint,
-  useUnclaimedRewarderRewardsPerPool
+  useUnclaimedRewarderRewardsPerPool,
+  useRewarderUSDPrice
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -537,8 +538,7 @@ export default function FarmPoolCard({
   /**
    * APR computation Rewarder
    */
-  const [rewarderTokenAddress, setRewarderTokenAddress] = useState<string[]>([])
-  const rewarderTokenUsdPrice = useTokenPrice(rewarderTokenAddress)
+  const rewarderTokenUsdPrice = useRewarderUSDPrice(poolInfo.rewarderAddress)
   const rewarderAPR =
     rewarderToken &&
     getRewarderAPR(
@@ -546,13 +546,9 @@ export default function FarmPoolCard({
       rewarderToken.multiplier,
       allocPoint,
       totalAllocPoint,
-      rewarderTokenUsdPrice[rewarderToken.tokenAddress],
+      rewarderTokenUsdPrice,
       stakedLiquidity
     )
-
-  useEffect(() => {
-    rewarderToken && setRewarderTokenAddress([rewarderToken.tokenAddress])
-  }, [rewarderToken])
 
   const [accumulativeTotal, setAccumulativeTotal] = useState('')
 

@@ -10,6 +10,7 @@ import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { useToken } from '../hooks/Tokens'
+import { useTokenPrice } from './useTokenPrice'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -264,4 +265,26 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
   }, [fetchRewarderToken])
 
   return pendingRewarderToken
+}
+
+export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
+  const rewarder = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
+  const [rewarderTokenAddress, setRewarderTokenAddress] = useState<string[]>([])
+  const rewarderTokenUsdPrice = useTokenPrice(rewarderTokenAddress)
+
+  const fetchTokenAddress = useCallback(async () => {
+    try {
+      if (!rewarder) return
+      const tokenAddress = await rewarder.rewardToken()
+      setRewarderTokenAddress([tokenAddress])
+    } catch (err) {
+      console.error(`Error fetching token address: `, err)
+    }
+  }, [rewarderAddress])
+
+  useEffect(() => {
+    fetchTokenAddress()
+  }, [fetchTokenAddress])
+
+  return rewarderTokenUsdPrice[rewarderTokenAddress[0]]
 }
