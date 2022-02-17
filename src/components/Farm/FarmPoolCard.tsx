@@ -16,9 +16,7 @@ import Row, { RowFixed, RowBetween, RowFlat } from '../Row'
 import { FixedHeightRow } from '../PositionCard'
 import { CustomLightSpinner, ExternalLink, HideSmall, TYPE, ButtonText } from 'theme'
 import NumericalInput from 'components/NumericalInput'
-import { GreyCard } from '../Card'
 import styled from 'styled-components'
-import { transparentize } from 'polished'
 import { formatEther, parseEther } from 'ethers/lib/utils'
 import Spinner from 'assets/images/spinner.svg'
 import SpinnerPurple from 'assets/images/spinner-purple.svg'
@@ -26,7 +24,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE } from '../../constants'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -88,29 +86,6 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   `};
 `
 
-const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  // border: none
-  // background: ${({ theme }) => transparentize(0.6, theme.bg1)};
-  // position: relative;
-  // overflow: visible;
-  // padding: 5px 0 5px 0;
-  // border-radius: 0px;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`  
-    background: #ffffff;
-    padding: 5px 0 0 0;
-    border-radius: 4px;
-    box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
-    margin-bottom: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #15006d;
-
-    &.expanded {
-      border-bottom: none;
-    }
-  `};
-`
-
 const StyledRowFixed = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     flex-direction: column;
@@ -134,16 +109,6 @@ const StyledRowFixed = styled(RowFixed)`
       width: 100%;
       margin-bottom: 0.5rem;
     }
-  `};
-`
-
-const StyledRowFixedBlocked = styled(RowFixed)`
-  display: block;
-  //width: 100%;
-  ${({ theme }) => theme.mediaWidth.upToSmall`  
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
   `};
 `
 
@@ -220,27 +185,7 @@ const ManageCloseButtonAlt = styled(ButtonText)`
   `};
 `
 
-const ManageCloseButton = styled(ManageCloseButtonAlt)`
-  // width: 100%;
-  // padding: 4px 8px;
-  // //border-radius: 5px;
-  // font-weight: 700;
-  // font-size: 16px;
-  // border: none;
-  // &:hover {
-  //   opacity: 0.6;
-  //   border: none;
-  // }
-  //
-  // ${({ theme }) => theme.mediaWidth.upToSmall`
-  //   background: ${({ theme }) => theme.text4};
-  //   color: white;
-  //   width: 100%;
-  //   border-radius: 4px;
-  //   padding: 6px 12px;
-  //   font-weight: 900;
-  // `};
-`
+const ManageCloseButton = styled(ManageCloseButtonAlt)``
 
 const LineSeparator = styled.div`
   display: none;
@@ -266,10 +211,10 @@ export const StyledCardBoxWeb = styled(RowBetween)`
 `
 
 export const StyledButtonWidth = styled(ButtonOutlined)`
-  margin: 0,
-  minWidth: 0,
-  display: "flex",
-  padding: 0
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  padding: 0;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -285,7 +230,7 @@ const ExpandedCard = styled.div`
   border-radius: 5px;
   border: 1px solid #15006d;
   margin-top: 0.5rem;
-  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border: none;
@@ -455,7 +400,7 @@ const RewardsChild = styled.div`
   }
 
   & .balance {
-    font-family: 'Fredoka One';
+    font-family: Fredoka One, sans-serif;
     font-size: 36px;
   }
 
@@ -854,7 +799,7 @@ export default function FarmPoolCard({
       background: #FFFFFF;
       border: 1px solid #15006D;
       box-sizing: border-box;
-      box-shadow: 0px 8px 8px rgba(27, 20, 100, 0.2);
+      box-shadow: 0 8px 8px rgba(27, 20, 100, 0.2);
       border-radius: 5px;
       transition: 0.5s;
     }
@@ -865,7 +810,7 @@ export default function FarmPoolCard({
   `
 
   const AprIconWrapper = styled.img`
-    apralerticonwidth: 16px;
+    width: 16px;
     height: 16px;
   `
 
