@@ -499,11 +499,7 @@ export default function FarmPoolCard({
   const unclaimedHALO = unclaimedPoolRewards
 
   // Get user earned rewarder
-  const rewarderToken = useUnclaimedRewarderRewardsPerPool(poolInfo)
-
-  useEffect(() => {
-    console.log(poolInfo.pid, rewarderToken)
-  }, [rewarderToken])
+  const rewarderToken = useUnclaimedRewarderRewardsPerPool([poolInfo.pid], poolInfo.rewarderAddress)
 
   // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
@@ -566,6 +562,7 @@ export default function FarmPoolCard({
   }, [rewarderAPR, rawAPY, t])
 
   const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
+  const hasAprBreakdown = rawAPY !== 0 && !!rewarderAPR && rewarderAPR !== Infinity
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -676,7 +673,7 @@ export default function FarmPoolCard({
       const tx = await deposit(poolInfo.pid, parseEther(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
-      console.error('Stake error: ', e)
+      console.error('Stake error: ', poolInfo.address, e)
     }
 
     setStakeAmount('')
@@ -857,7 +854,7 @@ export default function FarmPoolCard({
           <StyledRowFixed width="16%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
-            {poolHasRewarder && (
+            {hasAprBreakdown && (
               <MouseoverTooltip
                 text={
                   <div>

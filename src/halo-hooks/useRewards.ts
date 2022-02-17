@@ -10,7 +10,6 @@ import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { useToken } from '../hooks/Tokens'
-import { PoolInfo } from './usePoolInfo'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -233,22 +232,20 @@ interface RewarderToken {
   multiplier: number
 }
 
-export const useUnclaimedRewarderRewardsPerPool = (poolInfo: PoolInfo) => {
+export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAddress: string | undefined) => {
   const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>()
   const { account } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
 
-  const rewarder = useHALORewarderContract(
-    poolInfo.rewarderAddress !== ZERO_ADDRESS ? poolInfo.rewarderAddress : undefined
-  )
+  const rewarder = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
   const token = useToken(pendingRewarderToken?.tokenAddress === '' ? undefined : pendingRewarderToken?.tokenAddress)
 
   const fetchRewarderToken = useCallback(async () => {
     try {
       if (!ammRewards || !rewarder) return
 
-      const rewardAmount = await ammRewards.pendingRewardToken(poolInfo.pid, account)
-      const _pendingRewarderToken = await rewarder.viewPendingTokens(poolInfo.pid, account, rewardAmount)
+      const rewardAmount = await ammRewards.pendingRewardToken(poolID, account)
+      const _pendingRewarderToken = await rewarder.viewPendingTokens(poolID, account, rewardAmount)
       const multiplier = await rewarder.rewardMultiplier()
 
       setPendingRewarderToken({
@@ -260,7 +257,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolInfo: PoolInfo) => {
     } catch (err) {
       console.error(`Error fetching rewarder: `, err)
     }
-  }, [ammRewards, rewarder, poolInfo, token]) //eslint-disable-line
+  }, [ammRewards, rewarder, poolID, token]) //eslint-disable-line
 
   useEffect(() => {
     fetchRewarderToken()
