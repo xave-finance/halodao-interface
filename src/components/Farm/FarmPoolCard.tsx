@@ -30,7 +30,7 @@ import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
-import { TokenPrice, useTokenPrice } from 'halo-hooks/useTokenPrice'
+import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
@@ -356,6 +356,12 @@ const RewardsContainer = styled.div`
     align-items: flex-start;
   `};
 `
+const InsufficientBalance = styled.div`
+  text-align: center;
+  color: #ffb3b3;
+  font-weight: bold;
+`
+
 const RewardsChildFlex = styled.div`
   display: flex;
   flex-direction: column;
@@ -394,6 +400,10 @@ const RewardsChild = styled.div`
       text-decoration: underline;
       margin-top: 10px;
     }
+  }
+
+  &.harvest button {
+    margin: auto !important;
   }
 
   img {
@@ -474,6 +484,7 @@ export default function FarmPoolCard({
   const [harvestButtonState, setHarvestButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
+  const [insufficientReward, setInsufficientReward] = useState(false)
 
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
@@ -534,6 +545,7 @@ export default function FarmPoolCard({
 
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
+  console.log(poolInfo.pid)
 
   /**
    * APR computation Rewarder
@@ -730,6 +742,9 @@ export default function FarmPoolCard({
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
+      if (e === 'Insufficient balance') {
+        setInsufficientReward(true)
+      }
       console.error('Claim error: ', e)
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
@@ -1104,7 +1119,7 @@ export default function FarmPoolCard({
                   )}
                 </RewardsChildFlexContainer>
               </RewardsChild>
-              <RewardsChild>
+              <RewardsChild className="harvest">
                 <ClaimButton
                   onClick={showMigrateButton ? handleMigrate : handleClaim}
                   disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
@@ -1123,6 +1138,7 @@ export default function FarmPoolCard({
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}
                 </ClaimButton>
+                {insufficientReward && <InsufficientBalance>{t('insufficient-reward-balance')}</InsufficientBalance>}
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>

@@ -131,5 +131,6 @@
   "migrate": "Migrate",
   "migrated": "Migrated",
   "lend": "Lend",
-  "apr-breakdown": "APR Breakdown:"
+  "apr-breakdown": "APR Breakdown:",
+  "insufficient-reward-balance" : "Please ask protocol to top up rewards."
 }

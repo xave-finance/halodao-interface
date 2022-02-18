@@ -359,7 +359,10 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     xsgd: '0x70e8de73ce538da2beed35d14187f6959a8eca96'
   },
   [ChainId.MATIC_TESTNET]: {},
-  [ChainId.ARBITRUM_TESTNET]: {}
+  [ChainId.ARBITRUM_TESTNET]: {
+    dai: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
+    'usd-coin': '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5'
+  }
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
