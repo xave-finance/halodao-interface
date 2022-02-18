@@ -732,6 +732,7 @@ export default function FarmPoolCard({
    * Handles the user clicking "Harvest" button
    */
   const handleClaim = async () => {
+    setInsufficientReward(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -741,7 +742,7 @@ export default function FarmPoolCard({
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
-      if (e === 'Insufficient balance') {
+      if (e === ('Insufficient balance' || 'transfer amount exceeds balance')) {
         setInsufficientReward(true)
       }
       console.error('Claim error: ', e)
@@ -777,6 +778,7 @@ export default function FarmPoolCard({
    * Handles the user clicking "Migrate" button
    */
   const handleMigrate = async () => {
+    setInsufficientReward(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
