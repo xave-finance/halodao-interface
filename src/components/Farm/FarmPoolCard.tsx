@@ -736,10 +736,7 @@ export default function FarmPoolCard({
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
-      if (
-        e === 'Rewarder: Insufficient balance' ||
-        e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
-      ) {
+      if (e.data === 'Reverted' || e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance') {
         setInsufficientReward(true)
       }
       console.error('Claim error: ', e)
