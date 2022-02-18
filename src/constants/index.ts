@@ -360,8 +360,8 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
   },
   [ChainId.MATIC_TESTNET]: {},
   [ChainId.ARBITRUM_TESTNET]: {
-    dai: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
-    'usd-coin': '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5'
+    dai: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+    'usd-coin': '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
   }
 }
 

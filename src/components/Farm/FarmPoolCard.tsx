@@ -568,7 +568,8 @@ export default function FarmPoolCard({
     setAccumulativeTotal(total === t('new') ? total : `${formatNumber(total, NumberFormat.long)}%`)
   }, [rewarderAPR, rawAPY, t])
 
-  const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
+  const poolHasRewarder =
+    poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS && rawAPY > 0
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -736,7 +737,10 @@ export default function FarmPoolCard({
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
-      if (e === ('Insufficient balance' || 'transfer amount exceeds balance')) {
+      if (
+        e === 'Rewarder: Insufficient balance' ||
+        e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
+      ) {
         setInsufficientReward(true)
       }
       console.error('Claim error: ', e)
@@ -875,7 +879,8 @@ export default function FarmPoolCard({
                       <li>
                         {!rewarderAPR || rewarderAPR === Infinity
                           ? t('new')
-                          : `${formatNumber(rewarderAPR, NumberFormat.long)}% `}
+                          : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
+                        &nbsp;
                         {rewarderToken?.tokenName}
                       </li>
                     </ul>
