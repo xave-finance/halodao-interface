@@ -558,7 +558,12 @@ export default function FarmPoolCard({
   }, [rewarderAPR, rawAPY, t])
 
   const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
-  const hasAprBreakdown = rawAPY !== 0 && !!rewarderAPR && rewarderAPR !== Infinity
+  const hasAprBreakdown =
+    rawAPY !== 0 &&
+    !!rewarderAPR &&
+    rewarderAPR !== Infinity &&
+    !alreadyMigrated &&
+    (unclaimedHALO > 0 || bptStaked > 0)
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -860,8 +865,8 @@ export default function FarmPoolCard({
                       <li>
                         {!rewarderAPR || rewarderAPR === Infinity
                           ? t('new')
-                          : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
-                        &nbsp; {rewarderToken?.tokenName}
+                          : `${formatNumber(rewarderAPR, NumberFormat.long)}% `}
+                        {rewarderToken?.tokenName}
                       </li>
                     </ul>
                   </div>
