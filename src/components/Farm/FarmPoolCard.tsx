@@ -569,12 +569,6 @@ export default function FarmPoolCard({
   }, [rewarderAPR, rawAPY, t])
 
   const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
-  const hasAprBreakdown =
-    rawAPY !== 0 &&
-    !!rewarderAPR &&
-    rewarderAPR !== Infinity &&
-    !alreadyMigrated &&
-    (unclaimedHALO > 0 || bptStaked > 0)
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -871,7 +865,7 @@ export default function FarmPoolCard({
           <StyledRowFixed width="16%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
-            {hasAprBreakdown && (
+            {poolHasRewarder && (
               <MouseoverTooltip
                 text={
                   <div>
