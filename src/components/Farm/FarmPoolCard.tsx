@@ -545,7 +545,6 @@ export default function FarmPoolCard({
 
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
-  console.log(poolInfo.pid)
 
   /**
    * APR computation Rewarder
