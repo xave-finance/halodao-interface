@@ -568,8 +568,7 @@ export default function FarmPoolCard({
     setAccumulativeTotal(total === t('new') ? total : `${formatNumber(total, NumberFormat.long)}%`)
   }, [rewarderAPR, rawAPY, t])
 
-  const poolHasRewarder =
-    poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS && rawAPY > 0
+  const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -869,7 +868,7 @@ export default function FarmPoolCard({
           <StyledRowFixed width="16%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
-            {poolHasRewarder && (
+            {poolHasRewarder && rawAPY > 0 && (
               <MouseoverTooltip
                 text={
                   <div>
