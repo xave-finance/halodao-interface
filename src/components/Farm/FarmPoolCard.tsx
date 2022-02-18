@@ -511,7 +511,7 @@ export default function FarmPoolCard({
   const unclaimedHALO = unclaimedPoolRewards
 
   // Get user earned rewarder
-  const rewarderToken = useUnclaimedRewarderRewardsPerPool([poolInfo.pid], poolInfo.rewarderAddress)
+  const unclaimedRewarderRewards = useUnclaimedRewarderRewardsPerPool([poolInfo.pid], poolInfo.rewarderAddress)
 
   // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
@@ -551,10 +551,10 @@ export default function FarmPoolCard({
    */
   const rewarderTokenUsdPrice = useRewarderUSDPrice(poolInfo.rewarderAddress)
   const rewarderAPR =
-    rewarderToken &&
+    unclaimedRewarderRewards &&
     getRewarderAPR(
       rewardTokenPerSecond,
-      rewarderToken.multiplier,
+      unclaimedRewarderRewards.multiplier,
       allocPoint,
       totalAllocPoint,
       rewarderTokenUsdPrice,
@@ -736,13 +736,19 @@ export default function FarmPoolCard({
       await tx.wait()
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
+      console.error('Claim error: ', e)
       if (
         e === 'Rewarder: Insufficient balance' ||
         e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
       ) {
         setInsufficientReward(true)
+      } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
+        console.error('Rewarder insufficient balance')
+        console.error('Rewarder balance: ', unclaimedRewarderRewards.balance)
+        console.error('Reward amount: ', unclaimedRewarderRewards.amount)
+        setInsufficientReward(true)
       }
-      console.error('Claim error: ', e)
+
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
@@ -880,7 +886,7 @@ export default function FarmPoolCard({
                           ? t('new')
                           : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
                         &nbsp;
-                        {rewarderToken?.tokenName}
+                        {unclaimedRewarderRewards?.tokenName}
                       </li>
                     </ul>
                   </div>
@@ -915,12 +921,12 @@ export default function FarmPoolCard({
               ) : (
                 <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</div>
               )}
-              {poolHasRewarder && rewarderToken && (
+              {poolHasRewarder && unclaimedRewarderRewards && (
                 <div style={{ marginLeft: '-13px' }}>
                   {' + '}
-                  {rewarderToken && formatNumber(rewarderToken.amount, NumberFormat.long)}
+                  {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
                   &nbsp;
-                  {rewarderToken?.tokenName}
+                  {unclaimedRewarderRewards?.tokenName}
                 </div>
               )}
             </StyledTextForValue>
@@ -1110,9 +1116,9 @@ export default function FarmPoolCard({
                   {poolHasRewarder && (
                     <Text className="rewarder">
                       {' + '}
-                      {rewarderToken && formatNumber(rewarderToken.amount, NumberFormat.long)}
+                      {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
                       &nbsp;
-                      {rewarderToken?.tokenName}
+                      {unclaimedRewarderRewards?.tokenName}
                     </Text>
                   )}
                 </RewardsChildFlexContainer>

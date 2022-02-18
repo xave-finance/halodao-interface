@@ -1,4 +1,4 @@
-import { useHALORewardsContract, useHALORewarderContract } from 'hooks/useContract'
+import { useHALORewardsContract, useHALORewarderContract, useTokenContract } from 'hooks/useContract'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -231,40 +231,54 @@ interface RewarderToken {
   tokenName: string
   tokenAddress: string
   multiplier: number
+  balance: number
 }
 
 export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAddress: string | undefined) => {
-  const [pendingRewarderToken, setPendingRewarderToken] = useState<RewarderToken>()
   const { account } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
+  const rewarderContract = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
+  const [rewardTokenAddress, setRewardTokenAddress] = useState<string>()
+  const rewardTokenContract = useTokenContract(rewardTokenAddress)
+  const [unclaimedRewards, setUnclaimedRewards] = useState<RewarderToken>()
 
-  const rewarder = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
-  const token = useToken(pendingRewarderToken?.tokenAddress === '' ? undefined : pendingRewarderToken?.tokenAddress)
+  const fetchUnclaimedRewards = useCallback(async () => {
+    if (!ammRewards || !rewarderContract || !rewardTokenContract || !account || !rewarderAddress) return
 
-  const fetchRewarderToken = useCallback(async () => {
     try {
-      if (!ammRewards || !rewarder) return
+      console.log('fetchUnclaimedRewards() in progress...')
+      const pendingXRNBW = await ammRewards.pendingRewardToken(poolID, account)
+      const pendingRewarderTokens = await rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW)
+      const multiplier = await rewarderContract.rewardMultiplier()
+      const symbol = await rewardTokenContract.symbol()
+      const balance = await rewardTokenContract.balanceOf(rewarderAddress)
 
-      const rewardAmount = await ammRewards.pendingRewardToken(poolID, account)
-      const _pendingRewarderToken = await rewarder.viewPendingTokens(poolID, account, rewardAmount)
-      const multiplier = await rewarder.rewardMultiplier()
-
-      setPendingRewarderToken({
-        amount: parseFloat(formatEther(_pendingRewarderToken.rewardAmounts[0].toString())),
-        tokenName: token?.symbol || '',
-        tokenAddress: _pendingRewarderToken.rewardTokens[0],
-        multiplier: parseFloat(formatEther(multiplier.toString())) / 1000
+      setUnclaimedRewards({
+        amount: parseFloat(formatEther(pendingRewarderTokens.rewardAmounts[0])),
+        tokenName: symbol,
+        tokenAddress: pendingRewarderTokens.rewardTokens[0],
+        multiplier: parseFloat(formatEther(multiplier.toString())) / 1000,
+        balance: parseFloat(formatEther(balance))
       })
-    } catch (err) {
-      console.error(`Error fetching rewarder: `, err)
+    } catch (e) {
+      console.error('fetchUnclaimedRewards() error: ', e)
     }
-  }, [ammRewards, rewarder, token, poolID]) //eslint-disable-line
+  }, [rewardTokenContract, ammRewards, rewarderContract, poolID, account])
 
   useEffect(() => {
-    fetchRewarderToken()
-  }, [fetchRewarderToken])
+    if (!rewarderContract) return
+    try {
+      rewarderContract.rewardToken().then(setRewardTokenAddress)
+    } catch (e) {
+      console.error('Rewarder.rewardToken() failed', e)
+    }
+  }, [rewarderContract])
 
-  return pendingRewarderToken
+  useEffect(() => {
+    fetchUnclaimedRewards()
+  }, [rewardTokenContract])
+
+  return unclaimedRewards
 }
 
 export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
