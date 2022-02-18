@@ -911,16 +911,16 @@ export default function FarmPoolCard({
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</u>
+                <u>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</u>
               ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
                 <>0 xRNBW</>
               ) : (
-                <div>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</div>
+                <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</div>
               )}
               {poolHasRewarder && rewarderToken && (
                 <div style={{ marginLeft: '-13px' }}>
                   {' + '}
-                  {rewarderToken && formatNumber(rewarderToken.amount, isActivePool ? undefined : NumberFormat.short)}
+                  {rewarderToken && formatNumber(rewarderToken.amount, NumberFormat.long)}
                   &nbsp;
                   {rewarderToken?.tokenName}
                 </div>
@@ -1105,15 +1105,14 @@ export default function FarmPoolCard({
                       {showMigrateButton && alreadyMigrated ? (
                         <>0 xRNBW </>
                       ) : (
-                        <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xRNBW</>
+                        <>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</>
                       )}
                     </Text>
                   </RewardsChildFlex>
                   {poolHasRewarder && (
                     <Text className="rewarder">
                       {' + '}
-                      {rewarderToken &&
-                        formatNumber(rewarderToken.amount, isActivePool ? undefined : NumberFormat.short)}
+                      {rewarderToken && formatNumber(rewarderToken.amount, NumberFormat.long)}
                       &nbsp;
                       {rewarderToken?.tokenName}
                     </Text>
