@@ -9,7 +9,6 @@ import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
-import { useToken } from '../hooks/Tokens'
 import { useTokenPrice } from './useTokenPrice'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
@@ -248,10 +247,12 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
     try {
       console.log('fetchUnclaimedRewards() in progress...')
       const pendingXRNBW = await ammRewards.pendingRewardToken(poolID, account)
-      const pendingRewarderTokens = await rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW)
-      const multiplier = await rewarderContract.rewardMultiplier()
-      const symbol = await rewardTokenContract.symbol()
-      const balance = await rewardTokenContract.balanceOf(rewarderAddress)
+      const [pendingRewarderTokens, multiplier, symbol, balance] = await Promise.all([
+        rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW),
+        rewarderContract.rewardMultiplier(),
+        rewardTokenContract.symbol(),
+        rewardTokenContract.balanceOf(rewarderAddress)
+      ])
 
       setUnclaimedRewards({
         amount: parseFloat(formatEther(pendingRewarderTokens.rewardAmounts[0])),
@@ -263,7 +264,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
     } catch (e) {
       console.error('fetchUnclaimedRewards() error: ', e)
     }
-  }, [rewardTokenContract, ammRewards, rewarderContract, poolID, account])
+  }, [rewardTokenContract, ammRewards, rewarderContract, poolID, account]) //eslint-disable-line
 
   useEffect(() => {
     if (!rewarderContract) return
@@ -276,7 +277,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
 
   useEffect(() => {
     fetchUnclaimedRewards()
-  }, [rewardTokenContract])
+  }, [rewardTokenContract]) //eslint-disable-line
 
   return unclaimedRewards
 }
@@ -294,7 +295,7 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
     } catch (err) {
       console.error(`Error fetching token address: `, err)
     }
-  }, [rewarderAddress])
+  }, [rewarderAddress]) //eslint-disable-line
 
   useEffect(() => {
     fetchTokenAddress()
