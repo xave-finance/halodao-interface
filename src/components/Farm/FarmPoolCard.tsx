@@ -877,7 +877,10 @@ export default function FarmPoolCard({
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('apr')}:</LabelText>
-            <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
+            <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>
+              {isActivePool ? accumulativeTotal : t('inactive')}
+            </StyledTextForValue>{' '}
+            &nbsp;
             {poolHasRewarder && rawAPY > 0 && (
               <MouseoverTooltip
                 text={
@@ -926,7 +929,7 @@ export default function FarmPoolCard({
                 <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</div>
               )}
               {poolHasRewarder && unclaimedRewarderRewards && (
-                <div style={{ marginLeft: '-13px' }}>
+                <div style={{ marginLeft: '-13px', fontWeight: 'bold' }}>
                   {' + '}
                   {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
                   &nbsp;
