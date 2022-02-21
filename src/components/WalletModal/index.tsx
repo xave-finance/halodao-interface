@@ -73,7 +73,7 @@ const UpperSection = styled.div`
   }
 
   h5:last-child {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   h4 {
@@ -194,13 +194,6 @@ export default function WalletModal({
         }
       })
   }
-
-  // close wallet modal if fortmatic modal is active
-  useEffect(() => {
-    fortmatic.on(OVERLAY_READY, () => {
-      toggleWalletModal()
-    })
-  }, [toggleWalletModal])
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
