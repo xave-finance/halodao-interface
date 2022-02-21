@@ -65,7 +65,7 @@ import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MouseoverTooltip } from '../Tooltip'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
-  padding: 1.5rem;
+  padding: 1.5rem 1rem;
   margin: 0 -1rem;
   cursor: pointer;
   border: 1px solid transparent;
@@ -871,7 +871,7 @@ export default function FarmPoolCard({
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="18%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <StyledTextForValue>{isActivePool ? accumulativeTotal : t('inactive')}</StyledTextForValue> &nbsp;
             {poolHasRewarder && rawAPY > 0 && (
