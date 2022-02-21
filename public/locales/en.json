@@ -130,5 +130,7 @@
   "error-liquidity-estimates-changed": "FX estimation has changed. Please try entering a slightly lower amount.",
   "migrate": "Migrate",
   "migrated": "Migrated",
-  "lend": "Lend"
+  "lend": "Lend",
+  "apr-breakdown": "APR Breakdown:",
+  "insufficient-reward-balance": "Please ask protocol to top up rewards."
 }
