@@ -369,7 +369,6 @@ const RewardsChildFlexContainer = styled(RewardsChildFlex)`
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 8em;
 `
 const RewardsChild = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -426,7 +425,9 @@ const RewardsChild = styled.div`
   }
 
   &.rewardBalance {
-    padding-left: 30px !important;
+    padding-left: 30px;
+    padding-right: 100px;
+    flex: 1;
   }
 
   a {

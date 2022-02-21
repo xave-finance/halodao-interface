@@ -270,11 +270,13 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
 
   useEffect(() => {
     if (!rewarderContract) return
-    try {
-      rewarderContract.rewardToken().then(setRewardTokenAddress)
-    } catch (e) {
-      console.error('Rewarder.rewardToken() failed', e)
-    }
+
+    rewarderContract
+      .rewardToken()
+      .then(setRewardTokenAddress)
+      .catch((e: Error) => {
+        console.error('Rewarder.rewardToken() failed', e)
+      })
   }, [rewarderContract])
 
   useEffect(() => {
