@@ -649,7 +649,7 @@ export default function FarmPoolCard({
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated, unclaimedRewarderRewards])
 
   /**
    * Checks if user already migrated (from v1.0 to v1.1 AMMRewards)
