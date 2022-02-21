@@ -10,6 +10,7 @@ import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { useTokenPrice } from './useTokenPrice'
+import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -234,6 +235,7 @@ interface RewarderToken {
 }
 
 export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAddress: string | undefined) => {
+  const currentBlockTimestamp = useCurrentBlockTimestamp()
   const { account } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
   const rewarderContract = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
@@ -277,7 +279,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
 
   useEffect(() => {
     fetchUnclaimedRewards()
-  }, [rewardTokenContract]) //eslint-disable-line
+  }, [rewardTokenContract, currentBlockTimestamp]) //eslint-disable-line
 
   return unclaimedRewards
 }

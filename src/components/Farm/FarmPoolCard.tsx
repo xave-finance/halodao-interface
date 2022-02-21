@@ -344,7 +344,6 @@ const RewardsContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 20px 30px;
-  justify-content: space-around;
   background: #15006d;
   color: white;
   align-items: center;
@@ -402,8 +401,8 @@ const RewardsChild = styled.div`
     }
   }
 
-  &.harvest button {
-    margin: auto !important;
+  &.harvest {
+    margin-left: auto !important;
   }
 
   img {
@@ -423,6 +422,11 @@ const RewardsChild = styled.div`
     font-family: 'Fredoka One';
     font-size: 28px;
     padding-bottom: 5px;
+    margin-left: auto !important;
+  }
+
+  &.rewardBalance {
+    padding-left: 30px !important;
   }
 
   a {
@@ -1101,7 +1105,7 @@ export default function FarmPoolCard({
               <RewardsChild>
                 <img src={BunnyRewards} alt="Bunny Rewards" />
               </RewardsChild>
-              <RewardsChild className="">
+              <RewardsChild className="rewardBalance">
                 <RewardsChildFlexContainer>
                   <RewardsChildFlex>
                     <Text className="label">{poolInfo.pair} Rewards:</Text>
