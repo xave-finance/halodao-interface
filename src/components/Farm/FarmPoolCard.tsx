@@ -749,7 +749,7 @@ export default function FarmPoolCard({
         e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
       ) {
         setInsufficientReward(true)
-      } else if (e.message.includes('user denied transaction')) {
+      } else if (e.message.toLowerCase().includes('user denied transaction')) {
         setInsufficientReward(false)
       } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
         console.error('Rewarder insufficient balance')
