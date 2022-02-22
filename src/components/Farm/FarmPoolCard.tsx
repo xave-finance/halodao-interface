@@ -622,7 +622,6 @@ export default function FarmPoolCard({
    * Updating the state of unstake button
    */
   useEffect(() => {
-    console.log(isTxInProgress)
     if (isTxInProgress) return
 
     const amountAsFloat = parseFloat(unstakeAmount)
