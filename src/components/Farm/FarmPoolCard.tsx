@@ -63,6 +63,7 @@ import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { AlertCircle, Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MouseoverTooltip } from '../Tooltip'
+import { log } from 'util'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1.5rem 1rem;
@@ -492,7 +493,6 @@ export default function FarmPoolCard({
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
   const [insufficientReward, setInsufficientReward] = useState(false)
-
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
@@ -622,6 +622,7 @@ export default function FarmPoolCard({
    * Updating the state of unstake button
    */
   useEffect(() => {
+    console.log(isTxInProgress)
     if (isTxInProgress) return
 
     const amountAsFloat = parseFloat(unstakeAmount)
@@ -751,11 +752,13 @@ export default function FarmPoolCard({
         setInsufficientReward(true)
       } else if (e.message.toLowerCase().includes('user denied transaction')) {
         setInsufficientReward(false)
+        setIsTxInProgress(false)
       } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
         console.error('Rewarder insufficient balance')
         console.error('Rewarder balance: ', unclaimedRewarderRewards.balance)
         console.error('Reward amount: ', unclaimedRewarderRewards.amount)
         setInsufficientReward(true)
+        setIsTxInProgress(false)
       }
 
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
