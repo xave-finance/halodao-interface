@@ -401,7 +401,9 @@ const RewardsChild = styled.div`
   }
 
   &.harvest {
-    margin-left: auto !important;
+    & button {
+      margin-left: auto !important;
+    }
   }
 
   img {
@@ -426,7 +428,7 @@ const RewardsChild = styled.div`
 
   &.rewardBalance {
     padding-left: 30px;
-    padding-right: 100px;
+    padding-right: 40px;
     flex: 1;
   }
 
@@ -747,6 +749,8 @@ export default function FarmPoolCard({
         e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
       ) {
         setInsufficientReward(true)
+      } else if (e.message.includes('user denied transaction')) {
+        setInsufficientReward(false)
       } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
         console.error('Rewarder insufficient balance')
         console.error('Rewarder balance: ', unclaimedRewarderRewards.balance)
@@ -930,7 +934,7 @@ export default function FarmPoolCard({
                 <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</div>
               )}
               {poolHasRewarder && unclaimedRewarderRewards && (
-                <div style={{ marginLeft: '-13px', fontWeight: 'bold' }}>
+                <div style={{ marginLeft: '-13px' }}>
                   {' + '}
                   {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
                   &nbsp;
