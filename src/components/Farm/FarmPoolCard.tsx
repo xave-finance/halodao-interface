@@ -355,7 +355,7 @@ const RewardsContainer = styled.div`
     align-items: flex-start;
   `};
 `
-const InsufficientBalance = styled.div`
+const HarvestErrorMessage = styled.div`
   text-align: center;
   color: #ffb3b3;
   font-weight: bold;
@@ -401,7 +401,9 @@ const RewardsChild = styled.div`
   }
 
   &.harvest {
-    margin-left: auto !important;
+    & button {
+      margin-left: auto !important;
+    }
   }
 
   img {
@@ -426,7 +428,7 @@ const RewardsChild = styled.div`
 
   &.rewardBalance {
     padding-left: 30px;
-    padding-right: 100px;
+    padding-right: 40px;
     flex: 1;
   }
 
@@ -490,7 +492,7 @@ export default function FarmPoolCard({
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
   const [insufficientReward, setInsufficientReward] = useState(false)
-
+  const [harvestFailed, setHarvestFailed] = useState(false)
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
@@ -732,6 +734,7 @@ export default function FarmPoolCard({
    */
   const handleClaim = async () => {
     setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -747,11 +750,18 @@ export default function FarmPoolCard({
         e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
       ) {
         setInsufficientReward(true)
+      } else if (e.message.toLowerCase().includes('user denied transaction')) {
+        setInsufficientReward(false)
+        setIsTxInProgress(false)
+      } else if (e.message.toLowerCase().includes('cannot set properties of undefined')) {
+        setHarvestFailed(true)
+        setIsTxInProgress(false)
       } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
         console.error('Rewarder insufficient balance')
         console.error('Rewarder balance: ', unclaimedRewarderRewards.balance)
         console.error('Reward amount: ', unclaimedRewarderRewards.amount)
         setInsufficientReward(true)
+        setIsTxInProgress(false)
       }
 
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
@@ -787,6 +797,7 @@ export default function FarmPoolCard({
    */
   const handleMigrate = async () => {
     setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -930,7 +941,7 @@ export default function FarmPoolCard({
                 <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</div>
               )}
               {poolHasRewarder && unclaimedRewarderRewards && (
-                <div style={{ marginLeft: '-13px', fontWeight: 'bold' }}>
+                <div style={{ marginLeft: '-13px' }}>
                   {' + '}
                   {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
                   &nbsp;
@@ -1150,7 +1161,8 @@ export default function FarmPoolCard({
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}
                 </ClaimButton>
-                {insufficientReward && <InsufficientBalance>{t('insufficient-reward-balance')}</InsufficientBalance>}
+                {insufficientReward && <HarvestErrorMessage>{t('insufficient-reward-balance')}</HarvestErrorMessage>}
+                {harvestFailed && <HarvestErrorMessage>{t('harvest-failed')}</HarvestErrorMessage>}
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>
