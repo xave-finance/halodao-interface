@@ -63,7 +63,6 @@ import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { AlertCircle, Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MouseoverTooltip } from '../Tooltip'
-import { log } from 'util'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1.5rem 1rem;
@@ -356,7 +355,7 @@ const RewardsContainer = styled.div`
     align-items: flex-start;
   `};
 `
-const InsufficientBalance = styled.div`
+const HarvestErrorMessage = styled.div`
   text-align: center;
   color: #ffb3b3;
   font-weight: bold;
@@ -493,6 +492,7 @@ export default function FarmPoolCard({
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
   const [insufficientReward, setInsufficientReward] = useState(false)
+  const [harvestFailed, setHarvestFailed] = useState(false)
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
@@ -734,6 +734,7 @@ export default function FarmPoolCard({
    */
   const handleClaim = async () => {
     setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -751,6 +752,9 @@ export default function FarmPoolCard({
         setInsufficientReward(true)
       } else if (e.message.toLowerCase().includes('user denied transaction')) {
         setInsufficientReward(false)
+        setIsTxInProgress(false)
+      } else if (e.message.toLowerCase().includes('cannot set properties of undefined')) {
+        setHarvestFailed(true)
         setIsTxInProgress(false)
       } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
         console.error('Rewarder insufficient balance')
@@ -793,6 +797,7 @@ export default function FarmPoolCard({
    */
   const handleMigrate = async () => {
     setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -1156,7 +1161,8 @@ export default function FarmPoolCard({
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}
                 </ClaimButton>
-                {insufficientReward && <InsufficientBalance>{t('insufficient-reward-balance')}</InsufficientBalance>}
+                {insufficientReward && <HarvestErrorMessage>{t('insufficient-reward-balance')}</HarvestErrorMessage>}
+                {harvestFailed && <HarvestErrorMessage>{t('harvest-failed')}</HarvestErrorMessage>}
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>

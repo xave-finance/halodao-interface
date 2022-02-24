@@ -132,5 +132,6 @@
   "migrated": "Migrated",
   "lend": "Lend",
   "apr-breakdown": "APR Breakdown:",
-  "insufficient-reward-balance": "Please ask protocol to top up rewards."
+  "insufficient-reward-balance": "Please ask protocol to top up rewards.",
+  "harvest-failed": "Harvest failed. Please try again."
 }
