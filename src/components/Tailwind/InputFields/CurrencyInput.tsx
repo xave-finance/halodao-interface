@@ -89,6 +89,7 @@ const TokenInput = ({
       </div>
 
       <TokenSelectModal
+        currency={currency}
         isVisible={showModal}
         onDismiss={() => setShowModal(false)}
         onSelect={token => {
