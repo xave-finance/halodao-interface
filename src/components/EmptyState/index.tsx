@@ -1,7 +1,7 @@
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { isMobile } from 'react-device-detect'
 import ReactGA from 'react-ga'
 import { injected, portis } from '../../connectors'
@@ -9,7 +9,6 @@ import { injected, portis } from '../../connectors'
 import Row from '../Row'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
-import { CloseIcon, ExternalLink } from '../../theme'
 import { Text } from 'rebass'
 
 import { SUPPORTED_WALLETS } from '../../constants'
@@ -18,6 +17,7 @@ import Option from './Option'
 import PendingView from '../WalletModal/PendingView'
 import Modal from '../Modal'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
+import { ExternalLink } from '../../theme'
 
 const ContentWrapper = styled.div`
   padding: 2rem;
