@@ -1,3 +1,4 @@
+import { rinkeby } from '@halodao/halodao-contract-addresses'
 import { ChainId } from '@halodao/sdk'
 import { HALO_REWARDS_V1_ADDRESS, HALO_REWARDS_ADDRESS, HALO_REWARDS_V1_1_ADDRESS } from '../constants'
 
@@ -20,6 +21,11 @@ export const getAmmRewardsContractAddress = (chainId?: ChainId, version = AmmRew
     if (version === AmmRewardsVersion.Latest) {
       address = HALO_REWARDS_V1_ADDRESS[chainId]
     }
+  } else if (chainId === ChainId.RINKEBY) {
+    /**
+     * For RINKEBY, there's only 1 version atm
+     */
+    address = rinkeby.rewards.ammRewards
   } else {
     /**
      * On MAINNET/KOVAN, latest version is AmmRewards v1.1

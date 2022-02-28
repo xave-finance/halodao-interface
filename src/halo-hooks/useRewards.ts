@@ -18,6 +18,7 @@ export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) =
   const [lpTokenAddresses, setLpTokenAddresses] = useState<string[]>([])
 
   const fetchPoolLength = useCallback(async () => {
+    console.log('Fetching pool length...')
     if (!rewardsContract) {
       setPoolLength(0)
       return
@@ -25,6 +26,7 @@ export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) =
 
     try {
       const result = await rewardsContract.poolLength()
+      console.log('poolLength: ', result.toNumber())
       setPoolLength(result ? result.toNumber() : 0)
     } catch (err) {
       console.error(`Error fetching poolLength: `, err)
@@ -32,6 +34,7 @@ export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) =
   }, [rewardsContract])
 
   const fetchLpToken = useCallback(async () => {
+    console.log('Fetching lpToken(s)...')
     if (!rewardsContract) {
       setLpTokenAddresses([])
       return
@@ -44,6 +47,7 @@ export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) =
 
     try {
       const results = await Promise.all(promises)
+      console.log('lpToken(s): ', results)
       const addresses: string[] = []
       for (const result of results) {
         addresses.push(result)
