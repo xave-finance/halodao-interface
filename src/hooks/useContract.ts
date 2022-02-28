@@ -23,6 +23,7 @@ import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../consta
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
+import HALO_REWARDER_ABI from '../constants/haloAbis/Rewarder.json'
 import { getAmmRewardsContractAddress, AmmRewardsVersion } from 'utils/ammRewards'
 
 // returns null on errors
@@ -152,4 +153,8 @@ export function useHALORewardsContract(rewardsVersion = AmmRewardsVersion.Latest
   const { chainId } = useActiveWeb3React()
   const address = getAmmRewardsContractAddress(chainId, rewardsVersion)
   return useContract(address, HALO_REWARDS_ABI, true)
+}
+
+export function useHALORewarderContract(address?: string) {
+  return useContract(address, HALO_REWARDER_ABI, true)
 }
