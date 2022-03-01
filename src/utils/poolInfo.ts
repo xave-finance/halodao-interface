@@ -45,13 +45,13 @@ const isSushiPool = (address: string, chainId: ChainId | undefined) => {
 }
 
 const isHaloPool = (address: string, chainId: ChainId | undefined) => {
-  let haloAddresses = getHaloAddresses(chainId)
+  const haloAddresses = getHaloAddresses(chainId)
   const poolAddresses = [...haloAddresses.ammV2.pools.enabled, ...haloAddresses.ammV2.pools.disabled]
   return poolAddresses.includes(address)
 }
 
 export const isInactivePool = (address: string, chainId: ChainId | undefined) => {
-  let haloAddresses = getHaloAddresses(chainId)
+  const haloAddresses = getHaloAddresses(chainId)
   return haloAddresses.ammV2.pools.disabled.includes(address)
 }
 
