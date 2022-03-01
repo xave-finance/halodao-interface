@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
 import { PoolIdLpTokenMap } from 'utils/poolInfo'
 import { PoolInfo, PoolProvider } from './usePoolInfo'
-import CURVE_ABI from 'constants/haloAbis/Curve.json'
-import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
 import { Token } from '@halodao/sdk'
@@ -13,13 +11,14 @@ import { useContract, useHALORewardsContract } from '../hooks/useContract'
 import { AmmRewardsVersion } from '../utils/ammRewards'
 import VaultABI from 'constants/haloAbis/Vault.json'
 import CustomPoolABI from 'constants/haloAbis/CustomPool.json'
-import { rinkeby } from '@halodao/halodao-contract-addresses'
 import { BigNumber } from 'ethers'
+import { getHaloAddresses } from 'utils/haloAddresses'
 
 export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { account, library, chainId } = useActiveWeb3React()
+  const haloAddresses = getHaloAddresses(chainId)
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
-  const VaultContract = useContract(rinkeby.ammV2.vault, VaultABI)
+  const VaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 
   return useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
@@ -29,12 +28,11 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       return { poolsInfo, tokenAddresses }
     }
 
-    console.log('Fetching halo pool info: ', pidLpTokenMap)
     const promises: Promise<string>[] = []
-    pidLpTokenMap.map(map => {
+    for (const map of pidLpTokenMap) {
       const CustomPoolContract = getContract(map.lpToken, CustomPoolABI, library)
       promises.push(CustomPoolContract.getPoolId())
-    })
+    }
     const vaultPoolIds = await Promise.all(promises)
 
     for (const [i, map] of pidLpTokenMap.entries()) {
@@ -44,7 +42,6 @@ export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         ammRewards?.rewarder(map.pid)
       ])
       const [token0Address, token1Address] = poolTokens.tokens
-      console.log('Tokens: ', token0Address, token1Address)
       const Token0Contract = getContract(token0Address, ERC20_ABI, library)
       const Token1Contract = getContract(token1Address, ERC20_ABI, library)
       const CustomPoolContract = getContract(map.lpToken, CustomPoolABI, library)

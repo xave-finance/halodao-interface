@@ -24,7 +24,7 @@ const Pool = () => {
         setPools(_pools)
       }
     })
-  }, [])
+  }, []) // eslint-disable-line
 
   return (
     <PageWrapper>

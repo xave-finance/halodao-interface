@@ -6,9 +6,6 @@ import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
 import { useGetPoolData } from 'halo-hooks/amm-v2/useLiquidityPool'
-import { formatEther } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
-import { Token } from '@halodao/sdk'
 import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
@@ -84,14 +81,13 @@ const ExpandablePoolRow = ({
    * - 5 seconds after an in-app popup appeared (tx has been confirmed)
    **/
   useEffect(() => {
-    console.log('Expandable pool row props:', poolAddress, rewardsPoolId, vaultPoolId)
     if (!vaultPoolId || rewardsPoolId === undefined) return
     getPoolData(poolAddress, vaultPoolId, rewardsPoolId)
       .then(setPool)
       .catch(e => {
         console.error(e)
       })
-  }, [poolAddress, rewardsPoolId, vaultPoolId, blockNumber, reloader])
+  }, [poolAddress, rewardsPoolId, vaultPoolId, blockNumber, reloader]) // eslint-disable-line
 
   /**
    * Update cached pool data in app cache
