@@ -140,6 +140,7 @@ export const useGetPoolData = () => {
     if (!AmmRewardsContract) return undefined
 
     const poolTokens = await VaultContract.getPoolTokens(vaultPoolId)
+    console.log('Vault.poolTokens: ', poolTokens)
     const token0Address = poolTokens.tokens[0]
     const token1Address = poolTokens.tokens[1]
 
@@ -186,29 +187,33 @@ export const useGetPoolData = () => {
       new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
     ]
 
+    const genericDenom = BigNumber.from(10).pow(18)
+    const token0Denom = BigNumber.from(10).pow(token0Decimals)
+    const token1Denom = BigNumber.from(10).pow(token1Decimals)
+
     return {
       address: poolAddress,
       name: `${tokens[0].symbol}/${tokens[1].symbol}`,
       token0: tokens[0],
       token1: tokens[1],
       pooled: {
-        total: 0,
-        token0: poolTokens.balances[0].toNumber(),
-        token1: poolTokens.balances[1].toNumber()
+        total: 0, // @todo: once we know the rates, we can calculate total liquidity (in USD)
+        token0: poolTokens.balances[0].div(token0Denom).toNumber(),
+        token1: poolTokens.balances[1].div(token1Denom).toNumber()
       },
       weights: {
-        token0: 0.5,
-        token1: 0.5
+        token0: 0.5, // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
+        token1: 0.5 // @todo: calculate token 1 weight: totalLiquidityNumeraire / totalToken1Numeraire
       },
       rates: {
-        token0: 1, // @todo: get rates from token[0] assimilator contract
+        token0: 0.02, // @todo: get rates from token[0] assimilator contract
         token1: 1 // @todo: get rates from token[1] assimilator contract
       },
-      totalSupply: totalSupply.toNumber(),
-      held: userBalance.toNumber(),
+      totalSupply: totalSupply.div(genericDenom).toNumber(),
+      held: userBalance.div(genericDenom).toNumber(),
       heldBN: userBalance,
-      staked: userStaked.amount.toNumber(),
-      earned: userEarned.toNumber()
+      staked: userStaked.amount.div(genericDenom).toNumber(),
+      earned: userEarned.div(genericDenom).toNumber()
     }
   }
 

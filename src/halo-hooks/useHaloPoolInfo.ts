@@ -5,80 +5,86 @@ import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import { formatEther } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
-
 import { Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { getCustomTokenSymbol } from 'utils/tokens'
-import { useHALORewardsContract } from '../hooks/useContract'
+import { useContract, useHALORewardsContract } from '../hooks/useContract'
 import { AmmRewardsVersion } from '../utils/ammRewards'
+import VaultABI from 'constants/haloAbis/Vault.json'
+import CustomPoolABI from 'constants/haloAbis/CustomPool.json'
+import { rinkeby } from '@halodao/halodao-contract-addresses'
+import { BigNumber } from 'ethers'
 
 export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { account, library, chainId } = useActiveWeb3React()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
+  const VaultContract = useContract(rinkeby.ammV2.vault, VaultABI)
 
   return useCallback(async () => {
     const poolsInfo: PoolInfo[] = []
     const tokenAddresses: string[] = []
 
-    if (!chainId || !library) {
+    if (!chainId || !library || !VaultContract) {
       return { poolsInfo, tokenAddresses }
     }
 
-    for (const map of pidLpTokenMap) {
-      const poolAddress = getAddress(map.lpToken)
-      const CurveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
+    console.log('Fetching halo pool info: ', pidLpTokenMap)
+    const promises: Promise<string>[] = []
+    pidLpTokenMap.map(map => {
+      const CustomPoolContract = getContract(map.lpToken, CustomPoolABI, library)
+      promises.push(CustomPoolContract.getPoolId())
+    })
+    const vaultPoolIds = await Promise.all(promises)
 
-      const [token0Address, token1Address, rewardAddress] = await Promise.all([
-        CurveContract?.derivatives(0),
-        CurveContract?.derivatives(1),
+    for (const [i, map] of pidLpTokenMap.entries()) {
+      const poolAddress = getAddress(map.lpToken)
+      const [poolTokens, rewardAddress] = await Promise.all([
+        VaultContract.getPoolTokens(vaultPoolIds[i]),
         ammRewards?.rewarder(map.pid)
       ])
+      const [token0Address, token1Address] = poolTokens.tokens
+      console.log('Tokens: ', token0Address, token1Address)
       const Token0Contract = getContract(token0Address, ERC20_ABI, library)
       const Token1Contract = getContract(token1Address, ERC20_ABI, library)
+      const CustomPoolContract = getContract(map.lpToken, CustomPoolABI, library)
 
-      const [
-        token0Symbol,
-        token1Symbol,
-        token0Decimals,
-        token1Decimals,
-        totalLiquidityValue,
-        curveDecimals
-      ] = await Promise.all([
+      const [token0Symbol, token1Symbol, token0Decimals, token1Decimals, poolDecimals] = await Promise.all([
         Token0Contract?.symbol(),
         Token1Contract?.symbol(),
         Token0Contract?.decimals(),
         Token1Contract?.decimals(),
-        CurveContract?.liquidity(),
-        CurveContract?.decimals()
+        CustomPoolContract?.decimals()
       ])
 
       const token0SymbolProper = getCustomTokenSymbol(chainId, token0Address) || token0Symbol
       const token1SymbolProper = getCustomTokenSymbol(chainId, token1Address) || token1Symbol
+      const token0Denom = BigNumber.from(10).pow(token0Decimals)
+      const token1Denom = BigNumber.from(10).pow(token1Decimals)
 
       poolsInfo.push({
         pid: map.pid,
         pair: `${token0SymbolProper}/${token1SymbolProper}`,
         address: poolAddress,
         addLiquidityUrl: `https://app.halodao.com/#/pool`,
-        liquidity: +formatEther(totalLiquidityValue.total_),
+        liquidity: 0, // @todo: calculate total liquidity in USD value
         tokens: [
           {
             address: token0Address,
             mainnetAddress: token0Address,
-            balance: +formatEther(totalLiquidityValue.individual_[0]),
+            balance: poolTokens.balances[0].div(token0Denom).toNumber(),
             weightPercentage: 50,
             asToken: new Token(chainId, token0Address, token0Decimals, token0SymbolProper, token0SymbolProper)
           },
           {
             address: token1Address,
             mainnetAddress: token1Address,
-            balance: +formatEther(totalLiquidityValue.individual_[1]),
+            balance: poolTokens.balances[1].div(token1Denom).toNumber(),
             weightPercentage: 50,
             asToken: new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
           }
         ],
-        asToken: new Token(chainId, poolAddress, curveDecimals, 'HLP', 'HLP'),
+        asToken: new Token(chainId, poolAddress, poolDecimals, 'HLP', 'HLP'),
         allocPoint: 0,
         provider: PoolProvider.Halo,
         rewarderAddress: rewardAddress === undefined ? '' : rewardAddress

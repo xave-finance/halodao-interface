@@ -24,6 +24,7 @@ import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
 import { ChainId } from '@halodao/sdk'
+import { rinkeby } from '@halodao/halodao-contract-addresses'
 
 export type PoolIdLpTokenMap = {
   pid: number
@@ -62,6 +63,9 @@ const isHaloPool = (address: string, chainId: ChainId | undefined) => {
     return LIQUIDITY_POOLS_ADDRESSES_ARB.includes(address.toLocaleLowerCase())
   } else if (chainId === ChainId.ARBITRUM_TESTNET) {
     return LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.RINKEBY) {
+    const poolAddresses = [...rinkeby.ammV2.pools.enabled, ...rinkeby.ammV2.pools.disabled]
+    return poolAddresses.includes(address)
   }
   return LIQUIDITY_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
@@ -75,6 +79,8 @@ export const isInactivePool = (address: string, chainId: ChainId | undefined) =>
     return INACTIVE_POOLS_ARB.includes(address.toLocaleLowerCase())
   } else if (chainId === ChainId.ARBITRUM_TESTNET) {
     return INACTIVE_POOLS_ARB_RINKEBY.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.RINKEBY) {
+    return rinkeby.ammV2.pools.disabled.includes(address)
   }
   return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
 }
