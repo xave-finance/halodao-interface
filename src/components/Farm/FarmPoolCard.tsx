@@ -62,6 +62,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { AlertCircle, Check, GitPullRequest } from 'react-feather'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { useMyBalance } from '../../halo-hooks/amm/useMyBalance'
 import { MouseoverTooltip } from '../Tooltip'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
@@ -222,10 +223,11 @@ export const StyledCardBoxWeb = styled(RowBetween)`
 
 export const StyledButtonWidth = styled(ButtonOutlined)`
   margin: 0;
-  minwidth: 0;
+  min-width: 0;
   display: flex;
-  padding: 0
-    ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding: 0;
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
     border: 0;
   `};
@@ -494,7 +496,8 @@ export default function FarmPoolCard({
   const [insufficientReward, setInsufficientReward] = useState(false)
   const [harvestFailed, setHarvestFailed] = useState(false)
   // Get user BPT balance
-  const bptBalanceAmount = useTokenBalance(poolInfo.address)
+  const bptBalanceAmountUnset = useMyBalance(poolInfo.address)
+  const bptBalanceAmount = { value: BigNumber.from(bptBalanceAmountUnset.balance), decimals: 18 }
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
 
   // Get user staked BPT
@@ -685,6 +688,7 @@ export default function FarmPoolCard({
     try {
       const tx = await deposit(poolInfo.pid, parseEther(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
+      bptBalanceAmountUnset.getUpdatedBalance()
     } catch (e) {
       console.error('Stake error: ', poolInfo.address, e)
     }

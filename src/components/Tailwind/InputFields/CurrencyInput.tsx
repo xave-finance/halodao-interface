@@ -74,6 +74,7 @@ const TokenInput = ({
                 {balance
                   ? formatNumber(Number(balance), NumberFormat.long) || '-'
                   : currencyBalance?.toSignificant(6) || '-'}
+                {/*{formatNumber(Number(balance), NumberFormat.long)}*/}
               </div>
             )}
             <NumericalInput

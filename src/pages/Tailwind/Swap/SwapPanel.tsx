@@ -18,6 +18,7 @@ import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskError } from 'constants/errors'
+import { useMyBalance } from '../../../halo-hooks/amm/useMyBalance'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -45,8 +46,8 @@ const SwapPanel = () => {
     getPrice,
     getMinimumAmount,
     getTokenBalance,
-    toAmountBalance,
-    fromAmountBalance,
+    // toAmountBalance,
+    // fromAmountBalance,
     price,
     isLoadingPrice,
     toMinimumAmount,
@@ -56,6 +57,13 @@ const SwapPanel = () => {
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
+
+  const fromBalance = useMyBalance(toCurrency.address, true)
+  const toBalance = useMyBalance(fromCurrency.address, true)
+
+  const toAmountBalance = fromBalance.balance
+  const fromAmountBalance = toBalance.balance
+
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -86,9 +94,11 @@ const SwapPanel = () => {
   }, [timeLeft])
 
   const updateBalances = useCallback(async () => {
-    await getTokenBalance(CurrencySide.TO_CURRENCY)
-    await getTokenBalance(CurrencySide.FROM_CURRENCY)
-  }, [getTokenBalance])
+    // await getTokenBalance(CurrencySide.TO_CURRENCY)
+    // await getTokenBalance(CurrencySide.FROM_CURRENCY)
+    fromBalance.getUpdatedBalance()
+    toBalance.getUpdatedBalance()
+  }, [fromBalance, toBalance])
 
   useEffect(() => {
     getPrice()
@@ -116,7 +126,6 @@ const SwapPanel = () => {
   }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances])
 
   useEffect(() => {
-    console.log(allowance)
     if (allowance && Number(allowance) > 0) {
       setApproveState(ApproveButtonState.Approved)
       setButtonState(SwapButtonState.Swap)
@@ -152,7 +161,11 @@ const SwapPanel = () => {
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
           title="Swap"
-          state={PrimaryButtonState.Enabled}
+          state={
+            fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0
+              ? PrimaryButtonState.Enabled
+              : PrimaryButtonState.Disabled
+          }
           onClick={() => {
             setTimeLeft(60)
             setIsExpired(false)
@@ -336,7 +349,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={fromCurrency}
-                value={fromInputValue}
+                value={fromInputValue == '0.0' ? '' : fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
@@ -387,7 +400,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={toCurrency}
-                value={toInputValue}
+                value={toInputValue == '0.0' ? '' : toInputValue}
                 canSelectToken={true}
                 didChangeValue={val => {
                   if (approveState === ApproveButtonState.Approved) {
@@ -437,6 +450,8 @@ const SwapPanel = () => {
           if (txn) {
             setTxhash(txn.hash)
             setSwapTransactionModalState(ModalState.Successful)
+            setToInputValue('')
+            setFromInputValue('')
           }
 
           if (txn === 4001 || !txn) {
