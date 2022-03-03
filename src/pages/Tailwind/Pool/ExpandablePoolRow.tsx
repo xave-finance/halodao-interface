@@ -5,10 +5,7 @@ import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandBut
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
-import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
-import { formatEther } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
-import { Token } from '@halodao/sdk'
+import { useGetPoolData } from 'halo-hooks/amm-v2/useLiquidityPool'
 import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
@@ -47,23 +44,27 @@ const PoolRow = styled.div`
 
 interface ExpandablePoolRowProps {
   poolAddress: string
-  pid?: number
+  rewardsPoolId?: number
+  vaultPoolId?: string
   isExpanded: boolean
   onClick: () => void
   isActivePool?: boolean
 }
 
-const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({
+  poolAddress,
+  rewardsPoolId,
+  vaultPoolId,
+  isExpanded,
+  onClick,
+  isActivePool = true
+}: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const [reloader, setReloader] = useState(0)
-  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
-    poolAddress,
-    pid
-  )
   const dispatch = useDispatch<AppDispatch>()
-
   const blockNumber = useBlockNumber()
   const activePopups = useActivePopups()
+  const getPoolData = useGetPoolData()
 
   useEffect(() => {
     setReloader((r: number) => r + 1)
@@ -76,73 +77,17 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
    * Main logic: fetching pool info
    *
    * Triggers every:
-   * - network changed
+   * - new block number
+   * - 5 seconds after an in-app popup appeared (tx has been confirmed)
    **/
   useEffect(() => {
-    const promises = [
-      getTokens(),
-      getLiquidity(),
-      getBalance(),
-      getStakedLPToken(),
-      getPendingRewards(),
-      getTotalSupply()
-    ]
-
-    Promise.all(promises)
-      .then(results => {
-        const tokens: Token[] = results[0]
-        const liquidity: {
-          total: BigNumber
-          tokens: BigNumber[]
-          weights: number[]
-          rates: number[]
-          assimilators: string[]
-        } = results[1]
-        const balance: BigNumber = results[2]
-        const staked: BigNumber = results[3]
-        const rewards: BigNumber = results[4]
-        const totalSupply: BigNumber = results[5]
-
-        setPool({
-          address: poolAddress,
-          name: `${tokens[0].symbol}/${tokens[1].symbol}`,
-          token0: tokens[0],
-          token1: tokens[1],
-          pooled: {
-            total: parseFloat(formatEther(liquidity.total)),
-            token0: parseFloat(formatEther(liquidity.tokens[0])),
-            token1: parseFloat(formatEther(liquidity.tokens[1]))
-          },
-          weights: {
-            token0: liquidity.weights[0],
-            token1: liquidity.weights[1]
-          },
-          rates: {
-            token0: liquidity.rates[0],
-            token1: liquidity.rates[1]
-          },
-          held: Number(formatEther(balance)),
-          heldBN: balance,
-          staked: Number(formatEther(staked)),
-          earned: Number(formatEther(rewards)),
-          totalSupply: Number(formatEther(totalSupply)),
-          assimilators: liquidity.assimilators
-        })
-      })
+    if (!vaultPoolId || rewardsPoolId === undefined) return
+    getPoolData(poolAddress, vaultPoolId, rewardsPoolId)
+      .then(setPool)
       .catch(e => {
         console.error(e)
       })
-  }, [
-    poolAddress,
-    getTokens,
-    getLiquidity,
-    getBalance,
-    getStakedLPToken,
-    getPendingRewards,
-    getTotalSupply,
-    blockNumber,
-    reloader
-  ])
+  }, [poolAddress, rewardsPoolId, vaultPoolId, blockNumber, reloader]) // eslint-disable-line
 
   /**
    * Update cached pool data in app cache
