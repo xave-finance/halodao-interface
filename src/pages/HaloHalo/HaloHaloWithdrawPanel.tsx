@@ -186,18 +186,10 @@ export default function HaloHaloWithdrawPanel({
     } else {
       amount = formatToBalance(withdrawValue, decimals)
     }
-    // try {
-    //   const tx = await leave(amount)
-    //   await tx.wait()
-    // } catch (e) {
-    //   console.log(e)
-    // }
-    // setPendingTx(false)
-    // setButtonState(ButtonHaloStates.Disabled)
-    // setWithdrawValue('')
 
     try {
       const tx = await leave(amount)
+      await tx.wait()
       if (
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
