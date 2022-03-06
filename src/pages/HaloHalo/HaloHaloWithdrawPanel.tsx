@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Pair } from '@halodao/sdk'
+import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
@@ -15,6 +16,9 @@ import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useToke
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
+import useErrorMessage from '../../halo-hooks/useErrorMessage'
+import BaseModal from '../../components/Tailwind/Modals/BaseModal'
+import ErrorContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
 import { HALOHALO_ADDRESS } from '../../constants'
 import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { useTranslation } from 'react-i18next'
@@ -22,6 +26,7 @@ import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -94,6 +99,14 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
+  const [hasError, sethasError] = useState(false)
+  const { message, getErrorMessage } = useErrorMessage()
+  const [objectErrorMessage, setObjectErrorMessage] = useState({
+    code: 0,
+    data: '',
+    message: ''
+  })
+
 
   // Updating the state of stake button
   useEffect(() => {
@@ -120,8 +133,27 @@ export default function HaloHaloWithdrawPanel({
       const txHash = await approve()
       console.log(txHash)
       // user rejected tx or didn't go thru
-      if (!txHash) {
+      if (
+        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      ) {
+        console.clear()
+        getErrorMessage({
+          code: txHash.code,
+          data: '',
+          message: txHash.message
+        })
+        setObjectErrorMessage({
+          code: txHash.code,
+          data: '',
+          message: txHash.message
+        })
         setRequestedApproval(false)
+        sethasError(true)
+      } else {
+        await txHash.wait()
+        setRequestedApproval(true)
+        sethasError(false)
       }
     } catch (e) {
       console.log(e)
@@ -154,15 +186,61 @@ export default function HaloHaloWithdrawPanel({
     } else {
       amount = formatToBalance(withdrawValue, decimals)
     }
+    // try {
+    //   const tx = await leave(amount)
+    //   await tx.wait()
+    // } catch (e) {
+    //   console.log(e)
+    // }
+    // setPendingTx(false)
+    // setButtonState(ButtonHaloStates.Disabled)
+    // setWithdrawValue('')
+
     try {
       const tx = await leave(amount)
-      await tx.wait()
+      if (
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      ) {
+        console.clear()
+        getErrorMessage({
+          code: tx.code,
+          data: '',
+          message: tx.message
+        })
+        setObjectErrorMessage({
+          code: tx.code,
+          data: '',
+          message: tx.message
+        })
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        sethasError(true)
+      } else {
+        await tx.wait()
+        setPendingTx(false)
+        setButtonState(ButtonHaloStates.Disabled)
+        setWithdrawValue('')
+        sethasError(false)
+      }
     } catch (e) {
-      console.log(e)
+      console.error(e)
+      console.clear()
+      setPendingTx(false)
+      setButtonState(ButtonHaloStates.Disabled)
+      sethasError(true)
+      const shortedMessage = e.data.message
+      getErrorMessage({
+        code: e.data.code,
+        data: e.data.data,
+        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
+      })
+      setObjectErrorMessage({
+        code: e.data.code,
+        data: e.data.data,
+        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
+      })
     }
-    setPendingTx(false)
-    setButtonState(ButtonHaloStates.Disabled)
-    setWithdrawValue('')
     /** log deposit in GA
      */
     ReactGA.event({
@@ -289,6 +367,24 @@ export default function HaloHaloWithdrawPanel({
           </Column>
         </Container>
       </InputPanel>
+      {hasError && (
+        <BaseModal
+          isVisible={hasError}
+          onDismiss={() => {
+            sethasError(false)
+          }}
+        >
+          {
+            <ErrorContent
+              objectError={objectErrorMessage}
+              message={message}
+              closeError={() => {
+                sethasError(false)
+              }}
+            />
+          }
+        </BaseModal>
+      )}
     </>
   )
 }
