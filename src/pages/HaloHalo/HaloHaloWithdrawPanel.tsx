@@ -189,7 +189,7 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const tx = await leave(amount)
-      await tx.wait()
+      // await tx.wait()
       if (
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
