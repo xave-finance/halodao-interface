@@ -11,6 +11,8 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
 import { useActivePopups, useBlockNumber } from '../../../state/application/hooks'
+import { BigNumber } from 'ethers'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 const PoolRow = styled.div`
   .col-1 {
@@ -95,12 +97,14 @@ const ExpandablePoolRow = ({
   useEffect(() => {
     if (!pool) return
 
+    const price = pool.totalSupply.gt(BigNumber.from(0)) ? pool.totalLiquidity.div(pool.totalSupply) : BigNumber.from(0)
+
     const poolData = {
       lpTokenAddress: pool.address,
-      lpTokenBalance: pool.held,
-      lpTokenStaked: pool.staked,
-      lpTokenPrice: pool.totalSupply > 0 ? pool.pooled.total / pool.totalSupply : 0,
-      pendingRewards: pool.earned
+      lpTokenBalance: bigNumberToNumber(pool.userInfo.held),
+      lpTokenStaked: bigNumberToNumber(pool.userInfo.staked),
+      lpTokenPrice: bigNumberToNumber(price),
+      pendingRewards: bigNumberToNumber(pool.userInfo.earned)
     }
 
     dispatch(updatePools([poolData]))
@@ -144,32 +148,34 @@ const ExpandablePoolRow = ({
             md:font-normal 
           `}
         >
-          <DoubleCurrencyLogo currency0={pool.token0} currency1={pool.token1} size={16} />
+          <DoubleCurrencyLogo currency0={pool.tokens[0].token} currency1={pool.tokens[1].token} size={16} />
           <span>{pool.name}</span>
         </div>
         <div className="col-2 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (A) Tokens:</div>
           <div className="">
-            {formatNumber(pool.pooled.token0)} {pool.token0.symbol}
+            {formatNumber(bigNumberToNumber(pool.tokens[0].balance, pool.tokens[0].token.decimals))}{' '}
+            {pool.tokens[0].token.symbol}
           </div>
         </div>
         <div className="col-3 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (B) Tokens:</div>
           <div className="">
-            {formatNumber(pool.pooled.token1)} {pool.token1.symbol}
+            {formatNumber(bigNumberToNumber(pool.tokens[1].balance, pool.tokens[1].token.decimals))}{' '}
+            {pool.tokens[1].token.symbol}
           </div>
         </div>
         <div className="col-4 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Held HLP:</div>
-          <div className="">{formatNumber(pool.held)}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.held))}</div>
         </div>
         <div className="col-5 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Staked HLP:</div>
-          <div className="">{formatNumber(pool.staked)}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.staked))}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Earned:</div>
-          <div className="">{formatNumber(pool.earned)} xRNBW</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.earned))} xRNBW</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />

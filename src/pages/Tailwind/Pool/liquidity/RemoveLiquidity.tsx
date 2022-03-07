@@ -8,6 +8,7 @@ import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 interface RemoveLiquidityProps {
   pool: PoolData
@@ -20,13 +21,15 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const { getFutureTime } = useTime()
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
 
-  const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
+  const token0 = pool.tokens[0].token
+  const token1 = pool.tokens[1].token
+  const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, token0, token1)
 
   const updateAmountPercentage = async (percentage: number) => {
     setAmountPercentage(percentage)
 
-    const lpAmount = pool.held * (percentage * 0.01)
-    const withdrawAmount = percentage === 100 ? pool.heldBN : parseEther(`${lpAmount}`)
+    const lpAmount = bigNumberToNumber(pool.userInfo.held) * (percentage * 0.01)
+    const withdrawAmount = percentage === 100 ? pool.userInfo.held : parseEther(`${lpAmount}`)
     const tokenAmounts = await viewWithdraw(withdrawAmount)
     setToken0Amount(Number(tokenAmounts[0]))
     setToken1Amount(Number(tokenAmounts[1]))
@@ -42,8 +45,8 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     setRemoveButtonState(PrimaryButtonState.InProgress)
 
     try {
-      const lpAmount = pool.held * (Number(amountPercentage) * 0.01)
-      const withdrawAmount = amountPercentage === 100 ? pool.heldBN : parseEther(`${lpAmount}`)
+      const lpAmount = bigNumberToNumber(pool.userInfo.held) * (Number(amountPercentage) * 0.01)
+      const withdrawAmount = amountPercentage === 100 ? pool.userInfo.held : parseEther(`${lpAmount}`)
       const deadline = getFutureTime()
       const tx = await withdraw(withdrawAmount, deadline)
       await tx.wait()
@@ -76,15 +79,15 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
         <div className="flex justify-between">
           <div>{formatNumber(token0Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
-            <CurrencyLogo currency={pool.token0} />
-            <span>{pool.token0.symbol}</span>
+            <CurrencyLogo currency={token0} />
+            <span>{token0.symbol}</span>
           </div>
         </div>
         <div className="flex justify-between mt-2">
           <div>{formatNumber(token1Amount, NumberFormat.long)}</div>
           <div className="flex space-x-2">
-            <CurrencyLogo currency={pool.token1} />
-            <span>{pool.token1.symbol}</span>
+            <CurrencyLogo currency={token1} />
+            <span>{token1.symbol}</span>
           </div>
         </div>
       </div>

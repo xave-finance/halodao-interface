@@ -42,22 +42,25 @@ const SingleSidedLiquidity = ({
   onDeposit,
   isAddLiquidityEnabled
 }: SingleSidedLiquidityProps) => {
+  const token0 = pool.tokens[0].token
+  const token1 = pool.tokens[1].token
+
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
-  const [selectedToken, setSelectedToken] = useState(pool.token0)
+  const [selectedToken, setSelectedToken] = useState(token0)
   const [zapInput, setZapInput] = useState('')
   const [baseAmount, setBaseAmount] = useState('')
   const [quoteAmount, setQuoteAmount] = useState('')
   const [slippage, setSlippage] = useState('3')
   const [isGivenBase, setIsGivenBase] = useState(true)
 
-  const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote } = useZap(pool.address, pool.token0, pool.token1)
+  const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote } = useZap(pool.address, token0, token1)
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
 
   const { chainId } = useActiveWeb3React()
   const zapAddress = chainId ? AMM_ZAP_ADDRESS[chainId] : undefined
 
-  const baseTokenAmount = new TokenAmount(pool.token0, JSBI.BigInt(parseEther(baseAmount !== '' ? baseAmount : '0')))
-  const quoteTokenAmount = new TokenAmount(pool.token1, JSBI.BigInt(parseEther(quoteAmount !== '' ? quoteAmount : '0')))
+  const baseTokenAmount = new TokenAmount(token0, JSBI.BigInt(parseEther(baseAmount !== '' ? baseAmount : '0')))
+  const quoteTokenAmount = new TokenAmount(token1, JSBI.BigInt(parseEther(quoteAmount !== '' ? quoteAmount : '0')))
   const [baseZapApproveState, baseZapApproveCallback] = useTokenAllowance(baseTokenAmount, zapAddress)
   const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
@@ -70,7 +73,7 @@ const SingleSidedLiquidity = ({
 
     let calcBaseAmount = 0
     let calcQuoteAmount = 0
-    const zapFromBase = selectedToken === pool.token0
+    const zapFromBase = selectedToken === token0
 
     if (zapFromBase) {
       const swapAmount = await calcSwapAmountForZapFromBase(val)
@@ -132,11 +135,11 @@ const SingleSidedLiquidity = ({
           didChangeValue={val => onBaseInputUpdate(val)}
           showBalance={true}
           showMax={true}
-          tokenList={[pool.token0, pool.token1]}
+          tokenList={[token0, token1]}
           onSelectToken={token => {
             setSelectedToken(token)
             onBaseInputUpdate(zapInput)
-            const isTokenBase = token === pool.token0
+            const isTokenBase = token === token0
             setIsGivenBase(isTokenBase)
             onIsGivenBaseChanged(isTokenBase)
           }}
@@ -160,8 +163,8 @@ const SingleSidedLiquidity = ({
               <ApproveButton
                 title={
                   baseZapApproveState === ApprovalState.PENDING
-                    ? `Approving ${pool.token0.symbol}`
-                    : `Approve ${pool.token0.symbol}`
+                    ? `Approving ${token0.symbol}`
+                    : `Approve ${token0.symbol}`
                 }
                 state={
                   baseZapApproveState === ApprovalState.PENDING
@@ -177,8 +180,8 @@ const SingleSidedLiquidity = ({
               <ApproveButton
                 title={
                   quoteZapApproveState === ApprovalState.PENDING
-                    ? `Approving ${pool.token1.symbol}`
-                    : `Approve ${pool.token1.symbol}`
+                    ? `Approving ${token1.symbol}`
+                    : `Approve ${token1.symbol}`
                 }
                 state={
                   quoteZapApproveState === ApprovalState.PENDING
