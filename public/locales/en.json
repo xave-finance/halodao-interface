@@ -143,4 +143,8 @@
   "curveERC20TransferFailedMessage": "ERC20 transfer failed.",
   "SubtractionOverflowErrorMessage": "Overflow Issue",
   "MetamaskRejectionErrorMessage": "Metamask Rejection"
+  "lend": "Lend",
+  "apr-breakdown": "APR Breakdown:",
+  "insufficient-reward-balance": "Please ask protocol to top up rewards.",
+  "harvest-failed": "Harvest failed. Please try again."
 }
