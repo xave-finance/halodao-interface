@@ -27,7 +27,6 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 
-
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
@@ -106,7 +105,6 @@ export default function HaloHaloWithdrawPanel({
     data: '',
     message: ''
   })
-
 
   // Updating the state of stake button
   useEffect(() => {
