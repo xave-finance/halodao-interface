@@ -15,6 +15,7 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
+import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -32,6 +33,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
+  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
 }
 
 const AddLiquityModal = ({
@@ -43,7 +45,8 @@ const AddLiquityModal = ({
   zapAmount,
   slippage,
   isVisible,
-  onDismiss
+  onDismiss,
+  ErrorStateSetter
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
   const { getFutureTime } = useTime()
@@ -72,6 +75,9 @@ const AddLiquityModal = ({
     pool.token0,
     pool.token1
   )
+  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
+    ErrorStateSetter({ code, data, message })
+  }
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -90,13 +96,33 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isGivenBase) {
-        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
-        quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
-        baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
+          quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+          baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.clear()
+          onDismiss()
+          ErrorHandler({
+            code: e.code,
+            data: e.data?.originalError?.data,
+            message: e.message
+          })
+        }
       } else {
-        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
-        baseTokenAmount = Number(await viewTargetSwap(swapAmount))
-        quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
+          baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+          quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.clear()
+          onDismiss()
+          ErrorHandler({
+            code: e.code,
+            data: e.data?.originalError?.data,
+            message: e.message
+          })
+        }
       }
     }
 
