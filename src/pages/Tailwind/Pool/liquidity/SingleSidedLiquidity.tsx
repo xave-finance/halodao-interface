@@ -73,8 +73,8 @@ const SingleSidedLiquidity = ({
     const zapFromBase = selectedToken === pool.token0
     if (zapFromBase) {
       const swapAmount = await calcSwapAmountForZapFromBase(val)
-        calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
-        calcBaseAmount = Number(val) - Number(swapAmount)
+      calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
+      calcBaseAmount = Number(val) - Number(swapAmount)
     } else {
       const swapAmount = await calcSwapAmountForZapFromQuote(val)
       calcBaseAmount = Number(await viewTargetSwap(swapAmount))
