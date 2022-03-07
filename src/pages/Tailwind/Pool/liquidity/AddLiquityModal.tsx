@@ -80,7 +80,6 @@ const AddLiquityModal = ({
     ErrorStateSetter({ code, data, message })
   }
 
-
   /**
    * Main logic for updating confirm add liquidity UI
    **/
