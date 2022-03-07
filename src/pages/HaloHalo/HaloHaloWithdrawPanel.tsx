@@ -132,6 +132,7 @@ export default function HaloHaloWithdrawPanel({
       console.log(txHash)
       // user rejected tx or didn't go thru
       if (
+        // catch metamask rejection
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
