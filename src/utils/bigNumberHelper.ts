@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
 
-export const bigNumberToNumber = (bn: BigNumber, denomDecimals = 18) => {
-  const denom = BigNumber.from(10).pow(denomDecimals)
-  return bn.div(denom).toNumber()
+export const bigNumberToNumber = (bn: BigNumber, decimals = 18) => {
+  return parseFloat(formatUnits(bn.toString(), decimals))
 }

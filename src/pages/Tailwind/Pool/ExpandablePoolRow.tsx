@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
@@ -19,10 +19,10 @@ const PoolRow = styled.div`
     width: 19%;
   }
   .col-2 {
-    width: 18%;
+    width: 17%;
   }
   .col-3 {
-    width: 18%;
+    width: 17%;
   }
   .col-4 {
     width: 11%;
@@ -31,7 +31,7 @@ const PoolRow = styled.div`
     width: 13%;
   }
   .col-6 {
-    width: 13%;
+    width: 15%;
   }
   .col-7 {
     width: 8%;
@@ -167,15 +167,15 @@ const ExpandablePoolRow = ({
         </div>
         <div className="col-4 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Held HLP:</div>
-          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.held))}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.held), NumberFormat.long)}</div>
         </div>
         <div className="col-5 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Staked HLP:</div>
-          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.staked))}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.staked), NumberFormat.long)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Earned:</div>
-          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.earned))} xRNBW</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.earned), NumberFormat.long)} xRNBW</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />

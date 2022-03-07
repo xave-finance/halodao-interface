@@ -15,7 +15,8 @@ import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammReward
 import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { getHaloAddresses } from 'utils/haloAddresses'
-import { parseEther } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {
   const address = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest)
@@ -164,8 +165,13 @@ export const useGetPoolData = () => {
       new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
     ]
 
-    // TODO: remove this when we have a better way to get the total pool liquidity
-    const totalLiquidity = (poolTokens.balances as BigNumber[]).reduce((a, b) => a.add(b), BigNumber.from(0))
+    const token0Rate = parseUnits('0.02', 8) // @todo: get rates from token[0] assimilator contract
+    const token1Rate = parseUnits('1', 8) // @todo: get rates from token[1] assimilator contract
+    const token0Numeraire = bigNumberToNumber(poolTokens.balances[0].div(1e8).mul(token0Rate), token0Decimals)
+    const token1Numeraire = bigNumberToNumber(poolTokens.balances[1].div(1e8).mul(token1Rate), token1Decimals)
+    const totalLiquidity = token0Numeraire + token1Numeraire
+    const token0Weight = token0Numeraire / totalLiquidity
+    const token1Weight = token1Numeraire / totalLiquidity
 
     const poolData = {
       vaultPoolId,
@@ -173,19 +179,19 @@ export const useGetPoolData = () => {
       address: poolAddress,
       name: `${tokens[0].symbol}/${tokens[1].symbol}`,
       totalSupply: totalSupply,
-      totalLiquidity,
+      totalLiquidity: parseUnits(`${totalLiquidity}`),
       tokens: [
         {
           token: tokens[0],
           balance: poolTokens.balances[0],
-          weight: parseEther('0.5'), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
-          rate: parseEther('0.2') // @todo: get rates from token[0] assimilator contract
+          weight: parseUnits(`${token0Weight}`), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
+          rate: token0Rate
         },
         {
           token: tokens[1],
           balance: poolTokens.balances[1],
-          weight: parseEther('0.5'), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
-          rate: parseEther('1') // @todo: get rates from token[0] assimilator contract
+          weight: parseUnits(`${token1Weight}`), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
+          rate: token1Rate
         }
       ],
       userInfo: {
@@ -194,8 +200,6 @@ export const useGetPoolData = () => {
         earned: userEarned
       }
     }
-
-    console.log('poolData: ', poolData)
 
     return poolData
   }

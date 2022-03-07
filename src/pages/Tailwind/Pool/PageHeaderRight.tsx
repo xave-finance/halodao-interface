@@ -51,7 +51,7 @@ const PageHeaderRight = () => {
           <img width={'85px'} src={xRNBWLogo} alt="xRNBW" />
         </div>
         <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Unclaimed xRNBW Earned</div>
-        <div className="text-2xl font-semibold">{formatNumber(rewardsEarned)}</div>
+        <div className="text-2xl font-semibold">{formatNumber(rewardsEarned, NumberFormat.long)}</div>
       </div>
     </div>
   )

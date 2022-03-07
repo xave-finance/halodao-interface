@@ -1,5 +1,6 @@
 import PoolBigButton from 'components/Tailwind/Buttons/PoolBigButton'
 import { BigNumber } from 'ethers'
+import { parseUnits } from 'ethers/lib/utils'
 import React from 'react'
 import Chart from 'react-google-charts'
 import { useHistory } from 'react-router'
@@ -20,8 +21,8 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
     history.push(`/farm/${pool.address}`)
   }
 
-  const token0Price = bigNumberToNumber(pool.tokens[0].weight.mul(BigNumber.from(1).div(pool.tokens[0].rate)))
-  const token1Price = bigNumberToNumber(pool.tokens[1].weight.mul(BigNumber.from(1).div(pool.tokens[1].rate)))
+  const token0Price = bigNumberToNumber(pool.tokens[0].weight.mul(parseUnits('1', 8).div(pool.tokens[0].rate)))
+  const token1Price = bigNumberToNumber(pool.tokens[1].weight.mul(parseUnits('1', 8).div(pool.tokens[1].rate)))
 
   return (
     <div className="p-4 text-white bg-primary-hover rounded-tr-card rounded-tl-card md:rounded-br-card md:rounded-bl-card">
