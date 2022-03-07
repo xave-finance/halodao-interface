@@ -33,7 +33,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
 
   const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
   const ErrorHandling = (errors: ErrorMessageObject) => {
-    if (errors.code != 0) {
+    if (errors.code !== 0) {
       getErrorMessage(errors)
       sethasError(true)
       console.clear()
@@ -77,7 +77,6 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
           onSlippageChanged={setSlippage}
           onDeposit={() => setShowModal(true)}
           isAddLiquidityEnabled={isEnabled}
-          ErrorStateSetter={setErrors}
         />
       )}
 
@@ -91,6 +90,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
+        ErrorStateSetter={setErrors}
       />
       {hasError && (
         <BaseModal
