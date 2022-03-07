@@ -142,7 +142,7 @@
   "curveSwapHaltErrorMessage": "Pool has reached maximum inbalance. Swap back towards ideal ratios at cheaper fees.",
   "curveERC20TransferFailedMessage": "ERC20 transfer failed.",
   "SubtractionOverflowErrorMessage": "Overflow Issue",
-  "MetamaskRejectionErrorMessage": "Metamask Rejection"
+  "MetamaskRejectionErrorMessage": "Metamask Rejection",
   "lend": "Lend",
   "apr-breakdown": "APR Breakdown:",
   "insufficient-reward-balance": "Please ask protocol to top up rewards.",
