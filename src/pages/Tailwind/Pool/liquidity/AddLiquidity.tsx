@@ -72,7 +72,6 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
           onDeposit={() => setShowModal(true)}
           onIsGivenBaseChanged={setIsGivenBase}
           isAddLiquidityEnabled={isEnabled}
-          ErrorStateSetter={setErrors}
         />
       ) : (
         <SingleSidedLiquidity
@@ -96,6 +95,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
+        ErrorStateSetter={setErrors}
       />
       {hasError && (
         <BaseModal

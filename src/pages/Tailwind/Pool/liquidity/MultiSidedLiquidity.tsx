@@ -28,7 +28,6 @@ interface MultiSidedLiquidityProps {
   onDeposit: () => void
   onIsGivenBaseChanged: (isGivenBase: boolean) => void
   isAddLiquidityEnabled: boolean
-  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
 }
 
 const MultiSidedLiquidity = ({
@@ -38,8 +37,7 @@ const MultiSidedLiquidity = ({
   onQuoteAmountChanged,
   onDeposit,
   onIsGivenBaseChanged,
-  isAddLiquidityEnabled,
-  ErrorStateSetter
+  isAddLiquidityEnabled
 }: MultiSidedLiquidityProps) => {
   const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
@@ -59,9 +57,6 @@ const MultiSidedLiquidity = ({
   const [quoteApproveState, quoteApproveCallback] = useTokenAllowance(quoteTokenAmount, pool.address)
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
-  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
-    ErrorStateSetter({ code, data, message })
-  }
 
   /**
    * Update quote amount upon entering base amount
@@ -73,21 +68,12 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      try {
-        const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-        setQuoteInput(quote)
-        onQuoteAmountChanged(quote)
+      const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+      setQuoteInput(quote)
+      onQuoteAmountChanged(quote)
 
-        if (Number(base) > Number(val)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
-        }
-      } catch (e) {
-        console.clear()
-        ErrorHandler({
-          code: e.code,
-          data: e.data?.originalError?.data,
-          message: e.message
-        })
+      if (Number(base) > Number(val)) {
+        setErrorMessage(t('error-liquidity-estimates-changed'))
       }
     } else {
       setQuoteInput('')
