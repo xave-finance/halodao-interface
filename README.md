@@ -64,9 +64,8 @@ yarn deploy:<target>
 
 - `dev` (dev.app.halodao.com)
 - `dev-beta` (dev.beta.app.halodao.com)
-- `prod` (app.halodao.com)
 - `beta` (beta.app.halodao.com)
-
+- `prod` (app.halodao.com)
 ## Contributions
 
 **Please open all pull requests against the `develop` branch.**

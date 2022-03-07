@@ -330,6 +330,11 @@ export const BALANCER_SUBGRAPH_URL = {
   [ChainId.KOVAN]: process.env.REACT_APP_BALANCER_SUBGRAPH_URL_KOVAN
 }
 
+// Halodao Exchange URL
+export const HALODAO_EXCHANGE_SUBGRAPH = {
+  [ChainId.MAINNET]: process.env.REACT_APP_HALODAO_EXCHANGE_SUBGRAPH_URL
+}
+
 // Coingecko API URL
 export const COINGECKO_API_URL = process.env.REACT_APP_COINGECKO_API_URL || 'https://api.coingecko.com/api/v3'
 export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
@@ -341,7 +346,7 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
   // Testnets
   [ChainId.KOVAN]: {
     weth: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
-    dai: '0x1528F3FCc26d13F7079325Fb78D9442607781c8C',
+    dai: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
     maker: '0xef13C0c8abcaf5767160018d268f9697aE4f5375',
     'usd-coin': '0x2F375e94FC336Cdec2Dc0cCB5277FE59CBf1cAe5',
     augur: '0x8c9e6c40d3402480ACE624730524fACC5482798c',
@@ -359,7 +364,10 @@ export const COINGECKO_KNOWN_TOKENS: ChainCoinGeckoIdMap = {
     xsgd: '0x70e8de73ce538da2beed35d14187f6959a8eca96'
   },
   [ChainId.MATIC_TESTNET]: {},
-  [ChainId.ARBITRUM_TESTNET]: {}
+  [ChainId.ARBITRUM_TESTNET]: {
+    dai: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+    'usd-coin': '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8'
+  }
 }
 
 export const COMMON_CONTRACT_NAMES: { [address: string]: string } = {
