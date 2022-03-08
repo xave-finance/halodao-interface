@@ -1,30 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-export enum CurveError {
-  curveReentered = 'Curve/re-entered',
-  allowanceDecreaseUnderflow = 'Curve/allowance-decrease-underflow',
-  approvalOverflow = 'Curve/approval-overflow',
-  insufficientAllowance = 'Curve/insufficient-allowance',
-  frozen = 'Curve/frozen-only-allowing-proportional-withdraw',
-  emergencyState = 'Curve/emergency-only-allowing-emergency-proportional-withdraw',
-  transactionDeadlinePassed = 'Curve/tx-deadline-passed',
-  whitelistOnGoing = 'Curve/whitelist-stage-on-going',
-  whitelistStopped = 'Curve/whitelist-stage-stopped',
-  swapAmountTooLarge = 'Curve/amount-too-large',
-  swapConvergenceFailed = 'Curve/swap-convergence-failed',
-  swapInvariantViolation = 'Curve/swap-invariant-violation',
-  liquidityInvariantViolation = 'Curve/liquidity-invariant-violation',
-  upperHalt = 'Curve/upper-halt',
-  lowerHalt = 'Curve/lower-halt',
-  CADCTransferFailed = 'Curve/CADC-transfer-from-failed' // change in case and token
-  // check the other failed
-}
-
-export enum GeneralError {
-  SubtractionOverflow = 'SafeMath: subtraction overflow',
-  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.'
-}
+import { CurveErrorMessage, GeneralErrorMessage } from '../constants/errors'
 
 export type ErrorMessageObject = {
   code: number
@@ -39,59 +15,59 @@ const useErrorMessage = () => {
   const getErrorMessage = useCallback(
     (errorObject: ErrorMessageObject) => {
       switch (errorObject.message) {
-        case CurveError.curveReentered:
-          setMessage(t('curveDefaultErrorMessage'))
+        case CurveErrorMessage.CurveReentered:
+          setMessage(t('errorMessageCurveDefault'))
           break
-        case CurveError.allowanceDecreaseUnderflow:
-          setMessage(t('curveAllowanceErrorMessage'))
+        case CurveErrorMessage.AllowanceDecreaseUnderflow:
+          setMessage(t('errorMessageCurveAllowance'))
           break
-        case CurveError.approvalOverflow:
-          setMessage(t('curveAllowanceErrorMessage'))
+        case CurveErrorMessage.ApprovalOverflow:
+          setMessage(t('errorMessageCurveAllowance'))
           break
-        case CurveError.insufficientAllowance:
-          setMessage(t('curveAllowanceErrorMessage'))
+        case CurveErrorMessage.InsufficientAllowance:
+          setMessage(t('errorMessageCurveAllowance'))
           break
-        case CurveError.frozen:
-          setMessage(t('curveFrozenMessage"'))
+        case CurveErrorMessage.Frozen:
+          setMessage(t('errorMessageCurveFrozen"'))
           break
-        case CurveError.emergencyState:
-          setMessage(t('curveEmergencyMessage'))
+        case CurveErrorMessage.EmergencyState:
+          setMessage(t('errorMessageCurveEmergency'))
           break
-        case CurveError.transactionDeadlinePassed:
-          setMessage(t('curveDeadlinePassedMessage'))
+        case CurveErrorMessage.TransactionDeadlinePassed:
+          setMessage(t('errorMessageCurveDeadlinePassed'))
           break
-        case CurveError.whitelistOnGoing:
-          setMessage(t('curveWhitelistingStageMessage'))
+        case CurveErrorMessage.WhitelistOnGoing:
+          setMessage(t('errorMessageCurveWhitelistingStage'))
           break
-        case CurveError.whitelistStopped:
-          setMessage(t('curveNotWhitelistingStageMessage'))
+        case CurveErrorMessage.WhitelistStopped:
+          setMessage(t('errorMessageCurveNotWhitelistingStage'))
           break
-        case CurveError.swapAmountTooLarge:
-          setMessage(t('curveAmountTooLargeErrorMessage'))
+        case CurveErrorMessage.SwapAmountTooLarge:
+          setMessage(t('errorMessageCurveAmountTooLarge'))
           break
-        case CurveError.swapConvergenceFailed:
-          setMessage(t('curveSwapFailedErrorMessage'))
+        case CurveErrorMessage.SwapConvergenceFailed:
+          setMessage(t('errorMessageCurveSwapFailed'))
           break
-        case CurveError.swapInvariantViolation:
-          setMessage(t('curveSwapFailedErrorMessage'))
+        case CurveErrorMessage.SwapInvariantViolation:
+          setMessage(t('errorMessageCurveSwapFailed'))
           break
-        case CurveError.liquidityInvariantViolation:
-          setMessage(t('curveSwapFailedErrorMessage'))
+        case CurveErrorMessage.LiquidityInvariantViolation:
+          setMessage(t('errorMessageCurveSwapFailed'))
           break
-        case CurveError.upperHalt:
-          setMessage(t('curveSwapHaltErrorMessage'))
+        case CurveErrorMessage.UpperHalt:
+          setMessage(t('errorMessageCurveSwapHalt'))
           break
-        case CurveError.lowerHalt:
-          setMessage(t('curveSwapHaltErrorMessage'))
+        case CurveErrorMessage.LowerHalt:
+          setMessage(t('errorMessageCurveSwapHalt'))
           break
-        case CurveError.CADCTransferFailed:
-          setMessage(t('curveERC20TransferFailedMessage'))
+        case CurveErrorMessage.CADCTransferFailed:
+          setMessage(t('errorMessageCurveERC20TransferFailed'))
           break
-        case GeneralError.SubtractionOverflow:
-          setMessage(t('SubtractionOverflowErrorMessage'))
+        case GeneralErrorMessage.SubtractionOverflow:
+          setMessage(t('errorMessageSubtractionOverflow'))
           break
-        case GeneralError.MetamaskRejection:
-          setMessage(t('MetamaskRejectionErrorMessage'))
+        case GeneralErrorMessage.MetamaskRejection:
+          setMessage(t('errorMessageMetamaskRejection'))
           break
       }
     },

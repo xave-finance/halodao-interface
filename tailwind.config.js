@@ -19,6 +19,7 @@ module.exports = {
           gradientVia: '#5521B6',
           gradientTo: '#2DB7C4',
           gray: '#828282',
+          midGray: '#F1F1F1',
           lightGray: '#BDBDBD'
         },
         secondary: {
@@ -34,6 +35,9 @@ module.exports = {
         },
         warning: {
           DEFAULT: '#FA6F44'
+        },
+        error: {
+          DEFAULT: '#FF5F37'
         },
         link: {
           DEFAULT: '#518cff',

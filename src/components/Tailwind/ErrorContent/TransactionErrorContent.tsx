@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
 import { ErrorMessageObject } from '../../../halo-hooks/useErrorMessage'
@@ -10,138 +9,57 @@ interface ErrorProps {
   closeError: () => void
 }
 
-// TODO: Tailwind?
-const ReportOnDiscordButton = styled.button`
-  background: #ff5f37;
-  border-radius: 4px;
-  width: 100%;
-  margin: auto;
-`
-
-const RetryTransactionLink = styled.button`
-  font-family: Open Sans;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 130%;
-  /* identical to box height, or 21px */
-  text-align: center;
-  color: #ff5f37;
-  background: transparent;
-`
-const FooterErrorModal = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-`
-
-const ExpandedContentContainer = styled(FooterErrorModal)`
-  gap: unset;
-`
-const ExpandedContent = styled.code`
-  margin-top: 1em;
-  background: #f1f1f1;
-  border-radius: 5px;
-  padding: 1rem;
-  width: 90%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  & p {
-    font-style: italic;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-  ${({ theme }) => theme.mediaWidth.upToExtra2Small`
-    padding: unset;
-    width: 100%;
-  `};
-`
-const ExpandedContentOption = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  width: 100%;
-`
-
-const HideBtn = styled.div`
-  margin-top: -3px;
-  color: #333333;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.5;
-    transition: 0.2s;
-  }
-`
-const SeeMore = styled.small`
-  color: #333333;
-  cursor: pointer;
-  &:hover {
-    opacity: 0.5;
-    transition: 0.2s;
-  }
-`
-
-const StyledErrorMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-`
-
 const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
   const [showMore, setShowMore] = useState(false)
   const ErrorMessage = `${objectError.code}: ${objectError.message}`
 
   return (
     <footer className="p-4">
-      <div className="pt-12 pb-6 flex justify-center">
+      <div className="pt-12 pb-6 flex justify-center hover:opacity-50">
         <img src={OrangeWarningIcon} alt="" />
       </div>
       <div className="flex justify-center font-semibold text-2xl mb-2">Transaction Failed</div>
       <div className="text-center font-semibold">
         {message}
-        <SeeMore
+        <div className="text-gray-800 cursor-pointer"
           onClick={() => {
             setShowMore(!showMore)
           }}
         >
           {showMore ? '' : ' [...]'}
-        </SeeMore>
+        </div>
       </div>
-      <ExpandedContentContainer>
+      <div className='flex flex-col justify-center items-center text-center'>
         {showMore && (
-          <ExpandedContent>
-            <StyledErrorMessage>
-              <p>{ErrorMessage}</p>
-            </StyledErrorMessage>
-            <ExpandedContentOption>
+          <div className='flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray'>
+            <div className="flex justify-center items-center text-center">
+              <p className="italic mb-2.5 text-sm">{ErrorMessage}</p>
+            </div>
+            <div className="flex justify-center items-center w-full space-x-4">
               <div>
                 <Copy toCopy={ErrorMessage}>
                   <span>Copy</span>
                 </Copy>
               </div>
-              <HideBtn
+              <div className="text-gray-800 cursor-pointer"
                 onClick={() => {
                   setShowMore(false)
                 }}
               >
-                <small>Hide</small>
-              </HideBtn>
-            </ExpandedContentOption>
-          </ExpandedContent>
+                <span className="text-gray-800 cursor-pointe text-sm">Hide</span>
+              </div>
+            </div>
+          </div>
         )}
-      </ExpandedContentContainer>
-      <ReportOnDiscordButton
+      </div>
+      <div
         className={`
         ${!showMore ? 'mt-10' : 'mt-5'}
         flex items-center justify-center
         font-bold text-white
         py-2 w-full
         rounded
-        bg-orange
+        bg-error
         cursor-pointer
         hover:bg-orange-hover`}
         onClick={() => {
@@ -149,17 +67,17 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
         }}
       >
         Report Error on Discord
-      </ReportOnDiscordButton>
-      <FooterErrorModal>
-        <RetryTransactionLink
-          className="mt-4"
+      </div>
+      <div className='flex flex-col justify-center items-center text-center'>
+        <div
+          className="mt-4 text-error font-bold text-center cursor-pointer"
           onClick={() => {
             closeError()
           }}
         >
           Retry Transaction
-        </RetryTransactionLink>
-      </FooterErrorModal>
+        </div>
+      </div>
     </footer>
   )
 }
