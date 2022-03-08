@@ -21,7 +21,8 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
       <div className="flex justify-center font-semibold text-2xl mb-2">Transaction Failed</div>
       <div className="text-center font-semibold">
         {message}
-        <div className="text-gray-800 cursor-pointer"
+        <div
+          className="text-gray-800 cursor-pointer"
           onClick={() => {
             setShowMore(!showMore)
           }}
@@ -29,9 +30,9 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
           {showMore ? '' : ' [...]'}
         </div>
       </div>
-      <div className='flex flex-col justify-center items-center text-center'>
+      <div className="flex flex-col justify-center items-center text-center">
         {showMore && (
-          <div className='flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray'>
+          <div className="flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray">
             <div className="flex justify-center items-center text-center">
               <p className="italic mb-2.5 text-sm">{ErrorMessage}</p>
             </div>
@@ -41,7 +42,8 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
                   <span>Copy</span>
                 </Copy>
               </div>
-              <div className="text-gray-800 cursor-pointer"
+              <div
+                className="text-gray-800 cursor-pointer"
                 onClick={() => {
                   setShowMore(false)
                 }}
@@ -68,7 +70,7 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
       >
         Report Error on Discord
       </div>
-      <div className='flex flex-col justify-center items-center text-center'>
+      <div className="flex flex-col justify-center items-center text-center">
         <div
           className="mt-4 text-error font-bold text-center cursor-pointer"
           onClick={() => {
