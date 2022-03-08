@@ -12,7 +12,7 @@ const InlineErrorContent = ({ errorObject }: ErrorProps) => {
     <div className="bg-error-light border-solid border-1 border-error-dark rounded">
       <div className="">ERROR:</div>
       <div className="text-center font-semibold text-xl mb-2">
-        {message} Please show this error message <span className='text-primary-red'>{errorObject.message} </span>
+        {message} Please show this error message <span className="text-primary-red">{errorObject.message} </span>
         to the team on Discord or email us at dev@halodao.com.
       </div>
     </div>
