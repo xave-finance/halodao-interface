@@ -18,7 +18,6 @@ import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskErrorCode } from 'constants/errors'
-import  ErrorContent  from 'components/Tailwind/ErrorContent/TransactionErrorContent'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -325,13 +324,6 @@ const SwapPanel = () => {
       <div className="w-full">
         {account ? (
           <>
-            <ErrorContent
-              objectError={{ code: 0, data: 'this is data', message: 'this is message' }}
-              message="Tracy"
-              closeError={() => {
-                setShowModal(false)
-              }}
-            />
             <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
               <div className="w-1/2 flex justify-start">
                 <p className="font-semibold text-secondary-alternate">From</p>
