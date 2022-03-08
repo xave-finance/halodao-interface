@@ -152,7 +152,7 @@ export const useSwapToken = (
           ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
           : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
       } catch (e) {
-        setButtonState(SwapButtonState.InsufficientLiquidity)
+        // setButtonState(SwapButtonState.InsufficientLiquidity)
       }
       setIsLoadingMinimumAmount(false)
     },
@@ -222,7 +222,7 @@ export const useSwapToken = (
           toCurrency.address,
           quoteAmount,
           parsedMinimumAmountSwap,
-          deadline ? getFutureTime(deadline * 60) : getFutureTime(60)
+          Date.now() + 1
         )
 
         await tx.wait()
