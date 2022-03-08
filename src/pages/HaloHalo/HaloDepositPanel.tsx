@@ -136,7 +136,6 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
         getErrorMessage({
           code: txHash.code,
           data: '',
@@ -156,7 +155,6 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setRequestedApproval(false)
       sethasError(true)
       const shortedMessage = e.data.message
@@ -201,7 +199,6 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
         getErrorMessage({
           code: tx.code,
           data: '',
@@ -224,7 +221,6 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
