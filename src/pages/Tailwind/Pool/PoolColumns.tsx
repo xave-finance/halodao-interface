@@ -6,10 +6,10 @@ const Wrapper = styled.div`
     width: 19%;
   }
   .col-2 {
-    width: 18%;
+    width: 17%;
   }
   .col-3 {
-    width: 18%;
+    width: 17%;
   }
   .col-4 {
     width: 11%;
@@ -18,7 +18,7 @@ const Wrapper = styled.div`
     width: 13%;
   }
   .col-6 {
-    width: 13%;
+    width: 15%;
   }
   .col-7 {
     width: 8%;

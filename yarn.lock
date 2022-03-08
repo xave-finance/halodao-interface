@@ -2222,6 +2222,11 @@
     lodash.camelcase "^4.3.0"
     protobufjs "^6.8.6"
 
+"@halodao/halodao-contract-addresses@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@halodao/halodao-contract-addresses/-/halodao-contract-addresses-0.0.6.tgz#16c1a98e77c2475cb78388328757f9c491a91278"
+  integrity sha512-JdHxelX64FocebdOJ3rwI9/i7HhwonFtDARr4xar6IkxbblbDBDH6gnflC+ANZHSaRoaRNKfsrhKjyV0zy56KA==
+
 "@halodao/sdk@5.0.0-canary.2-b":
   version "5.0.0-canary.2-b"
   resolved "https://registry.yarnpkg.com/@halodao/sdk/-/sdk-5.0.0-canary.2-b.tgz#eb950bb34dd0b035da6206f7e470db797e9fe62f"

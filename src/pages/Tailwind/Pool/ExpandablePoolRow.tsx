@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
-import { formatNumber } from 'utils/formatNumber'
+import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import PoolExpandButton from '../../../components/Tailwind/Buttons/PoolExpandButton'
 import styled from 'styled-components'
 import PoolCardLeft from './PoolCardLeft'
 import PoolCardRight from './PoolCardRight'
-import { useLiquidityPool } from 'halo-hooks/amm/useLiquidityPool'
-import { formatEther } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
-import { Token } from '@halodao/sdk'
+import { useGetPoolData } from 'halo-hooks/amm-v2/useLiquidityPool'
 import { PoolData } from './models/PoolData'
 import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
 import { useActivePopups, useBlockNumber } from '../../../state/application/hooks'
+import { BigNumber } from 'ethers'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 const PoolRow = styled.div`
   .col-1 {
     width: 19%;
   }
   .col-2 {
-    width: 18%;
+    width: 17%;
   }
   .col-3 {
-    width: 18%;
+    width: 17%;
   }
   .col-4 {
     width: 11%;
@@ -32,7 +31,7 @@ const PoolRow = styled.div`
     width: 13%;
   }
   .col-6 {
-    width: 13%;
+    width: 15%;
   }
   .col-7 {
     width: 8%;
@@ -47,23 +46,27 @@ const PoolRow = styled.div`
 
 interface ExpandablePoolRowProps {
   poolAddress: string
-  pid?: number
+  rewardsPoolId?: number
+  vaultPoolId?: string
   isExpanded: boolean
   onClick: () => void
   isActivePool?: boolean
 }
 
-const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool = true }: ExpandablePoolRowProps) => {
+const ExpandablePoolRow = ({
+  poolAddress,
+  rewardsPoolId,
+  vaultPoolId,
+  isExpanded,
+  onClick,
+  isActivePool = true
+}: ExpandablePoolRowProps) => {
   const [pool, setPool] = useState<PoolData | undefined>(undefined)
   const [reloader, setReloader] = useState(0)
-  const { getTokens, getLiquidity, getBalance, getStakedLPToken, getPendingRewards, getTotalSupply } = useLiquidityPool(
-    poolAddress,
-    pid
-  )
   const dispatch = useDispatch<AppDispatch>()
-
   const blockNumber = useBlockNumber()
   const activePopups = useActivePopups()
+  const getPoolData = useGetPoolData()
 
   useEffect(() => {
     setReloader((r: number) => r + 1)
@@ -76,73 +79,17 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
    * Main logic: fetching pool info
    *
    * Triggers every:
-   * - network changed
+   * - new block number
+   * - 5 seconds after an in-app popup appeared (tx has been confirmed)
    **/
   useEffect(() => {
-    const promises = [
-      getTokens(),
-      getLiquidity(),
-      getBalance(),
-      getStakedLPToken(),
-      getPendingRewards(),
-      getTotalSupply()
-    ]
-
-    Promise.all(promises)
-      .then(results => {
-        const tokens: Token[] = results[0]
-        const liquidity: {
-          total: BigNumber
-          tokens: BigNumber[]
-          weights: number[]
-          rates: number[]
-          assimilators: string[]
-        } = results[1]
-        const balance: BigNumber = results[2]
-        const staked: BigNumber = results[3]
-        const rewards: BigNumber = results[4]
-        const totalSupply: BigNumber = results[5]
-
-        setPool({
-          address: poolAddress,
-          name: `${tokens[0].symbol}/${tokens[1].symbol}`,
-          token0: tokens[0],
-          token1: tokens[1],
-          pooled: {
-            total: parseFloat(formatEther(liquidity.total)),
-            token0: parseFloat(formatEther(liquidity.tokens[0])),
-            token1: parseFloat(formatEther(liquidity.tokens[1]))
-          },
-          weights: {
-            token0: liquidity.weights[0],
-            token1: liquidity.weights[1]
-          },
-          rates: {
-            token0: liquidity.rates[0],
-            token1: liquidity.rates[1]
-          },
-          held: Number(formatEther(balance)),
-          heldBN: balance,
-          staked: Number(formatEther(staked)),
-          earned: Number(formatEther(rewards)),
-          totalSupply: Number(formatEther(totalSupply)),
-          assimilators: liquidity.assimilators
-        })
-      })
+    if (!vaultPoolId || rewardsPoolId === undefined) return
+    getPoolData(poolAddress, vaultPoolId, rewardsPoolId)
+      .then(setPool)
       .catch(e => {
         console.error(e)
       })
-  }, [
-    poolAddress,
-    getTokens,
-    getLiquidity,
-    getBalance,
-    getStakedLPToken,
-    getPendingRewards,
-    getTotalSupply,
-    blockNumber,
-    reloader
-  ])
+  }, [poolAddress, rewardsPoolId, vaultPoolId, blockNumber, reloader]) // eslint-disable-line
 
   /**
    * Update cached pool data in app cache
@@ -150,12 +97,14 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
   useEffect(() => {
     if (!pool) return
 
+    const price = pool.totalSupply.gt(BigNumber.from(0)) ? pool.totalLiquidity.div(pool.totalSupply) : BigNumber.from(0)
+
     const poolData = {
       lpTokenAddress: pool.address,
-      lpTokenBalance: pool.held,
-      lpTokenStaked: pool.staked,
-      lpTokenPrice: pool.totalSupply > 0 ? pool.pooled.total / pool.totalSupply : 0,
-      pendingRewards: pool.earned
+      lpTokenBalance: bigNumberToNumber(pool.userInfo.held),
+      lpTokenStaked: bigNumberToNumber(pool.userInfo.staked),
+      lpTokenPrice: bigNumberToNumber(price),
+      pendingRewards: bigNumberToNumber(pool.userInfo.earned)
     }
 
     dispatch(updatePools([poolData]))
@@ -199,32 +148,34 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
             md:font-normal 
           `}
         >
-          <DoubleCurrencyLogo currency0={pool.token0} currency1={pool.token1} size={16} />
+          <DoubleCurrencyLogo currency0={pool.tokens[0].token} currency1={pool.tokens[1].token} size={16} />
           <span>{pool.name}</span>
         </div>
         <div className="col-2 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (A) Tokens:</div>
           <div className="">
-            {formatNumber(pool.pooled.token0)} {pool.token0.symbol}
+            {formatNumber(bigNumberToNumber(pool.tokens[0].balance, pool.tokens[0].token.decimals))}{' '}
+            {pool.tokens[0].token.symbol}
           </div>
         </div>
         <div className="col-3 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pooled (B) Tokens:</div>
           <div className="">
-            {formatNumber(pool.pooled.token1)} {pool.token1.symbol}
+            {formatNumber(bigNumberToNumber(pool.tokens[1].balance, pool.tokens[1].token.decimals))}{' '}
+            {pool.tokens[1].token.symbol}
           </div>
         </div>
         <div className="col-4 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Held HLP:</div>
-          <div className="">{formatNumber(pool.held)}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.held), NumberFormat.long)}</div>
         </div>
         <div className="col-5 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Staked HLP:</div>
-          <div className="">{formatNumber(pool.staked)}</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.staked), NumberFormat.long)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Earned:</div>
-          <div className="">{formatNumber(pool.earned)} xRNBW</div>
+          <div className="">{formatNumber(bigNumberToNumber(pool.userInfo.earned), NumberFormat.long)} xRNBW</div>
         </div>
         <div className="col-7 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { PoolAddressPidMap } from '.'
 import ExpandablePoolRow from './ExpandablePoolRow'
+import { PoolExternalIdsMap } from './types'
 
 interface PoolTableProps {
-  poolMap: PoolAddressPidMap[]
+  poolMap: PoolExternalIdsMap
   isActivePools: boolean
 }
 
@@ -13,11 +13,12 @@ const PoolTable = ({ poolMap, isActivePools }: PoolTableProps) => {
 
   return (
     <>
-      {poolMap.map((pool, i) => (
+      {Object.keys(poolMap).map((poolAddress, i) => (
         <ExpandablePoolRow
-          key={pool.address}
-          poolAddress={pool.address}
-          pid={pool.pid}
+          key={poolAddress}
+          poolAddress={poolAddress}
+          rewardsPoolId={poolMap[poolAddress].rewardsPoolId}
+          vaultPoolId={poolMap[poolAddress].vaultPoolId}
           isExpanded={activeRow === i ? isExpanded : false}
           onClick={() => {
             if (activeRow === i) {

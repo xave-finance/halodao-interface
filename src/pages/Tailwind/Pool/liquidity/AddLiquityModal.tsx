@@ -15,6 +15,7 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -60,17 +61,19 @@ const AddLiquityModal = ({
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation()
+  const token0 = pool.tokens[0].token
+  const token1 = pool.tokens[1].token
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
     pool.address,
-    pool.token0,
-    pool.token1
+    token0,
+    token1
   )
   const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
   const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
-    pool.token0,
-    pool.token1
+    token0,
+    token1
   )
 
   /**
@@ -104,7 +107,11 @@ const AddLiquityModal = ({
 
     let res: any
     if (isGivenBase) {
-      res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+      res = await previewDepositGivenBase(
+        `${baseTokenAmount}`,
+        bigNumberToNumber(pool.tokens[0].rate),
+        bigNumberToNumber(pool.tokens[0].weight)
+      )
     } else {
       res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
     }
@@ -122,7 +129,7 @@ const AddLiquityModal = ({
       min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
     })
 
-    setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
+    setPoolShare(maxLpAmount / (bigNumberToNumber(pool.totalLiquidity) + maxLpAmount))
     setIsLoading(false)
   }
 
@@ -216,7 +223,7 @@ const AddLiquityModal = ({
             {!isLoading && <>{formatNumber(lpAmount.target, NumberFormat.long)} HLP</>}
           </div>
           <div className="mt-1 text-xl">
-            {pool.token0.symbol}/{pool.token1.symbol} Pool Tokens
+            {token0.symbol}/{token1.symbol} Pool Tokens
           </div>
           {!isMultisided && (
             <div className="mt-4 text-sm italic">
@@ -229,21 +236,21 @@ const AddLiquityModal = ({
         <div className="bg-white px-4 pb-4">
           <div className="py-4 text-sm">
             <div className="flex justify-between mb-2">
-              <div className="font-bold">{pool.token0.symbol} Deposited</div>
+              <div className="font-bold">{token0.symbol} Deposited</div>
               <div className={isLoading ? 'animate-pulse bg-primary h-4 w-36 rounded' : ''}>
                 {!isLoading && (
                   <>
-                    {formatNumber(tokenAmounts[0], NumberFormat.long)} {pool.token0.symbol}
+                    {formatNumber(tokenAmounts[0], NumberFormat.long)} {token0.symbol}
                   </>
                 )}
               </div>
             </div>
             <div className="flex justify-between mb-2">
-              <div className="font-bold">{pool.token1.symbol} Deposited</div>
+              <div className="font-bold">{token1.symbol} Deposited</div>
               <div className={isLoading ? 'animate-pulse bg-primary h-4 w-36 rounded' : ''}>
                 {!isLoading && (
                   <>
-                    {formatNumber(tokenAmounts[1], NumberFormat.long)} {pool.token1.symbol}
+                    {formatNumber(tokenAmounts[1], NumberFormat.long)} {token1.symbol}
                   </>
                 )}
               </div>
@@ -254,14 +261,14 @@ const AddLiquityModal = ({
                 <div className={isLoading ? 'animate-pulse bg-primary h-4 w-52 rounded mb-1' : ''}>
                   {!isLoading && (
                     <>
-                      1 {pool.token0.symbol} = {formatNumber(tokenPrices[0])} {pool.token1.symbol}
+                      1 {token0.symbol} = {formatNumber(tokenPrices[0])} {token1.symbol}
                     </>
                   )}
                 </div>
                 <div className={isLoading ? 'animate-pulse bg-primary h-4 w-52 rounded' : ''}>
                   {!isLoading && (
                     <>
-                      1 {pool.token1.symbol} = {formatNumber(tokenPrices[1])} {pool.token0.symbol}
+                      1 {token1.symbol} = {formatNumber(tokenPrices[1])} {token0.symbol}
                     </>
                   )}
                 </div>
@@ -297,11 +304,11 @@ const AddLiquityModal = ({
         <div className="text-center font-bold mb-2">
           Adding{' '}
           <b>
-            {formatNumber(isMultisided ? Number(baseAmount) : tokenAmounts[0])} {pool.token0.symbol}
+            {formatNumber(isMultisided ? Number(baseAmount) : tokenAmounts[0])} {token0.symbol}
           </b>{' '}
           and{' '}
           <b>
-            {formatNumber(isMultisided ? Number(quoteAmount) : tokenAmounts[1])} {pool.token1.symbol}
+            {formatNumber(isMultisided ? Number(quoteAmount) : tokenAmounts[1])} {token1.symbol}
           </b>
         </div>
         <div className="text-center text-sm text-gray-500">Confirm this transaction in your wallet</div>

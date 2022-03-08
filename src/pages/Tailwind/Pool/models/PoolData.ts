@@ -1,28 +1,22 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@halodao/sdk'
+
 export interface PoolData {
-  pid?: string
+  vaultPoolId: string
+  rewardsPoolId: number
   address: string
   name: string
-  token0: Token
-  token1: Token
-  pooled: {
-    total: number
-    token0: number
-    token1: number
+  totalSupply: BigNumber
+  totalLiquidity: BigNumber
+  tokens: {
+    token: Token
+    balance: BigNumber
+    weight: BigNumber
+    rate: BigNumber
+  }[]
+  userInfo: {
+    held: BigNumber
+    staked: BigNumber
+    earned: BigNumber
   }
-  weights: {
-    token0: number
-    token1: number
-  }
-  rates: {
-    token0: number
-    token1: number
-  }
-  held: number
-  heldBN: BigNumber
-  staked: number
-  earned: number
-  totalSupply: number
-  assimilators: string[]
 }
