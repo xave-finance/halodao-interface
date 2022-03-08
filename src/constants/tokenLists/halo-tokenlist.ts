@@ -113,7 +113,11 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x70bA0482FD6343e8fcbd2480C8b4C11d6c654DF5',
   [TokenSymbol.TGBP]: '0x9Ec9C7215F936Ef0C5eFb8383a98354F5AcEFDd7',
   [TokenSymbol.XSGD]: '0xCaE2502093413290bc0E5c2CfA1039C661103bf1',
+<<<<<<< HEAD
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+=======
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
+>>>>>>> hdev-255-error-handler-in-single-sided-not-enough-liquidity
   [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
   [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D',
   [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
@@ -147,7 +151,11 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: '0x5710FFcED6aEd86820da398E2925DAf5738cd4ce',
   [TokenSymbol.TGBP]: '0x57D63073C5d8c8f52C38779cf141365aC46aeD72',
   [TokenSymbol.XSGD]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
+<<<<<<< HEAD
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+=======
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
+>>>>>>> hdev-255-error-handler-in-single-sided-not-enough-liquidity
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0xAF329A1764cD25d47f088292f802b0c8751dCd19',
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
@@ -164,7 +172,11 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+<<<<<<< HEAD
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+=======
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
+>>>>>>> hdev-255-error-handler-in-single-sided-not-enough-liquidity
   [TokenSymbol.fxPHP]: '0x9f555A3115C2Da9574c84C4Dfb1617193aA7AFE2',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
@@ -181,7 +193,11 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+<<<<<<< HEAD
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+=======
+  [TokenSymbol.fxAUD]: ZERO_ADDRESS,
+>>>>>>> hdev-255-error-handler-in-single-sided-not-enough-liquidity
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,

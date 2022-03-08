@@ -34,3 +34,11 @@ export enum ZapErrorCode {
 export enum ZapErrorMessage {
   NotEnoughLpAmount = '!Zap/not-enough-lp-amount'
 }
+<<<<<<< HEAD
+=======
+
+export enum MetamaskError {
+  Cancelled = 4001,
+  Reverted = -32015
+}
+>>>>>>> hdev-255-error-handler-in-single-sided-not-enough-liquidity
