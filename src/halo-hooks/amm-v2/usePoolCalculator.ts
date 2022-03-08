@@ -11,16 +11,8 @@ const usePoolCalculator = ({ tokens, tokenBalances }: { tokens: Token[]; tokenBa
     const tokenDecimals = tokens[tokenIndex].decimals
     const tokenBalance = tokenBalances[tokenIndex]
     const tokenAmount = parseUnits(amount, tokenDecimals)
-
     const otherTokenIndex = tokenIndex === 0 ? 1 : 0
     const otherTokenBalance = tokenBalances[otherTokenIndex]
-
-    console.log(
-      'calculating...',
-      formatUnits(tokenAmount, tokenDecimals),
-      formatUnits(otherTokenBalance, tokens[otherTokenIndex].decimals),
-      formatUnits(tokenBalance, tokenDecimals)
-    )
 
     return tokenAmount.mul(otherTokenBalance).div(tokenBalance)
   }

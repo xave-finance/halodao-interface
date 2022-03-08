@@ -184,13 +184,13 @@ export const useGetPoolData = () => {
         {
           token: tokens[0],
           balance: poolTokens.balances[0],
-          weight: parseUnits(`${token0Weight}`), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
+          weight: parseUnits(`${token0Weight}`),
           rate: token0Rate
         },
         {
           token: tokens[1],
           balance: poolTokens.balances[1],
-          weight: parseUnits(`${token1Weight}`), // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
+          weight: parseUnits(`${token1Weight}`),
           rate: token1Rate
         }
       ],
