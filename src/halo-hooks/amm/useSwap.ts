@@ -18,7 +18,7 @@ export const useSwap = (pool: PoolData) => {
       consoleLog('viewOriginSwap result: ', formatUnits(res, token1.decimals))
       return formatUnits(res, token1.decimals)
     },
-    [CurveContract, pool]
+    [CurveContract, token0, token1]
   )
 
   const viewTargetSwap = useCallback(
@@ -29,7 +29,7 @@ export const useSwap = (pool: PoolData) => {
       consoleLog('viewTargetSwap result: ', formatUnits(res, token1.decimals))
       return formatUnits(res, token0.decimals)
     },
-    [CurveContract, pool]
+    [CurveContract, token0, token1]
   )
 
   return { viewOriginSwap, viewTargetSwap }

@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import VaultABI from '../../constants/haloAbis/Vault.json'
 import CustomPoolABI from '../../constants/haloAbis/CustomPool.json'
 import ERC20ABI from '../../constants/abis/erc20.json'
@@ -15,7 +14,7 @@ import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammReward
 import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { getHaloAddresses } from 'utils/haloAddresses'
-import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {

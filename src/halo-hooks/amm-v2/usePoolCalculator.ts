@@ -1,6 +1,6 @@
 import { Token } from '@halodao/sdk'
 import { BigNumber } from 'ethers'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils'
 
 const usePoolCalculator = ({ tokens, tokenBalances }: { tokens: Token[]; tokenBalances: BigNumber[] }) => {
   const calculateOtherTokenIn = (amount: string, tokenIndex: number) => {

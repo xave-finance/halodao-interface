@@ -6,8 +6,6 @@ import { ApprovalState } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
 import { TokenAmount, JSBI } from '@halodao/sdk'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
-import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
 
@@ -39,7 +37,6 @@ const MultiSidedLiquidity = ({
   onIsGivenBaseChanged,
   isAddLiquidityEnabled
 }: MultiSidedLiquidityProps) => {
-  const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
@@ -51,8 +48,6 @@ const MultiSidedLiquidity = ({
     tokens: [token0, token1],
     tokenBalances: [pool.tokens[0].balance, pool.tokens[1].balance]
   })
-
-  const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(pool.address, token0, token1)
 
   const baseTokenAmount = new TokenAmount(token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useTokenAllowance(baseTokenAmount, pool.address)
@@ -75,14 +70,6 @@ const MultiSidedLiquidity = ({
       const quote = formatUnits(quoteAmount, token1.decimals)
       setQuoteInput(quote)
       onQuoteAmountChanged(quote)
-
-      // const { base, quote } = await previewDepositGivenBase(val, pool.tokens[0].rate, pool.tokens[0].weight)
-      // setQuoteInput(quote)
-      // onQuoteAmountChanged(quote)
-
-      // if (Number(base) > Number(val)) {
-      //   setErrorMessage(t('error-liquidity-estimates-changed'))
-      // }
     } else {
       setQuoteInput('')
     }
@@ -102,14 +89,6 @@ const MultiSidedLiquidity = ({
       const base = formatUnits(baseAmount, token0.decimals)
       setBaseInput(base)
       onBaseAmountChanged(base)
-
-      // const { base, quote } = await previewDepositGivenQuote(val)
-      // setBaseInput(base)
-      // onBaseAmountChanged(base)
-
-      // if (Number(quote) > Number(val)) {
-      //   setErrorMessage(t('error-liquidity-estimates-changed'))
-      // }
     } else {
       setBaseInput('')
     }
