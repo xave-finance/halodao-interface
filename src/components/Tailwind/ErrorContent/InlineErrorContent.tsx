@@ -1,6 +1,5 @@
 import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
 import React from 'react'
-import styled from 'styled-components'
 
 interface ErrorProps {
   errorObject: ErrorMessageObject
