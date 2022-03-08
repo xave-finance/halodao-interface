@@ -1,8 +1,4 @@
 import React, { useState } from 'react'
-<<<<<<< features/hdev-264-ui-for-handling-errors-and-warnings
-=======
-import styled from 'styled-components'
->>>>>>> Modal Error Handler Additional show more and copy button added
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
 import { ErrorMessageObject } from '../../../halo-hooks/useErrorMessage'
