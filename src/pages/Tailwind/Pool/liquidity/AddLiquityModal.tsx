@@ -100,13 +100,13 @@ const AddLiquityModal = ({
           const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
           quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
           baseTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (e) {
-          console.clear()
+        } catch (err) {
+          console.error(err)
           onDismiss()
           ErrorHandler({
-            code: e.code,
-            data: e.data?.originalError?.data,
-            message: e.message
+            code: (err as any).code,
+            data: (err as any).data?.originalError?.data,
+            message: (err as any).message
           })
         }
       } else {
@@ -114,13 +114,13 @@ const AddLiquityModal = ({
           const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
           baseTokenAmount = Number(await viewTargetSwap(swapAmount))
           quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (e) {
-          console.clear()
+        } catch (err) {
+          console.error(err)
           onDismiss()
           ErrorHandler({
-            code: e.code,
-            data: e.data?.originalError?.data,
-            message: e.message
+            code: (err as any).code,
+            data: (err as any).data?.originalError?.data,
+            message: (err as any).message
           })
         }
       }

@@ -36,7 +36,6 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
     if (errors.code !== 0) {
       getErrorMessage(errors)
       sethasError(true)
-      console.clear()
     }
   }
 
