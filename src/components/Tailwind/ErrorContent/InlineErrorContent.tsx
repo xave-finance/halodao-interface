@@ -6,14 +6,6 @@ interface ErrorProps {
   errorObject: ErrorMessageObject
 }
 
-// TODO: Tailwind?
-const Wrapper = styled.div`
-  background: #fdd9d7;
-  border: 1px solid #da1a0f;
-  box-sizing: border-box;
-  border-radius: 5px;
-`
-
 const InlineErrorContent = ({ errorObject }: ErrorProps) => {
   const { getErrorMessage, message } = useErrorMessage()
   getErrorMessage(errorObject)
