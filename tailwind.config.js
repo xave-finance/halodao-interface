@@ -20,7 +20,8 @@ module.exports = {
           gradientTo: '#2DB7C4',
           gray: '#828282',
           midGray: '#F1F1F1',
-          lightGray: '#BDBDBD'
+          lightGray: '#BDBDBD',
+          red: '#FF0000'
         },
         secondary: {
           DEFAULT: '#A38DD8',
@@ -37,7 +38,9 @@ module.exports = {
           DEFAULT: '#FA6F44'
         },
         error: {
-          DEFAULT: '#FF5F37'
+          DEFAULT: '#FF5F37',
+          light: '#FDD9D7',
+          dark: '#DA1A0F'
         },
         link: {
           DEFAULT: '#518cff',

@@ -14,21 +14,17 @@ const Wrapper = styled.div`
   border-radius: 5px;
 `
 
-const ErrorObjectMessageSpan = styled.span`
-  color: #ff0000;
-`
-
 const InlineErrorContent = ({ errorObject }: ErrorProps) => {
   const { getErrorMessage, message } = useErrorMessage()
   getErrorMessage(errorObject)
   return (
-    <Wrapper>
+    <div className="bg-error-light border-solid border-1 border-error-dark rounded">
       <div className="">ERROR:</div>
       <div className="text-center font-semibold text-xl mb-2">
-        {message} Please show this error message <ErrorObjectMessageSpan>{errorObject.message} </ErrorObjectMessageSpan>
+        {message} Please show this error message <span className='text-primary-red'>{errorObject.message} </span>
         to the team on Discord or email us at dev@halodao.com.
       </div>
-    </Wrapper>
+    </div>
   )
 }
 
