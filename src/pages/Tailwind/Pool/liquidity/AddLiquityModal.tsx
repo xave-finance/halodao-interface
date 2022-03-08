@@ -208,9 +208,9 @@ const AddLiquityModal = ({
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
       ErrorHandler({
-        code: err.code,
-        data: err.data?.originalError?.data,
-        message: err.message
+        code: (err as any).code,
+        data: (err as any).data?.originalError?.data,
+        message: (err as any).message
       })
       onDismiss()
     }
