@@ -18,6 +18,7 @@ import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskError } from 'constants/errors'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
+import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -111,11 +112,17 @@ const SwapPanel = () => {
   }, [fromMinimumAmount])
 
   useEffect(() => {
-    if (chainId) {
+    if (chainId && tokenList) {
+      if (tokenList.length > 0) {
+        setFromCurrency(tokenList[0])
+      }
+      if (tokenList.length > 1) {
+        setToCurrency(tokenList[1])
+      }
       setToInputValue('')
       setFromInputValue('')
     }
-  }, [chainId])
+  }, [chainId, tokenList])
 
   useEffect(() => {
     updateBalances()
@@ -310,6 +317,7 @@ const SwapPanel = () => {
         </div>
       )
     }
+
     return (
       <>
         <CurrentButtonContent />
@@ -325,9 +333,13 @@ const SwapPanel = () => {
     )
   }
 
+  if (!tokenListLoading && tokenList.length === 0) {
+    return <FeatureNotSupported isIsolated={true} />
+  }
+
   return (
     <>
-      <div className="w-full">
+      <div className="w-full bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
         {account ? (
           <>
             <div className="flex flex:row mt-2 md:mt-4 mb-4">

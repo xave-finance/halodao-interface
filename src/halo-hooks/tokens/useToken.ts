@@ -10,9 +10,13 @@ const useToken = () => {
     if (!chainId || !library) return null
 
     const ERC20Contract = getContract(tokenAddress, ERC20ABI, library)
-    const [decimals, symbol] = await Promise.all([ERC20Contract.decimals(), ERC20Contract.symbol()])
+    const [decimals, symbol, name] = await Promise.all([
+      ERC20Contract.decimals(),
+      ERC20Contract.symbol(),
+      ERC20Contract.name()
+    ])
 
-    return new Token(chainId, tokenAddress, decimals, symbol, symbol)
+    return new Token(chainId, tokenAddress, decimals, symbol, name)
   }
 
   const addressesToTokens = async (tokenAddresses: string[]) => {
