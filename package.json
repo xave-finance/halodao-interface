@@ -139,6 +139,7 @@
   "license": "GPL-3.0-or-later",
   "dependencies": {
     "@craco/craco": "5.8.0",
+    "@halodao/halodao-contract-addresses": "^0.0.6",
     "@types/numeral": "^2.0.1",
     "@types/react-transition-group": "1.x",
     "firebase": "^7.24.0",
