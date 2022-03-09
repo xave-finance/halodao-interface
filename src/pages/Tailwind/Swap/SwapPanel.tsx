@@ -13,20 +13,19 @@ import { CurrencySide, useSwapToken } from 'halo-hooks/amm/useSwapToken'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
-import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
 import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskError } from 'constants/errors'
+import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
+  const { tokenList } = useTokenList()
 
-  const [toCurrency, setToCurrency] = useState(
-    chainId ? (haloTokenList[chainId as ChainId] as Token[])[0] : (HALO[ChainId.MAINNET] as Token)
-  )
+  const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : (HALO[ChainId.MAINNET] as Token))
   const [fromCurrency, setFromCurrency] = useState(
-    chainId ? (haloTokenList[chainId as ChainId] as Token[])[1] : (HALO[ChainId.MAINNET] as Token)
+    tokenList.length > 1 ? tokenList[1] : (HALO[ChainId.MAINNET] as Token)
   )
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
@@ -71,6 +70,15 @@ const SwapPanel = () => {
   }, [approve, setApproveState])
 
   useEffect(() => {
+    if (fromCurrency.address === (HALO[ChainId.MAINNET] as Token).address && tokenList.length > 0) {
+      setFromCurrency(tokenList[0])
+    }
+    if (toCurrency.address === (HALO[ChainId.MAINNET] as Token).address && tokenList.length > 1) {
+      setToCurrency(tokenList[1])
+    }
+  }, [tokenList, fromCurrency.address, toCurrency.address])
+
+  useEffect(() => {
     if (!timeLeft) return
 
     const intervalId = setInterval(() => {
@@ -104,8 +112,6 @@ const SwapPanel = () => {
 
   useEffect(() => {
     if (chainId) {
-      setToCurrency((haloTokenList[chainId as ChainId] as Token[])[0])
-      setFromCurrency((haloTokenList[chainId as ChainId] as Token[])[1])
       setToInputValue('')
       setFromInputValue('')
     }
@@ -310,8 +316,8 @@ const SwapPanel = () => {
         <SwapDetails
           price={price}
           isLoadingPrice={isLoadingPrice}
-          toCurrency={toCurrency.symbol}
-          fromCurrency={fromCurrency.symbol}
+          toCurrency={toCurrency?.symbol}
+          fromCurrency={fromCurrency?.symbol}
           minimumReceived={toMinimumAmount}
           isLoadingMinimumAmount={isLoadingMinimumAmount}
         />
@@ -324,7 +330,7 @@ const SwapPanel = () => {
       <div className="w-full">
         {account ? (
           <>
-            <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
+            <div className="flex flex:row mt-2 md:mt-4 mb-4">
               <div className="w-1/2 flex justify-start">
                 <p className="font-semibold text-secondary-alternate">From</p>
               </div>
@@ -350,7 +356,7 @@ const SwapPanel = () => {
                 }}
                 showBalance={true}
                 showMax={true}
-                tokenList={haloTokenList[chainId as ChainId] || []}
+                tokenList={tokenList}
                 balance={fromAmountBalance}
                 onSelectToken={token => {
                   if (token !== toCurrency) {
@@ -398,7 +404,7 @@ const SwapPanel = () => {
                 }}
                 showBalance={true}
                 showMax={true}
-                tokenList={haloTokenList[chainId as ChainId] || []}
+                tokenList={tokenList}
                 balance={toAmountBalance}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
