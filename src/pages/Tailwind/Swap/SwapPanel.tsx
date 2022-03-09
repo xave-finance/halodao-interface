@@ -21,7 +21,7 @@ import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
-  const { tokenList } = useTokenList()
+  const { tokenList, tokenListLoading } = useTokenList()
 
   const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : (HALO[ChainId.MAINNET] as Token))
   const [fromCurrency, setFromCurrency] = useState(
@@ -356,6 +356,7 @@ const SwapPanel = () => {
                 }}
                 showBalance={true}
                 showMax={true}
+                isLoading={tokenListLoading}
                 tokenList={tokenList}
                 balance={fromAmountBalance}
                 onSelectToken={token => {
@@ -406,6 +407,7 @@ const SwapPanel = () => {
                 showMax={true}
                 tokenList={tokenList}
                 balance={toAmountBalance}
+                isLoading={tokenListLoading}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
                     setToInputValue('')
