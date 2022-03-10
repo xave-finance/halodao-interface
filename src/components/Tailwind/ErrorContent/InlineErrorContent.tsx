@@ -1,6 +1,6 @@
 import { AnyRecord } from 'dns'
+import React, { useEffect, useState } from 'react'
 import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
-import React from 'react'
 
 interface InlineErrorContentProps {
   errorObject: any
@@ -9,13 +9,15 @@ interface InlineErrorContentProps {
 const InlineErrorContent = ({ errorObject }: InlineErrorContentProps) => {
   const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
-  const haloError: HaloError = {
-    code: errorObject.code ?? 'Unknown',
-    data: errorObject.data ?? '',
-    message: errorObject.message ?? ''
-  }
+  const [haloError] = useState<HaloError>({
+    code: errorObject?.code ?? 'Unknown',
+    data: errorObject?.data ?? 'Unknown',
+    message: errorObject?.message ?? 'Unknown'
+  })
 
-  getFriendlyErrorMessage(haloError)
+  useEffect(() => {
+    getFriendlyErrorMessage(haloError)
+  }, [haloError])
 
   return (
     <div className="bg-error-light border-solid border-1 border-error-dark rounded">
