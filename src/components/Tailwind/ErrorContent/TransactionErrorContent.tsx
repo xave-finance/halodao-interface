@@ -8,7 +8,6 @@ interface ErrorProps {
   onDismiss: () => void
 }
 
-
 const ErrorContent = ({ objectError, onDismiss }: ErrorProps) => {
   const [showMore, setShowMore] = useState(false)
   // const ErrorMessage = `${objectError.code}: ${objectError.message}`
