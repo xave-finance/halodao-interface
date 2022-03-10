@@ -1,17 +1,23 @@
 import React, { useState } from 'react'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
-import { ErrorMessageObject } from '../../../halo-hooks/useErrorMessage'
+import useErrorMessage, { ErrorMessageObject } from '../../../halo-hooks/useErrorMessage'
 
 interface ErrorProps {
-  objectError: ErrorMessageObject
-  message: string
-  closeError: () => void
+  objectError: any
+  onDismiss: () => void
 }
 
-const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
+
+const ErrorContent = ({ objectError, onDismiss }: ErrorProps) => {
   const [showMore, setShowMore] = useState(false)
-  const ErrorMessage = `${objectError.code}: ${objectError.message}`
+  // const ErrorMessage = `${objectError.code}: ${objectError.message}`
+  // const { errorMessage, getErrorMessage } = useErrorMessage()
+  const [objectErrorMessage, setObjectErrorMessage] = useState({
+    code: objectError.code ? objectError.code : '',
+    data: objectError.data ? objectError.data : '',
+    message: objectError.message ? objectError.message : ''
+  })
 
   return (
     <footer className="p-4">
@@ -20,7 +26,7 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
       </div>
       <div className="flex justify-center font-semibold text-2xl mb-2">Transaction Failed</div>
       <div className="text-center font-semibold">
-        {message}
+        {objectErrorMessage.message}
         <div
           className="text-gray-800 cursor-pointer"
           onClick={() => {
@@ -34,11 +40,11 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
         {showMore && (
           <div className="flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray">
             <div className="flex justify-center items-center text-center">
-              <p className="italic mb-2.5 text-sm">{ErrorMessage}</p>
+              <p className="italic mb-2.5 text-sm">{objectErrorMessage.message}</p>
             </div>
             <div className="flex justify-center items-center w-full space-x-4">
               <div>
-                <Copy toCopy={ErrorMessage}>
+                <Copy toCopy={objectErrorMessage.message}>
                   <span>Copy</span>
                 </Copy>
               </div>
@@ -74,7 +80,7 @@ const ErrorContent = ({ objectError, message, closeError }: ErrorProps) => {
         <div
           className="mt-4 text-error font-bold text-center cursor-pointer"
           onClick={() => {
-            closeError()
+            onDismiss()
           }}
         >
           Retry Transaction
