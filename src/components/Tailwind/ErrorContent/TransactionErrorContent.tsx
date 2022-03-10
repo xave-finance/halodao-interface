@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
-import useErrorMessage, { ErrorMessageObject } from '../../../halo-hooks/useErrorMessage'
 
 interface ErrorProps {
   objectError: any
@@ -10,8 +9,6 @@ interface ErrorProps {
 
 const ErrorContent = ({ objectError, onDismiss }: ErrorProps) => {
   const [showMore, setShowMore] = useState(false)
-  // const ErrorMessage = `${objectError.code}: ${objectError.message}`
-  // const { errorMessage, getErrorMessage } = useErrorMessage()
   const [objectErrorMessage, setObjectErrorMessage] = useState({
     code: objectError.code ? objectError.code : '',
     data: objectError.data ? objectError.data : '',
