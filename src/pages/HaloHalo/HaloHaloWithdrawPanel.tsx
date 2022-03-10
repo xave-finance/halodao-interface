@@ -136,7 +136,10 @@ export default function HaloHaloWithdrawPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
+<<<<<<< HEAD
         console.clear()
+=======
+>>>>>>> hdb-68-error-handler-vesting-page
         getErrorMessage({
           code: txHash.code,
           data: '',

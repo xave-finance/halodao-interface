@@ -136,7 +136,10 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
+<<<<<<< HEAD
         console.clear()
+=======
+>>>>>>> hdb-68-error-handler-vesting-page
         getErrorMessage({
           code: txHash.code,
           data: '',
@@ -201,7 +204,10 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
+<<<<<<< HEAD
         console.clear()
+=======
+>>>>>>> hdb-68-error-handler-vesting-page
         getErrorMessage({
           code: tx.code,
           data: '',
@@ -224,7 +230,10 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
+<<<<<<< HEAD
       console.clear()
+=======
+>>>>>>> hdb-68-error-handler-vesting-page
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
