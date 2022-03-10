@@ -16,9 +16,6 @@ import useTokenBalance, { BalanceProps } from '../../sushi-hooks/queries/useToke
 import { formatFromBalance, formatToBalance } from '../../utils'
 
 import useHaloHalo from '../../halo-hooks/useHaloHalo'
-import useErrorMessage from '../../halo-hooks/useErrorMessage'
-import BaseModal from '../../components/Tailwind/Modals/BaseModal'
-import ErrorContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
 import { HALOHALO_ADDRESS } from '../../constants'
 import { ButtonHalo, ButtonHaloStates, ButtonMax } from 'components/Button'
 import { useTranslation } from 'react-i18next'
@@ -26,6 +23,7 @@ import Spinner from '../../assets/images/spinner.svg'
 import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -98,9 +96,7 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
-  const [hasError, sethasError] = useState(false)
-  const { message, getErrorMessage } = useErrorMessage()
-  const [objectErrorMessage, setObjectErrorMessage] = useState()
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -122,8 +118,10 @@ export default function HaloHaloWithdrawPanel({
 
   // handle approval
   const handleApprove = useCallback(async () => {
+    setRequestedApproval(true)
+    setErrorObject(undefined)
+
     try {
-      setRequestedApproval(true)
       const txHash = await approve()
       console.log(txHash)
       // user rejected tx or didn't go thru
@@ -132,16 +130,15 @@ export default function HaloHaloWithdrawPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setObjectErrorMessage(txHash)
-        setRequestedApproval(false)
-        sethasError(true)
+        setErrorObject(txHash)
       } else {
         await txHash.wait()
-        setRequestedApproval(true)
-        sethasError(false)
       }
     } catch (e) {
       console.log(e)
+      setErrorObject(e)
+    } finally {
+      setRequestedApproval(false)
     }
   }, [approve, setRequestedApproval])
 
@@ -164,7 +161,9 @@ export default function HaloHaloWithdrawPanel({
   const withdraw = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
+    setErrorObject(undefined)
 
+    let success = false
     let amount: BalanceProps | undefined
     if (maxSelected) {
       amount = maxWithdrawAmountInput
@@ -174,37 +173,34 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const tx = await leave(amount)
-      // await tx.wait()
       if (
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setObjectErrorMessage(tx)
-        setPendingTx(false)
-        setButtonState(ButtonHaloStates.Disabled)
-        sethasError(true)
+        setErrorObject(tx)
       } else {
         await tx.wait()
-        setPendingTx(false)
-        setButtonState(ButtonHaloStates.Disabled)
         setWithdrawValue('')
-        sethasError(false)
+        success = true
       }
     } catch (e) {
       console.error(e)
+      setErrorObject(e)
+    } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
-      sethasError(true)
-      setObjectErrorMessage((e as any).data)
     }
+
     /** log deposit in GA
      */
-    ReactGA.event({
-      category: 'Vest',
-      action: 'Withdraw',
-      label: account ? 'User Address: ' + account : '',
-      value: parseFloat(haloToClaim.toString())
-    })
+    if (success) {
+      ReactGA.event({
+        category: 'Vest',
+        action: 'Withdraw',
+        label: account ? 'User Address: ' + account : '',
+        value: parseFloat(haloToClaim.toString())
+      })
+    }
   }
 
   return (
@@ -323,22 +319,13 @@ export default function HaloHaloWithdrawPanel({
           </Column>
         </Container>
       </InputPanel>
-      {hasError && (
-        <BaseModal
-          isVisible={hasError}
-          onDismiss={() => {
-            sethasError(false)
-          }}
-        >
-          {
-            <ErrorContent
-              objectError={objectErrorMessage}
-              onDismiss={() => {
-                sethasError(false)
-              }}
-            />
-          }
-        </BaseModal>
+
+      {errorObject && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
       )}
     </>
   )
