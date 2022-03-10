@@ -20,7 +20,7 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
 
   useEffect(() => {
     getFriendlyErrorMessage(haloError)
-  }, [haloError])
+  }, [haloError]) // eslint-disable-line
 
   return (
     <footer className="p-4">

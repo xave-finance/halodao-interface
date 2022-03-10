@@ -17,7 +17,7 @@ const InlineErrorContent = ({ errorObject }: InlineErrorContentProps) => {
 
   useEffect(() => {
     getFriendlyErrorMessage(haloError)
-  }, [haloError])
+  }, [haloError]) // eslint-disable-line
 
   return (
     <div className="bg-error-light border-solid border-1 border-error-dark rounded">
