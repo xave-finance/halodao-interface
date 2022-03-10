@@ -36,11 +36,15 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
 
   const deposit = useCallback(
     async (amount: BigNumber, deadline: number) => {
-      const tx = await CurveContract?.deposit(amount, deadline)
-      addTransaction(tx, {
-        summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
-      })
-      return tx
+      try {
+        const tx = await CurveContract?.deposit(amount, deadline)
+        addTransaction(tx, {
+          summary: `Add Liquidity for ${token0.symbol}/${token1.symbol}`
+        })
+        return tx
+      } catch (e) {
+        console.log(e)
+      }
     },
     [CurveContract, token0, token1, addTransaction]
   )
