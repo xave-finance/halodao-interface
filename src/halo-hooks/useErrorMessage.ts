@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CurveErrorMessage, GeneralErrorMessage } from '../constants/errors'
 
-export type ErrorMessageObject = {
+export type HaloError = {
   code: number
   data: string
   message: string
@@ -10,71 +10,71 @@ export type ErrorMessageObject = {
 
 const useErrorMessage = () => {
   const { t } = useTranslation()
-  const [message, setMessage] = useState(t('curveDefaultErrorMessage'))
+  const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('curveDefaultErrorMessage'))
 
-  const getErrorMessage = useCallback(
-    (errorObject: ErrorMessageObject) => {
+  const getFriendlyErrorMessage = useCallback(
+    (errorObject: HaloError) => {
       switch (errorObject.message) {
         case CurveErrorMessage.CurveReentered:
-          setMessage(t('errorMessageCurveDefault'))
+          setFriendlyErrorMessage(t('errorMessageCurveDefault'))
           break
         case CurveErrorMessage.AllowanceDecreaseUnderflow:
-          setMessage(t('errorMessageCurveAllowance'))
+          setFriendlyErrorMessage(t('errorMessageCurveAllowance'))
           break
         case CurveErrorMessage.ApprovalOverflow:
-          setMessage(t('errorMessageCurveAllowance'))
+          setFriendlyErrorMessage(t('errorMessageCurveAllowance'))
           break
         case CurveErrorMessage.InsufficientAllowance:
-          setMessage(t('errorMessageCurveAllowance'))
+          setFriendlyErrorMessage(t('errorMessageCurveAllowance'))
           break
         case CurveErrorMessage.Frozen:
-          setMessage(t('errorMessageCurveFrozen"'))
+          setFriendlyErrorMessage(t('errorMessageCurveFrozen"'))
           break
         case CurveErrorMessage.EmergencyState:
-          setMessage(t('errorMessageCurveEmergency'))
+          setFriendlyErrorMessage(t('errorMessageCurveEmergency'))
           break
         case CurveErrorMessage.TransactionDeadlinePassed:
-          setMessage(t('errorMessageCurveDeadlinePassed'))
+          setFriendlyErrorMessage(t('errorMessageCurveDeadlinePassed'))
           break
         case CurveErrorMessage.WhitelistOnGoing:
-          setMessage(t('errorMessageCurveWhitelistingStage'))
+          setFriendlyErrorMessage(t('errorMessageCurveWhitelistingStage'))
           break
         case CurveErrorMessage.WhitelistStopped:
-          setMessage(t('errorMessageCurveNotWhitelistingStage'))
+          setFriendlyErrorMessage(t('errorMessageCurveNotWhitelistingStage'))
           break
         case CurveErrorMessage.SwapAmountTooLarge:
-          setMessage(t('errorMessageCurveAmountTooLarge'))
+          setFriendlyErrorMessage(t('errorMessageCurveAmountTooLarge'))
           break
         case CurveErrorMessage.SwapConvergenceFailed:
-          setMessage(t('errorMessageCurveSwapFailed'))
+          setFriendlyErrorMessage(t('errorMessageCurveSwapFailed'))
           break
         case CurveErrorMessage.SwapInvariantViolation:
-          setMessage(t('errorMessageCurveSwapFailed'))
+          setFriendlyErrorMessage(t('errorMessageCurveSwapFailed'))
           break
         case CurveErrorMessage.LiquidityInvariantViolation:
-          setMessage(t('errorMessageCurveSwapFailed'))
+          setFriendlyErrorMessage(t('errorMessageCurveSwapFailed'))
           break
         case CurveErrorMessage.UpperHalt:
-          setMessage(t('errorMessageCurveSwapHalt'))
+          setFriendlyErrorMessage(t('errorMessageCurveSwapHalt'))
           break
         case CurveErrorMessage.LowerHalt:
-          setMessage(t('errorMessageCurveSwapHalt'))
+          setFriendlyErrorMessage(t('errorMessageCurveSwapHalt'))
           break
         case CurveErrorMessage.CADCTransferFailed:
-          setMessage(t('errorMessageCurveERC20TransferFailed'))
+          setFriendlyErrorMessage(t('errorMessageCurveERC20TransferFailed'))
           break
         case GeneralErrorMessage.SubtractionOverflow:
-          setMessage(t('errorMessageSubtractionOverflow'))
+          setFriendlyErrorMessage(t('errorMessageSubtractionOverflow'))
           break
         case GeneralErrorMessage.MetamaskRejection:
-          setMessage(t('errorMessageMetamaskRejection'))
+          setFriendlyErrorMessage(t('errorMessageMetamaskRejection'))
           break
       }
     },
     [t]
   )
 
-  return { message, getErrorMessage }
+  return { friendlyErrorMessage, getFriendlyErrorMessage }
 }
 
 export default useErrorMessage

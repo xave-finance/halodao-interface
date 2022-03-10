@@ -23,9 +23,7 @@ import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
-import BaseModal from '../../components/Tailwind/Modals/BaseModal'
-import ErrorContent from '../../components/Tailwind/ErrorContent/TransactionErrorContent'
-import useErrorMessage from '../../halo-hooks/useErrorMessage'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -100,9 +98,8 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
-  const [hasError, sethasError] = useState(false)
-  const { message, getErrorMessage } = useErrorMessage()
-  const [objectErrorMessage, setObjectErrorMessage] = useState()
+  const [errorObject, setErrorObject] = useState<any>(null)
+  const [hasError, setHasError] = useState(false)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -124,27 +121,28 @@ export default function CurrencyInputPanel({
 
   // handle approval
   const handleApprove = useCallback(async () => {
+    setRequestedApproval(true)
+    setErrorObject(null)
+    setHasError(false)
+
     try {
-      setRequestedApproval(true)
       const txHash = await approve()
       // user rejected tx or didn't go thru
       if (
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setObjectErrorMessage(txHash)
-        setRequestedApproval(false)
-        sethasError(true)
+        setErrorObject(txHash)
+        setHasError(true)
       } else {
         await txHash.wait()
-        setRequestedApproval(true)
-        sethasError(false)
       }
     } catch (e) {
       console.error(e)
+      setErrorObject(e)
+      setHasError(true)
+    } finally {
       setRequestedApproval(false)
-      sethasError(true)
-      setObjectErrorMessage((e as any).data)
     }
   }, [approve, setRequestedApproval])
 
@@ -163,6 +161,8 @@ export default function CurrencyInputPanel({
   const deposit = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
+    setErrorObject(null)
+    setHasError(false)
 
     let amount: BalanceProps | undefined
     if (maxSelected) {
@@ -170,30 +170,29 @@ export default function CurrencyInputPanel({
     } else {
       amount = formatToBalance(depositValue, decimals)
     }
+
     try {
       const tx = await enter(amount)
       if (
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setObjectErrorMessage(tx)
-        setPendingTx(false)
-        setButtonState(ButtonHaloStates.Disabled)
-        sethasError(true)
+        console.log('setting error object to: ', tx)
+        setErrorObject(tx)
+        setHasError(true)
       } else {
         await tx.wait()
-        setPendingTx(false)
-        setButtonState(ButtonHaloStates.Disabled)
         setDepositValue('')
-        sethasError(false)
       }
     } catch (e) {
       console.error(e)
+      setErrorObject(e)
+      setHasError(true)
+    } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
-      sethasError(true)
-      setObjectErrorMessage((e as any).data)
     }
+
     /** log deposit in GA
      */
     ReactGA.event({
@@ -320,23 +319,8 @@ export default function CurrencyInputPanel({
           </Column>
         </Container>
       </InputPanel>
-      {hasError && (
-        <BaseModal
-          isVisible={hasError}
-          onDismiss={() => {
-            sethasError(false)
-          }}
-        >
-          {
-            <ErrorContent
-              objectError={objectErrorMessage}
-              onDismiss={() => {
-                sethasError(false)
-              }}
-            />
-          }
-        </BaseModal>
-      )}
+
+      {hasError && <ErrorModal isVisible={hasError} onDismiss={() => setHasError(false)} errorObject={errorObject} />}
     </>
   )
 }
