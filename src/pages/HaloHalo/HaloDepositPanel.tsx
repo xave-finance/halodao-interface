@@ -98,8 +98,7 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
-  const [errorObject, setErrorObject] = useState<any>(null)
-  const [hasError, setHasError] = useState(false)
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -122,8 +121,7 @@ export default function CurrencyInputPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     setRequestedApproval(true)
-    setErrorObject(null)
-    setHasError(false)
+    setErrorObject(undefined)
 
     try {
       const txHash = await approve()
@@ -133,14 +131,12 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
         setErrorObject(txHash)
-        setHasError(true)
       } else {
         await txHash.wait()
       }
     } catch (e) {
       console.error(e)
       setErrorObject(e)
-      setHasError(true)
     } finally {
       setRequestedApproval(false)
     }
@@ -161,9 +157,9 @@ export default function CurrencyInputPanel({
   const deposit = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
-    setErrorObject(null)
-    setHasError(false)
+    setErrorObject(undefined)
 
+    let success = false
     let amount: BalanceProps | undefined
     if (maxSelected) {
       amount = maxDepositAmountInput
@@ -177,17 +173,15 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.log('setting error object to: ', tx)
         setErrorObject(tx)
-        setHasError(true)
       } else {
         await tx.wait()
         setDepositValue('')
+        success = true
       }
     } catch (e) {
-      console.error(e)
+      console.error('Error catched! ', e)
       setErrorObject(e)
-      setHasError(true)
     } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
@@ -195,12 +189,14 @@ export default function CurrencyInputPanel({
 
     /** log deposit in GA
      */
-    ReactGA.event({
-      category: 'Vest',
-      action: 'Deposit',
-      label: account ? 'User Address: ' + account : '',
-      value: parseFloat(formatEther(amount.value.toString()))
-    })
+    if (success) {
+      ReactGA.event({
+        category: 'Vest',
+        action: 'Deposit',
+        label: account ? 'User Address: ' + account : '',
+        value: parseFloat(formatEther(amount.value.toString()))
+      })
+    }
   }
 
   return (
@@ -320,7 +316,13 @@ export default function CurrencyInputPanel({
         </Container>
       </InputPanel>
 
-      {hasError && <ErrorModal isVisible={hasError} onDismiss={() => setHasError(false)} errorObject={errorObject} />}
+      {errorObject && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
+      )}
     </>
   )
 }

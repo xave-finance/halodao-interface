@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
 import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
@@ -12,13 +12,15 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
   const [showMore, setShowMore] = useState(false)
   const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
-  const haloError: HaloError = {
-    code: errorObject.code ?? '',
-    data: errorObject.data ?? '',
-    message: errorObject.message ?? ''
-  }
+  const [haloError] = useState<HaloError>({
+    code: errorObject?.code ?? 'Unknown',
+    data: errorObject?.data ?? 'Unknown',
+    message: errorObject?.message ?? 'Unknown'
+  })
 
-  getFriendlyErrorMessage(haloError)
+  useEffect(() => {
+    getFriendlyErrorMessage(haloError)
+  }, [haloError])
 
   return (
     <footer className="p-4">
