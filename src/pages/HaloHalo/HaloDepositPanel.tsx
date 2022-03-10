@@ -102,11 +102,7 @@ export default function CurrencyInputPanel({
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [hasError, sethasError] = useState(false)
   const { message, getErrorMessage } = useErrorMessage()
-  const [objectErrorMessage, setObjectErrorMessage] = useState({
-    code: 0,
-    data: '',
-    message: ''
-  })
+  const [objectErrorMessage, setObjectErrorMessage] = useState()
 
   // Updating the state of stake button
   useEffect(() => {
@@ -142,11 +138,7 @@ export default function CurrencyInputPanel({
           data: '',
           message: txHash.message
         })
-        setObjectErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
+        setObjectErrorMessage(txHash)
         setRequestedApproval(false)
         sethasError(true)
       } else {
@@ -156,20 +148,9 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setRequestedApproval(false)
       sethasError(true)
-      const shortedMessage = e.data.message
-      getErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
-      setObjectErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
+      setObjectErrorMessage(e.data)
     }
   }, [approve, setRequestedApproval])
 
