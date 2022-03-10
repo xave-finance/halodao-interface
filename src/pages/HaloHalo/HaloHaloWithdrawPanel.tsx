@@ -132,17 +132,7 @@ export default function HaloHaloWithdrawPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
-        getErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
-        setObjectErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
+        setObjectErrorMessage(txHash)
         setRequestedApproval(false)
         sethasError(true)
       } else {
@@ -202,7 +192,6 @@ export default function HaloHaloWithdrawPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)

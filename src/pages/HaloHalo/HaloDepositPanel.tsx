@@ -132,12 +132,6 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
-        getErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
         setObjectErrorMessage(txHash)
         setRequestedApproval(false)
         sethasError(true)
@@ -150,7 +144,7 @@ export default function CurrencyInputPanel({
       console.error(e)
       setRequestedApproval(false)
       sethasError(true)
-      setObjectErrorMessage(e.data)
+      setObjectErrorMessage((e as any).data)
     }
   }, [approve, setRequestedApproval])
 
@@ -195,11 +189,10 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
-      setObjectErrorMessage(e.data)
+      setObjectErrorMessage((e as any).data)
     }
     /** log deposit in GA
      */
