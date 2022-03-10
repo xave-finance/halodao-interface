@@ -102,11 +102,7 @@ export default function CurrencyInputPanel({
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [hasError, sethasError] = useState(false)
   const { message, getErrorMessage } = useErrorMessage()
-  const [objectErrorMessage, setObjectErrorMessage] = useState({
-    code: 0,
-    data: '',
-    message: ''
-  })
+  const [objectErrorMessage, setObjectErrorMessage] = useState()
 
   // Updating the state of stake button
   useEffect(() => {
@@ -136,20 +132,12 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-<<<<<<< HEAD
-        console.clear()
-=======
->>>>>>> hdb-68-error-handler-vesting-page
         getErrorMessage({
           code: txHash.code,
           data: '',
           message: txHash.message
         })
-        setObjectErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
+        setObjectErrorMessage(txHash)
         setRequestedApproval(false)
         sethasError(true)
       } else {
@@ -159,20 +147,9 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-      console.clear()
       setRequestedApproval(false)
       sethasError(true)
-      const shortedMessage = e.data.message
-      getErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
-      setObjectErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
+      setObjectErrorMessage(e.data)
     }
   }, [approve, setRequestedApproval])
 
@@ -204,20 +181,7 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-<<<<<<< HEAD
-        console.clear()
-=======
->>>>>>> hdb-68-error-handler-vesting-page
-        getErrorMessage({
-          code: tx.code,
-          data: '',
-          message: tx.message
-        })
-        setObjectErrorMessage({
-          code: tx.code,
-          data: '',
-          message: tx.message
-        })
+        setObjectErrorMessage(tx)
         setPendingTx(false)
         setButtonState(ButtonHaloStates.Disabled)
         sethasError(true)
@@ -230,24 +194,10 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error(e)
-<<<<<<< HEAD
-      console.clear()
-=======
->>>>>>> hdb-68-error-handler-vesting-page
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
-      const shortedMessage = e.data.message
-      getErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
-      setObjectErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
+      setObjectErrorMessage((e as any).data)
     }
     /** log deposit in GA
      */
@@ -385,8 +335,7 @@ export default function CurrencyInputPanel({
           {
             <ErrorContent
               objectError={objectErrorMessage}
-              message={message}
-              closeError={() => {
+              onDismiss={() => {
                 sethasError(false)
               }}
             />

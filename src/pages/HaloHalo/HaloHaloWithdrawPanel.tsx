@@ -100,11 +100,7 @@ export default function HaloHaloWithdrawPanel({
   const [haloToClaim, setHaloToClaim] = useState(0)
   const [hasError, sethasError] = useState(false)
   const { message, getErrorMessage } = useErrorMessage()
-  const [objectErrorMessage, setObjectErrorMessage] = useState({
-    code: 0,
-    data: '',
-    message: ''
-  })
+  const [objectErrorMessage, setObjectErrorMessage] = useState()
 
   // Updating the state of stake button
   useEffect(() => {
@@ -136,20 +132,7 @@ export default function HaloHaloWithdrawPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-<<<<<<< HEAD
-        console.clear()
-=======
->>>>>>> hdb-68-error-handler-vesting-page
-        getErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
-        setObjectErrorMessage({
-          code: txHash.code,
-          data: '',
-          message: txHash.message
-        })
+        setObjectErrorMessage(txHash)
         setRequestedApproval(false)
         sethasError(true)
       } else {
@@ -196,17 +179,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        console.clear()
-        getErrorMessage({
-          code: tx.code,
-          data: '',
-          message: tx.message
-        })
-        setObjectErrorMessage({
-          code: tx.code,
-          data: '',
-          message: tx.message
-        })
+        setObjectErrorMessage(tx)
         setPendingTx(false)
         setButtonState(ButtonHaloStates.Disabled)
         sethasError(true)
@@ -223,17 +196,7 @@ export default function HaloHaloWithdrawPanel({
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
       sethasError(true)
-      const shortedMessage = e.data.message
-      getErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
-      setObjectErrorMessage({
-        code: e.data.code,
-        data: e.data.data,
-        message: shortedMessage?.replace(/^([^ ]+ ){2}/, '')
-      })
+      setObjectErrorMessage((e as any).data)
     }
     /** log deposit in GA
      */
@@ -371,8 +334,7 @@ export default function HaloHaloWithdrawPanel({
           {
             <ErrorContent
               objectError={objectErrorMessage}
-              message={message}
-              closeError={() => {
+              onDismiss={() => {
                 sethasError(false)
               }}
             />
