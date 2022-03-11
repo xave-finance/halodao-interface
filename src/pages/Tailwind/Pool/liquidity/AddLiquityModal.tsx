@@ -15,7 +15,8 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
-import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
+// import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
+import { HaloError } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -33,7 +34,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
-  ErrorStateSetter: ({ code, data, message }: ErrorMessageObject) => void
+  ErrorStateSetter: (errorObject: HaloError) => void
 }
 
 const AddLiquityModal = ({
@@ -75,8 +76,9 @@ const AddLiquityModal = ({
     pool.token0,
     pool.token1
   )
-  const ErrorHandler = ({ code, data, message }: ErrorMessageObject) => {
-    ErrorStateSetter({ code, data, message })
+
+  const ErrorHandler = ( errorObject : HaloError) => {
+    ErrorStateSetter(errorObject)
   }
 
   /**
@@ -96,33 +98,13 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isGivenBase) {
-        try {
-          const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
-          quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
-          baseTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (err) {
-          console.error(err)
-          onDismiss()
-          ErrorHandler({
-            code: (err as any).code,
-            data: (err as any).data?.originalError?.data,
-            message: (err as any).message
-          })
-        }
+        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
+        quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+        baseTokenAmount = Number(zapAmount) - Number(swapAmount)
       } else {
-        try {
-          const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
-          baseTokenAmount = Number(await viewTargetSwap(swapAmount))
-          quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (err) {
-          console.error(err)
-          onDismiss()
-          ErrorHandler({
-            code: (err as any).code,
-            data: (err as any).data?.originalError?.data,
-            message: (err as any).message
-          })
-        }
+        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
+        baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+        quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
       }
     }
 
@@ -130,26 +112,52 @@ const AddLiquityModal = ({
 
     let res: any
     if (isGivenBase) {
-      res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+      try {
+        res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+
+        if (Number(res.base) > Number(baseTokenAmount)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        ErrorHandler(e as any)
+        onDismiss()
+      }
     } else {
-      res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+      try {
+        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+
+        if (Number(res.quote) > Number(quoteTokenAmount)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        console.clear()
+        // ErrorHandler({
+        //   code: e.code,
+        //   data: e.data?.originalError?.data,
+        //   message: e.message
+        // })
+        ErrorHandler(e as any)
+        onDismiss()
+      }
     }
-    const maxDeposit = `${res.deposit}`
-    const lpAmount = res.lpToken
-    const basePrice = Number(res.quote) / Number(res.base)
-    const quotePrice = Number(res.base) / Number(res.quote)
+    if (res) {
+      const maxDeposit = `${res.deposit}`
+      const lpAmount = res.lpToken
+      const basePrice = Number(res.quote) / Number(res.base)
+      const quotePrice = Number(res.base) / Number(res.quote)
 
-    setDepositAmount(maxDeposit)
-    setTokenPrices([basePrice, quotePrice])
+      setDepositAmount(maxDeposit)
+      setTokenPrices([basePrice, quotePrice])
 
-    const maxLpAmount = Number(lpAmount)
-    setLpAmount({
-      target: maxLpAmount,
-      min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
-    })
+      const maxLpAmount = Number(lpAmount)
+      setLpAmount({
+        target: maxLpAmount,
+        min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
+      })
 
-    setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
-    setIsLoading(false)
+      setPoolShare(maxLpAmount / (pool.pooled.total + maxLpAmount))
+      setIsLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -158,7 +166,7 @@ const AddLiquityModal = ({
 
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
-    setTxHash('')
+  setTxHash('')
     setTokenAmounts([0, 0])
     setTokenPrices([0, 0])
     setLpAmount({
@@ -196,6 +204,8 @@ const AddLiquityModal = ({
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
+      ErrorHandler(err as any)
+      onDismiss()
     }
   }
 

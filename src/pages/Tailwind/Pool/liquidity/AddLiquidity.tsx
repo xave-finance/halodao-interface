@@ -6,9 +6,8 @@ import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import MultiSidedLiquidity from './MultiSidedLiquidity'
 import SingleSidedLiquidity from './SingleSidedLiquidity'
 import AddLiquityModal from './AddLiquityModal'
-import useErrorMessage, { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
-import BaseModal from '../../../../components/Tailwind/Modals/BaseModal'
-import ErrorContent from '../../../../components/Tailwind/ErrorContent/TransactionErrorContent'
+import useErrorMessage, { HaloError } from '../../../../halo-hooks/useErrorMessage'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 
 interface AddLiquidityProps {
   pool: PoolData
@@ -23,25 +22,27 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [zapAmount, setZapAmount] = useState('')
   const [isGivenBase, setIsGivenBase] = useState(true)
   const [slippage, setSlippage] = useState('3')
-  const [errors, setErrors] = useState<ErrorMessageObject>({ code: 0, data: '', message: '' })
+  // const [errors, setErrors] = useState<ErrorMessageObject>({ code: 0, data: '', message: '' })
   const [hasError, sethasError] = useState(false)
-  const { message, getErrorMessage } = useErrorMessage()
+  const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
   const balances = [tokenBalances[pool.token0.address], tokenBalances[pool.token1.address]]
 
   const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
-  const ErrorHandling = (errors: ErrorMessageObject) => {
-    if (errors.code !== 0) {
-      getErrorMessage(errors)
+  const ErrorHandling = (errors: HaloError) => {
+    if (errors) {
+      getFriendlyErrorMessage(errors)
       sethasError(true)
+      setErrorObject(errors)
     }
   }
 
   useEffect(() => {
-    ErrorHandling(errors)
-  }, [errors])
+    ErrorHandling(errorObject)
+  }, [errorObject])
 
   return (
     <div>
@@ -89,25 +90,14 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
-        ErrorStateSetter={setErrors}
+        ErrorStateSetter={setErrorObject}
       />
       {hasError && (
-        <BaseModal
-          isVisible={hasError}
-          onDismiss={() => {
-            sethasError(false)
-          }}
-        >
-          {
-            <ErrorContent
-              objectError={errors}
-              message={message}
-              closeError={() => {
-                sethasError(false)
-              }}
-            />
-          }
-        </BaseModal>
+         <ErrorModal
+         isVisible={errorObject !== undefined}
+         onDismiss={() => setErrorObject(undefined)}
+         errorObject={errorObject}
+       />
       )}
     </div>
   )

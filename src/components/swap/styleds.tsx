@@ -132,13 +132,13 @@ const SwapCallbackErrorInnerAlertTriangle = styled.div`
   height: 48px;
 `
 
-export function SwapCallbackError({ error }: { error: string }) {
+export function SwapCallbackError({ error }: { error: any }) {
   return (
     <SwapCallbackErrorInner>
       <SwapCallbackErrorInnerAlertTriangle>
         <AlertTriangle size={24} />
       </SwapCallbackErrorInnerAlertTriangle>
-      <p>{error}</p>
+      <p>{error.message}</p>
     </SwapCallbackErrorInner>
   )
 }

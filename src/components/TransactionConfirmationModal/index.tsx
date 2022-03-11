@@ -130,7 +130,7 @@ export function ConfirmationModalContent({
   )
 }
 
-export function TransactionErrorContent({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+export function ErrorModal({ message, onDismiss }: { message: string; onDismiss: () => void }) {
   const theme = useContext(ThemeContext)
   return (
     <Wrapper>
