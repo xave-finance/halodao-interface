@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { PoolData } from '../models/PoolData'
 import { useTokenBalances } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
