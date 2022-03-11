@@ -149,7 +149,6 @@ const AddLiquityModal = ({
         }
       } catch (e) {
         console.log('error calculate', e)
-        console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
           setErrorMessage(t('error-vm-exception'))
         } else {
