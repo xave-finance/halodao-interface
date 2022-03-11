@@ -14,7 +14,7 @@ import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
-import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
+import { ZapErrorCode, ZapErrorMessage, MetamaskErrorCode } from 'constants/errors'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -32,6 +32,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
+  onError: (errorObject: any) => void
 }
 
 const AddLiquityModal = ({
@@ -43,7 +44,8 @@ const AddLiquityModal = ({
   zapAmount,
   slippage,
   isVisible,
-  onDismiss
+  onDismiss,
+  onError
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
   const { getFutureTime } = useTime()
@@ -57,8 +59,8 @@ const AddLiquityModal = ({
   })
   const [poolShare, setPoolShare] = useState(0)
   const [depositAmount, setDepositAmount] = useState('')
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const { t } = useTranslation()
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
@@ -82,6 +84,7 @@ const AddLiquityModal = ({
     if (!isMultisided && (!zapAmount || zapAmount === '')) return
 
     setIsLoading(true)
+    setErrorMessage(undefined)
     let baseTokenAmount = 0
     let quoteTokenAmount = 0
 
@@ -90,13 +93,31 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isGivenBase) {
-        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
-        quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
-        baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
+          quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+          baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.log('error calculate', e)
+          if ((e as any).code === MetamaskErrorCode.Reverted) {
+            setErrorMessage(t('error-vm-exception'))
+          } else {
+            setErrorMessage((e as any).message)
+          }
+        }
       } else {
-        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
-        baseTokenAmount = Number(await viewTargetSwap(swapAmount))
-        quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
+          baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+          quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.log('error calculate', e)
+          if ((e as any).code === MetamaskErrorCode.Reverted) {
+            setErrorMessage(t('error-vm-exception'))
+          } else {
+            setErrorMessage((e as any).message)
+          }
+        }
       }
     }
 
@@ -104,10 +125,40 @@ const AddLiquityModal = ({
 
     let res: any
     if (isGivenBase) {
-      res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+      try {
+        res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
+
+        if (Number(res.base) > Number(baseTokenAmount)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        console.log('error calculate', e)
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        } else {
+          setErrorMessage((e as any).message)
+        }
+        onDismiss()
+      }
     } else {
-      res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+      try {
+        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+
+        if (Number(res.quote) > Number(quoteTokenAmount)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        console.log('error calculate', e)
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        } else {
+          setErrorMessage((e as any).message)
+        }
+        onDismiss()
+      }
     }
+    if (!res) return
+
     const maxDeposit = `${res.deposit}`
     const lpAmount = res.lpToken
     const basePrice = Number(res.quote) / Number(res.base)
@@ -170,6 +221,8 @@ const AddLiquityModal = ({
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
+      onError(err as any)
+      onDismiss()
     }
   }
 
@@ -197,7 +250,10 @@ const AddLiquityModal = ({
         (err as any).code === ZapErrorCode.SlippageTooLow ||
         (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
       ) {
-        setErrorMessage(t('error-liquidity-zap-reverted'))
+        onError({ message: t('error-liquidity-zap-reverted') })
+      } else {
+        onError(err as any)
+        onDismiss()
       }
     }
   }
@@ -276,7 +332,7 @@ const AddLiquityModal = ({
           </div>
           <PrimaryButton
             title="Confirm Supply"
-            state={isLoading ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
+            state={isLoading || errorMessage !== undefined ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
             onClick={() => {
               isMultisided ? confirmDeposit() : confirmZap()
             }}
