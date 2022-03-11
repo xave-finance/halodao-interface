@@ -1,34 +1,33 @@
-import useErrorMessage, { ErrorMessageObject } from 'halo-hooks/useErrorMessage'
-import React from 'react'
-import styled from 'styled-components'
+import { AnyRecord } from 'dns'
+import React, { useEffect, useState } from 'react'
+import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
 
-interface ErrorProps {
-  errorObject: ErrorMessageObject
+interface InlineErrorContentProps {
+  errorObject: any
 }
 
-// TODO: Tailwind?
-const Wrapper = styled.div`
-  background: #fdd9d7;
-  border: 1px solid #da1a0f;
-  box-sizing: border-box;
-  border-radius: 5px;
-`
+const InlineErrorContent = ({ errorObject }: InlineErrorContentProps) => {
+  const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
-const ErrorObjectMessageSpan = styled.span`
-  color: #ff0000;
-`
+  const [haloError] = useState<HaloError>({
+    code: errorObject?.code ?? 'Unknown',
+    data: errorObject?.data ?? 'Unknown',
+    message: errorObject?.message ?? 'Unknown'
+  })
 
-const InlineErrorContent = ({ errorObject }: ErrorProps) => {
-  const { getErrorMessage, message } = useErrorMessage()
-  getErrorMessage(errorObject)
+  useEffect(() => {
+    getFriendlyErrorMessage(haloError)
+  }, [haloError]) // eslint-disable-line
+
   return (
-    <Wrapper>
-      <div className="">ERROR:</div>
+    <div className="bg-error-light border-solid border-1 border-error-dark rounded">
+      <div className="">ERROR #: {haloError.code}</div>
       <div className="text-center font-semibold text-xl mb-2">
-        {message} Please show this error message <ErrorObjectMessageSpan>{errorObject.message} </ErrorObjectMessageSpan>
-        to the team on Discord or email us at dev@halodao.com.
+        {friendlyErrorMessage}. Please show this error message: &quot;
+        <span className="text-primary-red">{haloError.message} </span>&quot; to the team on Discord or email us at
+        dev@halodao.com.
       </div>
-    </Wrapper>
+    </div>
   )
 }
 
