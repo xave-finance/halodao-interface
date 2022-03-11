@@ -71,7 +71,7 @@ const MultiSidedLiquidity = ({
       setQuoteInput(quote)
       onQuoteAmountChanged(quote)
 
-      if (Number(base) > Number(val)) {
+      if (parseEther(base).gt(parseEther(val))) {
         setErrorMessage(t('error-liquidity-estimates-changed'))
       }
     } else {
@@ -93,7 +93,7 @@ const MultiSidedLiquidity = ({
       setBaseInput(base)
       onBaseAmountChanged(base)
 
-      if (Number(quote) > Number(val)) {
+      if (parseEther(quote).gt(parseEther(val))) {
         setErrorMessage(t('error-liquidity-estimates-changed'))
       }
     } else {
