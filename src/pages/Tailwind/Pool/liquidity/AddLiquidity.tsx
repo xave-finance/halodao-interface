@@ -93,11 +93,11 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         onError={setErrorObject}
       />
       {hasError && (
-         <ErrorModal
-         isVisible={errorObject !== undefined}
-         onDismiss={() => setErrorObject(undefined)}
-         errorObject={errorObject}
-       />
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
       )}
     </div>
   )
