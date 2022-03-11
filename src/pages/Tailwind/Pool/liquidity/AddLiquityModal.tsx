@@ -77,7 +77,7 @@ const AddLiquityModal = ({
     pool.token1
   )
 
-  const ErrorHandler = ( errorObject : HaloError) => {
+  const ErrorHandler = (errorObject: HaloError) => {
     ErrorStateSetter(errorObject)
   }
 
@@ -166,7 +166,7 @@ const AddLiquityModal = ({
 
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
-  setTxHash('')
+    setTxHash('')
     setTokenAmounts([0, 0])
     setTokenPrices([0, 0])
     setLpAmount({
