@@ -1,6 +1,6 @@
 import { currencyEquals, Trade } from '@halodao/sdk'
 import React, { useCallback, useMemo } from 'react'
-import TransactionConfirmationModal, { ConfirmationModalContent, ErrorModal } from '../TransactionConfirmationModal'
+import TransactionConfirmationModal, { ConfirmationModalContent, TransactionErrorContent } from '../TransactionConfirmationModal'
 import SwapModalFooter from './SwapModalFooter'
 import SwapModalHeader from './SwapModalHeader'
 import { useActiveWeb3React } from '../../hooks'
@@ -84,7 +84,7 @@ export default function ConfirmSwapModal({
   const confirmationContent = useCallback(
     () =>
       swapErrorMessage ? (
-        <ErrorModal onDismiss={onDismiss} message={swapErrorMessage} />
+        <TransactionErrorContent onDismiss={onDismiss} message={swapErrorMessage} />
       ) : (
         <ConfirmationModalContent
           title="Confirm Swap"
