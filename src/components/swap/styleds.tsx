@@ -138,7 +138,7 @@ export function SwapCallbackError({ error }: { error: any }) {
       <SwapCallbackErrorInnerAlertTriangle>
         <AlertTriangle size={24} />
       </SwapCallbackErrorInnerAlertTriangle>
-      <p>{error.message}</p>
+      <p>{error}</p>
     </SwapCallbackErrorInner>
   )
 }
