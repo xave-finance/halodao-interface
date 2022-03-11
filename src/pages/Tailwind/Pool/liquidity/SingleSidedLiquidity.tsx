@@ -219,23 +219,23 @@ const SingleSidedLiquidity = ({
             mainState === AddLiquidityState.Disabled
               ? 'Add Liquidity Disabled'
               : mainState === AddLiquidityState.NoAmount
-                ? 'Enter an amount'
-                : mainState === AddLiquidityState.NotConfigured
-                  ? 'Configure slippage'
-                  : mainState === AddLiquidityState.InsufficientBalance
-                    ? 'Insufficient Balance'
-                    : 'Supply'
+              ? 'Enter an amount'
+              : mainState === AddLiquidityState.NotConfigured
+              ? 'Configure slippage'
+              : mainState === AddLiquidityState.InsufficientBalance
+              ? 'Insufficient Balance'
+              : 'Supply'
           }
           state={
             errorMessage !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
-                ? PrimaryButtonState.Disabled
-                : mainState === AddLiquidityState.Approved
-                  ? PrimaryButtonState.Enabled
-                  : mainState === AddLiquidityState.Depositing
-                    ? PrimaryButtonState.InProgress
-                    : PrimaryButtonState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
+              ? PrimaryButtonState.Enabled
+              : mainState === AddLiquidityState.Depositing
+              ? PrimaryButtonState.InProgress
+              : PrimaryButtonState.Disabled
           }
           onClick={() => onDeposit()}
         />
