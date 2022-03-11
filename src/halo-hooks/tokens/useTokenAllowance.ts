@@ -4,6 +4,8 @@ import { useActiveWeb3React } from 'hooks'
 import { useTokenContract } from 'hooks/useContract'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { ApprovalState } from 'hooks/useApproveCallback'
+import { formatEther } from 'ethers/lib/utils'
+import { consoleLog } from 'utils/simpleLogger'
 
 const useTokenAllowance = (amountToApprove: TokenAmount, spender?: string): [ApprovalState, () => Promise<void>] => {
   const { account } = useActiveWeb3React()
@@ -17,6 +19,7 @@ const useTokenAllowance = (amountToApprove: TokenAmount, spender?: string): [App
     if (!account || !tokenContract || !spender) return
     try {
       const res = await tokenContract?.allowance(account, spender)
+      consoleLog(`${amountToApprove.token.symbol} allowance for ${spender}: `, formatEther(res))
       const newAllowance = new TokenAmount(amountToApprove.token, res.toString())
       setAllowance(newAllowance)
     } catch (error) {
@@ -39,6 +42,7 @@ const useTokenAllowance = (amountToApprove: TokenAmount, spender?: string): [App
       setIsApprovalPending(true)
 
       // execute actual approve call
+      consoleLog(`Approving ${formatEther(amountToApprove.raw.toString())} for ${spender}...`)
       const tx = await tokenContract?.approve(spender, amountToApprove.raw.toString())
       await tx.wait()
 

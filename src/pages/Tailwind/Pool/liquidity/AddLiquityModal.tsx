@@ -319,7 +319,7 @@ const AddLiquityModal = ({
         <div className="text-center font-semibold text-2xl mb-2">Transaction Confirmed</div>
         <div className="text-center">
           <a className="font-semibold text-link" href={explorerLink} target="_blank" rel="noopener noreferrer">
-            View on Etherscan
+            View on Block Explorer
           </a>
         </div>
         <div className="mt-12">
