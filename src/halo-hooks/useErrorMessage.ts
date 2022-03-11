@@ -10,7 +10,7 @@ export type HaloError = {
 
 const useErrorMessage = () => {
   const { t } = useTranslation()
-  const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('curveDefaultErrorMessage'))
+  const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('errorMessageCurveDefault'))
 
   const getFriendlyErrorMessage = useCallback(
     (errorObject: HaloError) => {

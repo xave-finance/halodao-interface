@@ -15,7 +15,6 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage } from 'constants/errors'
-// import { ErrorMessageObject } from '../../../../halo-hooks/useErrorMessage'
 import { HaloError } from '../../../../halo-hooks/useErrorMessage'
 
 enum AddLiquityModalState {
@@ -34,7 +33,7 @@ interface AddLiquityModalProps {
   slippage: string
   isVisible: boolean
   onDismiss: () => void
-  ErrorStateSetter: (errorObject: HaloError) => void
+  onError: (errorObject: any) => void
 }
 
 const AddLiquityModal = ({
@@ -47,7 +46,7 @@ const AddLiquityModal = ({
   slippage,
   isVisible,
   onDismiss,
-  ErrorStateSetter
+  onError
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
   const { getFutureTime } = useTime()
@@ -77,10 +76,6 @@ const AddLiquityModal = ({
     pool.token1
   )
 
-  const ErrorHandler = ( errorObject : HaloError) => {
-    ErrorStateSetter(errorObject)
-  }
-
   /**
    * Main logic for updating confirm add liquidity UI
    **/
@@ -98,13 +93,25 @@ const AddLiquityModal = ({
       quoteTokenAmount = Number(quoteAmount)
     } else {
       if (isGivenBase) {
-        const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
-        quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
-        baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
+          quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+          baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.log('error calculate', e)
+          onError(e as any)
+          onDismiss()
+        }
       } else {
-        const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
-        baseTokenAmount = Number(await viewTargetSwap(swapAmount))
-        quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        try {
+          const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
+          baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+          quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+        } catch (e) {
+          console.log('error calculate', e)
+          onError(e as any)
+          onDismiss()
+        }
       }
     }
 
@@ -119,7 +126,8 @@ const AddLiquityModal = ({
           setErrorMessage(t('error-liquidity-estimates-changed'))
         }
       } catch (e) {
-        ErrorHandler(e as any)
+        console.log('error calculate', e)
+        onError(e as any)
         onDismiss()
       }
     } else {
@@ -130,13 +138,8 @@ const AddLiquityModal = ({
           setErrorMessage(t('error-liquidity-estimates-changed'))
         }
       } catch (e) {
-        console.clear()
-        // ErrorHandler({
-        //   code: e.code,
-        //   data: e.data?.originalError?.data,
-        //   message: e.message
-        // })
-        ErrorHandler(e as any)
+        console.log('error calculate', e)
+        onError(e as any)
         onDismiss()
       }
     }
@@ -166,7 +169,7 @@ const AddLiquityModal = ({
 
   const dismissGracefully = () => {
     setState(AddLiquityModalState.NotConfirmed)
-  setTxHash('')
+    setTxHash('')
     setTokenAmounts([0, 0])
     setTokenPrices([0, 0])
     setLpAmount({
@@ -204,7 +207,7 @@ const AddLiquityModal = ({
       console.error(err)
       setTxHash('')
       setState(AddLiquityModalState.NotConfirmed)
-      ErrorHandler(err as any)
+      onError(err as any)
       onDismiss()
     }
   }
@@ -234,6 +237,9 @@ const AddLiquityModal = ({
         (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
       ) {
         setErrorMessage(t('error-liquidity-zap-reverted'))
+      } else {
+        onError(err as any)
+        onDismiss()
       }
     }
   }

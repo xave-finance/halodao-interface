@@ -128,6 +128,7 @@
   "bridge": "Bridge",
   "error-liquidity-zap-reverted": "The transaction has reverted. You may increase the slippage tolerance and try again.",
   "error-liquidity-estimates-changed": "FX estimation has changed. Please try entering a slightly lower amount.",
+  "error-vm-exception": "The transaction has reverted. Please try again.",
   "migrate": "Migrate",
   "migrated": "Migrated",
   "lend": "Lend",

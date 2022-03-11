@@ -9,6 +9,7 @@ import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { MetamaskErrorCode } from 'constants/errors'
 
 enum AddLiquidityState {
   NoAmount,
@@ -67,12 +68,18 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
-      setQuoteInput(quote)
-      onQuoteAmountChanged(quote)
+      try {
+        const { base, quote } = await previewDepositGivenBase(val, pool.rates.token0, pool.weights.token0)
+        setQuoteInput(quote)
+        onQuoteAmountChanged(quote)
 
-      if (Number(base) > Number(val)) {
-        setErrorMessage(t('error-liquidity-estimates-changed'))
+        if (Number(base) > Number(val)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        }
       }
     } else {
       setQuoteInput('')
@@ -89,12 +96,18 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      const { base, quote } = await previewDepositGivenQuote(val)
-      setBaseInput(base)
-      onBaseAmountChanged(base)
+      try {
+        const { base, quote } = await previewDepositGivenQuote(val)
+        setBaseInput(base)
+        onBaseAmountChanged(base)
 
-      if (Number(quote) > Number(val)) {
-        setErrorMessage(t('error-liquidity-estimates-changed'))
+        if (Number(quote) > Number(val)) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        }
       }
     } else {
       setBaseInput('')
@@ -192,21 +205,21 @@ const MultiSidedLiquidity = ({
             mainState === AddLiquidityState.Disabled
               ? 'Add Liquidity Disabled'
               : mainState === AddLiquidityState.NoAmount
-              ? 'Enter an amount'
-              : mainState === AddLiquidityState.InsufficientBalance
-              ? 'Insufficient Balance'
-              : 'Supply'
+                ? 'Enter an amount'
+                : mainState === AddLiquidityState.InsufficientBalance
+                  ? 'Insufficient Balance'
+                  : 'Supply'
           }
           state={
             errorMessage !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
-              ? PrimaryButtonState.Disabled
-              : mainState === AddLiquidityState.Approved
-              ? PrimaryButtonState.Enabled
-              : mainState === AddLiquidityState.Depositing
-              ? PrimaryButtonState.InProgress
-              : PrimaryButtonState.Disabled
+                ? PrimaryButtonState.Disabled
+                : mainState === AddLiquidityState.Approved
+                  ? PrimaryButtonState.Enabled
+                  : mainState === AddLiquidityState.Depositing
+                    ? PrimaryButtonState.InProgress
+                    : PrimaryButtonState.Disabled
           }
           onClick={onDeposit}
         />

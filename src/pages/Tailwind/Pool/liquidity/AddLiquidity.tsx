@@ -90,7 +90,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
-        ErrorStateSetter={setErrorObject}
+        onError={setErrorObject}
       />
       {hasError && (
          <ErrorModal
