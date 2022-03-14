@@ -1,7 +1,8 @@
 export enum ModalState {
   NotConfirmed,
   InProgress,
-  Successful
+  Successful,
+  Failed
 }
 
 export enum ButtonState {
