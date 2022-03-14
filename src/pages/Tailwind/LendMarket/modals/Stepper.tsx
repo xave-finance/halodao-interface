@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import CircleIcon from 'assets/svg/gray-white-circle.svg'
 import YellowCircleIcon from 'assets/svg/yellow-circle.svg'
 import CompleteIcon from 'assets/svg/check-circle-icon.svg'
-import DisabledIcon from 'assets/svg/circle-inside-square.svg'
+// import DisabledIcon from 'assets/svg/circle-inside-square.svg'
 import { ChainId, Token } from '@halodao/sdk'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
@@ -19,37 +19,37 @@ export enum StepperMode {
 
 const Stepper = ({ mode }: { mode: StepperMode }) => {
   const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
-
-  const DisabledContent = () => {
-    return (
-      <>
-        <div className="border border-primary-hover mt-4 rounded-md">
-          <div className="flex flex-col justify-center bg-primary-hover rounded-t-md p-4 w-full items-center">
-            <div className="text-lg text-white pl-2 tracking-wide">
-              {mode === StepperMode.Deposit && <span>Your balance is zero</span>}
-              {mode === StepperMode.Borrow && <span>You have no collateral</span>}
-            </div>
-          </div>
-          <div className="flex flex-col justify-center w-full items-center">
-            <div className="mt-4 text-center">
-              <img src={DisabledIcon} alt="Disabled..." />
-            </div>
-            <div className="p-8 text-center">
-              {mode === StepperMode.Deposit && (
-                <span>Transfer (Token) or any token into your wallet to use as collateral</span>
-              )}
-              {mode === StepperMode.Borrow && (
-                <span>
-                  If you want to borrow this or any asset, choose an asset from the main lending market page to
-                  deposit/lend assets
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </>
-    )
-  }
+  //eslint-disable-next-line
+  // const DisabledContent = () => {
+  //   return (
+  //     <>
+  //       <div className="border border-primary-hover mt-4 rounded-md">
+  //         <div className="flex flex-col justify-center bg-primary-hover rounded-t-md p-4 w-full items-center">
+  //           <div className="text-lg text-white pl-2 tracking-wide">
+  //             {mode === StepperMode.Deposit && <span>Your balance is zero</span>}
+  //             {mode === StepperMode.Borrow && <span>You have no collateral</span>}
+  //           </div>
+  //         </div>
+  //         <div className="flex flex-col justify-center w-full items-center">
+  //           <div className="mt-4 text-center">
+  //             <img src={DisabledIcon} alt="Disabled..." />
+  //           </div>
+  //           <div className="p-8 text-center">
+  //             {mode === StepperMode.Deposit && (
+  //               <span>Transfer (Token) or any token into your wallet to use as collateral</span>
+  //             )}
+  //             {mode === StepperMode.Borrow && (
+  //               <span>
+  //                 If you want to borrow this or any asset, choose an asset from the main lending market page to
+  //                 deposit/lend assets
+  //               </span>
+  //             )}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </>
+  //   )
+  // }
 
   const NotApprovedContent = () => {
     return (
