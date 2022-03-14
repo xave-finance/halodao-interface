@@ -44,6 +44,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         return tx
       } catch (e) {
         console.log(e)
+        throw e;
       }
     },
     [CurveContract, token0, token1, addTransaction]
