@@ -20,12 +20,12 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
 
   useEffect(() => {
     getFriendlyErrorMessage(haloError)
-  }, [haloError]) // eslint-disable-line
+  }, [haloError, getFriendlyErrorMessage])
 
   return (
-    <footer className="p-4">
-      <div className="pt-12 pb-6 flex justify-center hover:opacity-50">
-        <img src={OrangeWarningIcon} alt="" />
+    <div className="p-4">
+      <div className="pt-12 pb-6 flex justify-center">
+        <img src={OrangeWarningIcon} alt="Warning" />
       </div>
       <div className="flex justify-center font-semibold text-2xl mb-2">Transaction Failed</div>
       <div className="text-center font-semibold">
@@ -90,7 +90,7 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
           Dismiss
         </div>
       </div>
-    </footer>
+    </div>
   )
 }
 
