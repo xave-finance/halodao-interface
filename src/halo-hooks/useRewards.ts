@@ -247,7 +247,6 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
     if (!ammRewards || !rewarderContract || !rewardTokenContract || !account || !rewarderAddress) return
 
     try {
-      console.log('fetchUnclaimedRewards() in progress...')
       const pendingXRNBW = await ammRewards.pendingRewardToken(poolID, account)
       const [pendingRewarderTokens, multiplier, symbol, balance] = await Promise.all([
         rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW),

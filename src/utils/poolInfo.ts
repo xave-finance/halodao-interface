@@ -4,26 +4,17 @@ import {
   DOUBLE_ESTIMATE_POOLS,
   DOUBLE_ESTIMATE_POOLS_KOVAN,
   DOUBLE_ESTIMATE_POOLS_MATIC,
-  INACTIVE_POOLS,
-  INACTIVE_POOLS_MATIC,
-  INACTIVE_POOLS_KOVAN,
-  LIQUIDITY_POOLS_ADDRESSES,
-  LIQUIDITY_POOLS_ADDRESSES_KOVAN,
-  LIQUIDITY_POOLS_ADDRESSES_MATIC,
   SUSHI_POOLS_ADDRESSES,
   SUSHI_POOLS_ADDRESSES_KOVAN,
   UNI_POOLS_ADDRESSES,
   UNI_POOLS_ADDRESSES_KOVAN,
-  SUSHI_POOLS_ADDRESSES_MATIC,
-  INACTIVE_POOLS_ARB,
-  INACTIVE_POOLS_ARB_RINKEBY,
-  LIQUIDITY_POOLS_ADDRESSES_ARB,
-  LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY
+  SUSHI_POOLS_ADDRESSES_MATIC
 } from 'constants/pools'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
 import { ChainId } from '@halodao/sdk'
+import { getHaloAddresses } from './haloAddresses'
 
 export type PoolIdLpTokenMap = {
   pid: number
@@ -54,29 +45,14 @@ const isSushiPool = (address: string, chainId: ChainId | undefined) => {
 }
 
 const isHaloPool = (address: string, chainId: ChainId | undefined) => {
-  if (chainId === ChainId.MATIC) {
-    return LIQUIDITY_POOLS_ADDRESSES_MATIC.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.KOVAN) {
-    return LIQUIDITY_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.ARBITRUM) {
-    return LIQUIDITY_POOLS_ADDRESSES_ARB.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.ARBITRUM_TESTNET) {
-    return LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY.includes(address.toLocaleLowerCase())
-  }
-  return LIQUIDITY_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
+  const haloAddresses = getHaloAddresses(chainId)
+  const poolAddresses = [...haloAddresses.ammV2.pools.enabled, ...haloAddresses.ammV2.pools.disabled]
+  return poolAddresses.includes(address)
 }
 
 export const isInactivePool = (address: string, chainId: ChainId | undefined) => {
-  if (chainId === ChainId.MATIC) {
-    return INACTIVE_POOLS_MATIC.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.KOVAN) {
-    return INACTIVE_POOLS_KOVAN.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.ARBITRUM) {
-    return INACTIVE_POOLS_ARB.includes(address.toLocaleLowerCase())
-  } else if (chainId === ChainId.ARBITRUM_TESTNET) {
-    return INACTIVE_POOLS_ARB_RINKEBY.includes(address.toLocaleLowerCase())
-  }
-  return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
+  const haloAddresses = getHaloAddresses(chainId)
+  return haloAddresses.ammV2.pools.disabled.includes(address)
 }
 
 export const groupByPoolProvider = (addresses: string[], chainId: ChainId | undefined) => {

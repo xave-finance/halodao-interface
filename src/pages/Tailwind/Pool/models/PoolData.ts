@@ -1,5 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { Token } from '@halodao/sdk'
+
 export interface PoolData {
   pid?: string
   address: string
@@ -24,5 +25,4 @@ export interface PoolData {
   staked: number
   earned: number
   totalSupply: number
-  assimilators: string[]
 }
