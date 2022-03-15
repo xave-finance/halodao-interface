@@ -6,6 +6,7 @@ import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import MultiSidedLiquidity from './MultiSidedLiquidity'
 import SingleSidedLiquidity from './SingleSidedLiquidity'
 import AddLiquityModal from './AddLiquityModal'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 
 interface AddLiquidityProps {
   pool: PoolData
@@ -20,6 +21,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [zapAmount, setZapAmount] = useState('')
   const [isGivenBase, setIsGivenBase] = useState(true)
   const [slippage, setSlippage] = useState('3')
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.tokens[0].token, pool.tokens[1].token])
@@ -73,7 +75,15 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
+        onError={setErrorObject}
       />
+      {errorObject && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
+      )}
     </div>
   )
 }

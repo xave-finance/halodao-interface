@@ -7,6 +7,7 @@ import { PoolData } from '../models/PoolData'
 import { TokenAmount, JSBI } from '@halodao/sdk'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { MetamaskErrorCode } from 'constants/errors'
 import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
 
 enum AddLiquidityState {
@@ -66,10 +67,20 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      const quoteAmount = await calculateOtherTokenIn(val, 0)
-      const quote = formatUnits(quoteAmount, token1.decimals)
-      setQuoteInput(quote)
-      onQuoteAmountChanged(quote)
+      try {
+        const quoteAmount = await calculateOtherTokenIn(val, 0)
+        const quote = formatUnits(quoteAmount, token1.decimals)
+        setQuoteInput(quote)
+        onQuoteAmountChanged(quote)
+
+        if (parseEther(base).gt(parseEther(val))) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        }
+      }
     } else {
       setQuoteInput('')
     }
@@ -85,10 +96,20 @@ const MultiSidedLiquidity = ({
     setErrorMessage(undefined)
 
     if (val !== '') {
-      const baseAmount = await calculateOtherTokenIn(val, 1)
-      const base = formatUnits(baseAmount, token0.decimals)
-      setBaseInput(base)
-      onBaseAmountChanged(base)
+      try {
+        const baseAmount = await calculateOtherTokenIn(val, 1)
+        const base = formatUnits(baseAmount, token0.decimals)
+        setBaseInput(base)
+        onBaseAmountChanged(base)
+
+        if (parseEther(quote).gt(parseEther(val))) {
+          setErrorMessage(t('error-liquidity-estimates-changed'))
+        }
+      } catch (e) {
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        }
+      }
     } else {
       setBaseInput('')
     }

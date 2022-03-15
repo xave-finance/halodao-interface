@@ -180,7 +180,7 @@ export const NETWORK_PARAMS: {
       decimals: 18
     },
     rpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
-    blockExplorerUrls: ['https://rinkeby-explorer.arbitrum.io']
+    blockExplorerUrls: ['https://testnet.arbiscan.io/']
   }
   /*
     [ChainId.HARMONY]: {

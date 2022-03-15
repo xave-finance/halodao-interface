@@ -8,6 +8,7 @@ import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { parseEther } from 'ethers/lib/utils'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 interface RemoveLiquidityProps {
@@ -20,6 +21,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const [token1Amount, setToken1Amount] = useState(0)
   const { getFutureTime } = useTime()
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const token0 = pool.tokens[0].token
   const token1 = pool.tokens[1].token
@@ -64,6 +66,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       })
     } catch (err) {
       console.error(err)
+      setErrorObject(err)
       setRemoveButtonState(PrimaryButtonState.Enabled)
     }
   }
@@ -94,6 +97,13 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       <div className="mt-4">
         <PrimaryButton title="Remove Supply" state={removeButtonState} onClick={confirmWithdraw} />
       </div>
+      {errorObject && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
+      )}
     </div>
   )
 }

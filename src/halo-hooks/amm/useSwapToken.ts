@@ -234,8 +234,7 @@ export const useSwapToken = (
 
         return tx
       } catch (e) {
-        console.log(e)
-        return null
+        return e
       }
     },
     [

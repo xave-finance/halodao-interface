@@ -12,6 +12,8 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { MetamaskErrorCode } from 'constants/errors'
+import { useTranslation } from 'react-i18next'
 
 enum AddLiquidityState {
   NoAmount,
@@ -45,6 +47,7 @@ const SingleSidedLiquidity = ({
   const token0 = pool.tokens[0].token
   const token1 = pool.tokens[1].token
 
+  const { t } = useTranslation()
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [selectedToken, setSelectedToken] = useState(token0)
   const [zapInput, setZapInput] = useState('')
@@ -65,10 +68,13 @@ const SingleSidedLiquidity = ({
   const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
   const quoteZapApproved = quoteZapApproveState === ApprovalState.APPROVED
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
 
   const onBaseInputUpdate = async (val: string) => {
     setZapInput(val)
     onZapAmountChanged(val)
+    setErrorMessage(undefined)
+    console.log('errorMessage', errorMessage)
     if (val === '') return
 
     let calcBaseAmount = 0
@@ -76,17 +82,32 @@ const SingleSidedLiquidity = ({
     const zapFromBase = selectedToken === token0
 
     if (zapFromBase) {
-      const swapAmount = await calcSwapAmountForZapFromBase(val)
-      calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
-      calcBaseAmount = Number(val) - Number(swapAmount)
+      try {
+        const swapAmount = await calcSwapAmountForZapFromBase(val)
+        calcQuoteAmount = Number(await viewOriginSwap(swapAmount))
+        calcBaseAmount = Number(val) - Number(swapAmount)
+      } catch (e) {
+        console.log('error calculate', e)
+        if ((e as any).code === MetamaskErrorCode.Reverted) {
+          setErrorMessage(t('error-vm-exception'))
+        } else {
+          setErrorMessage((e as any).message)
+        }
+      }
     } else {
-      const swapAmount = await calcSwapAmountForZapFromQuote(val)
-      calcBaseAmount = Number(await viewTargetSwap(swapAmount))
-      calcQuoteAmount = Number(val) - Number(swapAmount)
+      try {
+        const swapAmount = await calcSwapAmountForZapFromQuote(val)
+        calcBaseAmount = Number(await viewTargetSwap(swapAmount))
+        calcQuoteAmount = Number(val) - Number(swapAmount)
+      } catch (e) {
+        console.log('error calculate', e)
+        setErrorMessage((e as any).message)
+      }
     }
 
     setBaseAmount(calcBaseAmount.toString())
     setQuoteAmount(calcQuoteAmount.toString())
+    console.log('errorMessageAfter', errorMessage)
   }
 
   /**
@@ -210,7 +231,9 @@ const SingleSidedLiquidity = ({
               : 'Supply'
           }
           state={
-            mainState === AddLiquidityState.Disabled
+            errorMessage !== undefined
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Disabled
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Approved
               ? PrimaryButtonState.Enabled
@@ -220,6 +243,7 @@ const SingleSidedLiquidity = ({
           }
           onClick={() => onDeposit()}
         />
+        {errorMessage && <div className="mt-4 text-red-600 text-center text-sm">{errorMessage}</div>}
       </div>
     </>
   )
