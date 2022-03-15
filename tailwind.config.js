@@ -21,7 +21,8 @@ module.exports = {
           gray: '#828282',
           midGray: '#F1F1F1',
           lightGray: '#BDBDBD',
-          red: '#FF0000'
+          red: '#FF0000',
+          yellow: '#ffd654'
         },
         secondary: {
           DEFAULT: '#A38DD8',
@@ -60,6 +61,12 @@ module.exports = {
       },
       height: {
         tokenInput: '80px'
+      },
+      backgroundImage: {
+        epochTimer: 'linear-gradient(54.93deg, #15006d 12.16%, #15006d 33.28%, #5521b6 66.19%, #2db7c4 93.15%)'
+      },
+      spacing: {
+        '155.61': '155.61px'
       }
     }
   },
