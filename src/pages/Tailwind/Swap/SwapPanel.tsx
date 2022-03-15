@@ -30,6 +30,7 @@ const SwapPanel = () => {
   const [fromCurrency, setFromCurrency] = useState(
     tokenList.length > 1 ? tokenList[1] : (HALO[ChainId.MAINNET] as Token)
   )
+  const [fromAmountBalance, setFromAmountBalance] = useState('')
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
   const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
@@ -47,9 +48,6 @@ const SwapPanel = () => {
   const {
     getPrice,
     getMinimumAmount,
-    getTokenBalance,
-    toAmountBalance,
-    fromAmountBalance,
     price,
     isLoadingPrice,
     toMinimumAmount,
@@ -59,6 +57,7 @@ const SwapPanel = () => {
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
+
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -97,11 +96,6 @@ const SwapPanel = () => {
     return () => clearInterval(intervalId)
   }, [timeLeft])
 
-  const updateBalances = useCallback(async () => {
-    await getTokenBalance(CurrencySide.TO_CURRENCY)
-    await getTokenBalance(CurrencySide.FROM_CURRENCY)
-  }, [getTokenBalance])
-
   useEffect(() => {
     getPrice()
   }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue])
@@ -126,10 +120,6 @@ const SwapPanel = () => {
       setFromInputValue('')
     }
   }, [chainId, tokenList])
-
-  useEffect(() => {
-    updateBalances()
-  }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances])
 
   useEffect(() => {
     console.log(allowance)
@@ -347,7 +337,7 @@ const SwapPanel = () => {
           <>
             <div className="flex flex:row mt-2 md:mt-4 mb-4">
               <div className="w-1/2 flex justify-start">
-                <p className="font-semibold text-secondary-alternate">From</p>
+                <p className="font-semibold text-secondary-alternate">From {fromAmountBalance}</p>
               </div>
               <div className="w-1/2 flex justify-end cursor-pointer">
                 <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} />
@@ -373,19 +363,20 @@ const SwapPanel = () => {
                 showMax={true}
                 isLoading={tokenListLoading}
                 tokenList={tokenList}
-                balance={fromAmountBalance}
                 onSelectToken={token => {
                   if (token !== toCurrency) {
                     setFromCurrency(token)
                     setToInputValue('')
                     setFromInputValue('')
-                    updateBalances()
                   }
+                }}
+                didUpdateBalance={balance => {
+                  setFromAmountBalance(balance)
                 }}
               />
             </div>
 
-            <div className="flex flex:row mt-2 mb-2 md:mt-4 mb-4">
+            <div className="flex flex:row mt-2 md:mt-4 mb-4">
               <div className="w-1/2 flex justify-start">
                 <p className="mt-2 font-semibold text-secondary-alternate">Swap to</p>
               </div>
@@ -398,7 +389,6 @@ const SwapPanel = () => {
                   setFromInputValue(prevToInputValue)
                   setToCurrency(fromCurrency)
                   setFromCurrency(prevToCurrency)
-                  updateBalances()
                   getMinimumAmount(prevToInputValue, CurrencySide.TO_CURRENCY)
                 }}
               >
@@ -421,7 +411,6 @@ const SwapPanel = () => {
                 showBalance={true}
                 showMax={true}
                 tokenList={tokenList}
-                balance={toAmountBalance}
                 isLoading={tokenListLoading}
                 onSelectToken={token => {
                   if (token !== fromCurrency) {
