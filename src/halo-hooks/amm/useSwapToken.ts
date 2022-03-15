@@ -92,7 +92,10 @@ export const useSwapToken = (
   const getRouter = useCallback(async () => {
     if (!library || !account || !chainId) return
 
-    return getContract(routerAddress[chainId] as string, ROUTER_ABI, library, true && account)
+    const address = routerAddress[chainId]
+    if (!address || address === ethers.constants.AddressZero) return
+
+    return getContract(address, ROUTER_ABI, library, true && account)
   }, [account, chainId, library])
 
   const getPrice = useCallback(async () => {

@@ -16,10 +16,8 @@ const Swap = () => {
         />
       </div>
       <div className="md:float-right md:w-1/2">
-        <div className="flex items-start bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
-          <div className="w-full">
-            <SwapPanel />
-          </div>
+        <div className="flex items-start ">
+          <SwapPanel />
         </div>
       </div>
       <div className="hidden md:flex items-start md:w-1/2">

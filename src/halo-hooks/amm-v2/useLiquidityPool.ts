@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers'
 import VaultABI from '../../constants/haloAbis/Vault.json'
 import CustomPoolABI from '../../constants/haloAbis/CustomPool.json'
 import ERC20ABI from '../../constants/abis/erc20.json'
@@ -15,6 +14,8 @@ import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammReward
 import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { getHaloAddresses } from 'utils/haloAddresses'
+import { parseUnits } from 'ethers/lib/utils'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {
   const address = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest)
@@ -163,34 +164,43 @@ export const useGetPoolData = () => {
       new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
     ]
 
-    const genericDenom = BigNumber.from(10).pow(18)
-    const token0Denom = BigNumber.from(10).pow(token0Decimals)
-    const token1Denom = BigNumber.from(10).pow(token1Decimals)
+    const token0Rate = parseUnits('0.02', 8) // @todo: get rates from token[0] assimilator contract
+    const token1Rate = parseUnits('1', 8) // @todo: get rates from token[1] assimilator contract
+    const token0Numeraire = bigNumberToNumber(poolTokens.balances[0].div(1e8).mul(token0Rate), token0Decimals)
+    const token1Numeraire = bigNumberToNumber(poolTokens.balances[1].div(1e8).mul(token1Rate), token1Decimals)
+    const totalLiquidity = token0Numeraire + token1Numeraire
+    const token0Weight = token0Numeraire / totalLiquidity
+    const token1Weight = token1Numeraire / totalLiquidity
 
-    return {
+    const poolData = {
+      vaultPoolId,
+      rewardsPoolId,
       address: poolAddress,
       name: `${tokens[0].symbol}/${tokens[1].symbol}`,
-      token0: tokens[0],
-      token1: tokens[1],
-      pooled: {
-        total: 0, // @todo: once we know the rates, we can calculate total liquidity (in USD)
-        token0: poolTokens.balances[0].div(token0Denom).toNumber(),
-        token1: poolTokens.balances[1].div(token1Denom).toNumber()
-      },
-      weights: {
-        token0: 0.5, // @todo: calculate token 0 weight: totalLiquidityNumeraire / totalToken0Numeraire
-        token1: 0.5 // @todo: calculate token 1 weight: totalLiquidityNumeraire / totalToken1Numeraire
-      },
-      rates: {
-        token0: 0.02, // @todo: get rates from token[0] assimilator contract
-        token1: 1 // @todo: get rates from token[1] assimilator contract
-      },
-      totalSupply: totalSupply.div(genericDenom).toNumber(),
-      held: userBalance.div(genericDenom).toNumber(),
-      heldBN: userBalance,
-      staked: userStaked.amount.div(genericDenom).toNumber(),
-      earned: userEarned.div(genericDenom).toNumber()
+      totalSupply: totalSupply,
+      totalLiquidity: parseUnits(`${totalLiquidity}`),
+      tokens: [
+        {
+          token: tokens[0],
+          balance: poolTokens.balances[0],
+          weight: parseUnits(`${token0Weight}`),
+          rate: token0Rate
+        },
+        {
+          token: tokens[1],
+          balance: poolTokens.balances[1],
+          weight: parseUnits(`${token1Weight}`),
+          rate: token1Rate
+        }
+      ],
+      userInfo: {
+        held: userBalance,
+        staked: userStaked.amount,
+        earned: userEarned
+      }
     }
+
+    return poolData
   }
 
   return getPoolData
