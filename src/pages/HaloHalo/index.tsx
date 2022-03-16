@@ -200,7 +200,7 @@ export default function HaloHalo() {
   const poolToHarvest = useSelector<AppState, PoolVestingInfo | undefined>(state => state.user.poolToHarvest)
   const [poolVestingInfo, setPoolVestingInfo] = useState<PoolVestingInfo | undefined>()
   const { t } = useTranslation()
-  const { chainId } = useActiveWeb3React()
+  const { chainId, account } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
 
   useEffect(() => {
@@ -248,22 +248,28 @@ export default function HaloHalo() {
               <AutoColumn>
                 {features?.vest && (
                   <>
-                    <HaloDepositPanel
-                      label={''}
-                      disableCurrencySelect={true}
-                      customBalanceText={'Available to deposit: '}
-                      id="stake-liquidity-token"
-                      buttonText="Claim RNBW"
-                      cornerRadiusBottomNone={true}
-                    />
-                    <HaloHaloWithdrawPanel
-                      label={''}
-                      disableCurrencySelect={true}
-                      customBalanceText={'Available to withdraw: '}
-                      id="withdraw-liquidity-token"
-                      buttonText="Withdraw"
-                      cornerRadiusTopNone={true}
-                    />
+                    {account === null ? (
+                      <FeatureNotSupported isIsolated={false} />
+                    ) : (
+                      <>
+                        <HaloDepositPanel
+                          label={''}
+                          disableCurrencySelect={true}
+                          customBalanceText={'Available to deposit: '}
+                          id="stake-liquidity-token"
+                          buttonText="Claim RNBW"
+                          cornerRadiusBottomNone={true}
+                        />
+                        <HaloHaloWithdrawPanel
+                          label={''}
+                          disableCurrencySelect={true}
+                          customBalanceText={'Available to withdraw: '}
+                          id="withdraw-liquidity-token"
+                          buttonText="Withdraw"
+                          cornerRadiusTopNone={true}
+                        />
+                      </>
+                    )}
                   </>
                 )}
 
