@@ -18,7 +18,7 @@ import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskErrorCode } from 'constants/errors'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
-import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
+// import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 import useSwap from 'halo-hooks/amm-v2/useSwap'
@@ -458,15 +458,15 @@ const SwapPanel = () => {
             if (txn === 4001 || !txn) {
               setSwapTransactionModalState(ModalState.NotConfirmed)
             }
-            if (
-              txn.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-              txn.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-            ) {
-              setShowModal(false)
-              setSwapTransactionModalState(ModalState.NotConfirmed)
-              setErrorObject(txn)
-              setButtonState(SwapButtonState.Swap)
-            }
+            // if (
+            //   txn.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+            //   txn.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+            // ) {
+            //   setShowModal(false)
+            //   setSwapTransactionModalState(ModalState.NotConfirmed)
+            //   setErrorObject(txn)
+            //   setButtonState(SwapButtonState.Swap)
+            // }
           } catch (e) {
             console.error('Error catched! ', e)
             setShowModal(false)

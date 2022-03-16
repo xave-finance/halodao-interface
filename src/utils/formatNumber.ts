@@ -1,5 +1,5 @@
 import numeral from 'numeral'
-import ethers from 'ethers'
+import { ethers } from 'ethers'
 
 export enum NumberFormat {
   long,

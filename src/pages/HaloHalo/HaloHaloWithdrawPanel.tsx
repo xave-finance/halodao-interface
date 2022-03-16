@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Pair } from '@halodao/sdk'
-import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
+// import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
@@ -124,16 +124,17 @@ export default function HaloHaloWithdrawPanel({
     try {
       const txHash = await approve()
       console.log(txHash)
-      // user rejected tx or didn't go thru
-      if (
-        // catch metamask rejection
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      ) {
-        setErrorObject(txHash)
-      } else {
-        await txHash.wait()
-      }
+      await txHash.wait()
+      // // user rejected tx or didn't go thru
+      // if (
+      //   // catch metamask rejection
+      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      // ) {
+      //   setErrorObject(txHash)
+      // } else {
+      //   await txHash.wait()
+      // }
     } catch (e) {
       console.log(e)
       setErrorObject(e)
@@ -173,16 +174,19 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const tx = await leave(amount)
-      if (
-        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      ) {
-        setErrorObject(tx)
-      } else {
-        await tx.wait()
-        setWithdrawValue('')
-        success = true
-      }
+      await tx.wait()
+      setWithdrawValue('')
+      success = true
+      // if (
+      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+      // ) {
+      //   setErrorObject(tx)
+      // } else {
+      //   await tx.wait()
+      //   setWithdrawValue('')
+      //   success = true
+      // }
     } catch (e) {
       console.error(e)
       setErrorObject(e)
