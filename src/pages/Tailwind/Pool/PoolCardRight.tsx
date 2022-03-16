@@ -7,9 +7,10 @@ import { PoolData } from './models/PoolData'
 
 interface PoolCardRightProps {
   pool: PoolData
+  isActivePool?: boolean
 }
 
-const PoolCardRight = ({ pool }: PoolCardRightProps) => {
+const PoolCardRight = ({ pool, isActivePool }: PoolCardRightProps) => {
   const history = useHistory()
 
   const stake = () => {
@@ -58,7 +59,17 @@ const PoolCardRight = ({ pool }: PoolCardRightProps) => {
           <div className="font-fredoka text-4xl">{formatNumber(pool.held)} HLP</div>
         </div>
         <div className="flex items-end">
-          <PoolBigButton title="Stake it" isEnabled={pool.held > 0} onClick={stake} />
+          <PoolBigButton
+            title="Stake it"
+            isEnabled={pool.held > 0}
+            onClick={
+              isActivePool
+                ? stake
+                : () => {
+                    // silent
+                  }
+            }
+          />
         </div>
       </div>
     </div>
