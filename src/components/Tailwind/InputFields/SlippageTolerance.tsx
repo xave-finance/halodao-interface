@@ -1,6 +1,7 @@
 import NumericalInput from 'components/NumericalInput'
 import React, { useState } from 'react'
-import { HelpCircle as QuestionIcon } from 'react-feather'
+import { AlertCircle } from 'react-feather'
+import { MouseoverTooltip } from '../../Tooltip'
 
 interface SlippageButtonProps {
   title: string
@@ -37,7 +38,12 @@ const SlippageTolerance = ({ value, didChangeValue }: SlippageToleranceProps) =>
     <div>
       <div className="flex items-center space-x-2 mb-2">
         <span>Slippage tolerance:</span>
-        <QuestionIcon size={16} />
+        <MouseoverTooltip
+          text={'Your transaction will revert if the price changes unfavorably by more than this percentage.'}
+          placement={'top'}
+        >
+          <AlertCircle size={'16'} />
+        </MouseoverTooltip>
       </div>
       <div className="flex space-x-4 mb-2">
         <SlippageButton title="0.5%" onClick={() => didChangeValue('0.5')} highlighted={value === '0.5'} />
