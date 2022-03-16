@@ -24,6 +24,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { MetamaskProviderErrorCode } from 'constants/errors'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -123,18 +124,12 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const txHash = await approve()
-      console.log(txHash)
-      await txHash.wait()
-      // // user rejected tx or didn't go thru
-      // if (
-      //   // catch metamask rejection
-      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      // ) {
-      //   setErrorObject(txHash)
-      // } else {
-      //   await txHash.wait()
-      // }
+      // user rejected tx or didn't go thru
+      if (txHash.code === MetamaskProviderErrorCode.userRejectedRequest) {
+        setErrorObject(txHash)
+      } else {
+        await txHash.wait()
+      }
     } catch (e) {
       console.log(e)
       setErrorObject(e)
@@ -174,19 +169,13 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const tx = await leave(amount)
-      await tx.wait()
-      setWithdrawValue('')
-      success = true
-      // if (
-      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      // ) {
-      //   setErrorObject(tx)
-      // } else {
-      //   await tx.wait()
-      //   setWithdrawValue('')
-      //   success = true
-      // }
+      if (tx.code === MetamaskProviderErrorCode.userRejectedRequest) {
+        setErrorObject(tx)
+      } else {
+        await tx.wait()
+        setWithdrawValue('')
+        success = true
+      }
     } catch (e) {
       console.error(e)
       setErrorObject(e)

@@ -22,8 +22,8 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
-// import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { MetamaskProviderErrorCode } from 'constants/errors'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -125,16 +125,12 @@ export default function CurrencyInputPanel({
 
     try {
       const txHash = await approve()
-      await txHash.wait()
-      // // user rejected tx or didn't go thru
-      // if (
-      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-      //   txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      // ) {
-      //   setErrorObject(txHash)
-      // } else {
-      //   await txHash.wait()
-      // }
+      // user rejected tx or didn't go thru
+      if (txHash.code === MetamaskProviderErrorCode.userRejectedRequest) {
+        setErrorObject(txHash)
+      } else {
+        await txHash.wait()
+      }
     } catch (e) {
       console.error(e)
       setErrorObject(e)
@@ -170,19 +166,13 @@ export default function CurrencyInputPanel({
 
     try {
       const tx = await enter(amount)
-      await tx.wait()
-      setDepositValue('')
-      success = true
-      // if (
-      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-      //   tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      // ) {
-      //   setErrorObject(tx)
-      // } else {
-      //   await tx.wait()
-      //   setDepositValue('')
-      //   success = true
-      // }
+      if (tx.code === MetamaskProviderErrorCode.userRejectedRequest) {
+        setErrorObject(tx)
+      } else {
+        await tx.wait()
+        setDepositValue('')
+        success = true
+      }
     } catch (e) {
       console.error('Error catched! ', e)
       setErrorObject(e)

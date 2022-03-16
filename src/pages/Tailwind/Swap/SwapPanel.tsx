@@ -16,7 +16,7 @@ import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
-import { MetamaskErrorCode } from 'constants/errors'
+import { MetamaskProviderErrorCode } from 'constants/errors'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 // import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
@@ -67,7 +67,7 @@ const SwapPanel = () => {
       const txHash: any = await approve()
 
       // user rejected tx or didn't go thru
-      if (txHash.code === MetamaskErrorCode.Cancelled || !txHash) {
+      if (txHash.code === MetamaskProviderErrorCode.userRejectedRequest || !txHash) {
         setApproveState(ApproveButtonState.NotApproved)
       }
     } catch (e) {
