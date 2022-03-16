@@ -21,6 +21,7 @@ import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
+import useSwap from 'halo-hooks/amm-v2/useSwap'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -44,6 +45,8 @@ const SwapPanel = () => {
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
   const [errorObject, setErrorObject] = useState<any>(undefined)
+
+  useSwap()
 
   const {
     getPrice,

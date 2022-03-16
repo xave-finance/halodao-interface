@@ -138,6 +138,7 @@
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "@balancer-labs/sdk": "^0.1.4",
     "@craco/craco": "5.8.0",
     "@halodao/halodao-contract-addresses": "^0.0.6",
     "@types/numeral": "^2.0.1",
