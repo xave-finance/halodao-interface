@@ -12,6 +12,7 @@ interface TokenSelectModalProps {
   onSelect: (token: Token) => void
   tokenList?: Token[]
   currency: Currency
+  pairCurrency?: Currency
 }
 
 interface TokenRowProps {
@@ -41,10 +42,17 @@ const TokenRow = ({ token, onSelect, selected }: TokenRowProps) => {
   )
 }
 
-const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList, currency }: TokenSelectModalProps) => {
+const TokenSelectModal = ({
+  isVisible,
+  onSelect,
+  onDismiss,
+  tokenList,
+  currency,
+  pairCurrency
+}: TokenSelectModalProps) => {
   const { chainId } = useActiveWeb3React()
   const [tokens, setTokens] = useState(tokenList ?? [])
-  const [searchTerm, setsearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   useEffect(() => {
     if (tokenList) {
       setTokens(tokenList)
@@ -68,7 +76,7 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList, currency 
 
   const SearchList = tokens
     .filter(val => {
-      if (searchTerm == '') {
+      if (searchTerm === '') {
         return val
       } else if (val.symbol?.toLowerCase().includes(searchTerm.toLowerCase())) {
         return val
@@ -79,12 +87,21 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList, currency 
       <TokenRow
         key={token.address}
         token={token}
-        onSelect={() => onSelect(token)}
-        selected={currency.symbol === token.symbol}
+        onSelect={() => {
+          onSelect(token)
+          setSearchTerm('')
+        }}
+        selected={currency.symbol === token.symbol || pairCurrency?.symbol === token.symbol}
       />
     ))
   return (
-    <BaseModal isVisible={isVisible} onDismiss={onDismiss}>
+    <BaseModal
+      isVisible={isVisible}
+      onDismiss={() => {
+        onDismiss()
+        setSearchTerm('')
+      }}
+    >
       <div className="bg-primary-lightest p-4 border-b">
         <div className="flex flex-col">
           <p className="font-bold text-lg">Select Asset</p>
@@ -99,7 +116,7 @@ const TokenSelectModal = ({ isVisible, onSelect, onDismiss, tokenList, currency 
                 className="h-14 pr-8 pl-10 rounded z-0 focus:shadow focus-within:border-gray-800"
                 placeholder="Search name or select asset"
                 onChange={e => {
-                  setsearchTerm(e.target.value)
+                  setSearchTerm(e.target.value)
                 }}
               />
             </div>

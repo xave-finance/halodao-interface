@@ -339,6 +339,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={fromCurrency}
+                pairCurrency={toCurrency}
                 value={fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
@@ -390,6 +391,7 @@ const SwapPanel = () => {
             <div className="mt-2">
               <CurrencyInput
                 currency={toCurrency}
+                pairCurrency={fromCurrency}
                 value={toInputValue}
                 canSelectToken={true}
                 didChangeValue={val => {
