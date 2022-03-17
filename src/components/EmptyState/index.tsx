@@ -16,7 +16,6 @@ import { SUPPORTED_WALLETS } from '../../constants'
 import Option from './Option'
 import PendingView from '../WalletModal/PendingView'
 import Modal from '../Modal'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { ExternalLink } from '../../theme'
 
 const ContentWrapper = styled.div`
@@ -38,34 +37,12 @@ const UpperSection = styled.div`
   }
 
   h5:last-child {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   h4 {
     margin-top: 0;
     font-weight: 500;
-  }
-`
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.text4};
-  }
-`
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-  border-bottom: 1px solid ${({ theme }) => theme.bg3};
-`
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
   }
 `
 
@@ -148,9 +125,9 @@ const EmptyState = ({
   walletLoading: (value: boolean) => void
 }) => {
   const { connector, activate } = useWeb3React()
-  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
+  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT) //eslint-disable-line
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-  const [pendingError, setPendingError] = useState<boolean>()
+  const [pendingError, setPendingError] = useState<boolean>() //eslint-disable-line
 
   const handleLoading = (value: boolean) => {
     walletLoading(value)
