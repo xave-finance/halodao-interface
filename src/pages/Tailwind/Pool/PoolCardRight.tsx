@@ -63,7 +63,7 @@ const PoolCardRight = ({ pool, isActivePool }: PoolCardRightProps) => {
             title="Stake it"
             isEnabled={pool.held > 0}
             onClick={
-              isActivePool
+              isActivePool && pool.held > 0
                 ? stake
                 : () => {
                     // silent
