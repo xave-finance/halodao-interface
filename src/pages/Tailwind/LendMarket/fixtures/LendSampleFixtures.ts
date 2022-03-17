@@ -4,7 +4,7 @@ import { HALO, USDT, XSGD } from '../../../../constants'
 
 export const pools: PoolData[] = [
   {
-    asset: HALO[ChainId.MAINNET]!,
+    asset: HALO[ChainId.MAINNET]!,//eslint-disable-line
     marketSize: 1000,
     borrowed: 100,
     depositAPY: 40,
@@ -31,7 +31,7 @@ export const pools: PoolData[] = [
 
 export const userLends: UserLendData[] = [
   {
-    asset: HALO[ChainId.MAINNET]!,
+    asset: HALO[ChainId.MAINNET]!,//eslint-disable-line
     balance: 1000,
     lendAPY: 40,
     collateral: false

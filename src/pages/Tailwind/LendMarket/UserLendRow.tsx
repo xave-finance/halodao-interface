@@ -161,6 +161,7 @@ const UserLendRow = ({ lend }: UserLendRowProps) => {
           </div>
         </div>
       </Wrapper>
+      {/* eslint-disable-next-line*/}
       <CollateralModal isVisible={showModal} currency={HALO[ChainId.MAINNET]!} onDismiss={() => setShowModal(false)} />
     </div>
   )

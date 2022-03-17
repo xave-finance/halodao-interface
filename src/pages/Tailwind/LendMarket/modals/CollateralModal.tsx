@@ -79,7 +79,7 @@ const CollateralModal = ({ isVisible, currency, onDismiss }: CollateralModalProp
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on Etherscan
+            View on Block Explorer
           </a>
         </div>
         <div className="mt-12">
