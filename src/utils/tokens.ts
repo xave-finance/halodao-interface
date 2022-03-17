@@ -5,10 +5,10 @@ const CUSTOM_TOKEN_SYMBOLS: {
   readonly [chainId in ChainId]?: { [key: string]: string }
 } = {
   [ChainId.MAINNET]: {
-    [TAGPHP[ChainId.MAINNET]!.toLowerCase()]: 'tagPHP'
+    [TAGPHP[ChainId.MAINNET]!.toLowerCase()]: 'tagPHP'//eslint-disable-line
   },
   [ChainId.MATIC]: {
-    [TAGPHP[ChainId.MATIC]!.toLowerCase()]: 'tagPHP'
+    [TAGPHP[ChainId.MATIC]!.toLowerCase()]: 'tagPHP'//eslint-disable-line
   }
 }
 
