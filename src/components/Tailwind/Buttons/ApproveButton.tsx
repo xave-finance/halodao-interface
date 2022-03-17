@@ -5,7 +5,8 @@ import SuccessIcon from 'assets/svg/success-icon.svg'
 export enum ApproveButtonState {
   Approved,
   NotApproved,
-  Approving
+  Approving,
+  Disabled
 }
 
 interface ApproveButtonProps {
