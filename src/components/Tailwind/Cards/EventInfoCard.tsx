@@ -20,7 +20,7 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
   return (
     <>
       <GradientCard>
-        <div className="flex justify-between flex-wrap">
+        <div className="flex justify-center flex-wrap">
           <div className="flex flex-col justify-around">
             {event ? (
               <>
