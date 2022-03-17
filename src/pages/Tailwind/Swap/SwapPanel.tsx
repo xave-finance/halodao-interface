@@ -340,7 +340,7 @@ const SwapPanel = () => {
           <>
             <div className="flex flex:row mt-2 md:mt-4 mb-4">
               <div className="w-1/2 flex justify-start">
-                <p className="font-semibold text-secondary-alternate">From {fromAmountBalance}</p>
+                <p className="font-semibold text-secondary-alternate">From</p>
               </div>
               <div className="w-1/2 flex justify-end cursor-pointer">
                 <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} />
@@ -458,15 +458,12 @@ const SwapPanel = () => {
             if (txn === 4001 || !txn) {
               setSwapTransactionModalState(ModalState.NotConfirmed)
             }
-            // if (
-            //   txn.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-            //   txn.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-            // ) {
-            //   setShowModal(false)
-            //   setSwapTransactionModalState(ModalState.NotConfirmed)
-            //   setErrorObject(txn)
-            //   setButtonState(SwapButtonState.Swap)
-            // }
+            if (txn.code === MetamaskProviderErrorCode.userRejectedRequest) {
+              setShowModal(false)
+              setSwapTransactionModalState(ModalState.NotConfirmed)
+              setErrorObject(txn)
+              setButtonState(SwapButtonState.Swap)
+            }
           } catch (e) {
             console.error('Error catched! ', e)
             setShowModal(false)
