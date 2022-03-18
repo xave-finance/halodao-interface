@@ -78,6 +78,7 @@ export const useGetPools = () => {
       }
 
       const vaultPoolIds = await Promise.all(promises)
+      console.log('Vault pool ids: ', vaultPoolIds)
       for (const [i, poolId] of vaultPoolIds.entries()) {
         if (i < enabledPoolAddresses.length) {
           const addr = enabledPoolAddresses[i]

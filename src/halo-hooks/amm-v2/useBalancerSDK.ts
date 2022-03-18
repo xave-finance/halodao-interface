@@ -26,16 +26,12 @@ const getBalancerNetwork = (chainId: ChainId) => {
 const useBalancerSDK = () => {
   const { chainId } = useActiveWeb3React()
 
-  const [balancer, setBalancer] = useState(() => {
-    return new BalancerSDK({
-      network: Network.MAINNET,
-      rpcUrl: RPC[ChainId.MAINNET]
-    })
-  })
+  const [balancer, setBalancer] = useState<BalancerSDK | undefined>(undefined)
 
   useEffect(() => {
     if (!chainId) return
 
+    console.log(`[useBalancerSDK] Creating instance using: ${chainId}, url: `, RPC[chainId])
     setBalancer(
       new BalancerSDK({
         network: getBalancerNetwork(chainId),

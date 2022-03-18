@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Pair } from '@halodao/sdk'
-// import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
