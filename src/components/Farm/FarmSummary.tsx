@@ -12,6 +12,7 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 
 import HaloHalo from '../../assets/images/xrnbw-token.png'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
+import { useActiveWeb3React } from '../../hooks'
 
 const DashboardRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
@@ -19,7 +20,7 @@ const DashboardRow = styled(Row)`
   `};
   flex-direction: row;
   align-items: start;
-  margin: 1.5 rem;
+  margin: 1.5rem;
 `
 
 const InfoRow = styled(Row)`
@@ -57,6 +58,7 @@ interface FarmSummaryProps {
 }
 
 const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
+  const { account } = useActiveWeb3React()
   const summary = useFarmSummary(poolsInfo, tokenPrice)
   const { t } = useTranslation()
 
@@ -82,7 +84,7 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
               style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
               id="text-stakeable-value"
             >
-              {summary.stakeableValue}
+              {account ? summary.stakeableValue : '$0'}
             </TYPE.body>
           </Row>
         </StakeCard>
@@ -105,7 +107,7 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
               style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
               id="text-staked-value"
             >
-              {summary.stakedValue}
+              {account ? summary.stakedValue : '$0'}
             </TYPE.body>
           </Row>
         </StakeCard>
@@ -135,7 +137,7 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
               style={{ marginTop: '0.1rem', fontWeight: 600, fontSize: '1.5rem', justifySelf: 'flex-start' }}
               id="text-halo-earned"
             >
-              {summary.haloEarned}
+              {account ? summary.haloEarned : '0'}
             </TYPE.body>
           </Row>
         </EarnCard>
