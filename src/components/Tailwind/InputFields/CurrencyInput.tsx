@@ -8,6 +8,7 @@ import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
+import Loader from 'components/Loader'
 
 interface TokenInputProps {
   currency: Currency
@@ -16,6 +17,7 @@ interface TokenInputProps {
   didChangeValue: (newValue: string) => void
   showBalance: boolean
   showMax: boolean
+  isLoading?: boolean
   onSelectToken?: (token: Token) => void
   tokenList?: Token[]
   balance?: string
@@ -28,6 +30,7 @@ const TokenInput = ({
   didChangeValue,
   showBalance,
   showMax,
+  isLoading = false,
   onSelectToken,
   tokenList,
   balance
@@ -47,9 +50,15 @@ const TokenInput = ({
     if (canSelectToken) {
       return (
         <div className="mb-2 md:mb-0 md:w-1/4 flex items-center cursor-pointer" onClick={() => setShowModal(true)}>
-          <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold pr-2">{currency ? currency.symbol : ''}</div>
-          <SelectButton onClick={() => setShowModal(true)} />
+          {isLoading ? (
+            <Loader size="24px" />
+          ) : (
+            <>
+              <CurrencyLogo currency={currency} />
+              <div className="ml-2 font-semibold pr-2">{currency ? currency.symbol : ''}</div>
+              <SelectButton onClick={() => setShowModal(true)} />
+            </>
+          )}
         </div>
       )
     } else {
@@ -82,9 +91,10 @@ const TokenInput = ({
               onUserInput={val => {
                 didChangeValue(val)
               }}
+              disabled={isLoading}
             />
           </div>
-          <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={true} onClick={onMax} />}</div>
+          <div className="ml-4">{showMax && <MaxButton title="Max" isEnabled={!isLoading} onClick={onMax} />}</div>
         </div>
       </div>
 

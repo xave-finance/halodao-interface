@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 import TabsControl from '../../../components/Tailwind/SegmentControl/TabsControl'
 import AddLiquidity from './liquidity/AddLiquidity'
 import RemoveLiquidity from './liquidity/RemoveLiquidity'
@@ -14,7 +15,7 @@ const PoolCardLeft = ({ pool, isActivePool }: PoolCardLeftProps) => {
   const [disabledTabs, setDisabledTabs] = useState<number[]>([])
 
   useEffect(() => {
-    if (pool.held > 0.00001) {
+    if (bigNumberToNumber(pool.userInfo.held) > 0.00001) {
       setDisabledTabs([])
     } else {
       // Disable Remove Liquidity tab if user has no HLP

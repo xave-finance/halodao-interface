@@ -24,10 +24,10 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const { account } = useActiveWeb3React()
-  const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
-  const balances = [tokenBalances[pool.token0.address], tokenBalances[pool.token1.address]]
+  const tokenBalances = useTokenBalances(account ?? undefined, [pool.tokens[0].token, pool.tokens[1].token])
+  const balances = [tokenBalances[pool.tokens[0].token.address], tokenBalances[pool.tokens[1].token.address]]
 
-  const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
+  const disabledSegments = pool.totalLiquidity.gt(0) ? undefined : [1]
 
   return (
     <div>
