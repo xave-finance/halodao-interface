@@ -21,15 +21,18 @@ import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 import useSwap from 'halo-hooks/amm-v2/useSwap'
-import { BigNumber } from 'ethers'
+import { BigNumber, Contract, getDefaultProvider, Wallet, constants } from 'ethers'
 import { PoolFilter, SwapTypes, queryBatchSwapTokensIn } from '@balancer-labs/sdk'
 import { scale } from 'utils/bigNumberHelper'
 import VaultABI from '../../../constants/haloAbis/Vault.json'
 import { useContract } from 'hooks/useContract'
 import useHaloAddresses from 'halo-hooks/useHaloAddresses'
+import { Web3Provider } from '@ethersproject/providers'
+import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { useTime } from 'halo-hooks/useTime'
 
 const SwapPanel = () => {
-  const { account, error, chainId } = useWeb3React()
+  const { account, error, chainId, library } = useWeb3React<Web3Provider>()
   const { tokenList, tokenListLoading } = useTokenList()
   const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : (HALO[ChainId.MAINNET] as Token))
   const [fromCurrency, setFromCurrency] = useState(
@@ -50,54 +53,118 @@ const SwapPanel = () => {
   const [txhash, setTxhash] = useState('')
   const [errorObject, setErrorObject] = useState<any>(undefined)
 
-  const { balancer } = useSwap()
+  const { getFutureTime } = useTime()
+  const { previewSwap } = useSwap()
   const haloAddresses = useHaloAddresses()
   const vaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 
-  useEffect(() => {
-    previewSwap()
-  }, [fromInputValue, fromCurrency])
+  // const previewSingleSwap = async (amount: string, swapType: SwapTypes) => {
+  //   if (!account || !vaultContract) return
 
-  const previewSwap = async () => {
-    if (!balancer || !vaultContract) return
-    if (!fromCurrency || !toCurrency || (!fromInputValue && !toInputValue)) return
+  //   console.log('previewSingleSwap')
+  //   const swaps = [
+  //     {
+  //       poolId: '0x4b4404e80bb3ae9e342b8ac3a95ef014ae7f9e480001000000000000000000eb',
+  //       assetInIndex: 0,
+  //       assetOutIndex: 1,
+  //       amount: parseEther(amount === '' ? '0' : amount),
+  //       userData: '0x'
+  //     }
+  //   ]
 
-    console.log('Previewing swap...')
-    console.log(fromCurrency, toCurrency, fromInputValue, toInputValue)
+  //   // param #3
+  //   const tokenAddresses = [fromCurrency.address, toCurrency.address]
 
-    const swapOptions = {
-      maxPools: 4,
-      gasPrice: BigNumber.from('100000000000'),
-      swapGas: BigNumber.from('100000'),
-      poolTypeFilter: PoolFilter.All,
-      timestamp: Math.floor(Date.now() / 1000),
-      forceRefresh: true
+  //   // param #4
+  //   const funds = {
+  //     // sender: wallet.address,
+  //     // recipient: wallet.address,
+  //     sender: account,
+  //     recipient: account,
+  //     fromInternalBalance: false,
+  //     toInternalBalance: false
+  //   }
+
+  //   // actual queryBatchSwap call
+  //   const deltas = await vaultContract.swap(swapType, swaps, tokenAddresses, funds)
+  //   console.log('deltas: ', formatEther(deltas[0]), formatEther(deltas[1]))
+  // }
+
+  const onInputChange = async (amount: string, isFromCurrency: boolean) => {
+    let swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
+
+    const amounts = await previewSwap(amount, swapType, fromCurrency, toCurrency)
+
+    if (isFromCurrency) {
+      setToInputValue(amounts[1])
+    } else {
+      setFromInputValue(amounts[0])
     }
 
-    const amountScaled = scale(fromInputValue, fromCurrency.decimals)
+    // // param #5
+    // const limits = [
+    //   parseUnits(amount === '' ? '0' : amount, fromCurrency.decimals),
+    //   BigNumber.from(parseFloat(amount) * 100)
+    // ]
 
-    try {
-      const swapInfo = await balancer.sor.getSwaps(
-        fromCurrency.address.toLowerCase(),
-        toCurrency.address.toLowerCase(),
-        SwapTypes.SwapExactIn,
-        amountScaled,
-        swapOptions
-      )
-      console.log('[BalancerSDK] getSwaps() response', swapInfo)
+    // // param #6
+    // const deadline = constants.MaxUint256
 
-      const batchSwapPreview = await queryBatchSwapTokensIn(
-        balancer.sor,
-        vaultContract,
-        [fromCurrency.address],
-        [fromInputValue],
-        toCurrency.address
-      )
-      console.log('[BalancerSDK] queryBatchSwapTokensIn() response', batchSwapPreview)
-    } catch (e) {
-      console.error('Preview swap error: ', e)
-    }
+    // // actual batchSwap call
+    // console.log(
+    //   'batchSwap params: ',
+    //   swapType,
+    //   swaps,
+    //   tokenAddresses,
+    //   funds,
+    //   limits.map(formatEther),
+    //   formatEther(deadline)
+    // )
+    // const tx = await vaultContract.batchSwap(swapType, swaps, tokenAddresses, funds, limits, deadline)
+    // const deltas = await tx.wait()
+    // console.log('deltas: ', formatUnits(deltas[0], fromCurrency.decimals), formatUnits(deltas[1], toCurrency.decimals))
   }
+
+  // const previewSwap = async () => {
+  //   if (!balancer || !vaultContract) return
+  //   if (!fromCurrency || !toCurrency || (!fromInputValue && !toInputValue)) return
+
+  //   console.log('Previewing swap...')
+  //   console.log(fromCurrency, toCurrency, fromInputValue, toInputValue)
+
+  //   const swapOptions = {
+  //     maxPools: 4,
+  //     gasPrice: BigNumber.from('100000000000'),
+  //     swapGas: BigNumber.from('100000'),
+  //     poolTypeFilter: PoolFilter.All,
+  //     timestamp: Math.floor(Date.now() / 1000),
+  //     forceRefresh: true
+  //   }
+
+  //   const amountScaled = scale(fromInputValue, fromCurrency.decimals)
+
+  //   try {
+  //     const swapInfo = await balancer.sor.getSwaps(
+  //       fromCurrency.address.toLowerCase(),
+  //       toCurrency.address.toLowerCase(),
+  //       SwapTypes.SwapExactIn,
+  //       amountScaled,
+  //       swapOptions
+  //     )
+  //     console.log('[BalancerSDK] getSwaps() response', swapInfo)
+
+  //     const batchSwapPreview = await queryBatchSwapTokensIn(
+  //       balancer.sor,
+  //       vaultContract,
+  //       [fromCurrency.address],
+  //       [fromInputValue],
+  //       toCurrency.address
+  //     )
+  //     console.log('[BalancerSDK] queryBatchSwapTokensIn() response', batchSwapPreview)
+  //   } catch (e) {
+  //     console.error('Preview swap error: ', e)
+  //   }
+  // }
 
   // const {
   //   getPrice,
@@ -423,6 +490,7 @@ const SwapPanel = () => {
                   // getMinimumAmount(val, CurrencySide.TO_CURRENCY)
 
                   setFromInputValue(val)
+                  onInputChange(val, true)
                 }}
                 showBalance={true}
                 showMax={true}
@@ -472,6 +540,7 @@ const SwapPanel = () => {
                   // }
                   // getMinimumAmount(val, CurrencySide.FROM_CURRENCY)
                   setToInputValue(val)
+                  onInputChange(val, false)
                 }}
                 showBalance={true}
                 showMax={true}
