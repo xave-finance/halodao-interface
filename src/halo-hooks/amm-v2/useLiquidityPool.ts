@@ -1,5 +1,4 @@
 import VaultABI from '../../constants/haloAbis/Vault.json'
-import CustomPoolABI from '../../constants/haloAbis/CustomPool.json'
 import ERC20ABI from '../../constants/abis/erc20.json'
 import { useCallback } from 'react'
 import { useActiveWeb3React } from 'hooks'
@@ -16,6 +15,8 @@ import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import { getHaloAddresses } from 'utils/haloAddresses'
 import { parseUnits } from 'ethers/lib/utils'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
+import { consoleLog } from 'utils/simpleLogger'
+import { BigNumber } from 'ethers'
 
 const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {
   const address = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest)
@@ -50,63 +51,52 @@ export const useGetPools = () => {
   const getPools = useCallback(async () => {
     if (!library) return undefined
 
-    const enabledPoolAddresses = haloAddresses.ammV2.pools.enabled
-    const enabledPoolExternalIdsMap: PoolExternalIdsMap = {}
-    for (const addr of enabledPoolAddresses) {
-      enabledPoolExternalIdsMap[addr] = {
+    consoleLog('[useLiquidityPool] fetching pools...')
+
+    const enabledPools = haloAddresses.ammV2.pools.enabled
+    const enabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
+    for (const pool of enabledPools) {
+      enabledPoolsExternalIdsMap[pool.address] = {
         rewardsPoolId: undefined,
-        vaultPoolId: undefined
+        vaultPoolId: pool.poolId
       }
     }
 
-    const disabledPoolAddresses = haloAddresses.ammV2.pools.disabled
-    const disabledPoolExternalIdsMap: PoolExternalIdsMap = {}
-    for (const addr of disabledPoolAddresses) {
-      disabledPoolExternalIdsMap[addr] = {
+    const disabledPools = haloAddresses.ammV2.pools.disabled
+    const disabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
+    for (const pool of disabledPools) {
+      disabledPoolsExternalIdsMap[pool.address] = {
         rewardsPoolId: undefined,
-        vaultPoolId: undefined
+        vaultPoolId: pool.poolId
       }
     }
 
     try {
-      // Get Vault poolId of each pool
-      const promises: Promise<string>[] = []
-      const poolAddresses = [...enabledPoolAddresses, ...disabledPoolAddresses]
-      for (const poolAddress of poolAddresses) {
-        const CustomPoolContract = getContract(poolAddress, CustomPoolABI, library)
-        promises.push(CustomPoolContract.getPoolId())
-      }
-
-      const vaultPoolIds = await Promise.all(promises)
-      console.log('Vault pool ids: ', vaultPoolIds)
-      for (const [i, poolId] of vaultPoolIds.entries()) {
-        if (i < enabledPoolAddresses.length) {
-          const addr = enabledPoolAddresses[i]
-          enabledPoolExternalIdsMap[addr].vaultPoolId = poolId
-        } else {
-          const addr = disabledPoolAddresses[i]
-          disabledPoolExternalIdsMap[addr].vaultPoolId = poolId
-        }
-      }
-
       // Get Rewards poolId of each pool
       const rewardsPoolAddresses = await getAmmRewardsPools()
+      const enabledPoolsAddresses = enabledPools.map(pool => pool.address)
+      const disabledPoolsAddresses = disabledPools.map(pool => pool.address)
+
       for (const [i, address] of rewardsPoolAddresses.entries()) {
-        if (enabledPoolAddresses.includes(address)) {
-          const addr = enabledPoolAddresses[i]
-          enabledPoolExternalIdsMap[addr].rewardsPoolId = i
-        } else {
-          const addr = disabledPoolAddresses[i]
-          disabledPoolExternalIdsMap[addr].rewardsPoolId = i
+        if (enabledPoolsAddresses.includes(address)) {
+          const addr = enabledPoolsAddresses[i]
+          enabledPoolsExternalIdsMap[addr].rewardsPoolId = i
+        } else if (disabledPoolsAddresses.includes(address)) {
+          const addr = disabledPoolsAddresses[i]
+          disabledPoolsExternalIdsMap[addr].rewardsPoolId = i
         }
       }
 
+      consoleLog('[useLiquidityPool] Fools fetched!')
+      consoleLog('[useLiquidityPool] Enabled pools: ', enabledPoolsExternalIdsMap)
+      consoleLog('[useLiquidityPool] Disabled pools: ', disabledPoolsExternalIdsMap)
+
       return {
-        enabled: enabledPoolExternalIdsMap,
-        disabled: disabledPoolExternalIdsMap
+        enabled: enabledPoolsExternalIdsMap,
+        disabled: disabledPoolsExternalIdsMap
       }
     } catch (err) {
-      console.error('useLiquidityPool(v2) failed to get vault pool ids: ', err)
+      console.error('[useLiquidityPool] useGetPools() failed: ', err)
     }
 
     return undefined
@@ -123,9 +113,11 @@ export const useGetPoolData = () => {
   const getPoolData = async (
     poolAddress: string,
     vaultPoolId: string,
-    rewardsPoolId: number
+    rewardsPoolId: number = -1
   ): Promise<PoolData | undefined> => {
     if (!VaultContract || !library || !chainId || !account) return undefined
+
+    consoleLog(`[useLiquidityPool] fetching pool (${poolAddress}) data...`)
 
     const AmmRewardsContract = getAmmRewardsContract(chainId, library)
     if (!AmmRewardsContract) return undefined
@@ -154,8 +146,12 @@ export const useGetPoolData = () => {
       Token1Contract?.decimals(),
       LpTokenContract?.totalSupply(),
       LpTokenContract?.balanceOf(account),
-      AmmRewardsContract?.userInfo(rewardsPoolId, account),
-      AmmRewardsContract?.pendingRewardToken(rewardsPoolId, account)
+      rewardsPoolId >= 0
+        ? AmmRewardsContract?.userInfo(rewardsPoolId, account)
+        : Promise.resolve({ amount: BigNumber.from(0) }),
+      rewardsPoolId >= 0
+        ? AmmRewardsContract?.pendingRewardToken(rewardsPoolId, account)
+        : Promise.resolve(BigNumber.from(0))
     ])
 
     const token0SymbolProper = getCustomTokenSymbol(chainId, token0Address) || token0Symbol
@@ -170,8 +166,8 @@ export const useGetPoolData = () => {
     const token0Numeraire = bigNumberToNumber(poolTokens.balances[0].div(1e8).mul(token0Rate), token0Decimals)
     const token1Numeraire = bigNumberToNumber(poolTokens.balances[1].div(1e8).mul(token1Rate), token1Decimals)
     const totalLiquidity = token0Numeraire + token1Numeraire
-    const token0Weight = token0Numeraire / totalLiquidity
-    const token1Weight = token1Numeraire / totalLiquidity
+    const token0Weight = totalLiquidity ? token0Numeraire / totalLiquidity : 50
+    const token1Weight = totalLiquidity ? token1Numeraire / totalLiquidity : 50
 
     const poolData = {
       vaultPoolId,

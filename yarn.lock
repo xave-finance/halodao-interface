@@ -2202,10 +2202,10 @@
     protobufjs "^6.10.0"
     yargs "^16.2.0"
 
-"@halodao/halodao-contract-addresses@^0.0.6":
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/@halodao/halodao-contract-addresses/-/halodao-contract-addresses-0.0.6.tgz#16c1a98e77c2475cb78388328757f9c491a91278"
-  integrity sha512-JdHxelX64FocebdOJ3rwI9/i7HhwonFtDARr4xar6IkxbblbDBDH6gnflC+ANZHSaRoaRNKfsrhKjyV0zy56KA==
+"@halodao/halodao-contract-addresses@^0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@halodao/halodao-contract-addresses/-/halodao-contract-addresses-0.0.7.tgz#914ee6c4656230d1629b9b1e710f1b4b7941db43"
+  integrity sha512-Wp1MkTmn4kNlbm9qbjBTkAjOTBJ5DxUSGXfPXG6uTskuCJvkhD7aksoM6XJU5SVgUSG/ThJ+DCiyZycxR46hgA==
 
 "@halodao/sdk@5.0.0-canary.2-b":
   version "5.0.0-canary.2-b"

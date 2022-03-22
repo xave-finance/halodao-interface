@@ -18,20 +18,20 @@ const useSwap = () => {
   useEffect(() => {
     if (!balancer) return
 
-    consoleLog('[BalancerSDK] Fetching pools...')
+    consoleLog('[useSwap] Fetching balancer pools...')
     try {
       balancer.sor
         .fetchPools()
         .then(success => {
-          consoleLog('[BalancerSDK] Pools fetched', success ? 'successfully' : 'with errors')
+          consoleLog('[useSwap] Balancer pools fetched', success ? 'successfully' : 'with errors')
           return balancer.sor.getPools()
           // @todo: what else todo after fetching balancer pools?
         })
         .then(pools => {
-          consoleLog('[BalancerSDK] Pools: ', pools)
+          consoleLog('[useSwap] Balancer pools: ', pools)
         })
     } catch (e) {
-      console.error('[BalancerSDK] Error fetching pools')
+      console.error('[useSwap] Error fetching balancer pools')
       console.error(e)
     }
   }, [balancer])

@@ -1,11 +1,8 @@
 import { ChainId, Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
-import { useContract } from 'hooks/useContract'
 import { useState, useCallback, useEffect } from 'react'
-import { getContract } from 'utils'
 import { getHaloAddresses } from 'utils/haloAddresses'
-import CustomPoolABI from '../../constants/haloAbis/CustomPool.json'
-import VaultABI from '../../constants/haloAbis/Vault.json'
+import { consoleLog } from 'utils/simpleLogger'
 import useToken from '../tokens/useToken'
 
 const ETH: { [key in ChainId]?: Token } = {
@@ -43,52 +40,13 @@ const WBTC: { [key in ChainId]?: Token } = {
 }
 
 const useTokenList = () => {
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId } = useActiveWeb3React()
   const haloAddresses = getHaloAddresses(chainId)
-  const VaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
   const { addressesToTokens } = useToken()
 
   const [tokenList, setTokenList] = useState<Token[]>([])
   const [tokenListLoading, setTokenListLoading] = useState(false)
   const [tokenListError, setTokenListError] = useState<unknown | null>(null)
-
-  const getVaultPoolIds = useCallback(
-    async (poolAddresses: string[]) => {
-      if (!library) return []
-
-      const promises: Promise<string>[] = []
-      for (const poolAddress of poolAddresses) {
-        const CustomPoolContract = getContract(poolAddress, CustomPoolABI, library)
-        promises.push(CustomPoolContract.getPoolId())
-      }
-      return await Promise.all(promises)
-    },
-    [library]
-  )
-
-  const getAllTokenAddresses = useCallback(
-    async (poolIds: string[]) => {
-      if (!VaultContract) return []
-
-      const promises: Promise<any>[] = []
-      for (const poolId of poolIds) {
-        promises.push(VaultContract.getPoolTokens(poolId))
-      }
-      const poolTokens = await Promise.all(promises)
-
-      const tokenAddresses: string[] = []
-      for (const poolToken of poolTokens) {
-        for (const tokenAddress of poolToken.tokens) {
-          if (!tokenAddresses.includes(tokenAddress)) {
-            tokenAddresses.push(tokenAddress)
-          }
-        }
-      }
-
-      return tokenAddresses
-    },
-    [VaultContract]
-  )
 
   const commonTokens = useCallback(() => {
     const commonTokens: Token[] = []
@@ -108,17 +66,21 @@ const useTokenList = () => {
   }, [chainId])
 
   const fetchTokenList = useCallback(async () => {
-    if (!chainId) return
+    consoleLog('[useTokenList] fetching token list...')
 
     setTokenListLoading(true)
     setTokenListError(null)
 
     try {
-      // Get vault pool ids of each pool
-      const vaultPoolIds = await getVaultPoolIds(haloAddresses.ammV2.pools.enabled)
-
       // Get all token addresses from all pools
-      const poolTokenAddresses = await getAllTokenAddresses(vaultPoolIds)
+      const poolTokenAddresses: string[] = []
+      for (const pool of haloAddresses.ammV2.pools.enabled) {
+        for (const asset of pool.assets) {
+          if (!poolTokenAddresses.includes(asset)) {
+            poolTokenAddresses.push(asset)
+          }
+        }
+      }
 
       // Transform all token addresses to tokens
       const poolTokens = await addressesToTokens(poolTokenAddresses)
@@ -128,16 +90,16 @@ const useTokenList = () => {
 
       setTokenList(allTokens)
     } catch (error) {
-      console.error('fetchTokenList() throw an error: ', error)
+      console.error('[useTokenList] fetchTokenList() throws an error: ', error)
       setTokenListError(error)
     } finally {
       setTokenListLoading(false)
     }
-  }, [chainId, haloAddresses, getVaultPoolIds, getAllTokenAddresses, addressesToTokens, commonTokens])
+  }, [haloAddresses, addressesToTokens, commonTokens])
 
   useEffect(() => {
     fetchTokenList()
-  }, [chainId]) // eslint-disable-line
+  }, [haloAddresses]) // eslint-disable-line
 
   return {
     tokenList,
