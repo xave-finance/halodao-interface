@@ -2,7 +2,7 @@ import React from 'react'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import SwapDetails from '../SwapDetails'
-import { ChainId, Currency } from '@sushiswap/sdk'
+import { ChainId, Currency } from '@halodao/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
@@ -18,7 +18,9 @@ interface SwapTransactionModalProps {
   fromAmount: string
   toAmount: string
   minimumAmount: string
+  isLoadingMinimumAmount: boolean
   price: number
+  isLoadingPrice: boolean
   onSwap: () => void
   onPriceUpdate: () => void
   onDismiss: () => void
@@ -38,7 +40,9 @@ const SwapTransactionModal = ({
   fromAmount,
   toAmount,
   minimumAmount,
+  isLoadingMinimumAmount,
   price,
+  isLoadingPrice,
   onSwap,
   onPriceUpdate,
   onDismiss,
@@ -103,9 +107,11 @@ const SwapTransactionModal = ({
         </div>
         <SwapDetails
           price={price}
+          isLoadingPrice={isLoadingPrice}
           toCurrency={toCurrency.symbol}
           fromCurrency={fromCurrency.symbol}
           minimumReceived={minimumAmount}
+          isLoadingMinimumAmount={isLoadingMinimumAmount}
         />
         <div className="bg-white p-4 pb-4">
           <PrimaryButton

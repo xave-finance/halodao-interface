@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
@@ -17,7 +17,9 @@ import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
 import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
-import { MetamaskError } from 'constants/errors'
+import { MetamaskErrorCode } from 'constants/errors'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
@@ -40,6 +42,7 @@ const SwapPanel = () => {
   const [isExpired, setIsExpired] = useState(false)
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const {
     getPrice,
@@ -48,20 +51,21 @@ const SwapPanel = () => {
     toAmountBalance,
     fromAmountBalance,
     price,
+    isLoadingPrice,
     toMinimumAmount,
     fromMinimumAmount,
+    isLoadingMinimumAmount,
     approve,
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
-
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
       const txHash: any = await approve()
 
       // user rejected tx or didn't go thru
-      if (txHash.code === MetamaskError.Cancelled || !txHash) {
+      if (txHash.code === MetamaskErrorCode.Cancelled || !txHash) {
         setApproveState(ApproveButtonState.NotApproved)
       }
     } catch (e) {
@@ -308,9 +312,11 @@ const SwapPanel = () => {
         <CurrentButtonContent />
         <SwapDetails
           price={price}
+          isLoadingPrice={isLoadingPrice}
           toCurrency={toCurrency.symbol}
           fromCurrency={fromCurrency.symbol}
           minimumReceived={toMinimumAmount}
+          isLoadingMinimumAmount={isLoadingMinimumAmount}
         />
       </>
     )
@@ -426,16 +432,35 @@ const SwapPanel = () => {
         fromAmount={fromInputValue}
         toAmount={toInputValue}
         minimumAmount={toMinimumAmount || '0'}
+        isLoadingMinimumAmount={isLoadingMinimumAmount}
         price={price || 0}
+        isLoadingPrice={isLoadingPrice}
         onSwap={async () => {
-          const txn = await swapToken(fromInputValue, txDeadline, slippage)
-          if (txn) {
-            setTxhash(txn.hash)
-            setSwapTransactionModalState(ModalState.Successful)
-          }
+          try {
+            const txn = await swapToken(fromInputValue, txDeadline, slippage)
+            if (txn) {
+              setTxhash(txn.hash)
+              setSwapTransactionModalState(ModalState.Successful)
+            }
 
-          if (txn === 4001 || !txn) {
+            if (txn === 4001 || !txn) {
+              setSwapTransactionModalState(ModalState.NotConfirmed)
+            }
+            if (
+              txn.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+              txn.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+            ) {
+              setShowModal(false)
+              setSwapTransactionModalState(ModalState.NotConfirmed)
+              setErrorObject(txn)
+              setButtonState(SwapButtonState.Swap)
+            }
+          } catch (e) {
+            console.error('Error catched! ', e)
+            setShowModal(false)
             setSwapTransactionModalState(ModalState.NotConfirmed)
+            setErrorObject(e)
+            setButtonState(SwapButtonState.Swap)
           }
         }}
         onPriceUpdate={() => {
@@ -455,6 +480,13 @@ const SwapPanel = () => {
         txnHash={txhash}
         chainId={chainId as number}
       />
+      {errorObject && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
+      )}
     </>
   )
 }

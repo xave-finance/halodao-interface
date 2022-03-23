@@ -1,7 +1,9 @@
-import { ChainId, Token } from '@sushiswap/sdk'
-import { ChainAddressMap, USDC, ZERO_ADDRESS } from '../../constants'
+import { ChainId, Token } from '@halodao/sdk'
+import { ethers } from 'ethers'
+import { ChainAddressMap, USDC } from '../../constants'
 
 // Supported token symbols
+// Adding new pairs step 1: Add tokensymbol enum
 export enum TokenSymbol {
   USDC = 'USDC',
   EURS = 'EURS',
@@ -40,6 +42,7 @@ export const haloUSDC: { [chainId in ChainId]?: Token } = {
 
 // Token Lists
 // Add tokens here to support, divided into different networks
+// Adding new pairs step 2: Add token in tokenList
 const mainNetTokenList: Token[] = [
   USDC,
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
@@ -51,6 +54,7 @@ const kovanTokenList: Token[] = [
   haloUSDC[ChainId.KOVAN] as Token,
   new Token(ChainId.KOVAN, '0x7bcFAF04C9BAD18e3A823740E0683A36426BB0Fe', 2, 'EURS', 'EURS Stasis Coin'),
   new Token(ChainId.KOVAN, '0x6d2dCe898dC56B1F26B8053995E7096804cd3fD5', 18, 'GBP', 'GBP'),
+  new Token(ChainId.KOVAN, '0xbd0b2de0bfB25b78d65Ff5c667E5231fbDF42cda', 18, 'fxAUD', 'fxAUD'),
   new Token(ChainId.KOVAN, '0xE9958574866587c391735b7e7CE0D79432d3b9d0', 18, 'CHF', 'Jarvis Synthetic Swiss Franc')
 ]
 
@@ -68,47 +72,50 @@ const polygonTokenList: Token[] = [
 export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
   [ChainId.MAINNET]: mainNetTokenList,
   [ChainId.KOVAN]: kovanTokenList,
-  [ChainId.MATIC]: polygonTokenList
+  [ChainId.MATIC]: polygonTokenList,
+  // [ChainId.ARBITRUM]: arbTokenList,
+  // [ChainId.ARBITRUM_TESTNET]: arbRinkebyTokenList
 }
 
 // Assimilators
 // Add assimilators here to support. These are arranged per base currency per network
+// Adding new pairs step 3: Add assimilator
 const mainNetAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.LUSDC]: ZERO_ADDRESS,
-  [TokenSymbol.LEUR]: ZERO_ADDRESS,
+  [TokenSymbol.LUSDC]: ethers.constants.AddressZero,
+  [TokenSymbol.LEUR]: ethers.constants.AddressZero,
   [TokenSymbol.LPHP]: '0xdEe6071B55Af127cb6399dce407A6864Ce8b0107',
-  [TokenSymbol.LSGD]: ZERO_ADDRESS,
-  [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
-  [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
-  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
+  [TokenSymbol.LSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.LfxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.LtagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.LLEUR]: ethers.constants.AddressZero,
   [TokenSymbol.USDC]: '0xDB70e4cF1eE40Ed01A6eE3E4a200AabBf0facCbC',
   [TokenSymbol.EURS]: '0x30A67BCbDC32c0882D8730F17ee3Ee15FCCcee18',
-  [TokenSymbol.GBP]: ZERO_ADDRESS,
-  [TokenSymbol.CHF]: ZERO_ADDRESS,
-  [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TCAD]: ZERO_ADDRESS,
-  [TokenSymbol.TGBP]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: ZERO_ADDRESS,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
   [TokenSymbol.XSGD]: '0xd58845Be9D194b5d071Ca1422cE3756A9711784D'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
-  [TokenSymbol.LUSDC]: ZERO_ADDRESS,
-  [TokenSymbol.LEUR]: ZERO_ADDRESS,
-  [TokenSymbol.LPHP]: ZERO_ADDRESS,
-  [TokenSymbol.LSGD]: ZERO_ADDRESS,
-  [TokenSymbol.LfxPHP]: ZERO_ADDRESS,
-  [TokenSymbol.LtagPHP]: ZERO_ADDRESS,
-  [TokenSymbol.LLEUR]: ZERO_ADDRESS,
-  [TokenSymbol.USDC]: ZERO_ADDRESS,
-  [TokenSymbol.EURS]: ZERO_ADDRESS,
-  [TokenSymbol.GBP]: ZERO_ADDRESS,
-  [TokenSymbol.CHF]: ZERO_ADDRESS,
-  [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TCAD]: ZERO_ADDRESS,
-  [TokenSymbol.TGBP]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: ZERO_ADDRESS,
-  [TokenSymbol.XSGD]: ZERO_ADDRESS
+  [TokenSymbol.LUSDC]: ethers.constants.AddressZero,
+  [TokenSymbol.LEUR]: ethers.constants.AddressZero,
+  [TokenSymbol.LPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.LSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.LfxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.LtagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.LLEUR]: ethers.constants.AddressZero,
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -119,20 +126,22 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.LfxPHP]: '0x6FedC22EF8d8dD595f4D1D06A076AbcC5bADA972',
   [TokenSymbol.LtagPHP]: '0xbD82D06ea44EBd2F5df01c4384128C74067253B3',
   [TokenSymbol.LLEUR]: '0x54534C49A7Ee7e1e084878B28941Dea35FC7790e',
-  [TokenSymbol.USDC]: ZERO_ADDRESS,
-  [TokenSymbol.EURS]: ZERO_ADDRESS,
-  [TokenSymbol.GBP]: ZERO_ADDRESS,
-  [TokenSymbol.CHF]: ZERO_ADDRESS,
-  [TokenSymbol.TUSD]: ZERO_ADDRESS,
-  [TokenSymbol.TCAD]: ZERO_ADDRESS,
-  [TokenSymbol.TGBP]: ZERO_ADDRESS,
-  [TokenSymbol.TAUD]: ZERO_ADDRESS,
-  [TokenSymbol.XSGD]: ZERO_ADDRESS
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
 export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } = {
   [ChainId.MAINNET]: mainNetAssimilators,
   [ChainId.KOVAN]: kovanAssimilators,
-  [ChainId.MATIC]: polygonAssimilators
+  [ChainId.MATIC]: polygonAssimilators,
+  // [ChainId.ARBITRUM]: arbAssimilators,
+  // [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
 }

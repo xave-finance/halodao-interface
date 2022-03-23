@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import MULTICALL_ABI from './abi.json'
 
 const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
@@ -14,7 +14,8 @@ const MULTICALL_NETWORKS: { [chainId in ChainId]: string } = {
   [ChainId.XDAI]: '0xb5b692a88BDFc81ca69dcB1d924f59f0413A602a',
   [ChainId.BSC]: '0xe348b292e8eA5FAB54340656f3D374b259D658b8',
   [ChainId.BSC_TESTNET]: '0xe348b292e8eA5FAB54340656f3D374b259D658b8',
-  [ChainId.ARBITRUM]: '0xBEee73F7f7d4848E1700135ff795960F2Aba66DB',
+  [ChainId.ARBITRUM]: '0x8a0bd1773139C6609e861B9ab68082587a3cD581',
+  [ChainId.ARBITRUM_TESTNET]: '0x20a590c339a5A6EA0bd6817b832847067377ecfb',
   [ChainId.MOONBASE]: '0x9B7D5fa91b4747031d8E7807DaEC906F0f683E78'
 }
 

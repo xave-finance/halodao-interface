@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { NETWORK_ICON, NETWORK_LABEL } from '../../../constants/networks'
 import NetworkModal, { NetworkModalMode } from 'components/Tailwind/Modals/NetworkModal'
 

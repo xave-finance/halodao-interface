@@ -51,7 +51,7 @@ const TitleText = styled(Text)`
   font-size: 36px;
   font-weight: 600;
   line-height: 130%;
-  justify-self: 'flex-start';
+  justify-self: flex-start;
   text-align: center;
 `
 
@@ -60,7 +60,7 @@ const SubTitleText = styled(Text)`
   font-weight: 400;
   line-height: 130%;
   color: #333333;
-  justify-self: 'flex-start';
+  justify-self: flex-start;
   text-align: center;
 `
 

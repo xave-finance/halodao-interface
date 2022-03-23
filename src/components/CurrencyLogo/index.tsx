@@ -1,4 +1,4 @@
-import { Currency, ETHER, Token, ChainId } from '@sushiswap/sdk'
+import { Currency, ETHER, Token, ChainId } from '@halodao/sdk'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 
@@ -17,6 +17,8 @@ const getTokenLogoURL = (address: string, chainId: ChainId | undefined) => {
   let chain = 'ethereum'
   if (chainId === ChainId.MATIC) {
     chain = 'polygon'
+  } else if (chainId === ChainId.ARBITRUM) {
+    chain = 'arbitrum'
   }
 
   return `https://raw.githubusercontent.com/HaloDAO/assets/master/blockchains/${chain}/assets/${address}/logo.png`

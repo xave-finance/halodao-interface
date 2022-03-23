@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { ORIGINAL_TOKEN_CHAIN_ID } from 'constants/bridge'
 import { NETWORK_ICON, NETWORK_LABEL, NETWORK_PARAMS } from '../../../constants/networks'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
@@ -101,16 +101,9 @@ const NetworkModal = ({ isVisible, mode, onDismiss, onChangeNetwork, tokenAddres
         <div className="flex flex-col mb-4">
           {[
             ChainId.MAINNET,
-            //ChainId.FANTOM,
-            // ChainId.BSC,
             ChainId.MATIC,
+            ChainId.ARBITRUM,
             ...(process.env.REACT_APP_MOCK_TOKEN_MAINNET ? [ChainId.XDAI] : [])
-            //ChainId.HECO,
-            // ChainId.XDAI
-            //ChainId.HARMONY,
-            //ChainId.AVALANCHE,
-            //ChainId.OKEX
-            //ChainId.MOONBASE
           ].map((key: ChainId, i: number) => {
             if (chainId === key && mode !== NetworkModalMode.PrimaryBridge) {
               return (

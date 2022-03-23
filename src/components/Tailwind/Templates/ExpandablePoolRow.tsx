@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { HALO, USDC } from '../../../constants'
 import { formatNumber } from 'utils/formatNumber'

@@ -28,11 +28,12 @@ import { AppDispatch, AppState } from 'state'
 import BetaLabel from 'components/Labels/BetaLabel'
 import EmptyState from 'components/EmptyState'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { NETWORK_SUPPORTED_FEATURES } from '../../constants/networks'
 import { useActiveWeb3React } from '../../hooks'
 import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
+import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 820px;
@@ -96,7 +97,7 @@ const AutoColumnVesting = styled.div`
 
 const AutoColumnDeposit = styled.div`
   ${AutoColumn} {
-    padding: '10px 0 10px 0';
+    padding: 10px 0 10px 0;
   }
 `
 
@@ -243,6 +244,7 @@ export default function HaloHalo() {
             </CardSectionWrapper>
           </VoteCard>
         </VoteCardWrapper>
+
         <DepositWrapper>
           <HaloHaloHeader vest={features?.vest} />
           <Wrapper id="swap-page">
@@ -269,11 +271,22 @@ export default function HaloHalo() {
                     cornerRadiusTopNone={true}
                   />
                 )}
+
                 {!features?.vest && (
-                  <div className="mt-4">
-                    <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
-                  </div>
+                  <>
+                    {chainId === null ? (
+                      <FeatureNotSupported isIsolated={false} />
+                    ) : (
+                      <>
+                        <DepositOnUnsupportedNetwork chainId={chainId as ChainId} />
+                        <div className="mt-4">
+                          <WithdrawOnUnsupportedNetwork chainId={chainId as ChainId} />
+                        </div>
+                      </>
+                    )}
+                  </>
                 )}
+
                 <RowBetweenHaloPair>
                   <RowBetween>
                     <HaloPairCenterContainer>
@@ -284,6 +297,7 @@ export default function HaloHalo() {
                     </HaloPairCenterContainer>
                   </RowBetween>
                 </RowBetweenHaloPair>
+
                 {!features?.vest && (
                   <HaloPairCenterContainer>
                     <HaloHaloPairText>(Ethereum mainnet)</HaloHaloPairText>
@@ -293,6 +307,7 @@ export default function HaloHalo() {
             </AutoColumnDeposit>
           </Wrapper>
         </DepositWrapper>
+
         <CardSectionContainer>
           <CardSection>
             <RowBetweenCard>
@@ -305,6 +320,7 @@ export default function HaloHalo() {
             </RowBetween>
           </CardSection>
         </CardSectionContainer>
+
         <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </PageWrapper>
     </>

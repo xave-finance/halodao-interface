@@ -14,12 +14,16 @@ import {
   SUSHI_POOLS_ADDRESSES_KOVAN,
   UNI_POOLS_ADDRESSES,
   UNI_POOLS_ADDRESSES_KOVAN,
-  SUSHI_POOLS_ADDRESSES_MATIC
+  SUSHI_POOLS_ADDRESSES_MATIC,
+  INACTIVE_POOLS_ARB,
+  INACTIVE_POOLS_ARB_RINKEBY,
+  LIQUIDITY_POOLS_ADDRESSES_ARB,
+  LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY
 } from 'constants/pools'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getAddress } from 'ethers/lib/utils'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 export type PoolIdLpTokenMap = {
   pid: number
@@ -54,6 +58,10 @@ const isHaloPool = (address: string, chainId: ChainId | undefined) => {
     return LIQUIDITY_POOLS_ADDRESSES_MATIC.includes(address.toLocaleLowerCase())
   } else if (chainId === ChainId.KOVAN) {
     return LIQUIDITY_POOLS_ADDRESSES_KOVAN.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.ARBITRUM) {
+    return LIQUIDITY_POOLS_ADDRESSES_ARB.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.ARBITRUM_TESTNET) {
+    return LIQUIDITY_POOLS_ADDRESSES_ARB_RINKEBY.includes(address.toLocaleLowerCase())
   }
   return LIQUIDITY_POOLS_ADDRESSES.includes(address.toLocaleLowerCase())
 }
@@ -63,6 +71,10 @@ export const isInactivePool = (address: string, chainId: ChainId | undefined) =>
     return INACTIVE_POOLS_MATIC.includes(address.toLocaleLowerCase())
   } else if (chainId === ChainId.KOVAN) {
     return INACTIVE_POOLS_KOVAN.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.ARBITRUM) {
+    return INACTIVE_POOLS_ARB.includes(address.toLocaleLowerCase())
+  } else if (chainId === ChainId.ARBITRUM_TESTNET) {
+    return INACTIVE_POOLS_ARB_RINKEBY.includes(address.toLocaleLowerCase())
   }
   return INACTIVE_POOLS.includes(address.toLocaleLowerCase())
 }

@@ -6,9 +6,10 @@ import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
 import { formatUnits } from 'ethers/lib/utils'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { getContract } from 'utils'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { BigNumber } from 'ethers'
 import Fraction from 'constants/Fraction'
+import { getCustomTokenSymbol } from 'utils/tokens'
 
 export const useLiquidityPool = (address: string, pid: number | undefined) => {
   const { account, library, chainId } = useActiveWeb3React()
@@ -33,9 +34,12 @@ export const useLiquidityPool = (address: string, pid: number | undefined) => {
       Token1Contract?.decimals()
     ])
 
+    const token0SymbolProper = getCustomTokenSymbol(chainId, token0Address) || token0Symbol
+    const token1SymbolProper = getCustomTokenSymbol(chainId, token1Address) || token1Symbol
+
     return [
-      new Token(chainId, token0Address, token0Decimals, token0Symbol, token0Symbol),
-      new Token(chainId, token1Address, token1Decimals, token1Symbol, token1Symbol)
+      new Token(chainId, token0Address, token0Decimals, token0SymbolProper, token0SymbolProper),
+      new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
     ]
   }, [CurveContract, chainId, library])
 

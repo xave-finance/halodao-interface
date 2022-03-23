@@ -3,7 +3,7 @@ import { abi as GOVERNANCE_ABI } from '@uniswap/governance/build/GovernorAlpha.j
 import { abi as UNI_ABI } from '@uniswap/governance/build/Uni.json'
 import { abi as STAKING_REWARDS_ABI } from '@uniswap/liquidity-staker/build/StakingRewards.json'
 import { abi as MERKLE_DISTRIBUTOR_ABI } from '@uniswap/merkle-distributor/build/MerkleDistributor.json'
-import { ChainId, WETH } from '@sushiswap/sdk'
+import { ChainId, WETH } from '@halodao/sdk'
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import { useMemo } from 'react'
 import { GOVERNANCE_ADDRESS, MERKLE_DISTRIBUTOR_ADDRESS, HALO } from '../constants'
@@ -23,6 +23,7 @@ import { V1_EXCHANGE_ABI, V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../consta
 import { getContract } from '../utils'
 import { useActiveWeb3React } from './index'
 import HALO_REWARDS_ABI from '../constants/haloAbis/Rewards.json'
+import HALO_REWARDER_ABI from '../constants/haloAbis/Rewarder.json'
 import { getAmmRewardsContractAddress, AmmRewardsVersion } from 'utils/ammRewards'
 
 // returns null on errors
@@ -152,4 +153,8 @@ export function useHALORewardsContract(rewardsVersion = AmmRewardsVersion.Latest
   const { chainId } = useActiveWeb3React()
   const address = getAmmRewardsContractAddress(chainId, rewardsVersion)
   return useContract(address, HALO_REWARDS_ABI, true)
+}
+
+export function useHALORewarderContract(address?: string) {
+  return useContract(address, HALO_REWARDER_ABI, true)
 }

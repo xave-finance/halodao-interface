@@ -3,7 +3,7 @@ import { useContract } from 'hooks/useContract'
 import CURVE_ABI from 'constants/haloAbis/Curve.json'
 import { BigNumber } from 'ethers'
 import { formatEther, formatUnits, parseEther } from 'ethers/lib/utils'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { isDoubleEstimatePool } from 'utils/poolInfo'
 import { useActiveWeb3React } from 'hooks'
@@ -69,7 +69,7 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
     async (inputAmount: number, estimatedAmount: number, totalNumeraire: number) => {
       const rateOfError = inputAmount / estimatedAmount
       const adjustedNumeraire = totalNumeraire * rateOfError
-      const { lpToken, base, quote } = await viewDeposit(parseEther(`${adjustedNumeraire}`))
+      const { lpToken, base, quote } = await viewDeposit(parseEther(adjustedNumeraire.toFixed(18)))
       return {
         deposit: adjustedNumeraire,
         lpToken,
@@ -85,8 +85,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const quoteAmountVal = Number(quoteAmount)
       const quoteNumeraire = quoteAmountVal // no need to convert, quote (USDC) is numeraire
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : 2
-      const totalNumeraire = quoteNumeraire * multiplier
-      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+      let totalNumeraire = quoteNumeraire * multiplier
+      const estimate = await viewDeposit(parseEther(totalNumeraire.toFixed(18)))
 
       let depositPreview = {
         deposit: totalNumeraire,
@@ -100,11 +100,13 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         while (estimatedQuoteVal - quoteAmountVal < -THRESHOLD) {
           depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
           estimatedQuoteVal = Number(depositPreview.quote)
+          totalNumeraire = depositPreview.deposit
         }
       } else {
         while (estimatedQuoteVal - quoteAmountVal > THRESHOLD) {
           depositPreview = await adjustViewDeposit(quoteAmountVal, estimatedQuoteVal, totalNumeraire)
           estimatedQuoteVal = Number(depositPreview.quote)
+          totalNumeraire = depositPreview.deposit
         }
       }
 
@@ -118,8 +120,8 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
       const baseAmountVal = Number(baseAmount)
       const baseNumeraire = baseAmountVal * baseRate
       const multiplier = isDoubleEstimatePool(address, chainId) ? 1 : baseWeight > 0 ? 1 / baseWeight : 2
-      const totalNumeraire = baseNumeraire * multiplier
-      const estimate = await viewDeposit(parseEther(`${totalNumeraire}`))
+      let totalNumeraire = baseNumeraire * multiplier
+      const estimate = await viewDeposit(parseEther(totalNumeraire.toFixed(18)))
 
       let depositPreview = {
         deposit: totalNumeraire,
@@ -133,11 +135,13 @@ export const useAddRemoveLiquidity = (address: string, token0: Token, token1: To
         while (estimatedBaseVal - baseAmountVal < -THRESHOLD) {
           depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
           estimatedBaseVal = Number(depositPreview.base)
+          totalNumeraire = depositPreview.deposit
         }
       } else {
         while (estimatedBaseVal - baseAmountVal > THRESHOLD) {
           depositPreview = await adjustViewDeposit(baseAmountVal, estimatedBaseVal, totalNumeraire)
           estimatedBaseVal = Number(depositPreview.base)
+          totalNumeraire = depositPreview.deposit
         }
       }
 

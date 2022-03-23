@@ -13,7 +13,7 @@ import {
   ButtonSecondary
 } from 'components/Button'
 import Toggle from 'components/Toggle'
-import { Currency } from '@sushiswap/sdk'
+import { Currency } from '@halodao/sdk'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 
 const themeColor = colors(false)
