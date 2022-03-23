@@ -72,7 +72,7 @@ const polygonTokenList: Token[] = [
 export const haloTokenList: { [chainId in ChainId]?: Token[] } = {
   [ChainId.MAINNET]: mainNetTokenList,
   [ChainId.KOVAN]: kovanTokenList,
-  [ChainId.MATIC]: polygonTokenList,
+  [ChainId.MATIC]: polygonTokenList
   // [ChainId.ARBITRUM]: arbTokenList,
   // [ChainId.ARBITRUM_TESTNET]: arbRinkebyTokenList
 }
@@ -141,7 +141,7 @@ const polygonAssimilators: AssimilatorAddressMap = {
 export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } = {
   [ChainId.MAINNET]: mainNetAssimilators,
   [ChainId.KOVAN]: kovanAssimilators,
-  [ChainId.MATIC]: polygonAssimilators,
+  [ChainId.MATIC]: polygonAssimilators
   // [ChainId.ARBITRUM]: arbAssimilators,
   // [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
 }
