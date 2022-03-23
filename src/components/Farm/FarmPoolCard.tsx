@@ -68,13 +68,14 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1.5rem 1rem;
   margin: 0 -1rem;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: 1px solid #c1c1c1;
   border-radius: 10px;
   width: auto;
   transition: border 100ms ease-in;
 
   &.inactive:hover {
     border-color: ${({ theme }) => theme.primary1};
+    box-shadow: 5px 5px #d1cfe2;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -83,6 +84,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
     height: 100%;
     padding: 0 30px 20px;
     cursor: default;
+    border: 1px solid transparent;
 
     &.inactive:hover {
       border-color: transparent;
@@ -115,10 +117,10 @@ const StyledCard = styled(GreyCard)<{ bgColor: any }>`
 
 const StyledRowFixed = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
-    flex-direction: column;
+    flex-direction: row;
     margin-top: 0.5rem;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: space-between;
+    justify-content: space-between;
     width: 100%;
 
     &:first-of-type {
@@ -153,6 +155,7 @@ const LabelText = styled(Text)`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     display: block;
+     margin-top: 0 !important;
   `};
   &.first {
     margin-top: 0 !important;
@@ -883,7 +886,7 @@ export default function FarmPoolCard({
   return (
     <StyledCard
       id={`pool-${poolInfo.address.toLowerCase()}`}
-      bgColor="#ffffff"
+      bgColor="#471bb2"
       className={'pool-card ' + (showMore ? 'expanded' : 'default')}
     >
       <AutoColumn>
