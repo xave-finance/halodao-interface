@@ -54,7 +54,7 @@ const SwapPanel = () => {
   const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const { getFutureTime } = useTime()
-  const { previewSwap } = useSwap()
+  const { previewSwap, swap } = useSwap()
   const haloAddresses = useHaloAddresses()
   const vaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 
@@ -438,7 +438,9 @@ const SwapPanel = () => {
           type={PrimaryButtonType.Gradient}
           title="Swap"
           state={PrimaryButtonState.Enabled}
-          onClick={() => {}}
+          onClick={() => {
+            swap(fromInputValue, SwapTypes.SwapExactIn, fromCurrency, toCurrency)
+          }}
         />
       </div>
     )
