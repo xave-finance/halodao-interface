@@ -12,11 +12,11 @@ import { PoolData } from 'pages/Tailwind/Pool/models/PoolData'
 import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
 import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
-import { getHaloAddresses } from 'utils/haloAddresses'
 import { parseUnits } from 'ethers/lib/utils'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 import { consoleLog } from 'utils/simpleLogger'
 import { BigNumber } from 'ethers'
+import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 
 const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {
   const address = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest)
@@ -26,7 +26,7 @@ const getAmmRewardsContract = (chainId: ChainId, library: Web3Provider) => {
 export const useGetPools = () => {
   const { chainId, library } = useActiveWeb3React()
   const rewardsPoolAddresses = useLPTokenAddresses()
-  const haloAddresses = getHaloAddresses(chainId)
+  const haloAddresses = useHaloAddresses()
 
   const getAmmRewardsPools = async () => {
     if (!chainId || !library) return []
@@ -107,7 +107,7 @@ export const useGetPools = () => {
 
 export const useGetPoolData = () => {
   const { library, chainId, account } = useActiveWeb3React()
-  const haloAddresses = getHaloAddresses(chainId)
+  const haloAddresses = useHaloAddresses()
   const VaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 
   const getPoolData = async (

@@ -135,7 +135,7 @@
   "apr-breakdown": "APR Breakdown:",
   "insufficient-reward-balance": "Please ask protocol to top up rewards.",
   "harvest-failed": "Harvest failed. Please try again.",
-  "errorMessageCurveDefault": "Something went wrong. Please show this error message to the team.",
+  "errorMessageCurveDefault": "Something went wrong.",
   "errorMessageCurveAllowance": "Allowance error. Please ask the team.",
   "errorMessageCurveFrozen": "Contract is currently frozen. Only proportional withdraw allowed",
   "errorMessageCurveEmergency": "Contracts are in emergency state. This function is disabled.",

@@ -10,7 +10,7 @@ import { useActiveWeb3React } from 'hooks'
 import Loader from 'components/Loader'
 
 interface TokenInputProps {
-  currency: Currency
+  currency?: Currency
   value: string
   canSelectToken: boolean
   didChangeValue: (newValue: string) => void
@@ -70,7 +70,7 @@ const TokenInput = ({
       return (
         <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
           <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold">{currency.symbol}</div>
+          <div className="ml-2 font-semibold">{currency?.symbol}</div>
         </div>
       )
     }

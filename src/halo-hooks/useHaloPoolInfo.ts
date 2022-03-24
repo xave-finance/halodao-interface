@@ -12,11 +12,11 @@ import { AmmRewardsVersion } from '../utils/ammRewards'
 import VaultABI from 'constants/haloAbis/Vault.json'
 import CustomPoolABI from 'constants/haloAbis/CustomPool.json'
 import { BigNumber } from 'ethers'
-import { getHaloAddresses } from 'utils/haloAddresses'
+import useHaloAddresses from './useHaloAddresses'
 
 export const useHaloPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { account, library, chainId } = useActiveWeb3React()
-  const haloAddresses = getHaloAddresses(chainId)
+  const haloAddresses = useHaloAddresses()
   const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
   const VaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 

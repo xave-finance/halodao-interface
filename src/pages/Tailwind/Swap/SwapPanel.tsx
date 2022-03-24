@@ -1,234 +1,38 @@
-import React, { useCallback, useState, useEffect } from 'react'
-import { ChainId, Token } from '@halodao/sdk'
+import React, { useState, useEffect } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
-import SwapSettingsModal from './modals/SwapSettingsModal'
-import SwapTransactionModal from './modals/SwapTransactionModal'
-import SwapDetails from './SwapDetails'
 import SwitchIcon from 'assets/svg/switch-swap-icon.svg'
-import SettingsIcon from 'assets/svg/cog-icon.svg'
+// import SettingsIcon from 'assets/svg/cog-icon.svg'
 import { useWalletModalToggle } from '../../../state/application/hooks'
-import { CurrencySide, useSwapToken } from 'halo-hooks/amm/useSwapToken'
-import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
-import RetryButton from 'components/Tailwind/Buttons/RetryButton'
-import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
-import { HALO } from '../../../constants'
+import { SwapButtonState } from '../../../constants/buttonStates'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
-import { MetamaskProviderErrorCode } from 'constants/errors'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 import useSwap from 'halo-hooks/amm-v2/useSwap'
-import { BigNumber, Contract, getDefaultProvider, Wallet, constants } from 'ethers'
-import { PoolFilter, SwapTypes, queryBatchSwapTokensIn } from '@balancer-labs/sdk'
-import { scale } from 'utils/bigNumberHelper'
-import VaultABI from '../../../constants/haloAbis/Vault.json'
-import { useContract } from 'hooks/useContract'
-import useHaloAddresses from 'halo-hooks/useHaloAddresses'
+import { SwapTypes } from '@balancer-labs/sdk'
 import { Web3Provider } from '@ethersproject/providers'
-import { formatEther, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
-import { useTime } from 'halo-hooks/useTime'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 
 const SwapPanel = () => {
-  const { account, error, chainId, library } = useWeb3React<Web3Provider>()
-  const { tokenList, tokenListLoading } = useTokenList()
-  const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : (HALO[ChainId.MAINNET] as Token))
-  const [fromCurrency, setFromCurrency] = useState(
-    tokenList.length > 1 ? tokenList[1] : (HALO[ChainId.MAINNET] as Token)
-  )
-  const [fromAmountBalance, setFromAmountBalance] = useState('')
+  const { account, chainId } = useWeb3React<Web3Provider>()
+  const toggleWalletModal = useWalletModalToggle()
+  const { tokenList, tokenListLoading, tokenListError } = useTokenList()
+  const { previewSwap, swap } = useSwap()
+
+  const [fromCurrency, setFromCurrency] = useState(tokenList.length > 1 ? tokenList[1] : undefined)
+  const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : undefined)
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
-  const [txDeadline, setTxDeadline] = useState(10) // 10 minutes
-  const [slippage, setSlippage] = useState(0.03) // 3%
-  const [approveState, setApproveState] = useState(ApproveButtonState.NotApproved)
-  const [showModal, setShowModal] = useState(false)
-  const [showSettingsModal, setShowSettingsModal] = useState(false)
-  const [buttonState, setButtonState] = useState(SwapButtonState.EnterAmount)
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [isExpired, setIsExpired] = useState(false)
-  const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
-  const [txhash, setTxhash] = useState('')
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [swapButtonState, setSwapButtonState] = useState(SwapButtonState.EnterAmount)
+  const [minorError, setMinorError] = useState<any>(undefined)
+  const [criticalError, setCriticalError] = useState<any>(undefined)
 
-  const { getFutureTime } = useTime()
-  const { previewSwap, swap } = useSwap()
-  const haloAddresses = useHaloAddresses()
-  const vaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
-
-  // const previewSingleSwap = async (amount: string, swapType: SwapTypes) => {
-  //   if (!account || !vaultContract) return
-
-  //   console.log('previewSingleSwap')
-  //   const swaps = [
-  //     {
-  //       poolId: '0x4b4404e80bb3ae9e342b8ac3a95ef014ae7f9e480001000000000000000000eb',
-  //       assetInIndex: 0,
-  //       assetOutIndex: 1,
-  //       amount: parseEther(amount === '' ? '0' : amount),
-  //       userData: '0x'
-  //     }
-  //   ]
-
-  //   // param #3
-  //   const tokenAddresses = [fromCurrency.address, toCurrency.address]
-
-  //   // param #4
-  //   const funds = {
-  //     // sender: wallet.address,
-  //     // recipient: wallet.address,
-  //     sender: account,
-  //     recipient: account,
-  //     fromInternalBalance: false,
-  //     toInternalBalance: false
-  //   }
-
-  //   // actual queryBatchSwap call
-  //   const deltas = await vaultContract.swap(swapType, swaps, tokenAddresses, funds)
-  //   console.log('deltas: ', formatEther(deltas[0]), formatEther(deltas[1]))
-  // }
-
-  const onInputChange = async (amount: string, isFromCurrency: boolean) => {
-    let swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
-
-    const amounts = await previewSwap(amount, swapType, fromCurrency, toCurrency)
-
-    if (isFromCurrency) {
-      setToInputValue(amounts[1])
-    } else {
-      setFromInputValue(amounts[0])
-    }
-
-    // // param #5
-    // const limits = [
-    //   parseUnits(amount === '' ? '0' : amount, fromCurrency.decimals),
-    //   BigNumber.from(parseFloat(amount) * 100)
-    // ]
-
-    // // param #6
-    // const deadline = constants.MaxUint256
-
-    // // actual batchSwap call
-    // console.log(
-    //   'batchSwap params: ',
-    //   swapType,
-    //   swaps,
-    //   tokenAddresses,
-    //   funds,
-    //   limits.map(formatEther),
-    //   formatEther(deadline)
-    // )
-    // const tx = await vaultContract.batchSwap(swapType, swaps, tokenAddresses, funds, limits, deadline)
-    // const deltas = await tx.wait()
-    // console.log('deltas: ', formatUnits(deltas[0], fromCurrency.decimals), formatUnits(deltas[1], toCurrency.decimals))
-  }
-
-  // const previewSwap = async () => {
-  //   if (!balancer || !vaultContract) return
-  //   if (!fromCurrency || !toCurrency || (!fromInputValue && !toInputValue)) return
-
-  //   console.log('Previewing swap...')
-  //   console.log(fromCurrency, toCurrency, fromInputValue, toInputValue)
-
-  //   const swapOptions = {
-  //     maxPools: 4,
-  //     gasPrice: BigNumber.from('100000000000'),
-  //     swapGas: BigNumber.from('100000'),
-  //     poolTypeFilter: PoolFilter.All,
-  //     timestamp: Math.floor(Date.now() / 1000),
-  //     forceRefresh: true
-  //   }
-
-  //   const amountScaled = scale(fromInputValue, fromCurrency.decimals)
-
-  //   try {
-  //     const swapInfo = await balancer.sor.getSwaps(
-  //       fromCurrency.address.toLowerCase(),
-  //       toCurrency.address.toLowerCase(),
-  //       SwapTypes.SwapExactIn,
-  //       amountScaled,
-  //       swapOptions
-  //     )
-  //     console.log('[BalancerSDK] getSwaps() response', swapInfo)
-
-  //     const batchSwapPreview = await queryBatchSwapTokensIn(
-  //       balancer.sor,
-  //       vaultContract,
-  //       [fromCurrency.address],
-  //       [fromInputValue],
-  //       toCurrency.address
-  //     )
-  //     console.log('[BalancerSDK] queryBatchSwapTokensIn() response', batchSwapPreview)
-  //   } catch (e) {
-  //     console.error('Preview swap error: ', e)
-  //   }
-  // }
-
-  // const {
-  //   getPrice,
-  //   getMinimumAmount,
-  //   price,
-  //   isLoadingPrice,
-  //   toMinimumAmount,
-  //   fromMinimumAmount,
-  //   isLoadingMinimumAmount,
-  //   approve,
-  //   allowance,
-  //   swapToken
-  // } = useSwapToken(toCurrency, fromCurrency, setButtonState)
-
-  // const handleApprove = useCallback(async () => {
-  //   try {
-  //     setApproveState(ApproveButtonState.Approving)
-  //     const txHash: any = await approve()
-
-  //     // user rejected tx or didn't go thru
-  //     if (txHash.code === MetamaskProviderErrorCode.userRejectedRequest || !txHash) {
-  //       setApproveState(ApproveButtonState.NotApproved)
-  //     }
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // }, [approve, setApproveState])
-
-  useEffect(() => {
-    if (fromCurrency.address === (HALO[ChainId.MAINNET] as Token).address && tokenList.length > 0) {
-      setFromCurrency(tokenList[0])
-    }
-    if (toCurrency.address === (HALO[ChainId.MAINNET] as Token).address && tokenList.length > 1) {
-      setToCurrency(tokenList[1])
-    }
-  }, [tokenList, fromCurrency.address, toCurrency.address])
-
-  useEffect(() => {
-    if (!timeLeft) return
-
-    const intervalId = setInterval(() => {
-      const decreaseTime = timeLeft - 1
-
-      setTimeLeft(decreaseTime)
-      if (decreaseTime === 0) {
-        setIsExpired(true)
-      }
-    }, 1000)
-
-    return () => clearInterval(intervalId)
-  }, [timeLeft])
-
-  // useEffect(() => {
-  //   getPrice()
-  // }, [toCurrency, fromCurrency, getMinimumAmount, getPrice, fromInputValue])
-
-  // useEffect(() => {
-  //   setToInputValue(toMinimumAmount || '')
-  // }, [toMinimumAmount])
-
-  // useEffect(() => {
-  //   setFromInputValue(fromMinimumAmount || '')
-  // }, [fromMinimumAmount])
-
+  /**
+   * State management
+   */
   useEffect(() => {
     if (chainId && tokenList) {
       if (tokenList.length > 0) {
@@ -242,394 +46,181 @@ const SwapPanel = () => {
     }
   }, [chainId, tokenList])
 
-  // useEffect(() => {
-  //   console.log(allowance)
-  //   if (allowance && Number(allowance) > 0) {
-  //     setApproveState(ApproveButtonState.Approved)
-  //     setButtonState(SwapButtonState.Swap)
-  //   } else {
-  //     setApproveState(ApproveButtonState.NotApproved)
-  //   }
-  // }, [allowance])
+  useEffect(() => {
+    if (!fromCurrency && tokenList.length > 0) {
+      setFromCurrency(tokenList[0])
+    }
+    if (!toCurrency && tokenList.length > 1) {
+      setToCurrency(tokenList[1])
+    }
+  }, [tokenList, fromCurrency, toCurrency])
 
-  // const NotApproveContent = () => {
-  //   return (
-  //     <div className="mt-4 flex space-x-4">
-  //       <div className="w-1/2">
-  //         <ApproveButton
-  //           title="Approve"
-  //           state={ApproveButtonState.NotApproved}
-  //           onClick={() => {
-  //             if (fromInputValue && toInputValue) {
-  //               handleApprove()
-  //             }
-  //           }}
-  //         />
-  //       </div>
-  //       <div className="w-1/2">
-  //         <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} />
-  //       </div>
-  //     </div>
-  //   )
-  // }
+  useEffect(() => {
+    if (
+      (fromInputValue === '' && toInputValue === '') ||
+      (Number(fromInputValue) === 0 && Number(toInputValue) === 0)
+    ) {
+      setSwapButtonState(SwapButtonState.EnterAmount)
+    } else {
+      setSwapButtonState(SwapButtonState.Swap)
+    }
+  }, [fromInputValue, toInputValue])
 
-  // const SwapContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <PrimaryButton
-  //         type={PrimaryButtonType.Gradient}
-  //         title="Swap"
-  //         state={PrimaryButtonState.Enabled}
-  //         onClick={() => {
-  //           setTimeLeft(60)
-  //           setIsExpired(false)
-  //           if (fromInputValue && toInputValue && Number(fromInputValue) > 0 && Number(toInputValue) > 0) {
-  //             setButtonState(SwapButtonState.Confirming)
-  //             setShowModal(true)
-  //           }
-  //         }}
-  //       />
-  //     </div>
-  //   )
-  // }
+  /**
+   * Action handlers
+   */
+  const onInputChange = async (amount: string, isFromCurrency: boolean) => {
+    if (!fromCurrency || !toCurrency) return
+    let swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
 
-  // const ApprovingContent = () => {
-  //   return (
-  //     <div className="mt-4 flex space-x-4">
-  //       <div className="w-1/2">
-  //         <ApproveButton title="Approving" state={ApproveButtonState.Approving} />
-  //       </div>
-  //       <div className="w-1/2">
-  //         <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} />
-  //       </div>
-  //     </div>
-  //   )
-  // }
+    try {
+      const amounts = await previewSwap(amount, swapType, fromCurrency, toCurrency)
 
-  // const ApprovedContent = () => {
-  //   return (
-  //     <div className="mt-4 flex space-x-4">
-  //       <div className="w-1/2">
-  //         <ApproveButton title="Approve" state={ApproveButtonState.Approved} />
-  //       </div>
-  //       <div className="w-1/2">
-  //         <PrimaryButton title="Swap" state={PrimaryButtonState.Disabled} onClick={() => console.log('clicked')} />
-  //       </div>
-  //     </div>
-  //   )
-  // }
+      if (isFromCurrency) {
+        setToInputValue(amounts[1])
+      } else {
+        setFromInputValue(amounts[0])
+      }
+    } catch (e) {
+      setMinorError(e)
+    }
+  }
 
-  // const ConfirmingContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <PrimaryButton type={PrimaryButtonType.Gradient} title="Confirming" state={PrimaryButtonState.InProgress} />
-  //     </div>
-  //   )
-  // }
+  const onSwap = async () => {
+    if (!fromCurrency || !toCurrency) return
+    setSwapButtonState(SwapButtonState.Confirming)
 
-  // const EnterAmountContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <PrimaryButton type={PrimaryButtonType.Gradient} title="Enter an amount" state={PrimaryButtonState.Disabled} />
-  //     </div>
-  //   )
-  // }
+    try {
+      await swap(fromInputValue, SwapTypes.SwapExactIn, fromCurrency, toCurrency)
+    } catch (e) {
+      console.error('Swap error:', e)
+      setCriticalError(e)
+    } finally {
+      setSwapButtonState(SwapButtonState.Swap)
+    }
+  }
 
-  // const InsufficientBalanceContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <PrimaryButton
-  //         type={PrimaryButtonType.Gradient}
-  //         title="Insufficient Balance"
-  //         state={PrimaryButtonState.Disabled}
-  //       />
-  //     </div>
-  //   )
-  // }
-
-  // const InsufficientLiquidityContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <PrimaryButton
-  //         type={PrimaryButtonType.Gradient}
-  //         title="Insufficient Pool Liquidity"
-  //         state={PrimaryButtonState.Disabled}
-  //       />
-  //     </div>
-  //   )
-  // }
-
-  // const RetryContent = () => {
-  //   return (
-  //     <div className="mt-4">
-  //       <RetryButton title="Retry" isEnabled={true} onClick={() => console.log('clicked')} />
-  //     </div>
-  //   )
-  // }
-
-  // const setButtonStates = useCallback(() => {
-  //   if (!allowance || Number(allowance) === 0) {
-  //     if (fromInputValue && parseFloat(fromInputValue) > 0 && toInputValue && parseFloat(toInputValue) > 0) {
-  //       setButtonState(SwapButtonState.Default)
-  //       setApproveState(ApproveButtonState.NotApproved)
-  //     } else if (parseFloat(fromInputValue) >= parseFloat(fromAmountBalance)) {
-  //       setButtonState(SwapButtonState.InsufficientBalance)
-  //       setApproveState(ApproveButtonState.NotApproved)
-  //     } else {
-  //       setButtonState(SwapButtonState.Default)
-  //     }
-  //   } else if (Number(allowance) > 0) {
-  //     if (parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
-  //       setButtonState(SwapButtonState.Swap)
-  //     }
-  //   }
-  // }, [allowance, fromInputValue, fromAmountBalance, toInputValue])
-
-  // useEffect(() => {
-  //   setButtonStates()
-  // }, [setButtonStates])
-
-  // const CurrentButtonContent = () => {
-  //   if (approveState === ApproveButtonState.NotApproved) {
-  //     if (buttonState === SwapButtonState.Default) {
-  //       return <NotApproveContent />
-  //     } else if (buttonState === SwapButtonState.InsufficientBalance) {
-  //       return <InsufficientBalanceContent />
-  //     } else if (parseFloat(fromInputValue) === 0 || parseFloat(toInputValue) === 0) {
-  //       return <EnterAmountContent />
-  //     } else if (buttonState === SwapButtonState.InsufficientLiquidity) {
-  //       return <InsufficientLiquidityContent />
-  //     }
-  //   } else if (approveState === ApproveButtonState.Approving) {
-  //     return <ApprovingContent />
-  //   } else if (approveState === ApproveButtonState.Approved) {
-  //     if (buttonState === SwapButtonState.Default) {
-  //       return <ApprovedContent />
-  //     } else if (buttonState === SwapButtonState.Swap) {
-  //       return <SwapContent />
-  //     } else if (buttonState === SwapButtonState.Confirming) {
-  //       return <ConfirmingContent />
-  //     } else if (buttonState === SwapButtonState.Retry) {
-  //       return <RetryContent />
-  //     } else if (buttonState === SwapButtonState.InsufficientBalance) {
-  //       return <InsufficientBalanceContent />
-  //     } else if (buttonState === SwapButtonState.InsufficientLiquidity) {
-  //       return <InsufficientLiquidityContent />
-  //     }
-  //   }
-
-  //   return <></>
-  // }
-
-  const BottomContent = () => {
-    const toggleWalletModal = useWalletModalToggle()
-
-    if (!account && !error) {
-      return (
+  /**
+   * Account not connected
+   */
+  if (!account) {
+    return (
+      <div className="w-full bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
+        <PageWarning caption={'Connect your wallet to swap your tokens!'} />
         <div className="mt-2">
           <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
         </div>
-      )
-    }
-
-    return (
-      <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Swap"
-          state={PrimaryButtonState.Enabled}
-          onClick={() => {
-            swap(fromInputValue, SwapTypes.SwapExactIn, fromCurrency, toCurrency)
-          }}
-        />
       </div>
     )
-
-    // return (
-    //   <>
-    //     <CurrentButtonContent />
-    //     <SwapDetails
-    //       price={price}
-    //       isLoadingPrice={isLoadingPrice}
-    //       toCurrency={toCurrency?.symbol}
-    //       fromCurrency={fromCurrency?.symbol}
-    //       minimumReceived={toMinimumAmount}
-    //       isLoadingMinimumAmount={isLoadingMinimumAmount}
-    //     />
-    //   </>
-    // )
   }
 
-  if (!tokenListLoading && tokenList.length === 0) {
+  /**
+   * Unable to fetch token list or empty token list
+   */
+  if (!tokenListLoading && (tokenList.length === 0 || tokenListError)) {
     return <FeatureNotSupported isIsolated={true} />
   }
 
   return (
     <>
       <div className="w-full bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
-        {account ? (
-          <>
-            <div className="flex flex:row mt-2 md:mt-4 mb-4">
-              <div className="w-1/2 flex justify-start">
-                <p className="font-semibold text-secondary-alternate">From</p>
-              </div>
-              <div className="w-1/2 flex justify-end cursor-pointer">
-                <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} />
-              </div>
-            </div>
+        <div className="flex flex:row mb-4">
+          <div className="w-1/2 flex justify-start">
+            <p className="font-semibold text-secondary-alternate">From</p>
+          </div>
+          <div className="w-1/2 flex justify-end cursor-pointer">
+            {/* <img src={SettingsIcon} alt="Settings" onClick={() => setShowSettingsModal(true)} /> */}
+          </div>
+        </div>
 
-            <div className="mt-2">
-              <CurrencyInput
-                currency={fromCurrency}
-                value={fromInputValue}
-                canSelectToken={true}
-                didChangeValue={async val => {
-                  // if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
-                  //   setButtonState(SwapButtonState.Swap)
-                  // } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
-                  //   setButtonState(SwapButtonState.InsufficientBalance)
-                  // }
-                  // getMinimumAmount(val, CurrencySide.TO_CURRENCY)
+        <div className="mt-2">
+          <CurrencyInput
+            currency={fromCurrency}
+            value={fromInputValue}
+            canSelectToken={true}
+            didChangeValue={async val => {
+              setFromInputValue(val)
+              onInputChange(val, true)
+            }}
+            showBalance={true}
+            showMax={true}
+            isLoading={tokenListLoading}
+            tokenList={tokenList}
+            onSelectToken={token => {
+              if (token !== toCurrency) {
+                setFromCurrency(token)
+                setToInputValue('')
+                setFromInputValue('')
+              }
+            }}
+          />
+        </div>
 
-                  setFromInputValue(val)
-                  onInputChange(val, true)
-                }}
-                showBalance={true}
-                showMax={true}
-                isLoading={tokenListLoading}
-                tokenList={tokenList}
-                onSelectToken={token => {
-                  if (token !== toCurrency) {
-                    setFromCurrency(token)
-                    setToInputValue('')
-                    setFromInputValue('')
-                  }
-                }}
-                didUpdateBalance={balance => {
-                  setFromAmountBalance(balance)
-                }}
-              />
-            </div>
+        <div className="flex flex:row mt-2 md:mt-4 mb-4">
+          <div className="w-1/2 flex justify-start">
+            <p className="mt-2 font-semibold text-secondary-alternate">Swap to</p>
+          </div>
+          <div
+            className="w-1/2 flex justify-end cursor-pointer"
+            onClick={() => {
+              const prevToInputValue = toInputValue
+              const prevToCurrency = toCurrency
+              setToInputValue(fromInputValue)
+              setFromInputValue(prevToInputValue)
+              setToCurrency(fromCurrency)
+              setFromCurrency(prevToCurrency)
+            }}
+          >
+            <img src={SwitchIcon} alt="Switch" />
+          </div>
+        </div>
 
-            <div className="flex flex:row mt-2 md:mt-4 mb-4">
-              <div className="w-1/2 flex justify-start">
-                <p className="mt-2 font-semibold text-secondary-alternate">Swap to</p>
-              </div>
-              <div
-                className="w-1/2 flex justify-end cursor-pointer"
-                onClick={() => {
-                  const prevToInputValue = toInputValue
-                  const prevToCurrency = toCurrency
-                  setToInputValue(fromInputValue)
-                  setFromInputValue(prevToInputValue)
-                  setToCurrency(fromCurrency)
-                  setFromCurrency(prevToCurrency)
-                  // getMinimumAmount(prevToInputValue, CurrencySide.TO_CURRENCY)
-                }}
-              >
-                <img src={SwitchIcon} alt="Switch" />
-              </div>
-            </div>
+        <div className="mt-2">
+          <CurrencyInput
+            currency={toCurrency}
+            value={toInputValue}
+            canSelectToken={true}
+            didChangeValue={val => {
+              setToInputValue(val)
+              onInputChange(val, false)
+            }}
+            showBalance={true}
+            showMax={true}
+            tokenList={tokenList}
+            isLoading={tokenListLoading}
+            onSelectToken={token => {
+              if (token !== fromCurrency) {
+                setToInputValue('')
+                setFromInputValue('')
+                setToCurrency(token)
+              }
+            }}
+          />
+        </div>
 
-            <div className="mt-2">
-              <CurrencyInput
-                currency={toCurrency}
-                value={toInputValue}
-                canSelectToken={true}
-                didChangeValue={val => {
-                  // if (approveState === ApproveButtonState.Approved) {
-                  //   setButtonState(SwapButtonState.Swap)
-                  // }
-                  // getMinimumAmount(val, CurrencySide.FROM_CURRENCY)
-                  setToInputValue(val)
-                  onInputChange(val, false)
-                }}
-                showBalance={true}
-                showMax={true}
-                tokenList={tokenList}
-                isLoading={tokenListLoading}
-                onSelectToken={token => {
-                  if (token !== fromCurrency) {
-                    setToInputValue('')
-                    setFromInputValue('')
-                    setToCurrency(token)
-                  }
-                }}
-              />
-            </div>
-          </>
-        ) : (
-          <PageWarning caption={'Connect your wallet to swap your tokens!'} />
-        )}
-        <BottomContent />
+        <div className="mt-4">
+          <PrimaryButton
+            type={PrimaryButtonType.Gradient}
+            title="Swap"
+            state={
+              swapButtonState === SwapButtonState.Confirming
+                ? PrimaryButtonState.InProgress
+                : [SwapButtonState.EnterAmount].includes(swapButtonState)
+                ? PrimaryButtonState.Disabled
+                : PrimaryButtonState.Enabled
+            }
+            onClick={onSwap}
+          />
+        </div>
+
+        {minorError && <InlineErrorContent errorObject={minorError} />}
       </div>
 
-      {/* <SwapSettingsModal
-        txDeadline={txDeadline}
-        isVisible={showSettingsModal}
-        onSlippageChanged={setSlippage}
-        onDismiss={() => setShowSettingsModal(false)}
-        didChangeTxDeadline={val => setTxDeadline(Number(val))}
-      /> */}
-
-      {/* <SwapTransactionModal
-        isVisible={showModal}
-        fromCurrency={fromCurrency}
-        toCurrency={toCurrency}
-        fromAmount={fromInputValue}
-        toAmount={toInputValue}
-        minimumAmount={toMinimumAmount || '0'}
-        isLoadingMinimumAmount={isLoadingMinimumAmount}
-        price={price || 0}
-        isLoadingPrice={isLoadingPrice}
-        onSwap={async () => {
-          try {
-            const txn = await swapToken(fromInputValue, txDeadline, slippage)
-            if (txn) {
-              setTxhash(txn.hash)
-              setSwapTransactionModalState(ModalState.Successful)
-            }
-
-            if (txn === 4001 || !txn) {
-              setSwapTransactionModalState(ModalState.NotConfirmed)
-            }
-            if (txn.code === MetamaskProviderErrorCode.userRejectedRequest) {
-              setShowModal(false)
-              setSwapTransactionModalState(ModalState.NotConfirmed)
-              setErrorObject(txn)
-              setButtonState(SwapButtonState.Swap)
-            }
-          } catch (e) {
-            console.error('Error catched! ', e)
-            setShowModal(false)
-            setSwapTransactionModalState(ModalState.NotConfirmed)
-            setErrorObject(e)
-            setButtonState(SwapButtonState.Swap)
-          }
-        }}
-        onPriceUpdate={() => {
-          setTimeLeft(60)
-          getMinimumAmount(fromInputValue, CurrencySide.TO_CURRENCY)
-          getPrice()
-        }}
-        onDismiss={() => {
-          setButtonState(SwapButtonState.Swap)
-          setShowModal(false)
-        }}
-        isExpired={isExpired}
-        setIsExpired={setIsExpired}
-        timeLeft={timeLeft}
-        swapTransactionModalState={swapTransactionModalState}
-        setSwapTransactionModalState={setSwapTransactionModalState}
-        txnHash={txhash}
-        chainId={chainId as number}
-      /> */}
-
-      {errorObject && (
+      {criticalError && (
         <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
+          isVisible={criticalError !== undefined}
+          onDismiss={() => setCriticalError(undefined)}
+          errorObject={criticalError}
         />
       )}
     </>

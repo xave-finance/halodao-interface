@@ -4,7 +4,7 @@ import { ChainId } from '@halodao/sdk'
 import { mainnet, rinkeby, kovan, matic, arb, arbTestnet } from '@halodao/halodao-contract-addresses'
 import { AddressCollection } from '@halodao/halodao-contract-addresses/dist/types'
 
-const getHaloAddresses = (chainId?: ChainId) => {
+export const getHaloAddresses = (chainId?: ChainId) => {
   switch (chainId) {
     case ChainId.MAINNET:
       return mainnet
@@ -24,8 +24,8 @@ const getHaloAddresses = (chainId?: ChainId) => {
 }
 
 const useHaloAddresses = () => {
-  const [haloAddresses, setHaloAddresses] = useState<AddressCollection>(getHaloAddresses(ChainId.MAINNET))
   const { chainId } = useWeb3React()
+  const [haloAddresses, setHaloAddresses] = useState<AddressCollection>(getHaloAddresses(chainId ?? ChainId.MAINNET))
 
   useEffect(() => {
     if (!chainId) return

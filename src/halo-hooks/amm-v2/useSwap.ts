@@ -1,19 +1,19 @@
 import { Token } from '@halodao/sdk'
-import { useEffect } from 'react'
-import useBalancerSDK from './useBalancerSDK'
+// import { useEffect } from 'react'
+// import useBalancerSDK from './useBalancerSDK'
 import VaultABI from '../../constants/haloAbis/Vault.json'
 import { useActiveWeb3React } from 'hooks'
 import { SwapTypes } from '@balancer-labs/sdk'
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 import { useContract } from 'hooks/useContract'
 import { consoleLog } from 'utils/simpleLogger'
 import assert from 'assert'
-import { BigNumber, ethers } from 'ethers'
+import { /*BigNumber,*/ ethers } from 'ethers'
 
 const useSwap = () => {
   const { account } = useActiveWeb3React()
-  const balancer = useBalancerSDK()
+  // const balancer = useBalancerSDK()
   const haloAddresses = useHaloAddresses()
   const vaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
 
@@ -38,19 +38,19 @@ const useSwap = () => {
   //   }
   // }, [balancer])
 
-  const getSwapsBalancer = async (amount: string, swapType: SwapTypes, tokenIn: Token, tokenOut: Token) => {
-    if (!balancer) return
+  // const getSwapsBalancer = async (amount: string, swapType: SwapTypes, tokenIn: Token, tokenOut: Token) => {
+  //   if (!balancer) return
 
-    const gasPrice = BigNumber.from('40000000000')
-    const maxPools = 4
+  //   const gasPrice = BigNumber.from('40000000000')
+  //   const maxPools = 4
 
-    const swapInfo = await balancer.sor.getSwaps(tokenIn.address, tokenOut.address, swapType, amount, {
-      gasPrice,
-      maxPools
-    })
+  //   const swapInfo = await balancer.sor.getSwaps(tokenIn.address, tokenOut.address, swapType, amount, {
+  //     gasPrice,
+  //     maxPools
+  //   })
 
-    return swapInfo.swaps
-  }
+  //   return swapInfo.swaps
+  // }
 
   const getSwaps = async (amount: string, swapType: SwapTypes, tokenIn: Token, tokenOut: Token) => {
     const decimals = swapType === SwapTypes.SwapExactIn ? tokenIn.decimals : tokenOut.decimals
@@ -136,7 +136,7 @@ const useSwap = () => {
   }
 
   const previewSwap = async (amount: string, swapType: SwapTypes, tokenIn: Token, tokenOut: Token) => {
-    if (!account || !vaultContract || amount === '') return ['0', '0']
+    if (!account || !vaultContract || amount === '' || Number(amount) === 0) return ['0', '0']
 
     const { tokenAddresses, swaps } = await getSwaps(amount, swapType, tokenIn, tokenOut)
     //const swaps = await getSwapsBalancer(amount, swapType, tokenIn, tokenOut)
@@ -149,7 +149,8 @@ const useSwap = () => {
     }
 
     consoleLog('[useSwap] queryBatchSwap params: ', swapType, swaps, tokenAddresses, funds)
-    const deltas = await vaultContract.queryBatchSwap(swapType, swaps, tokenAddresses, funds)
+    const type = swaps.length > 1 ? SwapTypes.SwapExactIn : swapType
+    const deltas = await vaultContract.queryBatchSwap(type, swaps, tokenAddresses, funds)
     consoleLog('[useSwap] queryBatchSwap raw response: ', deltas.toString())
     consoleLog(
       '[useSwap] queryBatchSwap response: ',
@@ -176,7 +177,14 @@ const useSwap = () => {
       toInternalBalance: false
     }
 
-    const limits = [parseUnits('999999999', 18), parseUnits('999999999', 6), parseUnits('999999999', 6)]
+    let limits = [parseUnits('999999999', tokenIn.decimals), parseUnits('999999999', tokenOut.decimals)]
+    if (swaps.length > 1) {
+      limits = [
+        parseUnits('999999999', tokenIn.decimals),
+        parseUnits('999999999', 6),
+        parseUnits('999999999', tokenOut.decimals)
+      ]
+    }
 
     const deadline = ethers.constants.MaxUint256
 
@@ -195,7 +203,7 @@ const useSwap = () => {
   }
 
   return {
-    balancer,
+    // balancer,
     previewSwap,
     swap
   }
