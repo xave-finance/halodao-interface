@@ -482,8 +482,8 @@ export default function Header() {
             <MobileTitle>HaloDAO</MobileTitle>
           </Title>
 
-           {/* Main menu */}
-           <HeaderLinks>
+          {/* Main menu */}
+          <HeaderLinks>
             {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
               {t('swap')}
             </StyledNavLink> */}
