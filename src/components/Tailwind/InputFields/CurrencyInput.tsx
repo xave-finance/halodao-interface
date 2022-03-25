@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Currency, Token } from '@sushiswap/sdk'
+import { Currency, Token } from '@halodao/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
@@ -30,7 +30,6 @@ const TokenInput = ({
   showMax,
   onSelectToken,
   tokenList,
-
   balance
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)

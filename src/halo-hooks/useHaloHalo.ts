@@ -9,14 +9,15 @@ import { useTokenContract, useContract } from 'hooks/useContract'
 import HALOHALO_ABI from '../constants/haloAbis/HaloHalo.json'
 import { HALO_TOKEN_ADDRESS, HALOHALO_ADDRESS, HALO_REWARDS_MANAGER_ADDRESS } from '../constants'
 import { formatNumber } from 'utils/formatNumber'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 const { BigNumber } = ethers
 
 const useHaloHalo = () => {
   const { account, chainId } = useActiveWeb3React()
   const addTransaction = useTransactionAdder()
-  const overrideCurrentProvider = chainId && chainId === ChainId.MATIC ? true : false // user RPCProvider to connect to mainnet if user is in MATIC
+  const overrideCurrentProvider =
+    chainId && [ChainId.MATIC, ChainId.ARBITRUM, ChainId.ARBITRUM_TESTNET].includes(chainId) ? true : false // user RPCProvider to connect to mainnet if user is in MATIC
   const contractChainId = overrideCurrentProvider ? ChainId.MAINNET : chainId
   const haloHaloAddress = chainId ? HALOHALO_ADDRESS[contractChainId as ChainId] : undefined
   const rewardsManagerAddress = chainId ? HALO_REWARDS_MANAGER_ADDRESS[contractChainId as ChainId] : undefined
@@ -80,7 +81,8 @@ const useHaloHalo = () => {
   const approve = useCallback(async () => {
     try {
       const tx = await haloContract?.approve(halohaloContract?.address, ethers.constants.MaxUint256.toString())
-      return addTransaction(tx, { summary: 'Approve' })
+      addTransaction(tx, { summary: 'Approve' })
+      return tx
     } catch (e) {
       return e
     }

@@ -5,22 +5,11 @@ import ConnectButton from 'components/Tailwind/Buttons/ConnectButton'
 import BridgePanel from './BridgePanel'
 import InfoCard from 'components/Tailwind/Cards/InfoCard'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
-import { NETWORK_SUPPORTED_FEATURES, NETWORK_LABEL } from '../../../constants/networks'
-import { ChainId } from '@sushiswap/sdk'
+import { NETWORK_SUPPORTED_FEATURES } from '../../../constants/networks'
+import { ChainId } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { useWalletModalToggle } from 'state/application/hooks'
-
-const NotSupportedContent = () => {
-  const { chainId } = useActiveWeb3React()
-  const caption = 'Ooops! Sorry this page/feature is not supported in ' + NETWORK_LABEL[chainId as ChainId] + '.'
-  return (
-    <div className="flex items-center bg-white py-6 px-8 border border-primary-hover shadow-md rounded-card">
-      <div className="w-full">
-        <PageWarning caption={caption} />
-      </div>
-    </div>
-  )
-}
+import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 
 const NotConnected = () => {
   const toggleWalletModal = useWalletModalToggle()
@@ -44,8 +33,9 @@ const CurrentPanelContent = () => {
   } else if (!account) {
     return <NotConnected />
   }
-  return <NotSupportedContent />
+  return <FeatureNotSupported isIsolated={true} />
 }
+
 const Bridge = () => {
   return (
     <PageWrapper className="mb-8">

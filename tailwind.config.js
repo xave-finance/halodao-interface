@@ -1,6 +1,7 @@
 module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
+  important: true,
   theme: {
     extend: {
       fontFamily: {
@@ -12,10 +13,15 @@ module.exports = {
           light: '#e8e4f5',
           lighter: '#D7CDF0',
           lightest: '#F3F2F8',
+          dark: '#4F4F4F',
           hover: '#15006d',
           disabled: '#9182c6',
           gradientVia: '#5521B6',
-          gradientTo: '#2DB7C4'
+          gradientTo: '#2DB7C4',
+          gray: '#828282',
+          midGray: '#F1F1F1',
+          lightGray: '#BDBDBD',
+          red: '#FF0000'
         },
         secondary: {
           DEFAULT: '#A38DD8',
@@ -25,10 +31,16 @@ module.exports = {
           alternate: '#5E5E5E'
         },
         misc: {
-          green: '#EDFFEF'
+          green: '#EDFFEF',
+          yellow: '#EDAB01'
         },
         warning: {
           DEFAULT: '#FA6F44'
+        },
+        error: {
+          DEFAULT: '#FF5F37',
+          light: '#FDD9D7',
+          dark: '#DA1A0F'
         },
         link: {
           DEFAULT: '#518cff',

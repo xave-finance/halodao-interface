@@ -12,9 +12,10 @@ interface ApproveButtonProps {
   title: string
   state: ApproveButtonState
   onClick?: () => void
+  className?: string
 }
 
-const ApproveButton = ({ title, state, onClick }: ApproveButtonProps) => {
+const ApproveButton = ({ title, state, onClick, className }: ApproveButtonProps) => {
   const isEnabled = state === ApproveButtonState.NotApproved
   const isApproving = state === ApproveButtonState.Approving
   const isApproved = state === ApproveButtonState.Approved
@@ -25,7 +26,7 @@ const ApproveButton = ({ title, state, onClick }: ApproveButtonProps) => {
       onClick={onClick}
       className={`
         flex items-center justify-center
-        font-bold text-primary-hover
+        font-bold
         py-2 w-full
         bg-transparent border border-primary-hover
         rounded
@@ -34,6 +35,8 @@ const ApproveButton = ({ title, state, onClick }: ApproveButtonProps) => {
         ${isEnabled ? 'hover:bg-primary hover:text-white' : ''}
         ${isEnabled ? 'active:ring active:ring-purple-300' : ''}
         ${isApproved ? 'border-success text-success' : ''}
+        ${!className ? 'text-primary-hover' : 'text-white'}
+        ${className}
       `}
     >
       {title}

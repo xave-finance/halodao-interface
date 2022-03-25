@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 export interface PoolData {
   pid?: string
   address: string

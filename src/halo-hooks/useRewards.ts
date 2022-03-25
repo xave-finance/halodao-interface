@@ -1,4 +1,4 @@
-import { useHALORewardsContract } from 'hooks/useContract'
+import { useHALORewardsContract, useHALORewarderContract, useTokenContract } from 'hooks/useContract'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSingleCallResult, useSingleContractMultipleData } from 'state/multicall/hooks'
 import { formatEther } from 'ethers/lib/utils'
@@ -9,6 +9,8 @@ import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { useTokenPrice } from './useTokenPrice'
+import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -222,4 +224,86 @@ export const useAllocPoints = (poolAddresses: string[], rewardsVersion = AmmRewa
   }, [poolAddresses, fetchAllocPoint])
 
   return allocPoint
+}
+
+interface RewarderToken {
+  amount: number
+  tokenName: string
+  tokenAddress: string
+  multiplier: number
+  balance: number
+}
+
+export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAddress: string | undefined) => {
+  const currentBlockTimestamp = useCurrentBlockTimestamp()
+  const { account } = useActiveWeb3React()
+  const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
+  const rewarderContract = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
+  const [rewardTokenAddress, setRewardTokenAddress] = useState<string>()
+  const rewardTokenContract = useTokenContract(rewardTokenAddress)
+  const [unclaimedRewards, setUnclaimedRewards] = useState<RewarderToken>()
+
+  const fetchUnclaimedRewards = useCallback(async () => {
+    if (!ammRewards || !rewarderContract || !rewardTokenContract || !account || !rewarderAddress) return
+
+    try {
+      console.log('fetchUnclaimedRewards() in progress...')
+      const pendingXRNBW = await ammRewards.pendingRewardToken(poolID, account)
+      const [pendingRewarderTokens, multiplier, symbol, balance] = await Promise.all([
+        rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW),
+        rewarderContract.rewardMultiplier(),
+        rewardTokenContract.symbol(),
+        rewardTokenContract.balanceOf(rewarderAddress)
+      ])
+
+      setUnclaimedRewards({
+        amount: parseFloat(formatEther(pendingRewarderTokens.rewardAmounts[0])),
+        tokenName: symbol,
+        tokenAddress: pendingRewarderTokens.rewardTokens[0],
+        multiplier: parseFloat(formatEther(multiplier.toString())) / 1000,
+        balance: parseFloat(formatEther(balance))
+      })
+    } catch (e) {
+      console.error('fetchUnclaimedRewards() error: ', e)
+    }
+  }, [rewardTokenContract, ammRewards, rewarderContract, poolID, account]) //eslint-disable-line
+
+  useEffect(() => {
+    if (!rewarderContract) return
+
+    rewarderContract
+      .rewardToken()
+      .then(setRewardTokenAddress)
+      .catch((e: Error) => {
+        console.error('Rewarder.rewardToken() failed', e)
+      })
+  }, [rewarderContract])
+
+  useEffect(() => {
+    fetchUnclaimedRewards()
+  }, [rewardTokenContract, currentBlockTimestamp]) //eslint-disable-line
+
+  return unclaimedRewards
+}
+
+export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
+  const rewarder = useHALORewarderContract(rewarderAddress !== ZERO_ADDRESS ? rewarderAddress : undefined)
+  const [rewarderTokenAddress, setRewarderTokenAddress] = useState<string[]>([])
+  const rewarderTokenUsdPrice = useTokenPrice(rewarderTokenAddress)
+
+  const fetchTokenAddress = useCallback(async () => {
+    try {
+      if (!rewarder) return
+      const tokenAddress = await rewarder.rewardToken()
+      setRewarderTokenAddress([tokenAddress])
+    } catch (err) {
+      console.error(`Error fetching token address: `, err)
+    }
+  }, [rewarderAddress]) //eslint-disable-line
+
+  useEffect(() => {
+    fetchTokenAddress()
+  }, [fetchTokenAddress])
+
+  return rewarderTokenUsdPrice[rewarderTokenAddress[0]]
 }

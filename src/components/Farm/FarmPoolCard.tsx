@@ -26,7 +26,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_MESSAGE } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants/index'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -34,15 +34,17 @@ import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import { getPoolLiquidity } from 'utils/poolInfo'
 import { useTotalSupply } from 'data/TotalSupply'
 import { formatNumber, NumberFormat, toFixed } from 'utils/formatNumber'
-import { monthlyReward, apy } from 'utils/poolAPY'
-import { useApproveCallback, ApprovalState } from '../../hooks/useApproveCallback'
-import { JSBI, TokenAmount } from '@sushiswap/sdk'
+import { monthlyReward, apy, getRewarderAPR } from 'utils/poolAPY'
+import { ApprovalState } from '../../hooks/useApproveCallback'
+import { JSBI, TokenAmount } from '@halodao/sdk'
 import {
   useDepositWithdrawHarvestCallback,
   useStakedBPTPerPool,
   useUnclaimedRewardsPerPool,
   useRewardTokenPerSecond,
-  useTotalAllocPoint
+  useTotalAllocPoint,
+  useUnclaimedRewarderRewardsPerPool,
+  useRewarderUSDPrice
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -55,13 +57,15 @@ import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammReward
 import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { consoleLog } from 'utils/simpleLogger'
-import { MetamaskError } from 'constants/errors'
+import { MetamaskErrorCode } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
-import { Check, GitPullRequest } from 'react-feather'
+import { AlertCircle, Check, GitPullRequest } from 'react-feather'
+import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
+import { MouseoverTooltip } from '../Tooltip'
 
 const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
-  padding: 1rem;
+  padding: 1.5rem 1rem;
   margin: 0 -1rem;
   cursor: pointer;
   border: 1px solid transparent;
@@ -87,7 +91,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
 `
 
 const StyledCard = styled(GreyCard)<{ bgColor: any }>`
-  border: none
+  border: none;
   background: ${({ theme }) => transparentize(0.6, theme.bg1)};
   position: relative;
   overflow: visible;
@@ -217,15 +221,14 @@ export const StyledCardBoxWeb = styled(RowBetween)`
 `
 
 export const StyledButtonWidth = styled(ButtonOutlined)`
-  margin: 0,
-  minWidth: 0,
-  display: "flex",
+  margin: 0;
+  minwidth: 0;
+  display: flex;
   padding: 0
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
+    ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
     border: 0;
-  `}
+  `};
 `
 
 const ExpandedCard = styled.div`
@@ -341,7 +344,6 @@ const RewardsContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 20px 30px;
-  justify-content: space-between;
   background: #15006d;
   color: white;
   align-items: center;
@@ -353,7 +355,21 @@ const RewardsContainer = styled.div`
     align-items: flex-start;
   `};
 `
+const HarvestErrorMessage = styled.div`
+  text-align: center;
+  color: #ffb3b3;
+  font-weight: bold;
+`
 
+const RewardsChildFlex = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+const RewardsChildFlexContainer = styled(RewardsChildFlex)`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+`
 const RewardsChild = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
     width: 100%;
@@ -384,6 +400,12 @@ const RewardsChild = styled.div`
     }
   }
 
+  &.harvest {
+    & button {
+      margin-left: auto !important;
+    }
+  }
+
   img {
     width: 35px;
   }
@@ -395,6 +417,19 @@ const RewardsChild = styled.div`
   & .balance {
     font-family: 'Fredoka One';
     font-size: 36px;
+  }
+
+  & .rewarder {
+    font-family: 'Fredoka One';
+    font-size: 28px;
+    padding-bottom: 5px;
+    margin-left: auto !important;
+  }
+
+  &.rewardBalance {
+    padding-left: 30px;
+    padding-right: 40px;
+    flex: 1;
   }
 
   a {
@@ -456,7 +491,8 @@ export default function FarmPoolCard({
   const [harvestButtonState, setHarvestButtonState] = useState(ButtonHaloSimpleStates.Disabled)
   const [isTxInProgress, setIsTxInProgress] = useState(false)
   const [alreadyMigrated, setAlreadyMigrated] = useState(false)
-
+  const [insufficientReward, setInsufficientReward] = useState(false)
+  const [harvestFailed, setHarvestFailed] = useState(false)
   // Get user BPT balance
   const bptBalanceAmount = useTokenBalance(poolInfo.address)
   const bptBalance = parseFloat(formatEther(bptBalanceAmount.value.toString()))
@@ -481,13 +517,16 @@ export default function FarmPoolCard({
   unclaimedPoolRewards = hasPendingRewardTokenError ? 0 : unclaimedPoolRewards
   const unclaimedHALO = unclaimedPoolRewards
 
-  // Make use of `useApproveCallback` for checking & setting allowance
+  // Get user earned rewarder
+  const unclaimedRewarderRewards = useUnclaimedRewarderRewardsPerPool([poolInfo.pid], poolInfo.rewarderAddress)
+
+  // Make use of `useTokenAllowance` for checking & setting allowance
   const rewardsContractAddress = getAmmRewardsContractAddress(chainId, rewardsVersion)
   // Change this when migrating to a new AMM Rewards Version
   const rewardsContractV1_1_ContractAddress = getAmmRewardsContractAddress(chainId, AmmRewardsVersion.Latest) // eslint-disable-line
 
   const tokenAmount = new TokenAmount(poolInfo.asToken, JSBI.BigInt(parseEther(`${parseFloat(stakeAmount) || 0}`)))
-  const [approveState, approveCallback] = useApproveCallback(tokenAmount, rewardsContractAddress)
+  const [approveState, approveCallback] = useTokenAllowance(tokenAmount, rewardsContractAddress)
   const lpTokenContract = useTokenContract(poolInfo.address)
 
   // Make use of `useDepositWithdrawPoolTokensCallback` for deposit & withdraw poolTokens methods
@@ -498,7 +537,7 @@ export default function FarmPoolCard({
   const addTransaction = useTransactionAdder()
 
   /**
-   * APY computation
+   * APY computation Rewards
    */
   const rewardTokenPerSecond = useRewardTokenPerSecond(rewardsVersion)
   const expectedMonthlyReward = monthlyReward(rewardTokenPerSecond)
@@ -513,6 +552,30 @@ export default function FarmPoolCard({
 
   const rawAPY = apy(expectedMonthlyReward, totalAllocPoint, tokenPrice, allocPoint, stakedLiquidity)
   const poolAPY = rawAPY === 0 ? t('new') : `${formatNumber(rawAPY, NumberFormat.long)}%`
+
+  /**
+   * APR computation Rewarder
+   */
+  const rewarderTokenUsdPrice = useRewarderUSDPrice(poolInfo.rewarderAddress)
+  const rewarderAPR =
+    unclaimedRewarderRewards &&
+    getRewarderAPR(
+      rewardTokenPerSecond,
+      unclaimedRewarderRewards.multiplier,
+      allocPoint,
+      totalAllocPoint,
+      rewarderTokenUsdPrice,
+      stakedLiquidity
+    )
+
+  const [accumulativeTotal, setAccumulativeTotal] = useState('')
+
+  useEffect(() => {
+    const total = rawAPY === 0 ? t('new') : rawAPY + (!rewarderAPR || rewarderAPR === Infinity ? 0 : rewarderAPR)
+    setAccumulativeTotal(total === t('new') ? total : `${formatNumber(total, NumberFormat.long)}%`)
+  }, [rewarderAPR, rawAPY, t])
+
+  const poolHasRewarder = poolInfo.rewarderAddress !== undefined && poolInfo.rewarderAddress !== ZERO_ADDRESS
 
   let stakingMessage = HALO_REWARDS_MESSAGE.staking
   let unstakingMessage = HALO_REWARDS_MESSAGE.unstaking
@@ -589,7 +652,7 @@ export default function FarmPoolCard({
     } else {
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     }
-  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated])
+  }, [unclaimedHALO, isTxInProgress, bptStaked, showMigrateButton, alreadyMigrated, unclaimedRewarderRewards])
 
   /**
    * Checks if user already migrated (from v1.0 to v1.1 AMMRewards)
@@ -623,7 +686,7 @@ export default function FarmPoolCard({
       const tx = await deposit(poolInfo.pid, parseEther(stakeAmount) ?? 0, poolInfo.address)
       await tx.wait()
     } catch (e) {
-      console.error('Stake error: ', e)
+      console.error('Stake error: ', poolInfo.address, e)
     }
 
     setStakeAmount('')
@@ -670,6 +733,8 @@ export default function FarmPoolCard({
    * Handles the user clicking "Harvest" button
    */
   const handleClaim = async () => {
+    setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -680,6 +745,25 @@ export default function FarmPoolCard({
       setHarvestButtonState(ButtonHaloSimpleStates.Disabled)
     } catch (e) {
       console.error('Claim error: ', e)
+      if (
+        e === 'Rewarder: Insufficient balance' ||
+        e.data?.message === 'execution reverted: ERC20: transfer amount exceeds balance'
+      ) {
+        setInsufficientReward(true)
+      } else if (e.message.toLowerCase().includes('user denied transaction')) {
+        setInsufficientReward(false)
+        setIsTxInProgress(false)
+      } else if (e.message.toLowerCase().includes('cannot set properties of undefined')) {
+        setHarvestFailed(true)
+        setIsTxInProgress(false)
+      } else if (unclaimedRewarderRewards && unclaimedRewarderRewards.amount > unclaimedRewarderRewards.balance) {
+        console.error('Rewarder insufficient balance')
+        console.error('Rewarder balance: ', unclaimedRewarderRewards.balance)
+        console.error('Reward amount: ', unclaimedRewarderRewards.amount)
+        setInsufficientReward(true)
+        setIsTxInProgress(false)
+      }
+
       setHarvestButtonState(ButtonHaloSimpleStates.Enabled)
       return
     }
@@ -712,6 +796,8 @@ export default function FarmPoolCard({
    * Handles the user clicking "Migrate" button
    */
   const handleMigrate = async () => {
+    setInsufficientReward(false)
+    setHarvestFailed(false)
     setIsTxInProgress(true)
     setHarvestButtonState(ButtonHaloSimpleStates.TxInProgress)
 
@@ -759,7 +845,7 @@ export default function FarmPoolCard({
       console.error('Migration error: ', e)
 
       // when txn signature is canceled
-      if ((e as any).code === MetamaskError.Cancelled) {
+      if ((e as any).code === MetamaskErrorCode.Cancelled) {
         setIsTxInProgress(false)
       }
 
@@ -801,9 +887,34 @@ export default function FarmPoolCard({
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="11%">
+          <StyledRowFixed width="18%">
             <LabelText className="first">{t('apr')}:</LabelText>
-            <StyledTextForValue>{isActivePool ? poolAPY : t('inactive')}</StyledTextForValue>
+            <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>
+              {isActivePool ? accumulativeTotal : t('inactive')}
+            </StyledTextForValue>{' '}
+            &nbsp;
+            {poolHasRewarder && rawAPY > 0 && (
+              <MouseoverTooltip
+                text={
+                  <div>
+                    <div>{t('apr-breakdown')}</div>
+                    <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
+                      <li>{poolAPY} xLPOP</li>
+                      <li>
+                        {!rewarderAPR || rewarderAPR === Infinity
+                          ? t('new')
+                          : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
+                        &nbsp;
+                        {unclaimedRewarderRewards?.tokenName}
+                      </li>
+                    </ul>
+                  </div>
+                }
+                placement={'top'}
+              >
+                <AlertCircle size={'16'} />
+              </MouseoverTooltip>
+            )}
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -823,11 +934,19 @@ export default function FarmPoolCard({
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
-                <u>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</u>
+                <u>{formatNumber(unclaimedHALO, NumberFormat.long)} xLPOP</u>
               ) : rewardsVersion === AmmRewardsVersion.V1 && alreadyMigrated ? (
                 <>0 xLPOP</>
               ) : (
-                <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</>
+                <div>{formatNumber(unclaimedHALO, NumberFormat.long)} xLPOP</div>
+              )}
+              {poolHasRewarder && unclaimedRewarderRewards && (
+                <div style={{ marginLeft: '-13px' }}>
+                  {' + '}
+                  {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
+                  &nbsp;
+                  {unclaimedRewarderRewards?.tokenName}
+                </div>
               )}
             </StyledTextForValue>
           </StyledRowFixed>
@@ -1001,17 +1120,29 @@ export default function FarmPoolCard({
               <RewardsChild>
                 <img src={BunnyRewards} alt="Bunny Rewards" />
               </RewardsChild>
-              <RewardsChild className="main">
-                <Text className="label">{poolInfo.pair} Rewards:</Text>
-                <Text className="balance">
-                  {showMigrateButton && alreadyMigrated ? (
-                    <>0 xLPOP </>
-                  ) : (
-                    <>{formatNumber(unclaimedHALO, isActivePool ? undefined : NumberFormat.short)} xLPOP</>
+              <RewardsChild className="rewardBalance">
+                <RewardsChildFlexContainer>
+                  <RewardsChildFlex>
+                    <Text className="label">{poolInfo.pair} Rewards:</Text>
+                    <Text className="balance">
+                      {showMigrateButton && alreadyMigrated ? (
+                        <>0 xRNBW </>
+                      ) : (
+                        <>{formatNumber(unclaimedHALO, NumberFormat.long)} xLPOP</>
+                      )}
+                    </Text>
+                  </RewardsChildFlex>
+                  {poolHasRewarder && (
+                    <Text className="rewarder">
+                      {' + '}
+                      {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
+                      &nbsp;
+                      {unclaimedRewarderRewards?.tokenName}
+                    </Text>
                   )}
-                </Text>
+                </RewardsChildFlexContainer>
               </RewardsChild>
-              <RewardsChild>
+              <RewardsChild className="harvest">
                 <ClaimButton
                   onClick={showMigrateButton ? handleMigrate : handleClaim}
                   disabled={[ButtonHaloSimpleStates.Disabled, ButtonHaloSimpleStates.TxInProgress].includes(
@@ -1030,6 +1161,8 @@ export default function FarmPoolCard({
                     <img src={ArrowRight} alt="Harvest icon" />
                   )}
                 </ClaimButton>
+                {insufficientReward && <HarvestErrorMessage>{t('insufficient-reward-balance')}</HarvestErrorMessage>}
+                {harvestFailed && <HarvestErrorMessage>{t('harvest-failed')}</HarvestErrorMessage>}
               </RewardsChild>
               <RewardsChild className="close">
                 <ButtonText onClick={() => setShowMore(!showMore)}>Close X</ButtonText>

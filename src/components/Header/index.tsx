@@ -1,4 +1,4 @@
-import { TokenAmount, Currency } from '@sushiswap/sdk'
+import { TokenAmount, Currency } from '@halodao/sdk'
 import React, { useState } from 'react'
 import { Text } from 'rebass'
 import { NavLink } from 'react-router-dom'
@@ -23,6 +23,9 @@ import { HALO } from '../../constants'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { useURLWarningVisible } from 'state/user/hooks'
 import { isMobile } from 'react-device-detect'
+
+const isProd = process.env.NODE_ENV === 'production'
+const lendingMarketUrl = isProd ? 'https://app.lending.halodao.com' : 'https://dev.app.lending.halodao.com'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -481,9 +484,9 @@ export default function Header() {
 
           {/* Main menu */}
           <HeaderLinks>
-            <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
+            {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
               {t('swap')}
-            </StyledNavLink>
+            </StyledNavLink> */}
             <StyledNavLink id={`pool-nav-link`} to={'/pool'}>
               {t('pool')}
             </StyledNavLink>
@@ -575,11 +578,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
 
   return (
     <>
-      <MenuItem>
+      {/* <MenuItem>
         <NavLink id={`swap-nav-link`} to={'/swap'} onClick={onClick}>
           {t('swap')}
         </NavLink>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
           {t('pool')}
@@ -624,8 +627,8 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
 
   return (
     <>
-      {chainId && [1, 3, 4, 5, 42, 137].includes(chainId) && (
-        <UNIWrapper onClick={onClickHandler}>
+      {chainId && [1, 3, 4, 5, 42, 137, 42161, 421611].includes(chainId) && (
+        <UNIWrapper id="rainbow" onClick={onClickHandler}>
           <UNIAmount active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && (
               <TYPE.white
@@ -643,7 +646,7 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
                 />
               </TYPE.white>
             )}
-            RNBW
+            LPOP
           </UNIAmount>
           <CardNoise />
         </UNIWrapper>

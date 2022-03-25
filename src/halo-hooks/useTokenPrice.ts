@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useActiveWeb3React } from 'hooks'
 import { COINGECKO_KNOWN_TOKENS, HALO_TOKEN_ADDRESS } from '../constants'
 import { getTokensUSDPrice, GetPriceBy } from 'utils/coingecko'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 export type TokenPrice = {
   [address: string]: number

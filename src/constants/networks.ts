@@ -1,7 +1,7 @@
 import Arbitrum from '../assets/networks/arbitrum-network.jpg'
 //import Avalanche from '../assets/networks/avalanche-network.jpg'
 import Bsc from '../assets/networks/bsc-network.jpg'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import Fantom from '../assets/networks/fantom-network.jpg'
 import Goerli from '../assets/networks/goerli-network.jpg'
 // import Harmony from '../assets/networks/harmonyone-network.jpg'
@@ -30,6 +30,7 @@ export const NETWORK_ICON = {
   [ChainId.MATIC_TESTNET]: Matic,
   [ChainId.XDAI]: xDai,
   [ChainId.ARBITRUM]: Arbitrum,
+  [ChainId.ARBITRUM_TESTNET]: Arbitrum,
   [ChainId.MOONBASE]: Moonbeam
   //[ChainId.AVALANCHE]: Avalanche,
   //[ChainId.FUJI]: Avalanche,
@@ -54,7 +55,9 @@ export const NETWORK_LABEL: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
+  [ChainId.MOONBASE]: 'Moonbase',
+  [ChainId.ARBITRUM]: 'Arbitrum',
+  [ChainId.ARBITRUM_TESTNET]: 'Arbitrum Testnet'
   //[ChainId.AVALANCHE]: 'Avalanche',
   //[ChainId.FUJI]: 'Fuji',
   //[ChainId.HECO]: 'HECO',
@@ -156,6 +159,28 @@ export const NETWORK_PARAMS: {
     },
     rpcUrls: ['https://rpc.testnet.moonbeam.network'], //['https://matic-mainnet.chainstacklabs.com/'],
     blockExplorerUrls: ['https://moonbase-blockscout.testnet.moonbeam.network']
+  },
+  [ChainId.ARBITRUM]: {
+    chainId: '0xA4B1',
+    chainName: 'Arbitrum One',
+    nativeCurrency: {
+      name: 'Arbitrum ETH',
+      symbol: 'AETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://arbiscan.io']
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
+    chainId: '0x66EEB',
+    chainName: 'Arbitrum Rinkeby',
+    nativeCurrency: {
+      name: 'Arbitrum Rinkeby ETH',
+      symbol: 'ARETH',
+      decimals: 18
+    },
+    rpcUrls: ['https://rinkeby.arbitrum.io/rpc'],
+    blockExplorerUrls: ['https://testnet.arbiscan.io/']
   }
   /*
     [ChainId.HARMONY]: {
@@ -298,5 +323,25 @@ export const NETWORK_SUPPORTED_FEATURES: {
     bridge: false,
     // bridge: true, // testing
     isBridgeCapped: isBridgeCapped === 'true'
+  },
+  [ChainId.ARBITRUM]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: false
+  },
+  [ChainId.ARBITRUM_TESTNET]: {
+    vest: false,
+    farm: true,
+    pool: true,
+    swap: true,
+    lend: true,
+    borrow: true,
+    bridge: false,
+    isBridgeCapped: false
   }
 }

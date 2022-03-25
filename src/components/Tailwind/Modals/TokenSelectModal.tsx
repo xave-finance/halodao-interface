@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Token } from '@sushiswap/sdk'
+import { Token } from '@halodao/sdk'
 import { HALO, HALOHALO, TRUE_AUD, TRUE_CAD, TRUE_GBP } from '../../../constants'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import CurrencyLogo from 'components/CurrencyLogo'

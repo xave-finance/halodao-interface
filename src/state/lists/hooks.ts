@@ -1,6 +1,6 @@
 import { UNSUPPORTED_LIST_URLS } from './../../constants/lists'
 import DEFAULT_TOKEN_LIST from '@sushiswap/default-token-list'
-import { ChainId, Token } from '@sushiswap/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { Tags, TokenInfo, TokenList } from '@uniswap/token-lists'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
@@ -51,6 +51,7 @@ const EMPTY_LIST: TokenAddressMap = {
   [ChainId.BSC]: {},
   [ChainId.BSC_TESTNET]: {},
   [ChainId.ARBITRUM]: {},
+  [ChainId.ARBITRUM_TESTNET]: {},
   [ChainId.MOONBASE]: {}
 }
 
@@ -117,7 +118,8 @@ function combineMaps(map1: TokenAddressMap, map2: TokenAddressMap): TokenAddress
     100: { ...map1[100], ...map2[100] }, // xdai
     56: { ...map1[56], ...map2[56] }, // bsc
     97: { ...map1[97], ...map2[97] }, // bsc testnet
-    79377087078960: { ...map1[79377087078960], ...map2[79377087078960] }, // arbitrum
+    42161: { ...map1[42161], ...map2[42161] }, // arbitrum
+    421611: { ...map1[421611], ...map2[421611] }, // arbitrum testnet
     1287: { ...map1[1287], ...map2[1287] } // moonbase
   }
 }

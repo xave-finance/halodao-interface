@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ChainId, Token, WETH } from '@sushiswap/sdk'
+import { ChainId, Token, WETH } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
 import { getAddress } from '@ethersproject/address'
 import { PoolInfo, PoolProvider } from './usePoolInfo'
@@ -10,6 +10,8 @@ import { GetPriceBy, getTokensUSDPrice } from 'utils/coingecko'
 import { PoolIdLpTokenMap } from 'utils/poolInfo'
 import { getContract } from 'utils'
 import { HALO } from '../constants'
+import { useHALORewardsContract } from '../hooks/useContract'
+import { AmmRewardsVersion } from '../utils/ammRewards'
 
 const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) => {
   if (chainId === ChainId.MAINNET) {
@@ -26,6 +28,7 @@ const getMainnetAddress = (address: string, symbol: string, chainId: ChainId) =>
 
 export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
   const { chainId, library, account } = useActiveWeb3React()
+  const ammRewards = useHALORewardsContract(AmmRewardsVersion.Latest)
 
   const WETH_ADDRESS = WETH[chainId || ChainId.MAINNET].address
 
@@ -53,12 +56,13 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
       promises.push(PoolContract?.token0())
       promises.push(PoolContract?.token1())
       promises.push(PoolContract?.getReserves())
+      promises.push(ammRewards?.rewarder(map.pid))
 
       const results = await Promise.all(promises)
       const token1Address = getAddress(results[0])
       const token2Address = getAddress(results[1])
       const totalReserves = results[2]
-
+      const rewardAddress = results[3]
       reserves[map.pid] = {
         token0: +formatEther(totalReserves[0]),
         token1: +formatEther(totalReserves[1])
@@ -110,7 +114,8 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
         ],
         asToken: new Token(chainId, poolAddress, 18, 'SLP', 'SLP'),
         allocPoint: 0,
-        provider: PoolProvider.Sushi
+        provider: PoolProvider.Sushi,
+        rewarderAddress: rewardAddress === undefined ? '' : rewardAddress
       })
 
       tokenAddresses.push(token1Address)
@@ -135,7 +140,7 @@ export const useSushiPoolInfo = (pidLpTokenMap: PoolIdLpTokenMap[]) => {
     }
 
     return { poolsInfo, tokenAddresses }
-  }, [pidLpTokenMap, chainId, library, account, WETH_ADDRESS])
+  }, [pidLpTokenMap, chainId, library, account, WETH_ADDRESS]) //eslint-disable-line
 
   return fetchPoolInfo
 }

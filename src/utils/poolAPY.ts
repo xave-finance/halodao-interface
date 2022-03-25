@@ -1,4 +1,4 @@
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 import { HALO_TOKEN_ADDRESS } from '../constants/index'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 
@@ -41,4 +41,24 @@ export const apy = (
 
   // APY
   return monthlyAPY(expectedMonthlyInterest) * 12
+}
+
+export const getRewarderAPR = (
+  rewardTokenPerSecond: number,
+  rewarderTokenMultiplier: number,
+  allocPoint: number,
+  totalAllocPoint: number,
+  rewarderTokenUsdPrice: number,
+  stakedLiquidity: number
+) => {
+  const rewarderRewardTokenPerSecond = rewardTokenPerSecond * rewarderTokenMultiplier
+  const expectedMonthlyRewarder = monthlyReward(rewarderRewardTokenPerSecond)
+  const monthlyRewardsInUsd = rewardMonthUSDValue(
+    allocPoint,
+    totalAllocPoint,
+    expectedMonthlyRewarder,
+    rewarderTokenUsdPrice
+  )
+  const monthlyInterest = monthlyRewardsInUsd / stakedLiquidity
+  return monthlyInterest * 12
 }

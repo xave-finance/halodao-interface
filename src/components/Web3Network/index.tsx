@@ -6,7 +6,7 @@ import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
 import styled from 'styled-components'
 import { YellowCard } from '../Card'
-import { ChainId } from '@sushiswap/sdk'
+import { ChainId } from '@halodao/sdk'
 
 const StyledWrapper = styled(YellowCard)`
   border-radius: ${({ theme }) => theme.borderRadius};
@@ -40,7 +40,9 @@ const NETWORK_LABELS: { [chainId in ChainId]?: string } = {
   [ChainId.XDAI]: 'xDai',
   [ChainId.BSC]: 'BSC',
   [ChainId.BSC_TESTNET]: 'BSC Testnet',
-  [ChainId.MOONBASE]: 'Moonbase'
+  [ChainId.MOONBASE]: 'Moonbase',
+  [ChainId.ARBITRUM]: 'Arbitrum',
+  [ChainId.ARBITRUM_TESTNET]: 'Arbitrum Testnet'
 }
 
 function Web3Network(): JSX.Element | null {
