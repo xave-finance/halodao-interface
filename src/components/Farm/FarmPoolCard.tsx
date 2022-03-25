@@ -899,7 +899,7 @@ export default function FarmPoolCard({
                   <div>
                     <div>{t('apr-breakdown')}</div>
                     <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
-                      <li>{poolAPY} xRNBW</li>
+                      <li>{poolAPY} xLPOP</li>
                       <li>
                         {!rewarderAPR || rewarderAPR === Infinity
                           ? t('new')

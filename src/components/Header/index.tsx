@@ -482,8 +482,8 @@ export default function Header() {
             <MobileTitle>HaloDAO</MobileTitle>
           </Title>
 
-          {/* Main menu */}
-          <HeaderLinks>
+           {/* Main menu */}
+           <HeaderLinks>
             {/* <StyledNavLink id={`swap-nav-link`} to={'/swap'}>
               {t('swap')}
             </StyledNavLink> */}
@@ -578,11 +578,11 @@ export const MainMenu = ({ onClick }: MainMenuProps) => {
 
   return (
     <>
-      <MenuItem>
+      {/* <MenuItem>
         <NavLink id={`swap-nav-link`} to={'/swap'} onClick={onClick}>
           {t('swap')}
         </NavLink>
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem>
         <NavLink id={`pool-nav-link`} to={'/pool'} onClick={onClick}>
           {t('pool')}
@@ -646,7 +646,7 @@ export const RNBWBalance = ({ onClickHandler }: RNBWBalanceProps) => {
                 />
               </TYPE.white>
             )}
-            RNBW
+            LPOP
           </UNIAmount>
           <CardNoise />
         </UNIWrapper>

@@ -176,30 +176,30 @@ export const HALOHALO: ChainTokenMap = {
     ChainId.MAINNET,
     process.env.REACT_APP_HALOHALO_ADDRESS_MAINNET || ZERO_ADDRESS,
     18,
-    'xRNBW',
-    'xRNBW Token'
+    'xLPOP',
+    'xLPOP Token'
   ),
   [ChainId.MATIC]: new Token(
     ChainId.MATIC,
     process.env.REACT_APP_HALOHALO_ADDRESS_MATIC || ZERO_ADDRESS,
     18,
-    'wXRNBW',
-    'Wrapped xRNBW Token'
+    'xLPOP',
+    'Wrapped xLPOP Token'
   ),
   [ChainId.ARBITRUM]: new Token(
     ChainId.ARBITRUM,
     process.env.REACT_APP_HALOHALO_ADDRESS_ARB || ZERO_ADDRESS,
     18,
-    'wXRNBW',
-    'Wrapped xRNBW Token'
+    'xLPOP',
+    'Wrapped xLPOP Token'
   ),
   // Testnets
   [ChainId.ARBITRUM_TESTNET]: new Token(
     ChainId.ARBITRUM_TESTNET,
     process.env.REACT_APP_HALOHALO_ADDRESS_ARB_RINKEBY || ZERO_ADDRESS,
     18,
-    'wXRNBW',
-    'Wrapped xRNBW Token'
+    'xLPOP',
+    'Wrapped xLPOP Token'
   )
 }
 
