@@ -70,6 +70,9 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="18%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('baseApr')}</TYPE.thHeader>
+                  </RowFixed>
+                  <RowFixed width="18%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="18%">

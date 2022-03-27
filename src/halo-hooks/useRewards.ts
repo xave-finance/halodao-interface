@@ -11,6 +11,8 @@ import { BigNumber } from 'ethers'
 import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { useTokenPrice } from './useTokenPrice'
 import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
+import { getContract } from '../utils'
+import CURVE_ABI from '../constants/haloAbis/Curve.json'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -306,4 +308,38 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
   }, [fetchTokenAddress])
 
   return rewarderTokenUsdPrice[rewarderTokenAddress[0]]
+}
+
+export const useGetBaseApr = (poolAddress: string): number => {
+  const { account, library } = useActiveWeb3React()
+  const [initialUsdHlpPrice, setInitialUsdHlpPrice] = useState(0)
+  const [currentUsdHlpPrice, setCurrentUsdHlpPrice] = useState(0)
+  const [baseAPR, setBaseApr] = useState(0)
+
+  const fetchInitialUsdHlpPrice = useCallback(async () => {
+    if (!library) return
+    const curveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
+  }, [])
+
+  const fetchCurrentUsdHlpPrice = useCallback(async () => {
+    if (!library) return
+    const curveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
+
+    try {
+      if (!curveContract) return
+      const [curveLiquidity, curveTotalSupply] = await Promise.all([
+        curveContract.liquidity(),
+        curveContract.totalSupply()
+      ])
+      setCurrentUsdHlpPrice(parseFloat(formatEther(curveLiquidity.total_)) / parseFloat(formatEther(curveTotalSupply)))
+    } catch (err) {
+      console.error(`Error fetching current USD HLP price `, err)
+    }
+  }, [poolAddress]) //eslint-disable-line
+
+  useEffect(() => {
+    fetchCurrentUsdHlpPrice()
+  }, [poolAddress])
+
+  return baseAPR
 }
