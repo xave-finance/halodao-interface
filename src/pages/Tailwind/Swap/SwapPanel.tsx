@@ -20,10 +20,10 @@ const SwapPanel = () => {
   const { account, chainId } = useWeb3React<Web3Provider>()
   const toggleWalletModal = useWalletModalToggle()
   const { tokenList, tokenListLoading, tokenListError } = useTokenList()
-  const { previewSwap, swap } = useSwap()
 
   const [fromCurrency, setFromCurrency] = useState(tokenList.length > 1 ? tokenList[1] : undefined)
   const [toCurrency, setToCurrency] = useState(tokenList.length > 0 ? tokenList[0] : undefined)
+  const { previewSwap, swap } = useSwap(fromCurrency, toCurrency)
   const [fromInputValue, setFromInputValue] = useState('')
   const [toInputValue, setToInputValue] = useState('')
   const [swapButtonState, setSwapButtonState] = useState(SwapButtonState.EnterAmount)
@@ -74,7 +74,7 @@ const SwapPanel = () => {
     let swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
 
     try {
-      const amounts = await previewSwap(amount, swapType, fromCurrency, toCurrency)
+      const amounts = await previewSwap(amount, swapType)
 
       if (isFromCurrency) {
         setToInputValue(amounts[1])
@@ -91,7 +91,7 @@ const SwapPanel = () => {
     setSwapButtonState(SwapButtonState.Confirming)
 
     try {
-      await swap(fromInputValue, SwapTypes.SwapExactIn, fromCurrency, toCurrency)
+      await swap(fromInputValue, SwapTypes.SwapExactIn)
     } catch (e) {
       console.error('Swap error:', e)
       setCriticalError(e)
