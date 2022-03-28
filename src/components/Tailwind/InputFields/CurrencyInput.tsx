@@ -1,17 +1,16 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Currency, Token } from '@halodao/sdk'
 import CurrencyLogo from 'components/CurrencyLogo'
 import MaxButton from '../Buttons/MaxButton'
 import SelectButton from '../Buttons/SelectButton'
 import NumericalInput from 'components/NumericalInput'
 import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import Loader from 'components/Loader'
 
 interface TokenInputProps {
-  currency: Currency
+  currency?: Currency
   value: string
   canSelectToken: boolean
   didChangeValue: (newValue: string) => void
@@ -20,7 +19,7 @@ interface TokenInputProps {
   isLoading?: boolean
   onSelectToken?: (token: Token) => void
   tokenList?: Token[]
-  balance?: string
+  didUpdateBalance?: (newBalance: string) => void
 }
 
 const TokenInput = ({
@@ -33,14 +32,20 @@ const TokenInput = ({
   isLoading = false,
   onSelectToken,
   tokenList,
-  balance
+  didUpdateBalance
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)
   const { account } = useActiveWeb3React()
   const currencyBalance = useCurrencyBalance(account ?? undefined, currency)
 
+  useEffect(() => {
+    if (didUpdateBalance && currencyBalance) {
+      didUpdateBalance(currencyBalance?.toExact())
+    }
+  }, [didUpdateBalance, currencyBalance])
+
   const onMax = () => {
-    balance = balance ? balance : currencyBalance?.toSignificant(6)
+    const balance = currencyBalance?.toExact()
     if (balance && Number(balance) > 0) {
       didChangeValue(balance)
     }
@@ -65,7 +70,7 @@ const TokenInput = ({
       return (
         <div className="mb-2 md:mb-0 md:w-1/4 flex items-center">
           <CurrencyLogo currency={currency} />
-          <div className="ml-2 font-semibold">{currency.symbol}</div>
+          <div className="ml-2 font-semibold">{currency?.symbol}</div>
         </div>
       )
     }
@@ -79,10 +84,7 @@ const TokenInput = ({
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
-                Balance:{' '}
-                {balance
-                  ? formatNumber(Number(balance), NumberFormat.long) || '-'
-                  : currencyBalance?.toSignificant(6) || '-'}
+                Balance: {currencyBalance ? currencyBalance.toFixed(2, { groupSeparator: ',' }) : '-'}
               </div>
             )}
             <NumericalInput

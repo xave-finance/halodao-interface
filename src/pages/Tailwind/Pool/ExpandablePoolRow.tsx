@@ -83,7 +83,7 @@ const ExpandablePoolRow = ({
    * - 5 seconds after an in-app popup appeared (tx has been confirmed)
    **/
   useEffect(() => {
-    if (!vaultPoolId || rewardsPoolId === undefined) return
+    if (!vaultPoolId) return
     getPoolData(poolAddress, vaultPoolId, rewardsPoolId)
       .then(setPool)
       .catch(e => {

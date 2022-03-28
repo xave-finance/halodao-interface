@@ -63,8 +63,7 @@ export const walletconnect = new WalletConnectConnector({
     [ChainId.MAINNET]: RPC[ChainId.MAINNET]
   },
   bridge: 'https://bridge.walletconnect.org',
-  qrcode: true,
-  pollingInterval: 15000
+  qrcode: true
 })
 
 // mainnet only

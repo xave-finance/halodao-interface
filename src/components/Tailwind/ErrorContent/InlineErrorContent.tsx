@@ -1,4 +1,3 @@
-import { AnyRecord } from 'dns'
 import React, { useEffect, useState } from 'react'
 import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
 
@@ -20,12 +19,12 @@ const InlineErrorContent = ({ errorObject }: InlineErrorContentProps) => {
   }, [haloError]) // eslint-disable-line
 
   return (
-    <div className="bg-error-light border-solid border-1 border-error-dark rounded">
+    <div className="bg-error-light border-solid border border-error-dark rounded p-4 mt-4">
       <div className="">ERROR #: {haloError.code}</div>
-      <div className="text-center font-semibold text-xl mb-2">
-        {friendlyErrorMessage}. Please show this error message: &quot;
-        <span className="text-primary-red">{haloError.message} </span>&quot; to the team on Discord or email us at
-        dev@halodao.com.
+      <div className="text-center mb-2">
+        {friendlyErrorMessage} Please show this error message: &quot;
+        <span className="text-primary-red font-semibold">{haloError.message} </span>&quot; to the team on Discord or
+        email us at dev@halodao.com.
       </div>
     </div>
   )

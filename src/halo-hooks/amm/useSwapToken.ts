@@ -33,8 +33,6 @@ export const useSwapToken = (
   const [price, setPrice] = useState<number>()
   const [isLoadingPrice, setIsLoadingPrice] = useState(false)
   const { getFutureTime } = useTime()
-  const [toAmountBalance, setToAmountBalance] = useState('0')
-  const [fromAmountBalance, setFromAmountBalance] = useState('0')
   const [toMinimumAmount, setToMinimumAmount] = useState<string | undefined>()
   const [fromMinimumAmount, setFromMinimumAmount] = useState<string | undefined>()
   const [isLoadingMinimumAmount, setIsLoadingMinimumAmount] = useState(false)
@@ -62,31 +60,6 @@ export const useSwapToken = (
       return getContract(address, ERC20_ABI, library, true && account)
     },
     [library, account]
-  )
-
-  const getTokenBalance = useCallback(
-    async (currencySide: CurrencySide) => {
-      const currencyContract = await getCurrencyContract(
-        currencySide === CurrencySide.TO_CURRENCY ? toCurrency.address : fromCurrency.address
-      )
-
-      if (!account || !toCurrency || !fromCurrency) {
-        setToAmountBalance('0.0')
-        setFromAmountBalance('0.0')
-        return
-      }
-
-      try {
-        if (currencySide === CurrencySide.TO_CURRENCY) {
-          setToAmountBalance(formatUnits(await currencyContract?.balanceOf(account), toCurrency.decimals))
-        } else {
-          setFromAmountBalance(formatUnits(await currencyContract?.balanceOf(account), fromCurrency.decimals))
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    [account, getCurrencyContract, fromCurrency, toCurrency]
   )
 
   const getRouter = useCallback(async () => {
@@ -264,9 +237,6 @@ export const useSwapToken = (
     approve,
     swapToken,
     fetchAllowance,
-    toSafeValue,
-    getTokenBalance,
-    toAmountBalance,
-    fromAmountBalance
+    toSafeValue
   }
 }

@@ -17,6 +17,7 @@ import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import BaseModal from 'components/Tailwind/Modals/BaseModal'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 
 const TailwindDemo = () => {
   const pools = [
@@ -342,6 +343,14 @@ const TailwindDemo = () => {
           </div>
         </BaseModal>
         <button onClick={() => setShowModal(true)}>Show modal</button>
+      </PageWrapper>
+
+      {/* ================== */}
+      {/* ===== Errors ===== */}
+      {/* ================== */}
+      <PageWrapper className="mb-8">
+        <div className="text-xl font-bold">Inline Error</div>
+        <InlineErrorContent errorObject={{ code: 12345, message: 'This is a sample error' }} />
       </PageWrapper>
     </>
   )

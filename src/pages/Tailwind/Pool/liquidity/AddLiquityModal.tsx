@@ -14,7 +14,7 @@ import { useSwap } from 'halo-hooks/amm/useSwap'
 import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
-import { ZapErrorCode, ZapErrorMessage, MetamaskErrorCode } from 'constants/errors'
+import { ZapErrorCode, ZapErrorMessage, MetamaskRPCErrorCode } from 'constants/errors'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 enum AddLiquityModalState {
@@ -102,7 +102,7 @@ const AddLiquityModal = ({
           baseTokenAmount = Number(zapAmount) - Number(swapAmount)
         } catch (e) {
           console.log('error calculate', e)
-          if ((e as any).code === MetamaskErrorCode.Reverted) {
+          if ((e as any).code === MetamaskRPCErrorCode.reverted) {
             setErrorMessage(t('error-vm-exception'))
           } else {
             setErrorMessage((e as any).message)
@@ -115,7 +115,7 @@ const AddLiquityModal = ({
           quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
         } catch (e) {
           console.log('error calculate', e)
-          if ((e as any).code === MetamaskErrorCode.Reverted) {
+          if ((e as any).code === MetamaskRPCErrorCode.reverted) {
             setErrorMessage(t('error-vm-exception'))
           } else {
             setErrorMessage((e as any).message)
@@ -140,7 +140,7 @@ const AddLiquityModal = ({
         }
       } catch (e) {
         console.log('error calculate', e)
-        if ((e as any).code === MetamaskErrorCode.Reverted) {
+        if ((e as any).code === MetamaskRPCErrorCode.reverted) {
           setErrorMessage(t('error-vm-exception'))
         } else {
           setErrorMessage((e as any).message)
@@ -156,7 +156,7 @@ const AddLiquityModal = ({
         }
       } catch (e) {
         console.log('error calculate', e)
-        if ((e as any).code === MetamaskErrorCode.Reverted) {
+        if ((e as any).code === MetamaskRPCErrorCode.reverted) {
           setErrorMessage(t('error-vm-exception'))
         } else {
           setErrorMessage((e as any).message)
