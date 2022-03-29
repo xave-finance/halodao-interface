@@ -20,7 +20,8 @@ export enum TokenSymbol {
   LSGD = 'LSGD',
   LfxPHP = 'LfxPHP',
   LtagPHP = 'LtagPHP',
-  LLEUR = 'LLEUR'
+  LLEUR = 'LLEUR',
+  UST = 'UST'
 }
 
 export type AssimilatorAddressMap = {
@@ -47,7 +48,8 @@ const mainNetTokenList: Token[] = [
   USDC,
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MAINNET, '0xdb25f211ab05b1c97d595516f45794528a807ad8', 2, 'EUR', 'EUR Stasis'),
-  new Token(ChainId.MAINNET, '0xB0beF52B81cBB44ED42F4B873B06152A8E9A0b72', 18, 'LPHP', 'LolliDAO PHP')
+  new Token(ChainId.MAINNET, '0xB0beF52B81cBB44ED42F4B873B06152A8E9A0b72', 18, 'LPHP', 'LolliDAO PHP'),
+  new Token(ChainId.MAINNET, '0xa693b19d2931d498c5b318df961919bb4aee87a5', 6, 'UST', 'UST')
 ]
 
 const kovanTokenList: Token[] = [
@@ -96,7 +98,8 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.TAUD]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: '0xd58845Be9D194b5d071Ca1422cE3756A9711784D'
+  [TokenSymbol.XSGD]: '0xd58845Be9D194b5d071Ca1422cE3756A9711784D',
+  [TokenSymbol.UST]: '0x89777df7E30B5eb02629BD71F41D12c2Fe93d10d'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -115,7 +118,8 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.TAUD]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -134,7 +138,8 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.TCAD]: ethers.constants.AddressZero,
   [TokenSymbol.TGBP]: ethers.constants.AddressZero,
   [TokenSymbol.TAUD]: ethers.constants.AddressZero,
-  [TokenSymbol.XSGD]: ethers.constants.AddressZero
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
