@@ -136,5 +136,3 @@ export const DEPOSIT_TXHASH: Record<string, string> = {
   '0x2ed09e2961d72659e4002ba8c2badfedc7db19b7': '0xe1ba04f32987d607980ad89260942e16642ea74b23f1175a06dbc90ad0a30f28', // TGBP:USDC
   '0x20e1d8daf58358cf11be5616946e1df55f1ef8b0': '0x6dc4b1c61c00004c85ec953a0d00bd680bb42109977fb19bf4f4cfa7382910dc' // fxPHP:USDC
 }
-
-export const ACTIVE_POOL = []
