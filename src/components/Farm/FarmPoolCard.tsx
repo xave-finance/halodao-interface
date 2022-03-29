@@ -557,9 +557,9 @@ export default function FarmPoolCard({
   const rewardsContractV1_1 = useHALORewardsContract(AmmRewardsVersion.Latest) // eslint-disable-line
 
   const addTransaction = useTransactionAdder()
-  console.log(poolInfo)
+
   // Get USD HLP base apr
-  const baseAPR = useGetBaseApr(poolInfo.address)
+  const baseAPR = useGetBaseApr(poolInfo.address, poolInfo.pair)
 
   /**
    * APY computation Rewards
@@ -914,7 +914,9 @@ export default function FarmPoolCard({
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('baseApr')}:</LabelText>
-            <StyledTextForValue>{`${formatNumber(baseAPR, NumberFormat.long)}%`}</StyledTextForValue>
+            <StyledTextForValue>
+              {baseAPR > 0 ? `${formatNumber(baseAPR, NumberFormat.long)}%` : '--'}
+            </StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('apr')}:</LabelText>

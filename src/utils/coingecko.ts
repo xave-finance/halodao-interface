@@ -29,3 +29,22 @@ export async function getTokensUSDPrice(by: GetPriceBy, addressesOrIds: string[]
     return prices
   }
 }
+
+export async function getInitialTokenUSDPrice(symbol: string, date: string) {
+  let price = 1
+  try {
+    const url = `${COINGECKO_API_URL}/coins/${symbol}/history?date=${date}`
+    const response = await fetch(url)
+    const data = await response.json()
+    price = data.market_data.current_price.usd
+    return price
+  } catch (err) {
+    console.error(`Error fetching usd price: ${symbol}`, err)
+    return price
+  }
+}
+
+export function getTxDate(timestamp: number): string {
+  const date = new Date(timestamp * 1000)
+  return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
+}

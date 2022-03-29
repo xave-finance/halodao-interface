@@ -1,6 +1,6 @@
 import { ChainId, Token } from '@halodao/sdk'
 import { ethers } from 'ethers'
-import { ChainAddressMap, USDC } from '../../constants'
+import { ChainAddressMap, USDC } from '../index'
 
 // Supported token symbols
 // Adding new pairs step 1: Add tokensymbol enum
@@ -55,9 +55,9 @@ const mainNetTokenList: Token[] = [
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
   // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP')
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
   // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
-  // new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
   // new Token(ChainId.MAINNET, '0x7A87104dfeA51853472fFafaD00D43e73284a135', 18, 'tagPHP', 'PHP Stablecoin')
   // new Token(ChainId.MAINNET, '0xebF2096E01455108bAdCbAF86cE30b6e5A72aa52', 6, 'XIDR', 'StraitsX: XIDR Token')
 ]
@@ -195,4 +195,12 @@ export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } 
   [ChainId.MATIC]: polygonAssimilators,
   [ChainId.ARBITRUM]: arbAssimilators,
   [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
+}
+// NOTE: add the coingecko token symbol here for other chain
+export const TOKEN_COINGECKO_NAME: Record<string, string> = {
+  usdc: 'usd-coin',
+  xsgd: 'xsgd',
+  tcad: 'truecad',
+  tgbp: 'truegbp',
+  fxphp: 'fxphp'
 }

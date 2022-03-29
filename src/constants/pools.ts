@@ -128,3 +128,13 @@ const doubleEstimatePoolsKovan =
 export const DOUBLE_ESTIMATE_POOLS = doubleEstimatePools
 export const DOUBLE_ESTIMATE_POOLS_MATIC = doubleEstimatePoolsMatic
 export const DOUBLE_ESTIMATE_POOLS_KOVAN = doubleEstimatePoolsKovan
+
+// NOTE: add the pool address and its first deposit tx here for other chain
+export const DEPOSIT_TXHASH: Record<string, string> = {
+  '0x64dcbdeb83e39f152b7faf83e5e5673faca0d42a': '0xead0a9717cb13feff2ee58d78786b7b2eac68eafe61809d7bfecf67986222ba8', // xSGD:USDC
+  '0xe15e50ff9d52bec41d53d3173f2ed40834d455f4': '0x6038346288968a18c766987b8a7811a2df17a25316edeb23800bb2125ba5902f', // TCAD:USDC
+  '0x2ed09e2961d72659e4002ba8c2badfedc7db19b7': '0xe1ba04f32987d607980ad89260942e16642ea74b23f1175a06dbc90ad0a30f28', // TGBP:USDC
+  '0x20e1d8daf58358cf11be5616946e1df55f1ef8b0': '0x6dc4b1c61c00004c85ec953a0d00bd680bb42109977fb19bf4f4cfa7382910dc' // fxPHP:USDC
+}
+
+export const ACTIVE_POOL = []
