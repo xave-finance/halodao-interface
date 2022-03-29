@@ -196,6 +196,7 @@ export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } 
   [ChainId.ARBITRUM]: arbAssimilators,
   [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
 }
+
 // NOTE: add the coingecko token symbol here for other chain
 export const TOKEN_COINGECKO_NAME: Record<string, string> = {
   usdc: 'usd-coin',
