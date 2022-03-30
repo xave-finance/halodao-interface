@@ -16,15 +16,15 @@ const useTVLInfo = () => {
   const APIURL = HALODAO_EXCHANGE_SUBGRAPH[ChainId.MAINNET]
   const fetchTVLInfo = useCallback(async () => {
     const tvlQuery = `
-query {
-tvls(first: 1) {
-id
-liquidityPools
-farm
-vestingBalance
-}
-}
-`
+      query {
+        tvls(first: 1) {
+          id
+          liquidityPools
+          farm
+          vestingBalance
+        }
+      }
+    `
     const client = new ApolloClient({
       uri: APIURL,
       cache: new InMemoryCache()
@@ -44,9 +44,11 @@ vestingBalance
         console.log('Error fetching data: ', err)
       })
   }, [])//eslint-disable-line
+
   useEffect(() => {
     fetchTVLInfo()
   }, [fetchTVLInfo]) //eslint-disable-line
+
   return tvlInfo
 }
 export default useTVLInfo
