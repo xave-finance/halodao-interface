@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { HALODAO_EXCHANGE_SUBGRAPH } from '../constants'
 import { ChainId } from '@halodao/sdk'
 
-interface CurrentEpoch {
+export interface CurrentEpoch {
   days: number
   hours: number
   minutes: number
@@ -60,7 +60,7 @@ const useEpochCountdown = () => {
     // Find the distance between now and the countdown date
     const distance = nextReleaseDate.getTime() - dateNow
 
-    // Time calculations for days, hours, minutes and seconds
+    // Time calculations for days, hours, and minutes
     const days = distance <= 0 ? 0 : Math.floor(distance / (1000 * 60 * 60 * 24))
     const hours = distance <= 0 ? 0 : Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = distance <= 0 ? 0 : Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
@@ -72,7 +72,7 @@ const useEpochCountdown = () => {
     })
   }, [lastEpoch])
 
-  useInterval(getNextEpoch, 60000)
+  useInterval(getNextEpoch, 1000)
   return nextReleaseDate
 }
 
