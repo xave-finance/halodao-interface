@@ -6,14 +6,14 @@ import { ChainId } from '@halodao/sdk'
 interface TVL {
   liquidityPools: number
   farm: number
-  vesting: number
+  vestingBalance: number
 }
 
 const useTVLInfo = () => {
   const [tvlInfo, setTvlInfo] = useState<TVL>({
     liquidityPools: 0,
     farm: 0,
-    vesting: 0
+    vestingBalance: 0
   })
   const APIURL = HALODAO_EXCHANGE_SUBGRAPH[ChainId.MAINNET]
 
@@ -23,7 +23,7 @@ const useTVLInfo = () => {
         id
         liquidityPools
         farm
-        vesting
+        vestingBalance
       }
     }
   `
