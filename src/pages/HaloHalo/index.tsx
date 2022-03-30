@@ -35,6 +35,7 @@ import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
 import EventInfoCard from '../../components/Tailwind/Cards/EventInfoCard'
 import useEpochCountdown from '../../halo-hooks/useEpochCountdown'
+import useTVLInfo from '../../halo-hooks/useTVLInfo'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1050px;
@@ -270,6 +271,7 @@ export default function HaloHalo() {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
   const epochCountdown = useEpochCountdown()
+  const { vestingBalance } = useTVLInfo()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -314,7 +316,7 @@ export default function HaloHalo() {
               event={true}
               content={{
                 title: 'Countdown to next rewards epoch',
-                deposit: '20,304,250.00 USD',
+                deposit: formatNumber(vestingBalance, NumberFormat.long) + ' USD',
                 profit: '20,304,250.00 USD'
               }}
               countdown={epochCountdown}
