@@ -26,7 +26,7 @@ import BunnyMoon from 'assets/svg/bunny-with-moon.svg'
 import BunnyRewards from 'assets/svg/bunny-rewards.svg'
 import ArrowRight from 'assets/svg/arrow-right.svg'
 import LinkIcon from 'assets/svg/link-icon.svg'
-import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants/index'
+import { HALO_REWARDS_MESSAGE, ZERO_ADDRESS } from '../../constants'
 import { useActiveWeb3React } from 'hooks'
 import DoubleCurrencyLogo from 'components/DoubleLogo'
 import { PoolInfo, PoolProvider } from 'halo-hooks/usePoolInfo'
@@ -68,13 +68,14 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
   padding: 1.5rem 1rem;
   margin: 0 -1rem;
   cursor: pointer;
-  border: 1px solid transparent;
+  border: 1px solid #c1c1c1;
   border-radius: 10px;
   width: auto;
   transition: border 100ms ease-in;
 
   &.inactive:hover {
     border-color: ${({ theme }) => theme.primary1};
+    box-shadow: 5px 5px #d1cfe2;
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -83,6 +84,7 @@ const StyledFixedHeightRowCustom = styled(FixedHeightRow)`
     height: 100%;
     padding: 0 30px 20px;
     cursor: default;
+    border: 1px solid transparent;
 
     &.inactive:hover {
       border-color: transparent;
@@ -96,7 +98,7 @@ const StyledCard = styled(GreyCard)<{ bgColor: any }>`
   position: relative;
   overflow: visible;
   padding: 5px 0 5px 0;
-  border-radius: 0px;
+  border-radius: 0;
 
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     background: #ffffff;
@@ -115,10 +117,10 @@ const StyledCard = styled(GreyCard)<{ bgColor: any }>`
 
 const StyledRowFixed = styled(RowFixed)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
-    flex-direction: column;
+    flex-direction: row;
     margin-top: 0.5rem;
-    align-items: flex-start;
-    justify-content: flex-start;
+    align-items: space-between;
+    justify-content: space-between;
     width: 100%;
 
     &:first-of-type {
@@ -153,6 +155,7 @@ const LabelText = styled(Text)`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     display: block;
+     margin-top: 0 !important;
   `};
   &.first {
     margin-top: 0 !important;
@@ -239,7 +242,7 @@ const ExpandedCard = styled.div`
   border-radius: 5px;
   border: 1px solid #15006d;
   margin-top: 12px;
-  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     border: none;
@@ -282,6 +285,7 @@ const StakeUnstakeContainer = styled.div`
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
     flex-direction: column;
+    padding: 20px 30px 0 30px;
   `};
 `
 
@@ -363,12 +367,37 @@ const HarvestErrorMessage = styled.div`
 
 const RewardsChildFlex = styled.div`
   display: flex;
-  flex-direction: column;
-`
-const RewardsChildFlexContainer = styled(RewardsChildFlex)`
   flex-direction: row;
   justify-content: space-between;
-  align-items: flex-end;
+
+  & .balance {
+    font-family: 'Fredoka One';
+    font-size: 36px;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+       font-size: 32px;
+    `};
+  }
+
+  & .rewarder {
+    font-family: 'Fredoka One';
+    font-size: 28px;
+    margin-left: auto !important;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+       margin-left: unset !important;
+       font-size: 24px;
+    `};
+  }
+
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+  `};
+`
+const RewardsChildFlexContainer = styled(RewardsChildFlex)`
+  flex-direction: column;
 `
 const RewardsChild = styled.div`
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -414,22 +443,14 @@ const RewardsChild = styled.div`
     font-weight: bold;
   }
 
-  & .balance {
-    font-family: 'Fredoka One';
-    font-size: 36px;
-  }
-
-  & .rewarder {
-    font-family: 'Fredoka One';
-    font-size: 28px;
-    padding-bottom: 5px;
-    margin-left: auto !important;
-  }
-
   &.rewardBalance {
     padding-left: 30px;
     padding-right: 40px;
     flex: 1;
+
+    ${({ theme }) => theme.mediaWidth.upToSmall`
+      padding-left: unset;
+    `};
   }
 
   a {
@@ -865,7 +886,7 @@ export default function FarmPoolCard({
   return (
     <StyledCard
       id={`pool-${poolInfo.address.toLowerCase()}`}
-      bgColor="#ffffff"
+      bgColor="#471bb2"
       className={'pool-card ' + (showMore ? 'expanded' : 'default')}
     >
       <AutoColumn>
@@ -889,32 +910,34 @@ export default function FarmPoolCard({
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('apr')}:</LabelText>
-            <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>
-              {isActivePool ? accumulativeTotal : t('inactive')}
-            </StyledTextForValue>{' '}
-            &nbsp;
-            {poolHasRewarder && rawAPY > 0 && (
-              <MouseoverTooltip
-                text={
-                  <div>
-                    <div>{t('apr-breakdown')}</div>
-                    <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
-                      <li>{poolAPY} xRNBW</li>
-                      <li>
-                        {!rewarderAPR || rewarderAPR === Infinity
-                          ? t('new')
-                          : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
-                        &nbsp;
-                        {unclaimedRewarderRewards?.tokenName}
-                      </li>
-                    </ul>
-                  </div>
-                }
-                placement={'top'}
-              >
-                <AlertCircle size={'16'} />
-              </MouseoverTooltip>
-            )}
+            <div className="flex flex-row">
+              <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>
+                {isActivePool ? accumulativeTotal : t('inactive')}
+              </StyledTextForValue>{' '}
+              &nbsp;
+              {poolHasRewarder && rawAPY > 0 && (
+                <MouseoverTooltip
+                  text={
+                    <div>
+                      <div>{t('apr-breakdown')}</div>
+                      <ul style={{ marginLeft: '30px', listStyle: 'unset' }}>
+                        <li>{poolAPY} xRNBW</li>
+                        <li>
+                          {!rewarderAPR || rewarderAPR === Infinity
+                            ? t('new')
+                            : `${formatNumber(rewarderAPR, NumberFormat.long)}%`}
+                          &nbsp;
+                          {unclaimedRewarderRewards?.tokenName}
+                        </li>
+                      </ul>
+                    </div>
+                  }
+                  placement={'top'}
+                >
+                  <AlertCircle size={'16'} />
+                </MouseoverTooltip>
+              )}
+            </div>
           </StyledRowFixed>
           <StyledRowFixed width="18%">
             <LabelText className="first">{t('totalPoolValue')}:</LabelText>
@@ -1122,8 +1145,8 @@ export default function FarmPoolCard({
               </RewardsChild>
               <RewardsChild className="rewardBalance">
                 <RewardsChildFlexContainer>
+                  <Text className="label">{poolInfo.pair} Rewards:</Text>
                   <RewardsChildFlex>
-                    <Text className="label">{poolInfo.pair} Rewards:</Text>
                     <Text className="balance">
                       {showMigrateButton && alreadyMigrated ? (
                         <>0 xRNBW </>
@@ -1131,15 +1154,17 @@ export default function FarmPoolCard({
                         <>{formatNumber(unclaimedHALO, NumberFormat.long)} xRNBW</>
                       )}
                     </Text>
+                    {poolHasRewarder && (
+                      <div className="flex flex-col justify-end pb-0.5">
+                        <Text className="rewarder">
+                          {' + '}
+                          {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
+                          &nbsp;
+                          {unclaimedRewarderRewards?.tokenName}
+                        </Text>
+                      </div>
+                    )}
                   </RewardsChildFlex>
-                  {poolHasRewarder && (
-                    <Text className="rewarder">
-                      {' + '}
-                      {unclaimedRewarderRewards && formatNumber(unclaimedRewarderRewards.amount, NumberFormat.long)}
-                      &nbsp;
-                      {unclaimedRewarderRewards?.tokenName}
-                    </Text>
-                  )}
                 </RewardsChildFlexContainer>
               </RewardsChild>
               <RewardsChild className="harvest">
