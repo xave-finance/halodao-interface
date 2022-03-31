@@ -79,11 +79,9 @@ export const useGetPools = () => {
 
       for (const [i, address] of rewardsPoolAddresses.entries()) {
         if (enabledPoolsAddresses.includes(address)) {
-          const addr = enabledPoolsAddresses[i]
-          enabledPoolsExternalIdsMap[addr].rewardsPoolId = i
+          enabledPoolsExternalIdsMap[address].rewardsPoolId = i
         } else if (disabledPoolsAddresses.includes(address)) {
-          const addr = disabledPoolsAddresses[i]
-          disabledPoolsExternalIdsMap[addr].rewardsPoolId = i
+          disabledPoolsExternalIdsMap[address].rewardsPoolId = i
         }
       }
 
