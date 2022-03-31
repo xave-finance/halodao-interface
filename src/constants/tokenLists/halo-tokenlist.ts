@@ -216,7 +216,8 @@ const rinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
