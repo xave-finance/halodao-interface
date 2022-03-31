@@ -27,7 +27,8 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.tokens[0].token, pool.tokens[1].token])
   const balances = [tokenBalances[pool.tokens[0].token.address], tokenBalances[pool.tokens[1].token.address]]
 
-  const disabledSegments = pool.totalLiquidity.gt(0) ? undefined : [1]
+  //const disabledSegments = pool.totalLiquidity.gt(0) ? undefined : [1]
+  const disabledSegments = [1] // @todo: remove once single-sided deposit is implemented
 
   return (
     <div>

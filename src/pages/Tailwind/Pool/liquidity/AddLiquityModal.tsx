@@ -4,18 +4,16 @@ import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/P
 import SpinnerIcon from 'assets/svg/spinner-icon-large.svg'
 import ArrowIcon from 'assets/svg/arrow-up-icon-large.svg'
 import { PoolData } from '../models/PoolData'
-import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { parseEther } from 'ethers/lib/utils'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { getExplorerLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
-import { useZap } from 'halo-hooks/amm/useZap'
-import { useSwap } from 'halo-hooks/amm/useSwap'
-import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
-import { useTranslation } from 'react-i18next'
-import { ZapErrorCode, ZapErrorMessage, MetamaskRPCErrorCode } from 'constants/errors'
+// import { useTranslation } from 'react-i18next'
+// import { MetamaskRPCErrorCode } from 'constants/errors'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
+import usePoolInvest from 'halo-hooks/amm-v2/usePoolInvest'
+import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
+import { formatEther, formatUnits } from 'ethers/lib/utils'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -49,7 +47,12 @@ const AddLiquityModal = ({
   onError
 }: AddLiquityModalProps) => {
   const { chainId } = useActiveWeb3React()
-  const { getFutureTime } = useTime()
+  // const { t } = useTranslation()
+
+  const token0 = pool.tokens[0].token
+  const token1 = pool.tokens[1].token
+  const { deposit } = usePoolInvest(pool.vaultPoolId, [token0, token1])
+
   const [state, setState] = useState(AddLiquityModalState.NotConfirmed)
   const [txHash, setTxHash] = useState('')
   const [tokenAmounts, setTokenAmounts] = useState([0, 0])
@@ -59,24 +62,23 @@ const AddLiquityModal = ({
     min: 0
   })
   const [poolShare, setPoolShare] = useState(0)
-  const [depositAmount, setDepositAmount] = useState('')
+  // const [depositAmount, setDepositAmount] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
-  const { t } = useTranslation()
-  const token0 = pool.tokens[0].token
-  const token1 = pool.tokens[1].token
 
-  const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
-    pool.address,
-    token0,
-    token1
-  )
-  const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
-  const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
-    pool.address,
-    token0,
-    token1
-  )
+  const { calculateOtherTokenIn, calculateLptOut } = usePoolCalculator(pool)
+
+  // const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
+  //   pool.address,
+  //   token0,
+  //   token1
+  // )
+  // const { viewOriginSwap, viewTargetSwap } = useSwap(pool)
+  // const { deposit, previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
+  //   pool.address,
+  //   token0,
+  //   token1
+  // )
 
   /**
    * Main logic for updating confirm add liquidity UI
@@ -95,86 +97,95 @@ const AddLiquityModal = ({
       baseTokenAmount = Number(baseAmount)
       quoteTokenAmount = Number(quoteAmount)
     } else {
-      if (isGivenBase) {
-        try {
-          const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
-          quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
-          baseTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (e) {
-          console.log('error calculate', e)
-          if ((e as any).code === MetamaskRPCErrorCode.reverted) {
-            setErrorMessage(t('error-vm-exception'))
-          } else {
-            setErrorMessage((e as any).message)
-          }
-        }
-      } else {
-        try {
-          const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
-          baseTokenAmount = Number(await viewTargetSwap(swapAmount))
-          quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
-        } catch (e) {
-          console.log('error calculate', e)
-          if ((e as any).code === MetamaskRPCErrorCode.reverted) {
-            setErrorMessage(t('error-vm-exception'))
-          } else {
-            setErrorMessage((e as any).message)
-          }
-        }
-      }
+      // if (isGivenBase) {
+      //   try {
+      //     const swapAmount = await calcSwapAmountForZapFromBase(zapAmount!) // eslint-disable-line
+      //     quoteTokenAmount = Number(await viewOriginSwap(swapAmount))
+      //     baseTokenAmount = Number(zapAmount) - Number(swapAmount)
+      //   } catch (e) {
+      //     console.log('error calculate', e)
+      //     if ((e as any).code === MetamaskRPCErrorCode.reverted) {
+      //       setErrorMessage(t('error-vm-exception'))
+      //     } else {
+      //       setErrorMessage((e as any).message)
+      //     }
+      //   }
+      // } else {
+      //   try {
+      //     const swapAmount = await calcSwapAmountForZapFromQuote(zapAmount!) // eslint-disable-line
+      //     baseTokenAmount = Number(await viewTargetSwap(swapAmount))
+      //     quoteTokenAmount = Number(zapAmount) - Number(swapAmount)
+      //   } catch (e) {
+      //     console.log('error calculate', e)
+      //     if ((e as any).code === MetamaskRPCErrorCode.reverted) {
+      //       setErrorMessage(t('error-vm-exception'))
+      //     } else {
+      //       setErrorMessage((e as any).message)
+      //     }
+      //   }
+      // }
     }
 
     setTokenAmounts([baseTokenAmount, quoteTokenAmount])
 
-    let res: any
-    if (isGivenBase) {
-      try {
-        res = await previewDepositGivenBase(
-          `${baseTokenAmount}`,
-          bigNumberToNumber(pool.tokens[0].rate),
-          bigNumberToNumber(pool.tokens[0].weight)
-        )
+    // let res: any
+    // if (isGivenBase) {
+    //   try {
+    //     res = await previewDepositGivenBase(
+    //       `${baseTokenAmount}`,
+    //       bigNumberToNumber(pool.tokens[0].rate),
+    //       bigNumberToNumber(pool.tokens[0].weight)
+    //     )
 
-        if (Number(res.base) > Number(baseTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
-        }
-      } catch (e) {
-        console.log('error calculate', e)
-        if ((e as any).code === MetamaskRPCErrorCode.reverted) {
-          setErrorMessage(t('error-vm-exception'))
-        } else {
-          setErrorMessage((e as any).message)
-        }
-        onDismiss()
-      }
-    } else {
-      try {
-        res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
+    //     if (Number(res.base) > Number(baseTokenAmount)) {
+    //       setErrorMessage(t('error-liquidity-estimates-changed'))
+    //     }
+    //   } catch (e) {
+    //     console.log('error calculate', e)
+    //     if ((e as any).code === MetamaskRPCErrorCode.reverted) {
+    //       setErrorMessage(t('error-vm-exception'))
+    //     } else {
+    //       setErrorMessage((e as any).message)
+    //     }
+    //     onDismiss()
+    //   }
+    // } else {
+    //   try {
+    //     res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
 
-        if (Number(res.quote) > Number(quoteTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
-        }
-      } catch (e) {
-        console.log('error calculate', e)
-        if ((e as any).code === MetamaskRPCErrorCode.reverted) {
-          setErrorMessage(t('error-vm-exception'))
-        } else {
-          setErrorMessage((e as any).message)
-        }
-        onDismiss()
-      }
+    //     if (Number(res.quote) > Number(quoteTokenAmount)) {
+    //       setErrorMessage(t('error-liquidity-estimates-changed'))
+    //     }
+    //   } catch (e) {
+    //     console.log('error calculate', e)
+    //     if ((e as any).code === MetamaskRPCErrorCode.reverted) {
+    //       setErrorMessage(t('error-vm-exception'))
+    //     } else {
+    //       setErrorMessage((e as any).message)
+    //     }
+    //     onDismiss()
+    //   }
+    // }
+    // if (!res) return
+
+    if (isGivenBase && baseAmount && !quoteAmount) {
+      const estimatedQuote = await calculateOtherTokenIn(baseAmount!, 0)
+      quoteAmount = formatUnits(estimatedQuote, token1.decimals)
+    } else if (!isGivenBase && quoteAmount && !baseAmount) {
+      const estimatedBase = await calculateOtherTokenIn(quoteAmount!, 1)
+      baseAmount = formatUnits(estimatedBase, token1.decimals)
     }
-    if (!res) return
 
-    const maxDeposit = `${res.deposit}`
-    const lpAmount = res.lpToken
-    const basePrice = Number(res.quote) / Number(res.base)
-    const quotePrice = Number(res.base) / Number(res.quote)
+    // const maxDeposit = `${res.deposit}`
+    // const lpAmount = res.lpToken
+    const basePrice = Number(quoteAmount!) / Number(baseAmount!)
+    const quotePrice = Number(baseAmount!) / Number(quoteAmount!)
 
-    setDepositAmount(maxDeposit)
+    // setDepositAmount(maxDeposit)
     setTokenPrices([basePrice, quotePrice])
 
-    const maxLpAmount = Number(lpAmount)
+    const lpAmount = calculateLptOut(baseAmount!, quoteAmount!)
+    const maxLpAmount = Number(formatEther(lpAmount))
     setLpAmount({
       target: maxLpAmount,
       min: maxLpAmount - maxLpAmount * (slippage !== '' ? Number(slippage) / 100 : 0)
@@ -215,11 +226,12 @@ const AddLiquityModal = ({
    * Multi-sided add liquidity logic
    **/
   const confirmDeposit = async () => {
+    if (!baseAmount || !quoteAmount) return
+
     setState(AddLiquityModalState.InProgress)
 
     try {
-      const deadline = getFutureTime()
-      const tx = await deposit(parseEther(depositAmount), deadline)
+      const tx = await deposit([baseAmount, quoteAmount])
       setTxHash(tx.hash)
       await tx.wait()
       setState(AddLiquityModalState.Successful)
@@ -237,32 +249,30 @@ const AddLiquityModal = ({
    * Single-sided add liquidity logic
    **/
   const confirmZap = async () => {
-    setState(AddLiquityModalState.InProgress)
-    setErrorMessage(undefined)
-
-    try {
-      const deadline = getFutureTime()
-      const func = isGivenBase ? zapFromBase : zapFromQuote
-      const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`)) // eslint-disable-line
-      setTxHash(tx.hash)
-      await tx.wait()
-      setState(AddLiquityModalState.Successful)
-      logGAEvent()
-    } catch (err) {
-      console.error(err)
-      setTxHash('')
-      setState(AddLiquityModalState.NotConfirmed)
-
-      if (
-        (err as any).code === ZapErrorCode.SlippageTooLow ||
-        (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
-      ) {
-        onError({ message: t('error-liquidity-zap-reverted') })
-      } else {
-        onError(err as any)
-        onDismiss()
-      }
-    }
+    // setState(AddLiquityModalState.InProgress)
+    // setErrorMessage(undefined)
+    // try {
+    //   const deadline = getFutureTime()
+    //   const func = isGivenBase ? zapFromBase : zapFromQuote
+    //   const tx = await func(zapAmount!, deadline, parseEther(`${lpAmount.min}`)) // eslint-disable-line
+    //   setTxHash(tx.hash)
+    //   await tx.wait()
+    //   setState(AddLiquityModalState.Successful)
+    //   logGAEvent()
+    // } catch (err) {
+    //   console.error(err)
+    //   setTxHash('')
+    //   setState(AddLiquityModalState.NotConfirmed)
+    //   if (
+    //     (err as any).code === ZapErrorCode.SlippageTooLow ||
+    //     (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
+    //   ) {
+    //     onError({ message: t('error-liquidity-zap-reverted') })
+    //   } else {
+    //     onError(err as any)
+    //     onDismiss()
+    //   }
+    // }
   }
 
   const ConfirmContent = () => {

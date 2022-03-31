@@ -2,22 +2,22 @@ import { Token } from '@halodao/sdk'
 // import { useEffect } from 'react'
 // import useBalancerSDK from './useBalancerSDK'
 import VaultABI from '../../constants/haloAbis/Vault.json'
-import ERC20ABI from '../../constants/abis/erc20.json'
 import { useActiveWeb3React } from 'hooks'
 import { SwapTypes } from '@balancer-labs/sdk'
-import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 import { useContract } from 'hooks/useContract'
 import { consoleLog } from 'utils/simpleLogger'
 import assert from 'assert'
 import { /*BigNumber,*/ ethers } from 'ethers'
+import useToken from 'halo-hooks/tokens/useToken'
 
 const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
   const { account } = useActiveWeb3React()
   // const balancer = useBalancerSDK()
   const haloAddresses = useHaloAddresses()
   const vaultContract = useContract(haloAddresses.ammV2.vault, VaultABI)
-  const tokenInContract = useContract(tokenIn?.address, ERC20ABI)
+  const { allowTokenAmount } = useToken()
 
   // useEffect(() => {
   //   if (!balancer) return
@@ -53,20 +53,6 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
 
   //   return swapInfo.swaps
   // }
-
-  const allowTokenAmount = async (amount: string) => {
-    if (!tokenIn || !tokenInContract) return
-
-    const allowance = await tokenInContract.allowance(account, haloAddresses.ammV2.vault)
-    consoleLog(`[useSwap] Current ${tokenIn.symbol} allowance: `, formatEther(allowance))
-    const amountBN = ethers.utils.parseEther(amount)
-    consoleLog(`[useSwap] Amount to spend: `, formatEther(amountBN))
-    if (allowance.lt(amountBN)) {
-      consoleLog(`[useSwap] Approving...`)
-      const tx = await tokenInContract.approve(haloAddresses.ammV2.vault, amountBN)
-      await tx.wait()
-    }
-  }
 
   const getSwaps = async (amount: string, swapType: SwapTypes) => {
     if (!tokenIn || !tokenOut) {
@@ -191,7 +177,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
     if (!tokenIn || !tokenOut || !account || !vaultContract || amount === '') return
 
     // Make sure allowance is sufficient
-    await allowTokenAmount(amount)
+    await allowTokenAmount(tokenIn.address, amount, haloAddresses.ammV2.vault)
 
     const { tokenAddresses, swaps } = await getSwaps(amount, swapType)
     //const swaps = await getSwapsBalancer(amount, swapType)

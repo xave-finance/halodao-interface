@@ -41,14 +41,10 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const { calculateOtherTokenIn } = usePoolCalculator(pool)
 
   const token0 = pool.tokens[0].token
   const token1 = pool.tokens[1].token
-  const { calculateOtherTokenIn } = usePoolCalculator({
-    tokens: [token0, token1],
-    tokenBalances: [pool.tokens[0].balance, pool.tokens[1].balance]
-  })
-
   const baseTokenAmount = new TokenAmount(token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
   const [baseApproveState, baseApproveCallback] = useTokenAllowance(baseTokenAmount, pool.address)
   const quoteTokenAmount = new TokenAmount(token1, JSBI.BigInt(parseEther(quoteInput !== '' ? quoteInput : '0')))
