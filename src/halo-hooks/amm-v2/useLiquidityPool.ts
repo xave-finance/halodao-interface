@@ -113,7 +113,7 @@ export const useGetPoolData = () => {
   const getPoolData = async (
     poolAddress: string,
     vaultPoolId: string,
-    rewardsPoolId: number = -1
+    rewardsPoolId = -1
   ): Promise<PoolData | undefined> => {
     if (!VaultContract || !library || !chainId || !account) return undefined
 

@@ -71,7 +71,7 @@ const SwapPanel = () => {
    */
   const onInputChange = async (amount: string, isFromCurrency: boolean) => {
     if (!fromCurrency || !toCurrency) return
-    let swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
+    const swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
 
     try {
       const amounts = await previewSwap(amount, swapType)
