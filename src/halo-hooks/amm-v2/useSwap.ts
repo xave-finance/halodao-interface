@@ -3,7 +3,6 @@ import { Token } from '@halodao/sdk'
 // import useBalancerSDK from './useBalancerSDK'
 import VaultABI from '../../constants/haloAbis/Vault.json'
 import { useActiveWeb3React } from 'hooks'
-import { SwapTypes } from '@balancer-labs/sdk'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 import { useContract } from 'hooks/useContract'
@@ -11,6 +10,11 @@ import { consoleLog } from 'utils/simpleLogger'
 import assert from 'assert'
 import { /*BigNumber,*/ ethers } from 'ethers'
 import useToken from 'halo-hooks/tokens/useToken'
+
+export enum HaloSwapType {
+  SwapExactIn,
+  SwapExactOut
+}
 
 const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
   const { account } = useActiveWeb3React()
@@ -40,7 +44,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
   //   }
   // }, [balancer])
 
-  // const getSwapsBalancer = async (amount: string, swapType: SwapTypes, tokenIn: Token, tokenOut: Token) => {
+  // const getSwapsBalancer = async (amount: string, swapType: HaloSwapType, tokenIn: Token, tokenOut: Token) => {
   //   if (!balancer) return
 
   //   const gasPrice = BigNumber.from('40000000000')
@@ -54,7 +58,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
   //   return swapInfo.swaps
   // }
 
-  const getSwaps = async (amount: string, swapType: SwapTypes) => {
+  const getSwaps = async (amount: string, swapType: HaloSwapType) => {
     if (!tokenIn || !tokenOut) {
       return {
         tokenAddresses: [],
@@ -62,7 +66,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
       }
     }
 
-    const decimals = swapType === SwapTypes.SwapExactIn ? tokenIn.decimals : tokenOut.decimals
+    const decimals = swapType === HaloSwapType.SwapExactIn ? tokenIn.decimals : tokenOut.decimals
     const allPools = [...haloAddresses.ammV2.pools.genesis, ...haloAddresses.ammV2.pools.enabled]
 
     // scenario 1: there's a pool with both tokenIn and tokenOut
@@ -102,7 +106,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
     consoleLog('sortedTokenAddresses: ', sortedTokenAddresses)
 
     let swaps = []
-    if (swapType === SwapTypes.SwapExactIn) {
+    if (swapType === HaloSwapType.SwapExactIn) {
       swaps = [
         {
           poolId: poolWithTokenIn.poolId,
@@ -144,7 +148,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
     }
   }
 
-  const previewSwap = async (amount: string, swapType: SwapTypes) => {
+  const previewSwap = async (amount: string, swapType: HaloSwapType) => {
     if (!tokenIn || !tokenOut || !account || !vaultContract || amount === '' || Number(amount) === 0) return ['0', '0']
 
     const { tokenAddresses, swaps } = await getSwaps(amount, swapType)
@@ -158,7 +162,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
     }
 
     consoleLog('[useSwap] queryBatchSwap params: ', swapType, swaps, tokenAddresses, funds)
-    const type = swaps.length > 1 ? SwapTypes.SwapExactIn : swapType
+    const type = swaps.length > 1 ? HaloSwapType.SwapExactIn : swapType
     const deltas = await vaultContract.queryBatchSwap(type, swaps, tokenAddresses, funds)
     consoleLog('[useSwap] queryBatchSwap raw response: ', deltas.toString())
     consoleLog(
@@ -173,7 +177,7 @@ const useSwap = (tokenIn?: Token, tokenOut?: Token) => {
     return [estimatedAmountIn, estimatedAmountOut]
   }
 
-  const swap = async (amount: string, swapType: SwapTypes) => {
+  const swap = async (amount: string, swapType: HaloSwapType) => {
     if (!tokenIn || !tokenOut || !account || !vaultContract || amount === '') return
 
     // Make sure allowance is sufficient

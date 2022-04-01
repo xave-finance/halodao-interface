@@ -11,8 +11,7 @@ import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import useTokenList from 'halo-hooks/amm-v2/useTokenList'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
-import useSwap from 'halo-hooks/amm-v2/useSwap'
-import { SwapTypes } from '@balancer-labs/sdk'
+import useSwap, { HaloSwapType } from 'halo-hooks/amm-v2/useSwap'
 import { Web3Provider } from '@ethersproject/providers'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 
@@ -71,7 +70,7 @@ const SwapPanel = () => {
    */
   const onInputChange = async (amount: string, isFromCurrency: boolean) => {
     if (!fromCurrency || !toCurrency) return
-    const swapType = isFromCurrency ? SwapTypes.SwapExactIn : SwapTypes.SwapExactOut
+    const swapType = isFromCurrency ? HaloSwapType.SwapExactIn : HaloSwapType.SwapExactOut
 
     try {
       const amounts = await previewSwap(amount, swapType)
@@ -91,7 +90,7 @@ const SwapPanel = () => {
     setSwapButtonState(SwapButtonState.Confirming)
 
     try {
-      await swap(fromInputValue, SwapTypes.SwapExactIn)
+      await swap(fromInputValue, HaloSwapType.SwapExactIn)
     } catch (e) {
       console.error('Swap error:', e)
       setCriticalError(e)
