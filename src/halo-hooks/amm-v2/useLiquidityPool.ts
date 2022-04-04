@@ -12,7 +12,9 @@ import { PoolData } from 'pages/Tailwind/Pool/models/PoolData'
 import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammRewards'
 import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
-import { parseUnits } from 'ethers/lib/utils'
+import FX_POOL_ABI from '../../constants/haloAbis/FxPool.json'
+import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 import { consoleLog } from 'utils/simpleLogger'
 import { BigNumber } from 'ethers'
@@ -53,7 +55,14 @@ export const useGetPools = () => {
 
     consoleLog('[useLiquidityPool] fetching pools...')
 
-    const enabledPools = haloAddresses.ammV2.pools.enabled
+    // const enabledPools = haloAddresses.ammV2.pools.enabled
+    const enabledPools = [
+      {
+        assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
+        address: '0xD2bf123f2f4ffCFfC33F28315998c73FAA977F46',
+        poolId: '0xd2bf123f2f4ffcffc33f28315998c73faa977f460002000000000000000007b5'
+      }
+    ]
     const enabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
     for (const pool of enabledPools) {
       enabledPoolsExternalIdsMap[pool.address] = {
@@ -124,7 +133,7 @@ export const useGetPoolData = () => {
     const token0Address = poolTokens.tokens[0]
     const token1Address = poolTokens.tokens[1]
 
-    const LpTokenContract = getContract(poolAddress, ERC20ABI, library)
+    const FxPoolContract = getContract(poolAddress, FX_POOL_ABI, library)
     const Token0Contract = getContract(token0Address, ERC20ABI, library)
     const Token1Contract = getContract(token1Address, ERC20ABI, library)
 
@@ -142,8 +151,8 @@ export const useGetPoolData = () => {
       Token1Contract?.symbol(),
       Token0Contract?.decimals(),
       Token1Contract?.decimals(),
-      LpTokenContract?.totalSupply(),
-      LpTokenContract?.balanceOf(account),
+      FxPoolContract?.totalSupply(),
+      FxPoolContract?.balanceOf(account),
       rewardsPoolId >= 0
         ? AmmRewardsContract?.userInfo(rewardsPoolId, account)
         : Promise.resolve({ amount: BigNumber.from(0) }),
@@ -159,13 +168,23 @@ export const useGetPoolData = () => {
       new Token(chainId, token1Address, token1Decimals, token1SymbolProper, token1SymbolProper)
     ]
 
-    const token0Rate = parseUnits('0.02', 8) // @todo: get rates from token[0] assimilator contract
-    const token1Rate = parseUnits('1', 8) // @todo: get rates from token[1] assimilator contract
+    const [assimialtor0Address, assimialtor1Address] = await Promise.all([
+      FxPoolContract.assimilator(token0Address),
+      FxPoolContract.assimilator(token1Address)
+    ])
+    const Assimilator0Contract = getContract(assimialtor0Address, ASSIMILATOR_ABI, library)
+    const Assimilator1Contract = getContract(assimialtor1Address, ASSIMILATOR_ABI, library)
+    const [token0Rate, token1Rate] = await Promise.all([Assimilator0Contract.getRate(), Assimilator1Contract.getRate()])
+    // const token0Rate = parseUnits('0.02', 8) // @todo: get rates from token[0] assimilator contract
+    // const token1Rate = parseUnits('1', 8) // @todo: get rates from token[1] assimilator contract
+    consoleLog('token0Rate', formatUnits(token0Rate, 8))
+    consoleLog('token1Rate', formatUnits(token1Rate, 8))
+
     const token0Numeraire = bigNumberToNumber(poolTokens.balances[0].div(1e8).mul(token0Rate), token0Decimals)
     const token1Numeraire = bigNumberToNumber(poolTokens.balances[1].div(1e8).mul(token1Rate), token1Decimals)
     const totalLiquidity = token0Numeraire + token1Numeraire
-    const token0Weight = totalLiquidity ? token0Numeraire / totalLiquidity : 50
-    const token1Weight = totalLiquidity ? token1Numeraire / totalLiquidity : 50
+    const token0Weight = totalLiquidity ? token0Numeraire / totalLiquidity : 0.5
+    const token1Weight = totalLiquidity ? token1Numeraire / totalLiquidity : 0.5
 
     const poolData = {
       vaultPoolId,

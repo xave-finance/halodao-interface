@@ -184,7 +184,7 @@ const AddLiquityModal = ({
     // setDepositAmount(maxDeposit)
     setTokenPrices([basePrice, quotePrice])
 
-    const lpAmount = calculateLptOut(baseAmount!, quoteAmount!)
+    const lpAmount = await calculateLptOut(baseAmount!, quoteAmount!)
     const maxLpAmount = Number(formatEther(lpAmount))
     setLpAmount({
       target: maxLpAmount,

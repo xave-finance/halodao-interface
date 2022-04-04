@@ -31,12 +31,12 @@ const useToken = () => {
     const ERC20Contract = getContract(tokenAddress, ERC20ABI, library, account)
 
     const allowance = await ERC20Contract.allowance(account, spender)
-    consoleLog(`[useSwap] Current token allowance: `, formatEther(allowance))
+    consoleLog(`[useToken] Current token allowance: `, formatEther(allowance))
     const amountBN = parseEther(amount)
-    consoleLog(`[useSwap] Amount to spend: `, formatEther(amountBN))
+    consoleLog(`[useToken] Amount to spend: `, formatEther(amountBN))
     if (allowance.gte(amountBN)) return true
 
-    consoleLog(`[useSwap] Approving...`)
+    consoleLog(`[useToken] Approving...`)
     const tx = await ERC20Contract.approve(spender, amountBN)
     await tx.wait()
     return true
