@@ -1,6 +1,6 @@
 import { Token } from '@halodao/sdk'
 import { BigNumber } from 'ethers/lib/ethers'
-import { defaultAbiCoder, formatUnits, parseEther, parseUnits } from 'ethers/lib/utils'
+import { defaultAbiCoder, formatUnits, parseUnits } from 'ethers/lib/utils'
 import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 import useToken from 'halo-hooks/tokens/useToken'
 import { useContract } from 'hooks/useContract'
@@ -41,10 +41,11 @@ const usePoolInvest = (poolId: string, tokens: Token[]) => {
       vaultContract.address
     )
 
-    const payload = defaultAbiCoder.encode(['uint256[]'], [sortedAmounts])
+    const sortedAddresses = sortedTokens.map(t => t.address)
+    const payload = defaultAbiCoder.encode(['uint256[]', 'address[]'], [sortedAmounts, sortedAddresses])
 
     const request = {
-      assets: sortedTokens.map(t => t.address),
+      assets: sortedAddresses,
       maxAmountsIn: sortedAmounts,
       userData: payload,
       fromInternalBalance: false

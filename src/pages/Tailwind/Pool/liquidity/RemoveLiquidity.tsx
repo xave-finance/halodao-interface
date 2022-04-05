@@ -31,7 +31,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     setAmountPercentage(percentage)
 
     const withdrawAmount = pool.userInfo.held.mul(percentage).div(100)
-    const tokenAmounts = calculateTokensOut(withdrawAmount)
+    const tokenAmounts = await calculateTokensOut(withdrawAmount)
     setToken0Amount(new TokenAmount(token0, tokenAmounts[0].toBigInt()))
     setToken1Amount(new TokenAmount(token1, tokenAmounts[1].toBigInt()))
 

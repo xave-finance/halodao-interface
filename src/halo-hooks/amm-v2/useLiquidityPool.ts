@@ -14,7 +14,7 @@ import { Web3Provider } from '@ethersproject/providers'
 import HALO_REWARDS_ABI from '../../constants/haloAbis/Rewards.json'
 import FX_POOL_ABI from '../../constants/haloAbis/FxPool.json'
 import ASSIMILATOR_ABI from 'constants/haloAbis/Assimilator.json'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
 import { consoleLog } from 'utils/simpleLogger'
 import { BigNumber } from 'ethers'
@@ -59,8 +59,8 @@ export const useGetPools = () => {
     const enabledPools = [
       {
         assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
-        address: '0xD2bf123f2f4ffCFfC33F28315998c73FAA977F46',
-        poolId: '0xd2bf123f2f4ffcffc33f28315998c73faa977f460002000000000000000007b5'
+        address: '0x5288e69aFDd329D677202FE855275A8C7a89F763',
+        poolId: '0x5288e69afdd329d677202fe855275a8c7a89f7630002000000000000000007c8'
       }
     ]
     const enabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
@@ -175,13 +175,13 @@ export const useGetPoolData = () => {
     const Assimilator0Contract = getContract(assimialtor0Address, ASSIMILATOR_ABI, library)
     const Assimilator1Contract = getContract(assimialtor1Address, ASSIMILATOR_ABI, library)
     const [token0Rate, token1Rate] = await Promise.all([Assimilator0Contract.getRate(), Assimilator1Contract.getRate()])
-    // const token0Rate = parseUnits('0.02', 8) // @todo: get rates from token[0] assimilator contract
-    // const token1Rate = parseUnits('1', 8) // @todo: get rates from token[1] assimilator contract
-    consoleLog('token0Rate', formatUnits(token0Rate, 8))
-    consoleLog('token1Rate', formatUnits(token1Rate, 8))
 
-    const token0Numeraire = bigNumberToNumber(poolTokens.balances[0].div(1e8).mul(token0Rate), token0Decimals)
-    const token1Numeraire = bigNumberToNumber(poolTokens.balances[1].div(1e8).mul(token1Rate), token1Decimals)
+    const token0Balance = bigNumberToNumber(poolTokens.balances[0], token0Decimals)
+    const token1Balance = bigNumberToNumber(poolTokens.balances[1], token1Decimals)
+    const rate0 = bigNumberToNumber(token0Rate, 8)
+    const rate1 = bigNumberToNumber(token1Rate, 8)
+    const token0Numeraire = token0Balance * rate0
+    const token1Numeraire = token1Balance * rate1
     const totalLiquidity = token0Numeraire + token1Numeraire
     const token0Weight = totalLiquidity ? token0Numeraire / totalLiquidity : 0.5
     const token1Weight = totalLiquidity ? token1Numeraire / totalLiquidity : 0.5
