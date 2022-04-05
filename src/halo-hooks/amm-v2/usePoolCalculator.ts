@@ -54,9 +54,12 @@ const usePoolCalculator = (pool: PoolData) => {
   }
 
   const calculateTokensOut = async (lptAmount: BigNumber): Promise<BigNumber[]> => {
-    const [baseView, quoteView] = await fxPoolContract?.viewWithdraw(parseUnits(`${lptAmount}`))
-    consoleLog('[usePoolCalculator] viewWithdraw response >>', baseView.toString(), quoteView.toString())
-    return [baseView, quoteView]
+    consoleLog('[usePoolCalculator] viewWithdraw param >>', formatUnits(lptAmount))
+    const res = await fxPoolContract?.viewWithdraw(lptAmount)
+    consoleLog('[usePoolCalculator] viewWithdraw response >>', res.toString())
+    const [baseOut, quoteOut] = res
+    consoleLog('[usePoolCalculator] viewWithdraw response >>', baseOut.toString(), quoteOut.toString())
+    return [baseOut, quoteOut]
   }
 
   return {

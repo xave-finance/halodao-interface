@@ -10,6 +10,8 @@ import JSBI from 'jsbi'
 import { TokenAmount } from '@halodao/sdk'
 import usePoolInvest from 'halo-hooks/amm-v2/usePoolInvest'
 import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
+import { formatUnits } from '@ethersproject/units'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface RemoveLiquidityProps {
   pool: PoolData
@@ -22,8 +24,8 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const { calculateTokensOut } = usePoolCalculator(pool)
   const { withdraw } = usePoolInvest(pool.vaultPoolId, [token0, token1])
   const [amountPercentage, setAmountPercentage] = useState(0)
-  const [token0Amount, setToken0Amount] = useState(new TokenAmount(token0, JSBI.BigInt(0)))
-  const [token1Amount, setToken1Amount] = useState(new TokenAmount(token1, JSBI.BigInt(0)))
+  const [token0Amount, setToken0Amount] = useState(new TokenAmount(token0, '0'))
+  const [token1Amount, setToken1Amount] = useState(new TokenAmount(token1, '0'))
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
   const [errorObject, setErrorObject] = useState<any>(undefined)
 
@@ -32,8 +34,13 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
     const withdrawAmount = pool.userInfo.held.mul(percentage).div(100)
     const tokenAmounts = await calculateTokensOut(withdrawAmount)
-    setToken0Amount(new TokenAmount(token0, tokenAmounts[0].toBigInt()))
-    setToken1Amount(new TokenAmount(token1, tokenAmounts[1].toBigInt()))
+    consoleLog(
+      'tokenAmounts',
+      formatUnits(tokenAmounts[0], token1.decimals),
+      formatUnits(tokenAmounts[1], token0.decimals)
+    )
+    setToken0Amount(new TokenAmount(token1, tokenAmounts[0].toString()))
+    setToken1Amount(new TokenAmount(token0, tokenAmounts[1].toString()))
 
     if (percentage > 0) {
       setRemoveButtonState(PrimaryButtonState.Enabled)
@@ -51,8 +58,8 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       await tx.wait()
 
       setAmountPercentage(0)
-      setToken0Amount(new TokenAmount(token0, JSBI.BigInt(0)))
-      setToken1Amount(new TokenAmount(token0, JSBI.BigInt(0)))
+      setToken0Amount(new TokenAmount(token0, '0'))
+      setToken1Amount(new TokenAmount(token0, '0'))
       setRemoveButtonState(PrimaryButtonState.Disabled)
 
       ReactGA.event({
