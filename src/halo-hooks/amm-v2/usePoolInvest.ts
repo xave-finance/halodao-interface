@@ -66,7 +66,8 @@ const usePoolInvest = (poolId: string, tokens: Token[]) => {
 
     const [sortedTokens, sortedTokenAmounts] = sortTokensAndAmounts(tokens, tokenAmounts)
 
-    const payload = defaultAbiCoder.encode(['uint256'], [lptAmount])
+    const sortedAddresses = sortedTokens.map(t => t.address)
+    const payload = defaultAbiCoder.encode(['uint256', 'address[]'], [lptAmount, sortedAddresses])
 
     const request = {
       assets: sortedTokens.map(t => t.address),

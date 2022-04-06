@@ -58,7 +58,6 @@ const usePoolCalculator = (pool: PoolData) => {
     const res = await fxPoolContract?.viewWithdraw(lptAmount)
     consoleLog('[usePoolCalculator] viewWithdraw response >>', res.toString())
     const [baseOut, quoteOut] = res
-    consoleLog('[usePoolCalculator] viewWithdraw response >>', baseOut.toString(), quoteOut.toString())
     return [baseOut, quoteOut]
   }
 
