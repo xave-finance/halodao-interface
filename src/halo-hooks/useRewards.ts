@@ -15,7 +15,7 @@ import { getContract } from '../utils'
 import CURVE_ABI from '../constants/haloAbis/Curve.json'
 import { haloTokenList, TOKEN_COINGECKO_NAME } from 'constants/tokenLists/halo-tokenlist'
 import { ChainId, Token } from '@halodao/sdk'
-import { getInitialTokenUSDPrice, getTxDate } from '../utils/coingecko'
+import { getTokenUSDPriceAtDate, getTxDate } from '../utils/coingecko'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -324,10 +324,20 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
     let quoteTokenInitialUsdPrice = 0
     let baseTokenInitialUsdPrice = 0
     let hlpMintedValue = 0
+    let noOfDaysSinceFirstDeposit = 0
     if (!library || !poolsWithBaseAPR.includes(poolAddress.toLowerCase())) return
     const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress.toLowerCase()])
     const curveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
-    const date = getTxDate((await library.getBlock(txReceipt.blockNumber)).timestamp)
+    const txTimestamp = (await library.getBlock(txReceipt.blockNumber)).timestamp
+    const date = getTxDate(txTimestamp)
+    // get the transfer logs
+    const logs = txReceipt.logs.filter(
+      value => value.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    )
+
+    //compute the number of days since the first deposit
+    const dateNow = new Date().getTime()
+    noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
 
     // get the quote token info
     const baseToken = tokenPair.split('/')[0]
@@ -335,19 +345,13 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
 
     // Calculate initial USD:HLP price during the first deposit tx of the pool
     baseTokenInitialUsdPrice =
-      parseFloat(ethers.utils.formatUnits(txReceipt.logs[0].data, baseTokenInfo.decimals)) *
-      (await getInitialTokenUSDPrice(TOKEN_COINGECKO_NAME[baseToken.toLowerCase()], date))
-    if (baseTokenInfo.symbol === 'XSGD') {
-      quoteTokenInitialUsdPrice =
-        parseFloat(ethers.utils.formatUnits(txReceipt.logs[1].data, 6)) *
-        (await getInitialTokenUSDPrice(TOKEN_COINGECKO_NAME['usdc'], date))
-      hlpMintedValue = parseFloat(ethers.utils.formatUnits(txReceipt.logs[2].data, 18))
-    } else {
-      quoteTokenInitialUsdPrice =
-        parseFloat(ethers.utils.formatUnits(txReceipt.logs[2].data, 6)) *
-        (await getInitialTokenUSDPrice(TOKEN_COINGECKO_NAME['usdc'], date))
-      hlpMintedValue = parseFloat(ethers.utils.formatUnits(txReceipt.logs[3].data, 18))
-    }
+      parseFloat(ethers.utils.formatUnits(logs[0].data, baseTokenInfo.decimals)) *
+      (await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseToken.toLowerCase()], date))
+    quoteTokenInitialUsdPrice =
+      parseFloat(ethers.utils.formatUnits(logs[1].data, 6)) *
+      (await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['usdc'], date))
+    hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
+
     initialUsdHlpPrice = (baseTokenInitialUsdPrice + quoteTokenInitialUsdPrice) / hlpMintedValue
 
     // Calculate current USD:HLP price
@@ -358,7 +362,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
     currentUsdHlpPrice = parseFloat(formatEther(curveLiquidity.total_)) / parseFloat(formatEther(curveTotalSupply))
 
     // Calculate the Base APR
-    setBaseApr((initialUsdHlpPrice / currentUsdHlpPrice - 1) * (365 / 190) * 100)
+    setBaseApr((initialUsdHlpPrice / currentUsdHlpPrice - 1) * (365 / noOfDaysSinceFirstDeposit) * 100)
   }, [poolAddress]) //eslint-disable-line
 
   useEffect(() => {

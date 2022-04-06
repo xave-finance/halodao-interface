@@ -210,5 +210,6 @@ export const TOKEN_COINGECKO_NAME: Record<string, string> = {
   xsgd: 'xsgd',
   tcad: 'truecad',
   tgbp: 'truegbp',
-  fxphp: 'fxphp'
+  fxphp: 'fxphp',
+  ust: 'terra-usd'
 }

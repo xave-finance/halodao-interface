@@ -30,7 +30,7 @@ export async function getTokensUSDPrice(by: GetPriceBy, addressesOrIds: string[]
   }
 }
 
-export async function getInitialTokenUSDPrice(symbol: string, date: string) {
+export async function getTokenUSDPriceAtDate(symbol: string, date: string) {
   let price = 1
   try {
     const url = `${COINGECKO_API_URL}/coins/${symbol}/history?date=${date}`
