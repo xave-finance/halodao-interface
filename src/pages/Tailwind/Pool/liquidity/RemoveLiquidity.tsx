@@ -38,8 +38,8 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       formatUnits(tokenAmounts[0], token1.decimals),
       formatUnits(tokenAmounts[1], token0.decimals)
     )
-    setToken0Amount(new TokenAmount(token0, tokenAmounts[1].toString()))
-    setToken1Amount(new TokenAmount(token1, tokenAmounts[0].toString()))
+    setToken0Amount(new TokenAmount(token0, tokenAmounts[0].toString()))
+    setToken1Amount(new TokenAmount(token1, tokenAmounts[1].toString()))
 
     if (percentage > 0) {
       setRemoveButtonState(PrimaryButtonState.Enabled)
