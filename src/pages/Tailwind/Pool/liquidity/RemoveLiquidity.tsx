@@ -6,7 +6,6 @@ import { PoolData } from '../models/PoolData'
 import ReactGA from 'react-ga'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
-import JSBI from 'jsbi'
 import { TokenAmount } from '@halodao/sdk'
 import usePoolInvest from 'halo-hooks/amm-v2/usePoolInvest'
 import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
@@ -39,8 +38,8 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       formatUnits(tokenAmounts[0], token1.decimals),
       formatUnits(tokenAmounts[1], token0.decimals)
     )
-    setToken0Amount(new TokenAmount(token1, tokenAmounts[0].toString()))
-    setToken1Amount(new TokenAmount(token0, tokenAmounts[1].toString()))
+    setToken0Amount(new TokenAmount(token0, tokenAmounts[1].toString()))
+    setToken1Amount(new TokenAmount(token1, tokenAmounts[0].toString()))
 
     if (percentage > 0) {
       setRemoveButtonState(PrimaryButtonState.Enabled)
@@ -59,7 +58,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
 
       setAmountPercentage(0)
       setToken0Amount(new TokenAmount(token0, '0'))
-      setToken1Amount(new TokenAmount(token0, '0'))
+      setToken1Amount(new TokenAmount(token1, '0'))
       setRemoveButtonState(PrimaryButtonState.Disabled)
 
       ReactGA.event({

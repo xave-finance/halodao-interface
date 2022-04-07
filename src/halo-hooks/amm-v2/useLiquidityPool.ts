@@ -59,8 +59,8 @@ export const useGetPools = () => {
     const enabledPools = [
       {
         assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
-        address: '0x5288e69aFDd329D677202FE855275A8C7a89F763',
-        poolId: '0x5288e69afdd329d677202fe855275a8c7a89f7630002000000000000000007c8'
+        address: '0x57Fe7c24Ff01854F5088D41471d40032FAC79213',
+        poolId: '0x57fe7c24ff01854f5088d41471d40032fac792130002000000000000000007d9'
       }
     ]
     const enabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
