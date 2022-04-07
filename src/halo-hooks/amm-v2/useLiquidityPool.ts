@@ -57,11 +57,26 @@ export const useGetPools = () => {
 
     // const enabledPools = haloAddresses.ammV2.pools.enabled
     const enabledPools = [
+      // NOTE: 1st 100% working version, with > 0 liquidity
+      // {
+      //   assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
+      //   address: '0x1A5a5c245A09Cc4902d552B833d438f85E96ba89',
+      //   poolId: '0x1a5a5c245a09cc4902d552b833d438f85e96ba890002000000000000000007e7'
+      // }
+
+      // NOTE: for demo, no liquidity
       {
         assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
-        address: '0x57Fe7c24Ff01854F5088D41471d40032FAC79213',
-        poolId: '0x57fe7c24ff01854f5088d41471d40032fac792130002000000000000000007d9'
+        address: '0xe2094130f94CC23BDfe46FF0EF63A13899F4D708',
+        poolId: '0xe2094130f94cc23bdfe46ff0ef63a13899f4d7080002000000000000000007e9'
       }
+
+      // NOTE: for new deployment
+      // {
+      //   assets: [haloAddresses.tokens.fxPHP, haloAddresses.tokens.USDC],
+      //   address: '',
+      //   poolId: ''
+      // }
     ]
     const enabledPoolsExternalIdsMap: PoolExternalIdsMap = {}
     for (const pool of enabledPools) {
