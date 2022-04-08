@@ -64,18 +64,24 @@ const usePoolInvest = (poolId: string, tokens: Token[]) => {
   const withdraw = async (lptAmount: BigNumber, tokenAmounts: string[]) => {
     if (!vaultContract || !account) return
 
-    const [sortedTokens, sortedTokenAmounts] = sortTokensAndAmounts(tokens, tokenAmounts)
+    const [sortedTokens, sortedAmounts] = sortTokensAndAmounts(tokens, tokenAmounts)
 
     const sortedAddresses = sortedTokens.map(t => t.address)
     const payload = defaultAbiCoder.encode(['uint256', 'address[]'], [lptAmount, sortedAddresses])
 
     const request = {
-      assets: sortedTokens.map(t => t.address),
-      minAmountsOut: sortedTokenAmounts,
+      assets: sortedAddresses,
+      minAmountsOut: sortedAmounts,
       userData: payload,
       fromInternalBalance: false
     }
 
+    consoleLog('exitPool request(): ', request)
+    consoleLog(
+      'amounts: ',
+      formatUnits(sortedAmounts[0], sortedTokens[0].decimals),
+      formatUnits(sortedAmounts[1], sortedTokens[1].decimals)
+    )
     return await vaultContract.exitPool(poolId, account, account, request)
   }
 
