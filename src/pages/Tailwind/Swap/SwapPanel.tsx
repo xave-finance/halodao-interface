@@ -8,7 +8,7 @@ import SwapTransactionModal from './modals/SwapTransactionModal'
 import SwapDetails from './SwapDetails'
 import SwitchIcon from 'assets/svg/switch-swap-icon.svg'
 import SettingsIcon from 'assets/svg/cog-icon.svg'
-import { useWalletModalToggle } from '../../../state/application/hooks'
+import { useBlockNumber, useWalletModalToggle } from '../../../state/application/hooks'
 import { CurrencySide, useSwapToken } from 'halo-hooks/amm/useSwapToken'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
@@ -43,6 +43,7 @@ const SwapPanel = () => {
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
   const [errorObject, setErrorObject] = useState<any>(undefined)
+  const currentBlockNumber = useBlockNumber()
 
   const {
     getPrice,
@@ -59,6 +60,7 @@ const SwapPanel = () => {
     allowance,
     swapToken
   } = useSwapToken(toCurrency, fromCurrency, setButtonState)
+
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -116,7 +118,7 @@ const SwapPanel = () => {
 
   useEffect(() => {
     updateBalances()
-  }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances])
+  }, [setToCurrency, setFromCurrency, toInputValue, fromInputValue, updateBalances, currentBlockNumber])
 
   useEffect(() => {
     console.log(allowance)
@@ -481,11 +483,7 @@ const SwapPanel = () => {
         chainId={chainId as number}
       />
       {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
+        <ErrorModal isVisible={true} onDismiss={() => setErrorObject(undefined)} errorObject={errorObject} />
       )}
     </>
   )

@@ -6,8 +6,7 @@ import SelectButton from '../Buttons/SelectButton'
 import NumericalInput from 'components/NumericalInput'
 import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useActiveWeb3React } from 'hooks'
+import { useTokenBalance } from '../../../halo-hooks/useTokenBalance'
 
 interface TokenInputProps {
   currency: Currency
@@ -33,11 +32,10 @@ const TokenInput = ({
   balance
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)
-  const { account } = useActiveWeb3React()
-  const currencyBalance = useCurrencyBalance(account ?? undefined, currency)
+  const currencyBalance = useTokenBalance(currency)
 
   const onMax = () => {
-    balance = balance ? balance : currencyBalance?.toSignificant(6)
+    balance = balance ? balance : currencyBalance
     if (balance && Number(balance) > 0) {
       didChangeValue(balance)
     }
@@ -73,7 +71,7 @@ const TokenInput = ({
                 Balance:{' '}
                 {balance
                   ? formatNumber(Number(balance), NumberFormat.long) || '-'
-                  : currencyBalance?.toSignificant(6) || '-'}
+                  : formatNumber(Number(currencyBalance), NumberFormat.long) || '-'}
               </div>
             )}
             <NumericalInput
