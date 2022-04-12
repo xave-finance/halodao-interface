@@ -8,7 +8,7 @@ import { tokenSymbolForPool } from 'utils/poolInfo'
 import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
 import { BigNumber, ethers } from 'ethers'
-import { DEPOSIT_TXHASH, PENDING_REWARD_FAILED } from 'constants/pools'
+import { DEPOSIT_TXHASH, PENDING_REWARD_FAILED, TRANSFER_EVENT_HASH } from 'constants/pools'
 import { useTokenPrice } from './useTokenPrice'
 import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
 import { calculateBaseApr } from '../utils/calculator'
@@ -336,9 +336,9 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
     const totalCurveSupply = parseFloat(formatEther(curveTotalSupply))
 
     // get the date of the deposit transaction and the number of days since the tx
-    const txTimestamp = (await library.getBlock(txReceipt.blockNumber)).timestamp
-    const date = getTxDate(txTimestamp)
     const dateNow = new Date().getTime()
+    const txTimestamp = txReceipt ? (await library.getBlock(txReceipt.blockNumber)).timestamp : dateNow
+    const date = getTxDate(txTimestamp)
     const noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
 
     // get the base token symbol and decimals
@@ -348,9 +348,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
     )[0]
 
     // get the transfer logs
-    const logs = txReceipt.logs.filter(
-      (value: any) => value.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-    )
+    const logs = txReceipt.logs.filter((value: any) => value.topics[0] === TRANSFER_EVENT_HASH)
     const baseTokenValue = parseFloat(ethers.utils.formatUnits(logs[0].data, decimals))
     const quoteTokenValue = parseFloat(ethers.utils.formatUnits(logs[1].data, 6))
 
