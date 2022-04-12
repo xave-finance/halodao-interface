@@ -7,11 +7,17 @@ import { useActiveWeb3React } from 'hooks'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
-import { BigNumber } from 'ethers'
-import { PENDING_REWARD_FAILED } from 'constants/pools'
+import { BigNumber, ethers } from 'ethers'
+import { DEPOSIT_TXHASH, PENDING_REWARD_FAILED } from 'constants/pools'
 import { useTokenPrice } from './useTokenPrice'
 import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
 import { calculateBaseApr } from '../utils/calculator'
+import { getContract } from '../utils'
+import CURVE_ABI from '../constants/haloAbis/Curve.json'
+import { getTokenUSDPriceAtDate, getTxDate } from '../utils/coingecko'
+import { CHAINLINK_ORACLE, haloTokenList, TOKEN_COINGECKO_NAME } from '../constants/tokenLists/halo-tokenlist'
+import { ChainId, Token } from '@halodao/sdk'
+import { getTokenUSDPriceOracle } from '../utils/chainlinkOracle'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -312,9 +318,64 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
 export const useGetBaseApr = (poolAddress: string, tokenPair: string): number => {
   const { account, library, chainId } = useActiveWeb3React()
   const [baseAPR, setBaseApr] = useState(0)
+  const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
-    setBaseApr(await calculateBaseApr(poolAddress, tokenPair, account, library, chainId))
+    if (!library || !poolsWithBaseAPR.includes(poolAddress.toLowerCase())) return
+
+    // get the first deposit transaction of the curve
+    const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress.toLowerCase()])
+
+    // get the liquidity and total supply of the curve
+    const curveContract = await getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
+    const [curveLiquidity, curveTotalSupply] = await Promise.all([
+      curveContract.liquidity(),
+      curveContract.totalSupply()
+    ])
+    const totalCurveLiquidity = parseFloat(formatEther(curveLiquidity.total_))
+    const totalCurveSupply = parseFloat(formatEther(curveTotalSupply))
+
+    // get the date of the deposit transaction and the number of days since the tx
+    const txTimestamp = (await library.getBlock(txReceipt.blockNumber)).timestamp
+    const date = getTxDate(txTimestamp)
+    const dateNow = new Date().getTime()
+    const noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
+
+    // get the base token symbol and decimals
+    const baseTokenSymbol = tokenPair.split('/')[0]
+    const { decimals } = (haloTokenList[chainId as ChainId] as Token[]).filter(
+      token => token.symbol === baseTokenSymbol
+    )[0]
+
+    // get the transfer logs
+    const logs = txReceipt.logs.filter(
+      (value: any) => value.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
+    )
+    const baseTokenValue = parseFloat(ethers.utils.formatUnits(logs[0].data, decimals))
+    const quoteTokenValue = parseFloat(ethers.utils.formatUnits(logs[1].data, 6))
+
+    let baseTokenUSDPrice: number
+    // Check if the token price is available in coingecko else get it in chainlink
+    if (TOKEN_COINGECKO_NAME[baseTokenSymbol]) {
+      baseTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseTokenSymbol], date)
+    } else {
+      baseTokenUSDPrice = await getTokenUSDPriceOracle(CHAINLINK_ORACLE[baseTokenSymbol], library)
+    }
+    const quoteTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['USDC'], date)
+    const hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
+
+    setBaseApr(
+      calculateBaseApr(
+        baseTokenValue,
+        baseTokenUSDPrice,
+        quoteTokenValue,
+        quoteTokenUSDPrice,
+        hlpMintedValue,
+        totalCurveLiquidity,
+        totalCurveSupply,
+        noOfDaysSinceFirstDeposit
+      )
+    )
   }, [poolAddress]) //eslint-disable-line
 
   useEffect(() => {
