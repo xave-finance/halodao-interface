@@ -7,7 +7,15 @@ import { ChainId, Token } from '@halodao/sdk'
 import { ethers } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import { getTokenUSDPriceOracle } from './chainlinkOracle'
-
+/**
+ *
+ * @param poolAddress
+ * @param tokenPair
+ * @param account
+ * @param library
+ * @param chainId
+ * @returns
+ */
 export async function calculateBaseApr(
   poolAddress: string,
   tokenPair: string,
