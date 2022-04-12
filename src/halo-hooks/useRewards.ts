@@ -7,15 +7,11 @@ import { useActiveWeb3React } from 'hooks'
 import { tokenSymbolForPool } from 'utils/poolInfo'
 import { AmmRewardsVersion } from 'utils/ammRewards'
 import { ZERO_ADDRESS } from '../constants'
-import { BigNumber, ethers } from 'ethers'
-import { DEPOSIT_TXHASH, PENDING_REWARD_FAILED } from 'constants/pools'
+import { BigNumber } from 'ethers'
+import { PENDING_REWARD_FAILED } from 'constants/pools'
 import { useTokenPrice } from './useTokenPrice'
 import useCurrentBlockTimestamp from '../hooks/useCurrentBlockTimestamp'
-import { getContract } from '../utils'
-import CURVE_ABI from '../constants/haloAbis/Curve.json'
-import { haloTokenList, TOKEN_COINGECKO_NAME } from 'constants/tokenLists/halo-tokenlist'
-import { ChainId, Token } from '@halodao/sdk'
-import { getTokenUSDPriceAtDate, getTxDate } from '../utils/coingecko'
+import { calculateBaseApr } from '../utils/calculator'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -316,53 +312,9 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
 export const useGetBaseApr = (poolAddress: string, tokenPair: string): number => {
   const { account, library, chainId } = useActiveWeb3React()
   const [baseAPR, setBaseApr] = useState(0)
-  const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
-    let initialUsdHlpPrice = 0
-    let currentUsdHlpPrice = 0
-    let quoteTokenInitialUsdPrice = 0
-    let baseTokenInitialUsdPrice = 0
-    let hlpMintedValue = 0
-    let noOfDaysSinceFirstDeposit = 0
-    if (!library || !poolsWithBaseAPR.includes(poolAddress.toLowerCase())) return
-    const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress.toLowerCase()])
-    const curveContract = getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
-    const txTimestamp = (await library.getBlock(txReceipt.blockNumber)).timestamp
-    const date = getTxDate(txTimestamp)
-    // get the transfer logs
-    const logs = txReceipt.logs.filter(
-      value => value.topics[0] === '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
-    )
-
-    //compute the number of days since the first deposit
-    const dateNow = new Date().getTime()
-    noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
-
-    // get the quote token info
-    const baseToken = tokenPair.split('/')[0]
-    const baseTokenInfo = (haloTokenList[chainId as ChainId] as Token[]).filter(token => token.symbol === baseToken)[0]
-
-    // Calculate initial USD:HLP price during the first deposit tx of the pool
-    baseTokenInitialUsdPrice =
-      parseFloat(ethers.utils.formatUnits(logs[0].data, baseTokenInfo.decimals)) *
-      (await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseToken.toLowerCase()], date))
-    quoteTokenInitialUsdPrice =
-      parseFloat(ethers.utils.formatUnits(logs[1].data, 6)) *
-      (await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['usdc'], date))
-    hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
-
-    initialUsdHlpPrice = (baseTokenInitialUsdPrice + quoteTokenInitialUsdPrice) / hlpMintedValue
-
-    // Calculate current USD:HLP price
-    const [curveLiquidity, curveTotalSupply] = await Promise.all([
-      curveContract.liquidity(),
-      curveContract.totalSupply()
-    ])
-    currentUsdHlpPrice = parseFloat(formatEther(curveLiquidity.total_)) / parseFloat(formatEther(curveTotalSupply))
-
-    // Calculate the Base APR
-    setBaseApr((initialUsdHlpPrice / currentUsdHlpPrice - 1) * (365 / noOfDaysSinceFirstDeposit) * 100)
+    setBaseApr(await calculateBaseApr(poolAddress, tokenPair, account, library, chainId))
   }, [poolAddress]) //eslint-disable-line
 
   useEffect(() => {

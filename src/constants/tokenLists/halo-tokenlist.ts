@@ -204,12 +204,16 @@ export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } 
   [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
 }
 
-// NOTE: add the coingecko token symbol here for other chain
+// NOTE: Add in TOKEN_COINGECKO_NAME the token id if available in coingecko,
+// if not, add the contract address of the token in CHAINLINK_ORACLE
 export const TOKEN_COINGECKO_NAME: Record<string, string> = {
-  usdc: 'usd-coin',
-  xsgd: 'xsgd',
-  tcad: 'truecad',
-  tgbp: 'truegbp',
-  fxphp: 'fxphp',
-  ust: 'terra-usd'
+  USDC: 'usd-coin',
+  XSGD: 'xsgd',
+  TGBP: 'truegbp'
+}
+
+export const CHAINLINK_ORACLE: Record<string, string> = {
+  TCAD: '0xa34317DB73e77d453b1B8d04550c44D10e981C8e',
+  fxPHP: '0x9481e7ad8BE6BbB22A8B9F7B9fB7588d1df65DF6',
+  UST: '0x8b6d9085f310396C6E4f0012783E9f850eaa8a82'
 }
