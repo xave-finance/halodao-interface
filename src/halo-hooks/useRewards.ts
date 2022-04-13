@@ -328,7 +328,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
   const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
-    if (!library || !poolsWithBaseAPR.includes(poolAddress)) return
+    if (!library || !poolsWithBaseAPR.includes(poolAddress) || poolAddress === ethers.constants.AddressZero) return
 
     try {
       // get the first deposit transaction of the curve
@@ -389,7 +389,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
         )
       )
     } catch (e) {
-      console.log(e)
+      console.log('Error fetching base APR.', e)
     }
   }, [poolAddress, library, chainId]) //eslint-disable-line
 
