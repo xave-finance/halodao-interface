@@ -15,9 +15,16 @@ import { calculateBaseApr } from '../utils/calculator'
 import { getContract } from '../utils'
 import CURVE_ABI from '../constants/haloAbis/Curve.json'
 import { getTokenUSDPriceAtDate, getTxDate } from '../utils/coingecko'
-import { CHAINLINK_ORACLE, haloTokenList, TOKEN_COINGECKO_NAME } from '../constants/tokenLists/halo-tokenlist'
+import {
+  CHAINLINK_ORACLE,
+  ChainLinkAddressMap,
+  haloTokenList,
+  TOKEN_COINGECKO_NAME,
+  TokenSymbol
+} from '../constants/tokenLists/halo-tokenlist'
 import { ChainId, Token } from '@halodao/sdk'
-import { getTokenUSDPriceOracle } from '../utils/chainlinkOracle'
+import CHAINLINK_ABI from '../constants/abis/chainlinkOracle.json'
+import { formatUnits } from 'ethers/lib/utils'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -321,64 +328,74 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
   const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
-    if (!library || !poolsWithBaseAPR.includes(poolAddress.toLowerCase())) return
+    if (!library || !poolsWithBaseAPR.includes(poolAddress)) return
 
-    // get the first deposit transaction of the curve
-    const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress.toLowerCase()])
+    try {
+      // get the first deposit transaction of the curve
+      const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress])
 
-    // get the liquidity and total supply of the curve
-    const curveContract = await getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
-    const [curveLiquidity, curveTotalSupply] = await Promise.all([
-      curveContract.liquidity(),
-      curveContract.totalSupply()
-    ])
-    const totalCurveLiquidity = parseFloat(formatEther(curveLiquidity.total_))
-    const totalCurveSupply = parseFloat(formatEther(curveTotalSupply))
+      // get the liquidity and total supply of the curve
+      const curveContract = await getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
+      const [curveLiquidity, curveTotalSupply] = await Promise.all([
+        curveContract.liquidity(),
+        curveContract.totalSupply()
+      ])
+      const totalCurveLiquidity = parseFloat(formatEther(curveLiquidity.total_))
+      const totalCurveSupply = parseFloat(formatEther(curveTotalSupply))
 
-    // get the date of the deposit transaction and the number of days since the tx
-    const dateNow = new Date().getTime()
-    const txTimestamp = txReceipt ? (await library.getBlock(txReceipt.blockNumber)).timestamp : dateNow
-    const date = getTxDate(txTimestamp)
-    const noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
+      // get the date of the deposit transaction and the number of days since the tx
+      const dateNow = new Date().getTime()
+      const txTimestamp = txReceipt ? (await library.getBlock(txReceipt.blockNumber)).timestamp : dateNow
+      const date = getTxDate(txTimestamp)
+      const noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
 
-    // get the base token symbol and decimals
-    const baseTokenSymbol = tokenPair.split('/')[0]
-    const { decimals } = (haloTokenList[chainId as ChainId] as Token[]).filter(
-      token => token.symbol === baseTokenSymbol
-    )[0]
+      // get the base token symbol and decimals
+      const baseTokenSymbol = tokenPair.split('/')[0]
+      const { decimals } = (haloTokenList[chainId as ChainId] as Token[]).filter(
+        token => token.symbol === baseTokenSymbol
+      )[0]
 
-    // get the transfer logs
-    const logs = txReceipt.logs.filter((value: any) => value.topics[0] === TRANSFER_EVENT_HASH)
-    const baseTokenValue = parseFloat(ethers.utils.formatUnits(logs[0].data, decimals))
-    const quoteTokenValue = parseFloat(ethers.utils.formatUnits(logs[1].data, 6))
+      // get the transfer logs
+      const logs = txReceipt.logs.filter((value: any) => value.topics[0] === TRANSFER_EVENT_HASH)
+      const baseTokenValue = parseFloat(ethers.utils.formatUnits(logs[0].data, decimals))
+      const quoteTokenValue = parseFloat(ethers.utils.formatUnits(logs[1].data, 6))
 
-    let baseTokenUSDPrice: number
-    // Check if the token price is available in coingecko else get it in chainlink
-    if (TOKEN_COINGECKO_NAME[baseTokenSymbol]) {
-      baseTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseTokenSymbol], date)
-    } else {
-      baseTokenUSDPrice = await getTokenUSDPriceOracle(CHAINLINK_ORACLE[baseTokenSymbol], library)
-    }
-    const quoteTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['USDC'], date)
-    const hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
+      let baseTokenUSDPrice: number
+      // Check if the token price is available in coingecko else get it in chainlink
+      if (TOKEN_COINGECKO_NAME[baseTokenSymbol]) {
+        baseTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseTokenSymbol], date)
+      } else {
+        const tokenContract = getContract(
+          (CHAINLINK_ORACLE[chainId as ChainId] as ChainLinkAddressMap)[baseTokenSymbol as TokenSymbol],
+          CHAINLINK_ABI,
+          library
+        )
+        const [latestAnswer, decimals] = await Promise.all([tokenContract?.latestAnswer(), tokenContract?.decimals()])
+        baseTokenUSDPrice = Number(formatUnits(latestAnswer, decimals))
+      }
+      const quoteTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['USDC'], date)
+      const hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
 
-    setBaseApr(
-      calculateBaseApr(
-        baseTokenValue,
-        baseTokenUSDPrice,
-        quoteTokenValue,
-        quoteTokenUSDPrice,
-        hlpMintedValue,
-        totalCurveLiquidity,
-        totalCurveSupply,
-        noOfDaysSinceFirstDeposit
+      setBaseApr(
+        calculateBaseApr(
+          baseTokenValue,
+          baseTokenUSDPrice,
+          quoteTokenValue,
+          quoteTokenUSDPrice,
+          hlpMintedValue,
+          totalCurveLiquidity,
+          totalCurveSupply,
+          noOfDaysSinceFirstDeposit
+        )
       )
-    )
-  }, [poolAddress]) //eslint-disable-line
+    } catch (e) {
+      console.log(e)
+    }
+  }, [poolAddress, library, chainId]) //eslint-disable-line
 
   useEffect(() => {
     fetchBaseUsdHlpPrice()
-  }, [poolAddress]) //eslint-disable-line
+  }, [fetchBaseUsdHlpPrice]) //eslint-disable-line
 
   return baseAPR
 }

@@ -212,10 +212,62 @@ export const TOKEN_COINGECKO_NAME: Record<string, string> = {
   TGBP: 'truegbp'
 }
 
-export const CHAINLINK_ORACLE: Record<string, string> = {
-  TCAD: '0xa34317DB73e77d453b1B8d04550c44D10e981C8e',
-  fxPHP: '0x9481e7ad8BE6BbB22A8B9F7B9fB7588d1df65DF6',
-  UST: '0x8b6d9085f310396C6E4f0012783E9f850eaa8a82',
-  fxAUD: '0x77F9710E7d0A19669A13c055F62cd80d313dF022',
-  tagPHP: '0x9481e7ad8BE6BbB22A8B9F7B9fB7588d1df65DF6'
+export type ChainLinkAddressMap = {
+  [token in TokenSymbol]: string
+}
+const mainNetToken: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: '0xa34317DB73e77d453b1B8d04550c44D10e981C8e',
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: '0x9481e7ad8BE6BbB22A8B9F7B9fB7588d1df65DF6',
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: '0x8b6d9085f310396C6E4f0012783E9f850eaa8a82'
+}
+const polygonToken: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.tagPHP]: '0x218231089Bebb2A31970c3b77E96eCfb3BA006D1',
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
+}
+const arbToken: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: '0xfF82AAF635645fD0bcc7b619C3F28004cDb58574',
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
+}
+export const CHAINLINK_ORACLE: { [chainId in ChainId]?: ChainLinkAddressMap } = {
+  [ChainId.MAINNET]: mainNetToken,
+  [ChainId.MATIC]: polygonToken,
+  [ChainId.ARBITRUM]: arbToken
 }
