@@ -325,14 +325,14 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
 export const useGetBaseApr = (poolAddress: string, tokenPair: string): number => {
   const { account, library, chainId } = useActiveWeb3React()
   const [baseAPR, setBaseApr] = useState(0)
-  const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH)
+  const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH[chainId as ChainId] as Record<string, string>)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
     if (!library || !poolsWithBaseAPR.includes(poolAddress) || poolAddress === ethers.constants.AddressZero) return
 
     try {
       // get the first deposit transaction of the curve
-      const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[poolAddress])
+      const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[chainId as ChainId]?.[poolAddress] as string)
 
       // get the liquidity and total supply of the curve
       const curveContract = await getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
