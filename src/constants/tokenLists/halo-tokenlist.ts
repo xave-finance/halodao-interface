@@ -215,7 +215,7 @@ export const TOKEN_COINGECKO_NAME: Record<string, string> = {
 export type ChainLinkAddressMap = {
   [token in TokenSymbol]: string
 }
-const mainNetToken: ChainLinkAddressMap = {
+const mainnetToken: ChainLinkAddressMap = {
   [TokenSymbol.USDC]: ethers.constants.AddressZero,
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
@@ -267,7 +267,7 @@ const arbToken: ChainLinkAddressMap = {
   [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 export const CHAINLINK_ORACLE: { [chainId in ChainId]?: ChainLinkAddressMap } = {
-  [ChainId.MAINNET]: mainNetToken,
+  [ChainId.MAINNET]: mainnetToken,
   [ChainId.MATIC]: polygonToken,
   [ChainId.ARBITRUM]: arbToken
 }
