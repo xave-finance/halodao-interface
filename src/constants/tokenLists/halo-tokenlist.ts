@@ -215,7 +215,8 @@ export const TOKEN_COINGECKO_NAME: Record<string, string> = {
 export type ChainLinkAddressMap = {
   [token in TokenSymbol]: string
 }
-const mainnetOracle: ChainLinkAddressMap = {
+
+const mainnetOracles: ChainLinkAddressMap = {
   [TokenSymbol.USDC]: ethers.constants.AddressZero,
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
@@ -232,7 +233,7 @@ const mainnetOracle: ChainLinkAddressMap = {
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.UST]: '0x8b6d9085f310396C6E4f0012783E9f850eaa8a82'
 }
-const polygonOracle: ChainLinkAddressMap = {
+const polygonOracles: ChainLinkAddressMap = {
   [TokenSymbol.USDC]: ethers.constants.AddressZero,
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
@@ -249,7 +250,8 @@ const polygonOracle: ChainLinkAddressMap = {
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.UST]: ethers.constants.AddressZero
 }
-const arbOracle: ChainLinkAddressMap = {
+
+const arbOracles: ChainLinkAddressMap = {
   [TokenSymbol.USDC]: ethers.constants.AddressZero,
   [TokenSymbol.EURS]: ethers.constants.AddressZero,
   [TokenSymbol.GBP]: ethers.constants.AddressZero,
@@ -266,8 +268,9 @@ const arbOracle: ChainLinkAddressMap = {
   [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
   [TokenSymbol.UST]: ethers.constants.AddressZero
 }
-export const CHAINLINK_ORACLE: { [chainId in ChainId]?: ChainLinkAddressMap } = {
-  [ChainId.MAINNET]: mainnetOracle,
-  [ChainId.MATIC]: polygonOracle,
-  [ChainId.ARBITRUM]: arbOracle
+
+export const CHAINLINK_ORACLES: { [chainId in ChainId]?: ChainLinkAddressMap } = {
+  [ChainId.MAINNET]: mainnetOracles,
+  [ChainId.MATIC]: polygonOracles,
+  [ChainId.ARBITRUM]: arbOracles
 }

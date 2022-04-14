@@ -66,13 +66,13 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
             >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="18%">
+                  <RowFixed width="22%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="18%">
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('baseApr')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="18%">
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="18%">

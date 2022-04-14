@@ -16,7 +16,7 @@ import { getContract } from '../utils'
 import CURVE_ABI from '../constants/haloAbis/Curve.json'
 import { getTokenUSDPriceAtDate, getTxDate } from '../utils/coingecko'
 import {
-  CHAINLINK_ORACLE,
+  CHAINLINK_ORACLES,
   ChainLinkAddressMap,
   haloTokenList,
   TOKEN_COINGECKO_NAME,
@@ -25,6 +25,7 @@ import {
 import { ChainId, Token } from '@halodao/sdk'
 import CHAINLINK_ABI from '../constants/abis/chainlinkOracle.json'
 import { formatUnits } from 'ethers/lib/utils'
+import { consoleLog } from 'utils/simpleLogger'
 
 export const useLPTokenAddresses = (rewardsVersion = AmmRewardsVersion.Latest) => {
   const rewardsContract = useHALORewardsContract(rewardsVersion)
@@ -261,7 +262,7 @@ export const useUnclaimedRewarderRewardsPerPool = (poolID: number[], rewarderAdd
     if (!ammRewards || !rewarderContract || !rewardTokenContract || !account || !rewarderAddress) return
 
     try {
-      console.log('fetchUnclaimedRewards() in progress...')
+      consoleLog('fetchUnclaimedRewards() in progress...')
       const pendingXRNBW = await ammRewards.pendingRewardToken(poolID, account)
       const [pendingRewarderTokens, multiplier, symbol, balance] = await Promise.all([
         rewarderContract.viewPendingTokens(poolID, account, pendingXRNBW),
@@ -328,11 +329,13 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
   const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH[chainId as ChainId] as Record<string, string>)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
+    consoleLog(`${tokenPair} fetchBaseUsdHlpPrice`)
     if (!library || !poolsWithBaseAPR.includes(poolAddress) || poolAddress === ethers.constants.AddressZero) return
 
     try {
       // get the first deposit transaction of the curve
       const txReceipt = await library.getTransactionReceipt(DEPOSIT_TXHASH[chainId as ChainId]?.[poolAddress] as string)
+      consoleLog(`${tokenPair} txReceipt:`, txReceipt)
 
       // get the liquidity and total supply of the curve
       const curveContract = await getContract(poolAddress, CURVE_ABI, library, account ?? undefined)
@@ -348,6 +351,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
       const txTimestamp = txReceipt ? (await library.getBlock(txReceipt.blockNumber)).timestamp : dateNow
       const date = getTxDate(txTimestamp)
       const noOfDaysSinceFirstDeposit = Math.floor((dateNow - txTimestamp * 1000) / (1000 * 60 * 60 * 24))
+      consoleLog(`${tokenPair} noOfDaysSinceFirstDeposit: `, noOfDaysSinceFirstDeposit)
 
       // get the base token symbol and decimals
       const baseTokenSymbol = tokenPair.split('/')[0]
@@ -356,6 +360,7 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
       )[0]
 
       // get the transfer logs
+      consoleLog(`${tokenPair} txReceipt.logs: `, txReceipt.logs)
       const logs = txReceipt.logs.filter((value: any) => value.topics[0] === TRANSFER_EVENT_HASH)
       const baseTokenValue = parseFloat(ethers.utils.formatUnits(logs[0].data, decimals))
       const quoteTokenValue = parseFloat(ethers.utils.formatUnits(logs[1].data, 6))
@@ -366,30 +371,44 @@ export const useGetBaseApr = (poolAddress: string, tokenPair: string): number =>
         baseTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME[baseTokenSymbol], date)
       } else {
         const tokenContract = getContract(
-          (CHAINLINK_ORACLE[chainId as ChainId] as ChainLinkAddressMap)[baseTokenSymbol as TokenSymbol],
+          (CHAINLINK_ORACLES[chainId as ChainId] as ChainLinkAddressMap)[baseTokenSymbol as TokenSymbol],
           CHAINLINK_ABI,
           library
         )
         const [latestAnswer, decimals] = await Promise.all([tokenContract?.latestAnswer(), tokenContract?.decimals()])
         baseTokenUSDPrice = Number(formatUnits(latestAnswer, decimals))
       }
+      consoleLog(`${tokenPair} baseTokenUSDPrice: `, baseTokenUSDPrice)
       const quoteTokenUSDPrice = await getTokenUSDPriceAtDate(TOKEN_COINGECKO_NAME['USDC'], date)
       const hlpMintedValue = parseFloat(ethers.utils.formatUnits(logs[2].data, 18))
 
-      setBaseApr(
-        calculateBaseApr(
-          baseTokenValue,
-          baseTokenUSDPrice,
-          quoteTokenValue,
-          quoteTokenUSDPrice,
-          hlpMintedValue,
-          totalCurveLiquidity,
-          totalCurveSupply,
-          noOfDaysSinceFirstDeposit
-        )
+      consoleLog(`Calculating ${tokenPair}: `, {
+        baseTokenValue,
+        baseTokenUSDPrice,
+        quoteTokenValue,
+        quoteTokenUSDPrice,
+        hlpMintedValue,
+        totalCurveLiquidity,
+        totalCurveSupply,
+        noOfDaysSinceFirstDeposit
+      })
+
+      const _baseApr = calculateBaseApr(
+        baseTokenValue,
+        baseTokenUSDPrice,
+        quoteTokenValue,
+        quoteTokenUSDPrice,
+        hlpMintedValue,
+        totalCurveLiquidity,
+        totalCurveSupply,
+        noOfDaysSinceFirstDeposit
       )
+
+      consoleLog(`${tokenPair} baseAPR: `, _baseApr)
+
+      setBaseApr(_baseApr)
     } catch (e) {
-      console.log('Error fetching base APR.', e)
+      consoleLog('Error fetching base APR.', e)
     }
   }, [poolAddress, library, chainId]) //eslint-disable-line
 
