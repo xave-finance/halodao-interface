@@ -326,10 +326,18 @@ export const useRewarderUSDPrice = (rewarderAddress: string | undefined) => {
 export const useGetBaseApr = (poolAddress: string, tokenPair: string): number => {
   const { account, library, chainId } = useActiveWeb3React()
   const [baseAPR, setBaseApr] = useState(0)
-  const poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH[chainId as ChainId] as Record<string, string>)
 
   const fetchBaseUsdHlpPrice = useCallback(async () => {
     consoleLog(`${tokenPair} fetchBaseUsdHlpPrice`)
+    // check if the network has deposit tx in DEPOSIT_TXHASH
+    let poolsWithBaseAPR = []
+    try {
+      poolsWithBaseAPR = Object.keys(DEPOSIT_TXHASH[chainId as ChainId] as Record<string, string>)
+    } catch (e) {
+      console.log('Network is not supported for baseAPR')
+      return
+    }
+
     if (!library || !poolsWithBaseAPR.includes(poolAddress) || poolAddress === ethers.constants.AddressZero) return
 
     try {
