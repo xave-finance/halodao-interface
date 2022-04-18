@@ -17,5 +17,5 @@ export function calculateBaseApr(
   const currentUsdHlpPrice = totalCurveLiquidity / totalCurveSupply
 
   // Calculate the Base APR
-  return (initialUsdHlpPrice / currentUsdHlpPrice - 1) * ((365 / noOfDaysSinceFirstDeposit) * 100)
+  return Math.abs(initialUsdHlpPrice / currentUsdHlpPrice - 1) * ((365 / noOfDaysSinceFirstDeposit) * 100)
 }
