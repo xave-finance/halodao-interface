@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import { Pair } from '@halodao/sdk'
-import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import styled from 'styled-components'
 import { darken } from 'polished'
 
@@ -24,6 +23,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { MetamaskProviderErrorCode } from 'constants/errors'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -123,13 +123,8 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const txHash = await approve()
-      console.log(txHash)
       // user rejected tx or didn't go thru
-      if (
-        // catch metamask rejection
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      ) {
+      if (txHash.code === MetamaskProviderErrorCode.userRejectedRequest) {
         setErrorObject(txHash)
       } else {
         await txHash.wait()
@@ -173,10 +168,7 @@ export default function HaloHaloWithdrawPanel({
 
     try {
       const tx = await leave(amount)
-      if (
-        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
-      ) {
+      if (tx.code === MetamaskProviderErrorCode.userRejectedRequest) {
         setErrorObject(tx)
       } else {
         await tx.wait()

@@ -8,6 +8,7 @@ import { TokenAmount, JSBI } from '@halodao/sdk'
 import { formatUnits, parseEther } from 'ethers/lib/utils'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
+import useHaloAddresses from 'halo-hooks/useHaloAddresses'
 
 enum AddLiquidityState {
   NoAmount,
@@ -41,18 +42,15 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const { calculateOtherTokenIn } = usePoolCalculator(pool)
+  const haloAddresses = useHaloAddresses()
 
   const token0 = pool.tokens[0].token
   const token1 = pool.tokens[1].token
-  const { calculateOtherTokenIn } = usePoolCalculator({
-    tokens: [token0, token1],
-    tokenBalances: [pool.tokens[0].balance, pool.tokens[1].balance]
-  })
-
   const baseTokenAmount = new TokenAmount(token0, JSBI.BigInt(parseEther(baseInput !== '' ? baseInput : '0')))
-  const [baseApproveState, baseApproveCallback] = useTokenAllowance(baseTokenAmount, pool.address)
+  const [baseApproveState, baseApproveCallback] = useTokenAllowance(baseTokenAmount, haloAddresses.ammV2.vault)
   const quoteTokenAmount = new TokenAmount(token1, JSBI.BigInt(parseEther(quoteInput !== '' ? quoteInput : '0')))
-  const [quoteApproveState, quoteApproveCallback] = useTokenAllowance(quoteTokenAmount, pool.address)
+  const [quoteApproveState, quoteApproveCallback] = useTokenAllowance(quoteTokenAmount, haloAddresses.ammV2.vault)
   const baseApproved = baseApproveState === ApprovalState.APPROVED
   const quoteApproved = quoteApproveState === ApprovalState.APPROVED
 

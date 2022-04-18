@@ -1,10 +1,12 @@
 import { Token } from '@halodao/sdk'
+import { formatEther, parseEther } from 'ethers/lib/utils'
 import { useActiveWeb3React } from 'hooks'
 import { getContract } from 'utils'
+import { consoleLog } from 'utils/simpleLogger'
 import ERC20ABI from '../../constants/abis/erc20.json'
 
 const useToken = () => {
-  const { chainId, library } = useActiveWeb3React()
+  const { chainId, account, library } = useActiveWeb3React()
 
   const addressToToken = async (tokenAddress: string) => {
     if (!chainId || !library) return null
@@ -24,9 +26,26 @@ const useToken = () => {
     return (tokensOrNulls as unknown[]).filter(token => token !== null) as Token[]
   }
 
+  const allowTokenAmount = async (tokenAddress: string, amount: string, spender: string) => {
+    if (!account || !library) return false
+    const ERC20Contract = getContract(tokenAddress, ERC20ABI, library, account)
+
+    const allowance = await ERC20Contract.allowance(account, spender)
+    consoleLog(`[useToken] Current token allowance: `, formatEther(allowance))
+    const amountBN = parseEther(amount)
+    consoleLog(`[useToken] Amount to spend: `, formatEther(amountBN))
+    if (allowance.gte(amountBN)) return true
+
+    consoleLog(`[useToken] Approving...`)
+    const tx = await ERC20Contract.approve(spender, amountBN)
+    await tx.wait()
+    return true
+  }
+
   return {
     addressToToken,
-    addressesToTokens
+    addressesToTokens,
+    allowTokenAmount
   }
 }
 

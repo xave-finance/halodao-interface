@@ -12,7 +12,7 @@ import { PoolData } from '../models/PoolData'
 import { useZap } from 'halo-hooks/amm/useZap'
 import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
-import { MetamaskErrorCode } from 'constants/errors'
+import { MetamaskRPCErrorCode } from 'constants/errors'
 import { useTranslation } from 'react-i18next'
 
 enum AddLiquidityState {
@@ -88,7 +88,7 @@ const SingleSidedLiquidity = ({
         calcBaseAmount = Number(val) - Number(swapAmount)
       } catch (e) {
         console.log('error calculate', e)
-        if ((e as any).code === MetamaskErrorCode.Reverted) {
+        if ((e as any).code === MetamaskRPCErrorCode.reverted) {
           setErrorMessage(t('error-vm-exception'))
         } else {
           setErrorMessage((e as any).message)

@@ -57,7 +57,7 @@ import { AmmRewardsVersion, getAmmRewardsContractAddress } from 'utils/ammReward
 import { useHALORewardsContract, useTokenContract } from 'hooks/useContract'
 import { useTransactionAdder } from 'state/transactions/hooks'
 import { consoleLog } from 'utils/simpleLogger'
-import { MetamaskErrorCode } from 'constants/errors'
+import { MetamaskProviderErrorCode } from 'constants/errors'
 import { BigNumber } from '@ethersproject/bignumber'
 import { addPendingRewards, didAlreadyMigrate } from 'utils/firebaseHelper'
 import { AlertCircle, Check, GitPullRequest } from 'react-feather'
@@ -845,7 +845,7 @@ export default function FarmPoolCard({
       console.error('Migration error: ', e)
 
       // when txn signature is canceled
-      if ((e as any).code === MetamaskErrorCode.Cancelled) {
+      if ((e as any).code === MetamaskProviderErrorCode.userRejectedRequest) {
         setIsTxInProgress(false)
       }
 

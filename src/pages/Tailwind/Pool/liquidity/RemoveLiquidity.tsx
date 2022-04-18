@@ -1,40 +1,45 @@
 import React, { useState } from 'react'
 import AmountSlider from 'components/Tailwind/InputFields/AmountSlider'
-import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import CurrencyLogo from 'components/CurrencyLogo'
 import PrimaryButton, { PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
 import { PoolData } from '../models/PoolData'
-import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
-import { parseEther } from 'ethers/lib/utils'
-import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { bigNumberToNumber } from 'utils/bigNumberHelper'
+import { TokenAmount } from '@halodao/sdk'
+import usePoolInvest from 'halo-hooks/amm-v2/usePoolInvest'
+import usePoolCalculator from 'halo-hooks/amm-v2/usePoolCalculator'
+import { formatUnits } from '@ethersproject/units'
+import { consoleLog } from 'utils/simpleLogger'
 
 interface RemoveLiquidityProps {
   pool: PoolData
 }
 
 const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
-  const [amountPercentage, setAmountPercentage] = useState(0)
-  const [token0Amount, setToken0Amount] = useState(0)
-  const [token1Amount, setToken1Amount] = useState(0)
-  const { getFutureTime } = useTime()
-  const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
-  const [errorObject, setErrorObject] = useState<any>(undefined)
-
   const token0 = pool.tokens[0].token
   const token1 = pool.tokens[1].token
-  const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, token0, token1)
+
+  const { calculateTokensOut } = usePoolCalculator(pool)
+  const { withdraw } = usePoolInvest(pool.vaultPoolId, [token0, token1])
+  const [amountPercentage, setAmountPercentage] = useState(0)
+  const [token0Amount, setToken0Amount] = useState(new TokenAmount(token0, '0'))
+  const [token1Amount, setToken1Amount] = useState(new TokenAmount(token1, '0'))
+  const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
+  const [errorObject, setErrorObject] = useState<any>(undefined)
 
   const updateAmountPercentage = async (percentage: number) => {
     setAmountPercentage(percentage)
 
-    const lpAmount = bigNumberToNumber(pool.userInfo.held) * (percentage * 0.01)
-    const withdrawAmount = percentage === 100 ? pool.userInfo.held : parseEther(`${lpAmount}`)
-    const tokenAmounts = await viewWithdraw(withdrawAmount)
-    setToken0Amount(Number(tokenAmounts[0]))
-    setToken1Amount(Number(tokenAmounts[1]))
+    const withdrawAmount = pool.userInfo.held.mul(percentage).div(100)
+    const tokenAmounts = await calculateTokensOut(withdrawAmount)
+    consoleLog(
+      'tokenAmounts',
+      formatUnits(tokenAmounts[0], token1.decimals),
+      formatUnits(tokenAmounts[1], token0.decimals)
+    )
+    setToken0Amount(new TokenAmount(token0, tokenAmounts[0].toString()))
+    setToken1Amount(new TokenAmount(token1, tokenAmounts[1].toString()))
 
     if (percentage > 0) {
       setRemoveButtonState(PrimaryButtonState.Enabled)
@@ -47,22 +52,20 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
     setRemoveButtonState(PrimaryButtonState.InProgress)
 
     try {
-      const lpAmount = bigNumberToNumber(pool.userInfo.held) * (Number(amountPercentage) * 0.01)
-      const withdrawAmount = amountPercentage === 100 ? pool.userInfo.held : parseEther(`${lpAmount}`)
-      const deadline = getFutureTime()
-      const tx = await withdraw(withdrawAmount, deadline)
+      const withdrawAmount = pool.userInfo.held.mul(amountPercentage).div(100)
+      const tx = await withdraw(withdrawAmount, [token0Amount.toExact(), token1Amount.toExact()])
       await tx.wait()
 
       setAmountPercentage(0)
-      setToken0Amount(0)
-      setToken1Amount(0)
+      setToken0Amount(new TokenAmount(token0, '0'))
+      setToken1Amount(new TokenAmount(token1, '0'))
       setRemoveButtonState(PrimaryButtonState.Disabled)
 
       ReactGA.event({
         category: 'Liquidity',
         action: 'Remove Liquidity',
         label: pool.name,
-        value: lpAmount
+        value: bigNumberToNumber(withdrawAmount)
       })
     } catch (err) {
       console.error(err)
@@ -80,14 +83,14 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       <div className="mt-4">You will receive</div>
       <div className="mt-2 py-2 md:px-8 border-t border-b border-gray-200">
         <div className="flex justify-between">
-          <div>{formatNumber(token0Amount, NumberFormat.long)}</div>
+          <div>{token0Amount.toFixed(2, { groupSeparator: ',' })}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={token0} />
             <span>{token0.symbol}</span>
           </div>
         </div>
         <div className="flex justify-between mt-2">
-          <div>{formatNumber(token1Amount, NumberFormat.long)}</div>
+          <div>{token1Amount.toFixed(2, { groupSeparator: ',' })}</div>
           <div className="flex space-x-2">
             <CurrencyLogo currency={token1} />
             <span>{token1.symbol}</span>

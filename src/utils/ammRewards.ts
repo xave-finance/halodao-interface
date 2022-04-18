@@ -1,6 +1,6 @@
 import { ChainId } from '@halodao/sdk'
+import { getHaloAddresses } from 'halo-hooks/useHaloAddresses'
 import { ZERO_ADDRESS } from '../constants'
-import { getHaloAddresses } from './haloAddresses'
 
 export enum AmmRewardsVersion {
   Latest = 'latest', // V2
