@@ -35,8 +35,7 @@ const HeaderRow = styled(RowBetween)`
     flex-direction: column;
   `};
   flex-direction: column;
-  width: 60%;
-  padding-right: 2rem;
+  width: 40%;
 `
 
 const TitleRow = styled(RowBetween)`

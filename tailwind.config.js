@@ -3,6 +3,10 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   important: true,
   theme: {
+    fontSize: {
+      '9px': '9px',
+      '24px': '24px'
+    },
     extend: {
       fontFamily: {
         fredoka: ['Fredoka One', 'ui-serif']
@@ -60,6 +64,10 @@ module.exports = {
       },
       height: {
         tokenInput: '80px'
+      },
+      backgroundImage: {
+        stakeCard:
+          'radial-gradient(50.72% 70.72% at 100% 100%, rgba(71, 46, 219, 0.7) -20%, rgba(108, 108, 234, 0.35) 18.65%, rgba(45, 183, 196, 0.308) 58.75%, rgba(45, 183, 196, 0) 100%)'
       }
     }
   },
