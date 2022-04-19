@@ -44,7 +44,8 @@ import {
   useRewardTokenPerSecond,
   useTotalAllocPoint,
   useUnclaimedRewarderRewardsPerPool,
-  useRewarderUSDPrice
+  useRewarderUSDPrice,
+  useGetBaseApr
 } from 'halo-hooks/useRewards'
 import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
 import { ErrorText } from 'components/Alerts'
@@ -557,6 +558,9 @@ export default function FarmPoolCard({
 
   const addTransaction = useTransactionAdder()
 
+  // Get USD HLP base apr
+  const baseAPR = useGetBaseApr(poolInfo.address, poolInfo.pair)
+
   /**
    * APY computation Rewards
    */
@@ -899,7 +903,7 @@ export default function FarmPoolCard({
             }
           }}
         >
-          <StyledRowFixed width="18%">
+          <StyledRowFixed width="22%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -908,7 +912,13 @@ export default function FarmPoolCard({
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="18%">
+          <StyledRowFixed width="16%">
+            <LabelText className="first">{t('baseApr')}:</LabelText>
+            <StyledTextForValue>
+              {baseAPR > 0 ? `${formatNumber(baseAPR, NumberFormat.long)}%` : '--'}
+            </StyledTextForValue>
+          </StyledRowFixed>
+          <StyledRowFixed width="16%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <div className="flex flex-row">
               <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>

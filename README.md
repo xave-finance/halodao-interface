@@ -66,7 +66,16 @@ yarn deploy:<target>
 - `dev-beta` (dev.beta.app.halodao.com)
 - `beta` (beta.app.halodao.com)
 - `prod` (app.halodao.com)
+
 ## Contributions
 
 **Please open all pull requests against the `develop` branch.**
 CI checks will run against all PRs.
+
+## Feature Notes
+
+### Base APR
+
+To calculate for base APR, we need to know the first deposit transaction of each pool. We currently store this info under `DEPOSIT_TXHASH` constant on `src/constants/pools.ts`.
+
+When adding a new pool, don't forget to add the first deposit tx of the pool to the `DEPOSIT_TXHASH` constant or the base APR won't be displayed.
