@@ -3,13 +3,17 @@ import { useSelector } from 'react-redux'
 import { AppState } from 'state'
 import { CachedPool } from 'state/pool/reducer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import xRNBWLogo from '../../../assets/images/xrnbw-token.png'
+import StakeCard from '../../../components/Tailwind/Cards/StakeCard'
+import { useTranslation } from 'react-i18next'
+import useTVLInfo from '../../../halo-hooks/useTVLInfo'
 
 const PageHeaderRight = () => {
   const [stakeableValue, setStakeableValue] = useState(0)
   const [stakedValue, setStakedValue] = useState(0)
   const [rewardsEarned, setRewardsEarned] = useState(0)
   const cachedPools = useSelector<AppState, CachedPool[]>(state => state.pool.pools)
+  const { t } = useTranslation()
+  const { liquidityPools } = useTVLInfo()
 
   useEffect(() => {
     let totalStakeable = 0
@@ -35,24 +39,11 @@ const PageHeaderRight = () => {
   }, [cachedPools])
 
   return (
-    <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
-      <div className="flex-auto flex flex-col space-y-2">
-        <div className="flex-auto bg-primary-light py-4 px-6 rounded-card">
-          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Stakeable HLP value</div>
-          <div className="text-2xl font-semibold">{formatNumber(stakeableValue, NumberFormat.usd)}</div>
-        </div>
-        <div className="flex-auto bg-primary-light py-4 px-6 rounded-card">
-          <div className="text-xs font-extrabold tracking-widest text-primary uppercase">My Staked HLP value</div>
-          <div className="text-2xl font-semibold">{formatNumber(stakedValue, NumberFormat.usd)}</div>
-        </div>
-      </div>
-      <div className="flex-auto bg-primary-light py-4 px-6 rounded-card flex flex-col">
-        <div className="mb-2">
-          <img width={'85px'} src={xRNBWLogo} alt="xRNBW" />
-        </div>
-        <div className="text-xs font-extrabold tracking-widest text-primary uppercase">Unclaimed xRNBW Earned</div>
-        <div className="text-2xl font-semibold">{formatNumber(rewardsEarned)}</div>
-      </div>
+    <div className="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 pb-2">
+      <StakeCard title={t('totalPoolValue')} value={formatNumber(liquidityPools, NumberFormat.usd)} />
+      <StakeCard title={t('poolSummaryHaloEarned')} value={formatNumber(rewardsEarned)} />
+      <StakeCard title={t('poolSummaryStaked')} value={formatNumber(stakedValue, NumberFormat.usd)} />
+      <StakeCard title={t('poolSummaryStakeable')} value={formatNumber(stakeableValue, NumberFormat.usd)} />
     </div>
   )
 }

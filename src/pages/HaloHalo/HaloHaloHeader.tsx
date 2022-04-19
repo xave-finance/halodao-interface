@@ -4,8 +4,6 @@ import { RowBetween } from '../../components/Row'
 import XRNBW from '../../assets/svg/xrnbw-token.svg'
 
 const StyledHaloHaloHeader = styled.div`
-  padding: 30px 0 0 30px;
-  margin-bottom: -4px;
   width: 100%;
   max-width: 420px;
   color: ${({ theme }) => theme.text2};
