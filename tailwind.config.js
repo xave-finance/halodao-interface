@@ -3,11 +3,11 @@ module.exports = {
   darkMode: false, // or 'media' or 'class'
   important: true,
   theme: {
-    fontSize: {
-      '9px': '9px',
-      '24px': '24px'
-    },
     extend: {
+      fontSize: {
+        '9px': '9px',
+        '24px': '24px'
+      },
       fontFamily: {
         fredoka: ['Fredoka One', 'ui-serif']
       },
