@@ -10,7 +10,7 @@ interface TimeObject {
   countdown?: CurrentEpoch
 }
 
-const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
+const EpochReleaseTimerCard = ({ event, content, countdown }: TimeObject) => {
   const Content = styled.div`
     display: flex;
     justify-content: space-between;
@@ -145,10 +145,8 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
                   <div>
                     <p>Hours</p>
                     <h2>
-                      <h2>
-                        {' '}
-                        {IfDoubleDigit(ConvertToString(countdown?.hours)) ? `0${countdown?.hours}` : countdown?.hours}
-                      </h2>
+                      {' '}
+                      {IfDoubleDigit(ConvertToString(countdown?.hours)) ? `0${countdown?.hours}` : countdown?.hours}
                     </h2>
                   </div>
                   <div>
@@ -159,10 +157,6 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
                         : countdown?.minutes}
                     </h2>
                   </div>
-                  {/*<div>*/}
-                  {/*  <p>Seconds</p>*/}
-                  {/*  <h2>{countdown?.seconds}</h2>*/}
-                  {/*</div>*/}
                 </CountDown>
               </>
             ) : (
@@ -189,4 +183,4 @@ const EventInfoCard = ({ event, content, countdown }: TimeObject) => {
   )
 }
 
-export default EventInfoCard
+export default EpochReleaseTimerCard

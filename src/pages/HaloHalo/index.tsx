@@ -33,7 +33,7 @@ import { useActiveWeb3React } from '../../hooks'
 import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
-import EventInfoCard from '../../components/Tailwind/Cards/EventInfoCard'
+import EpochReleaseTimerCard from '../../components/Tailwind/Cards/EpochReleaseTimerCard'
 import useEpochCountdown from '../../halo-hooks/useEpochCountdown'
 import useTVLInfo from '../../halo-hooks/useTVLInfo'
 
@@ -125,7 +125,7 @@ const DepositWrapper = styled.div`
   width: 100%;
   border: 1px solid #15006d;
   border-radius: 4px;
-  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
   padding: 30px 80px;
   height: 519px;
   ${({ theme }) => theme.mediaWidth.upToMedium`
@@ -159,7 +159,7 @@ const HaloIngredients = styled.img`
 `
 
 const HaloHaloPairText = styled.div`
-  margin: 0 0 0 0px;
+  margin: 0 0 0 0;
   font-style: italic;
   font-family: Open Sans;
   font-weight: 600;
@@ -312,7 +312,7 @@ export default function HaloHalo() {
             </VoteCard>
           </VoteCardWrapper>
           <CustomWithProtected>
-            <EventInfoCard
+            <EpochReleaseTimerCard
               event={true}
               content={{
                 title: 'Countdown to next rewards epoch',
@@ -419,30 +419,6 @@ export default function HaloHalo() {
       <EmptyPageWrapper>
         <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
       </EmptyPageWrapper>
-      {/*<div style={{ marginTop: '120px', height: '248px', maxWidth: '476px', width: '100%' }}>*/}
-      {/*  <EventInfoCard*/}
-      {/*    event={false}*/}
-      {/*    content={{*/}
-      {/*      title: 'Total Farm TVL',*/}
-      {/*      deposit: '20,304,250.00 USD',*/}
-      {/*      profit: '20,304,250.00 USD',*/}
-      {/*      liquidity: `$ ${Math.floor(Math.random() * 24000000 + 20000000)*/}
-      {/*        .toString()*/}
-      {/*        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`*/}
-      {/*    }}*/}
-      {/*  />*/}
-      {/*  <br />*/}
-      {/*  <EventInfoCard*/}
-      {/*    event={true}*/}
-      {/*    content={{*/}
-      {/*      title: 'Countdown to next rewards epoch',*/}
-      {/*      deposit: '20,304,250.00 USD',*/}
-      {/*      profit: '20,304,250.00 USD'*/}
-      {/*    }}*/}
-      {/*    countdown={epochCountdown}*/}
-      {/*  />*/}
-      {/*  <br />*/}
-      {/*</div>*/}
     </>
   )
 }

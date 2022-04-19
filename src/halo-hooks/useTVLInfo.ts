@@ -47,7 +47,7 @@ const useTVLInfo = () => {
 
   useEffect(() => {
     fetchTVLInfo()
-  }, [fetchTVLInfo]) //eslint-disable-line
+  }, [fetchTVLInfo, ChainId]) //eslint-disable-line
 
   return tvlInfo
 }

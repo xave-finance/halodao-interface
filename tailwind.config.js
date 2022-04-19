@@ -67,7 +67,8 @@ module.exports = {
       },
       backgroundImage: {
         stakeCard:
-          'radial-gradient(50.72% 70.72% at 100% 100%, rgba(71, 46, 219, 0.7) -20%, rgba(108, 108, 234, 0.35) 18.65%, rgba(45, 183, 196, 0.308) 58.75%, rgba(45, 183, 196, 0) 100%)'
+          'radial-gradient(50.72% 70.72% at 100% 100%, rgba(71, 46, 219, 0.7) -20%, rgba(108, 108, 234, 0.35) 18.65%, rgba(45, 183, 196, 0.308) 58.75%, rgba(45, 183, 196, 0) 100%)',
+        epochReleaseCard: 'linear-gradient(54.93deg, #15006d 12.16%, #15006d 33.28%, #5521b6 66.19%, #2db7c4 93.15%)'
       }
     }
   },
