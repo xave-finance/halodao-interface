@@ -15,8 +15,8 @@ const FarmSummary = ({ poolsInfo, tokenPrice }: FarmSummaryProps) => {
   const { t } = useTranslation()
 
   return (
-    <div className="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 pb-2">
-      <StakeCard title={t('totalPoolValue')} value="5000.03" />
+    <div className="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 pb-2 justify-end">
+      {/* <StakeCard title={t('totalPoolValue')} value="5000.03" /> */}
       <StakeCard title={t('poolSummaryHaloEarned')} value={summary.haloEarned} />
       <StakeCard title={t('poolSummaryStaked')} value={summary.stakedValue} />
       <StakeCard title={t('poolSummaryStakeable')} value={summary.stakeableValue} />
