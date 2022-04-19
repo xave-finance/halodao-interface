@@ -156,7 +156,8 @@ const LabelText = styled(Text)`
   display: none;
   ${({ theme }) => theme.mediaWidth.upToSmall`  
     display: block;
-     margin-top: 0 !important;
+    margin-top: 0 !important;
+    color: #838383;
   `};
   &.first {
     margin-top: 0 !important;
