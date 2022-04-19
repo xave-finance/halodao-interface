@@ -94,6 +94,8 @@ const Farm = () => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const allocPoints = useAllocPoints(lpTokenAddresses)
 
+  const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
+
   useEffect(() => {
     setPoolsInfo([])
     setV0PoolsInfo([])
@@ -148,7 +150,6 @@ const Farm = () => {
   useEffect(() => {
     setSelectedPoolAddress(address?.toLowerCase())
   }, [address])
-
   return (
     <>
       <PageWrapper id={`farm-page`}>
@@ -175,7 +176,12 @@ const Farm = () => {
             <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
           </Row>
         </FarmSummaryRow>
-        <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
+        <EmptyState
+          header={t('emptyStateTitleInFarm')}
+          subHeader={t('emptyStateSubTitleInFarm')}
+          loading={EmptyStateLoading}
+          walletLoading={setEmptyStateLoading}
+        />
         <FarmPoolTable
           poolsInfo={poolsInfo}
           v0PoolsInfo={v0PoolsInfo}
