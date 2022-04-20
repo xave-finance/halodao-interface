@@ -99,6 +99,8 @@ const Farm = () => {
   // Get the Farm TVL
   const { farm } = useTVLInfo()
 
+  const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
+
   useEffect(() => {
     setPoolsInfo([])
     setV0PoolsInfo([])
@@ -180,7 +182,12 @@ const Farm = () => {
             <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} farmTVL={formatNumber(farm, NumberFormat.usd)} />
           </Row>
         </FarmSummaryRow>
-        <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
+        <EmptyState
+          header={t('emptyStateTitleInFarm')}
+          subHeader={t('emptyStateSubTitleInFarm')}
+          loading={EmptyStateLoading}
+          walletLoading={setEmptyStateLoading}
+        />
         <FarmPoolTable
           poolsInfo={poolsInfo}
           v0PoolsInfo={v0PoolsInfo}
