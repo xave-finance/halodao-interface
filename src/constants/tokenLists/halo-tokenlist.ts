@@ -1,6 +1,6 @@
 import { ChainId, Token } from '@halodao/sdk'
 import { ethers } from 'ethers'
-import { ChainAddressMap, USDC } from '../../constants'
+import { ChainAddressMap, USDC } from '../index'
 
 // Supported token symbols
 // Adding new pairs step 1: Add tokensymbol enum
@@ -17,7 +17,8 @@ export enum TokenSymbol {
   fxPHP = 'fxPHP',
   tagPHP = 'tagPHP',
   XIDR = 'XIDR',
-  fxAUD = 'fxAUD'
+  fxAUD = 'fxAUD',
+  UST = 'UST'
 }
 
 export type AssimilatorAddressMap = {
@@ -55,9 +56,10 @@ const mainNetTokenList: Token[] = [
   new Token(ChainId.MAINNET, '0x70e8dE73cE538DA2bEEd35d14187F6959a8ecA96', 6, 'XSGD', 'Xfers SGD'),
   new Token(ChainId.MAINNET, '0x00000100F2A2bd000715001920eB70D229700085', 18, 'TCAD', 'True CAD'),
   // new Token(ChainId.MAINNET, '0x00006100F7090010005F1bd7aE6122c3C2CF0090', 18, 'TAUD', 'True AUD'),
-  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP')
+  new Token(ChainId.MAINNET, '0x00000000441378008EA67F4284A57932B1c000a5', 18, 'TGBP', 'True GBP'),
+  new Token(ChainId.MAINNET, '0xa693b19d2931d498c5b318df961919bb4aee87a5', 6, 'UST', 'UST'),
   // new Token(ChainId.MAINNET, '0x0000000000085d4780B73119b644AE5ecd22b376', 18, 'TUSD', 'True USD')
-  // new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP'),
+  new Token(ChainId.MAINNET, '0x3d147cD9aC957B2a5F968dE9d1c6B9d0872286a0', 18, 'fxPHP', 'handlePHP')
   // new Token(ChainId.MAINNET, '0x7A87104dfeA51853472fFafaD00D43e73284a135', 18, 'tagPHP', 'PHP Stablecoin')
   // new Token(ChainId.MAINNET, '0xebF2096E01455108bAdCbAF86cE30b6e5A72aa52', 6, 'XIDR', 'StraitsX: XIDR Token')
 ]
@@ -117,7 +119,8 @@ const mainNetAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: '0x8cfaae374f7617d76218c6FeCF97F818bd325071',
   [TokenSymbol.tagPHP]: '0x2575721EA3088C3e4247478ad1a99aB6905BBe3D',
   [TokenSymbol.XIDR]: '0xB80c3d54BF3A0E25B927a216F48ecE07dB1173Ed',
-  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: '0x89777df7E30B5eb02629BD71F41D12c2Fe93d10d'
 }
 
 const kovanAssimilators: AssimilatorAddressMap = {
@@ -134,7 +137,8 @@ const kovanAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 const polygonAssimilators: AssimilatorAddressMap = {
@@ -151,7 +155,8 @@ const polygonAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
   [TokenSymbol.tagPHP]: '0xAF329A1764cD25d47f088292f802b0c8751dCd19',
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 const arbAssimilators: AssimilatorAddressMap = {
@@ -168,7 +173,8 @@ const arbAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: '0x9f555A3115C2Da9574c84C4Dfb1617193aA7AFE2',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: '0x7Ab404C804Df8f9f8A44A63e3B546bC16E98b5bf'
+  [TokenSymbol.fxAUD]: '0x7Ab404C804Df8f9f8A44A63e3B546bC16E98b5bf',
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 const arbRinkebyAssimilators: AssimilatorAddressMap = {
@@ -185,7 +191,8 @@ const arbRinkebyAssimilators: AssimilatorAddressMap = {
   [TokenSymbol.fxPHP]: '0x805103E7574E432790e4AdB81607864CB1645295',
   [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
   [TokenSymbol.XIDR]: ethers.constants.AddressZero,
-  [TokenSymbol.fxAUD]: ethers.constants.AddressZero
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
 }
 
 // Allows switching in between assimilators when chainging network to be used by the useSwapToken() hook
@@ -195,4 +202,75 @@ export const haloAssimilators: { [chainId in ChainId]?: AssimilatorAddressMap } 
   [ChainId.MATIC]: polygonAssimilators,
   [ChainId.ARBITRUM]: arbAssimilators,
   [ChainId.ARBITRUM_TESTNET]: arbRinkebyAssimilators
+}
+
+// NOTE: Add in TOKEN_COINGECKO_NAME the token id if available in coingecko,
+// if not, add the contract address of the token in CHAINLINK_ORACLE
+export const TOKEN_COINGECKO_NAME: Record<string, string> = {
+  USDC: 'usd-coin',
+  XSGD: 'xsgd',
+  TGBP: 'truegbp'
+}
+
+export type ChainLinkAddressMap = {
+  [token in TokenSymbol]: string
+}
+
+const mainnetOracles: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: '0xa34317DB73e77d453b1B8d04550c44D10e981C8e',
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: '0x9481e7ad8BE6BbB22A8B9F7B9fB7588d1df65DF6',
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: '0x8b6d9085f310396C6E4f0012783E9f850eaa8a82'
+}
+const polygonOracles: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.tagPHP]: '0x218231089Bebb2A31970c3b77E96eCfb3BA006D1',
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
+}
+
+const arbOracles: ChainLinkAddressMap = {
+  [TokenSymbol.USDC]: ethers.constants.AddressZero,
+  [TokenSymbol.EURS]: ethers.constants.AddressZero,
+  [TokenSymbol.GBP]: ethers.constants.AddressZero,
+  [TokenSymbol.CHF]: ethers.constants.AddressZero,
+  [TokenSymbol.TUSD]: ethers.constants.AddressZero,
+  [TokenSymbol.TAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.TCAD]: ethers.constants.AddressZero,
+  [TokenSymbol.TGBP]: ethers.constants.AddressZero,
+  [TokenSymbol.XSGD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.fxPHP]: '0xfF82AAF635645fD0bcc7b619C3F28004cDb58574',
+  [TokenSymbol.tagPHP]: ethers.constants.AddressZero,
+  [TokenSymbol.XIDR]: ethers.constants.AddressZero,
+  [TokenSymbol.fxAUD]: ethers.constants.AddressZero,
+  [TokenSymbol.UST]: ethers.constants.AddressZero
+}
+
+export const CHAINLINK_ORACLES: { [chainId in ChainId]?: ChainLinkAddressMap } = {
+  [ChainId.MAINNET]: mainnetOracles,
+  [ChainId.MATIC]: polygonOracles,
+  [ChainId.ARBITRUM]: arbOracles
 }
