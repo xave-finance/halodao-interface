@@ -53,8 +53,7 @@ const Web3StatusError = styled(Web3StatusGeneric)`
   border: 1px solid ${({ theme }) => theme.red1};
   color: ${({ theme }) => theme.white};
   font-weight: 500;
-  :hover,
-  :focus {
+  :hover {
     opacity: 0.8;
   }
 `
@@ -205,6 +204,7 @@ function Web3StatusInner({ shorten }: Web3StatusProps) {
 
 export default function Web3Status({ shorten = false }: Web3StatusProps) {
   const { active, account } = useWeb3React()
+
   const contextNetwork = useWeb3React(NetworkContextName)
 
   const { ENSName } = useENSName(account ?? undefined)

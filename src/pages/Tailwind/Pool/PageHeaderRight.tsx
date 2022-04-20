@@ -4,8 +4,11 @@ import { AppState } from 'state'
 import { CachedPool } from 'state/pool/reducer'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import xRNBWLogo from '../../../assets/images/xrnbw-token.png'
+import { useActiveWeb3React } from '../../../hooks'
 
 const PageHeaderRight = () => {
+  const { account } = useActiveWeb3React()
+
   const [stakeableValue, setStakeableValue] = useState(0)
   const [stakedValue, setStakedValue] = useState(0)
   const [rewardsEarned, setRewardsEarned] = useState(0)
@@ -16,23 +19,25 @@ const PageHeaderRight = () => {
     let totalStaked = 0
     let totalRewardsEarned = 0
 
-    for (const pool of cachedPools) {
-      const lpTokenPrice = pool.lpTokenPrice ?? 1
-      if (pool.lpTokenBalance) {
-        totalStakeable += pool.lpTokenBalance * lpTokenPrice
-      }
-      if (pool.lpTokenStaked) {
-        totalStaked += pool.lpTokenStaked * lpTokenPrice
-      }
-      if (pool.pendingRewards) {
-        totalRewardsEarned += pool.pendingRewards
+    if (account) {
+      for (const pool of cachedPools) {
+        const lpTokenPrice = pool.lpTokenPrice ?? 1
+        if (pool.lpTokenBalance) {
+          totalStakeable += pool.lpTokenBalance * lpTokenPrice
+        }
+        if (pool.lpTokenStaked) {
+          totalStaked += pool.lpTokenStaked * lpTokenPrice
+        }
+        if (pool.pendingRewards) {
+          totalRewardsEarned += pool.pendingRewards
+        }
       }
     }
 
     setStakeableValue(totalStakeable)
     setStakedValue(totalStaked)
     setRewardsEarned(totalRewardsEarned)
-  }, [cachedPools])
+  }, [cachedPools]) //eslint-disable-line
 
   return (
     <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">

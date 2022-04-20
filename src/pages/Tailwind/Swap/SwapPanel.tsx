@@ -22,7 +22,7 @@ import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 
 const SwapPanel = () => {
-  const { account, error, chainId } = useWeb3React()
+  const { account, chainId } = useWeb3React()
 
   const [toCurrency, setToCurrency] = useState(
     chainId ? (haloTokenList[chainId as ChainId] as Token[])[0] : (HALO[ChainId.MAINNET] as Token)
@@ -300,7 +300,7 @@ const SwapPanel = () => {
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
 
-    if (!account && !error) {
+    if (!account) {
       return (
         <div className="mt-2">
           <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />

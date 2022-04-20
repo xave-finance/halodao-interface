@@ -33,10 +33,10 @@ enum PoolFilter {
 }
 
 const Pool = () => {
+  const { chainId, account } = useActiveWeb3React()
+
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
-
-  const { chainId } = useActiveWeb3React()
   const { t } = useTranslation()
 
   const defaultPoolMap = (filter: PoolFilter) => {
@@ -120,16 +120,20 @@ const Pool = () => {
         </div>
       </div>
 
-      <div className="mt-6 md:mt-12">
-        <PoolColumns />
-      </div>
-
-      <PoolTable poolMap={poolMap} isActivePools={true} />
-
-      {inactivePoolMap.length > 0 && (
+      {account && (
         <>
-          <div className="mt-8 mb-4">{t('inactive pools')}</div>
-          <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
+          <div className="mt-6 md:mt-12">
+            <PoolColumns />
+          </div>
+
+          <PoolTable poolMap={poolMap} isActivePools={true} />
+
+          {inactivePoolMap.length > 0 && (
+            <>
+              <div className="mt-8 mb-4">{t('inactive pools')}</div>
+              <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
+            </>
+          )}
         </>
       )}
     </PageWrapper>
