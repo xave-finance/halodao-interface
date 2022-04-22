@@ -1,21 +1,22 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
-import { useCallback, useEffect, useState } from 'react'
-import { HALODAO_EXCHANGE_SUBGRAPH } from '../constants'
+import { useEffect, useState } from 'react'
+import { HALODAO_EXCHANGE_SUBGRAPH_HOSTED, HALODAO_EXCHANGE_SUBGRAPH_STUDIO } from '../constants'
 import { ChainId } from '@halodao/sdk'
+
 interface TVL {
   liquidityPools: number
   farm: number
   vestingBalance: number
 }
+
 const useTVLInfo = () => {
   const [tvlInfo, setTvlInfo] = useState<TVL>({
     liquidityPools: 0,
     farm: 0,
     vestingBalance: 0
   })
-  const APIURL = HALODAO_EXCHANGE_SUBGRAPH[ChainId.MAINNET]
-  const fetchTVLInfo = useCallback(async () => {
-    const tvlQuery = `
+
+  const tvlQuery = `
       query {
         tvls(first: 1) {
           id
@@ -25,29 +26,54 @@ const useTVLInfo = () => {
         }
       }
     `
+
+  async function getStudio() {
+    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_STUDIO[ChainId.MAINNET]
     const client = new ApolloClient({
       uri: APIURL,
       cache: new InMemoryCache()
     })
-    client
-      .query({
-        query: gql(tvlQuery)
-      })
-      .then(data => {
-        setTvlInfo({
-          liquidityPools: data.data.tvls[0].liquidityPools,
-          farm: data.data.tvls[0].farm,
-          vestingBalance: data.data.tvls[0].vestingBalance
-        })
-      })
-      .catch(err => {
-        console.log('Error fetching data: ', err)
-      })
-  }, [])//eslint-disable-line
+    return client.query({
+      query: gql(tvlQuery)
+    })
+  }
+
+  async function getHosted() {
+    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_HOSTED[ChainId.MAINNET]
+    const client = new ApolloClient({
+      uri: APIURL,
+      cache: new InMemoryCache()
+    })
+    return client.query({
+      query: gql(tvlQuery)
+    })
+  }
+
+  function setData(data: any) {
+    setTvlInfo({
+      liquidityPools: data.data.tvls[0].liquidityPools,
+      farm: data.data.tvls[0].farm,
+      vestingBalance: data.data.tvls[0].vestingBalance
+    })
+  }
 
   useEffect(() => {
-    fetchTVLInfo()
-  }, [fetchTVLInfo, ChainId]) //eslint-disable-line
+    try {
+      getStudio()
+        .then(data => {
+          setData(data)
+        })
+        .catch(err => {
+          console.log('Error fetching data on Studio: ', err)
+          console.log('Trying to get data in Hosted')
+          getHosted().then(data => {
+            setData(data)
+          })
+        })
+    } catch (e) {
+      console.error('Error fetching data in Studio and Hosted')
+    }
+  }, [ChainId]) //eslint-disable-line
 
   return tvlInfo
 }
