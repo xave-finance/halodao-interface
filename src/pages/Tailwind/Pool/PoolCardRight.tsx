@@ -14,7 +14,11 @@ const PoolCardRight = ({ pool, isActivePool }: PoolCardRightProps) => {
   const history = useHistory()
 
   const stake = () => {
-    history.push(`/farm/${pool.address}`)
+    return isActivePool && pool.held > 0
+      ? history.push(`/farm/${pool.address}`)
+      : () => {
+          // silent
+        }
   }
 
   const lpToken0Price = pool.weights.token0 * (1 / pool.rates.token0)
@@ -59,17 +63,7 @@ const PoolCardRight = ({ pool, isActivePool }: PoolCardRightProps) => {
           <div className="font-fredoka text-4xl">{formatNumber(pool.held)} HLP</div>
         </div>
         <div className="flex items-end">
-          <PoolBigButton
-            title="Stake it"
-            isEnabled={pool.held > 0}
-            onClick={
-              isActivePool && pool.held > 0
-                ? stake
-                : () => {
-                    // silent
-                  }
-            }
-          />
+          <PoolBigButton title="Stake it" isEnabled={pool.held > 0} onClick={stake} />
         </div>
       </div>
     </div>
