@@ -202,6 +202,7 @@ export default function HaloHalo() {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
+  const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -316,7 +317,14 @@ export default function HaloHalo() {
           </CardSection>
         </CardSectionContainer>
 
-        <EmptyState header={t('emptyStateTitleInVest')} subHeader={t('emptyStateSubTitleInVest')} />
+        <EmptyState
+          header={t('emptyStateTitleInVest')}
+          subHeader={t('emptyStateSubTitleInVest')}
+          loading={EmptyStateLoading}
+          walletLoading={() => {
+            setEmptyStateLoading(true)
+          }}
+        />
       </PageWrapper>
     </>
   )

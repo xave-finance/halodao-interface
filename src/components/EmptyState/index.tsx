@@ -9,12 +9,42 @@ import { injected, portis } from '../../connectors'
 import Row from '../Row'
 import { RowBetween } from 'components/Row'
 import styled from 'styled-components'
-import { ExternalLink } from '../../theme'
 import { Text } from 'rebass'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 
 import Option from './Option'
+import PendingView from '../WalletModal/PendingView'
+import Modal from '../Modal'
+import { ExternalLink } from '../../theme'
+
+const ContentWrapper = styled.div`
+  padding: 2rem;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
+`
+
+const UpperSection = styled.div`
+  position: relative;
+  width: 100%;
+
+  h5 {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  h5:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin-top: 0;
+    font-weight: 500;
+  }
+`
 
 const WalletRow = styled(Row)`
   ${({ theme }) => theme.mediaWidth.upToSmall`  
@@ -83,11 +113,25 @@ const WALLET_VIEWS = {
   PENDING: 'pending'
 }
 
-const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string }) => {
+const EmptyState = ({
+  header,
+  subHeader,
+  loading,
+  walletLoading
+}: {
+  header?: string
+  subHeader?: string
+  loading: boolean
+  walletLoading: (value: boolean) => void
+}) => {
   const { connector, activate } = useWeb3React()
-  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
+  const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT) //eslint-disable-line
   const [pendingWallet, setPendingWallet] = useState<AbstractConnector | undefined>()
-  const [pendingError, setPendingError] = useState<boolean>()
+  const [pendingError, setPendingError] = useState<boolean>() //eslint-disable-line
+
+  const handleLoading = (value: boolean) => {
+    walletLoading(value)
+  }
 
   const tryActivation = async (connector: AbstractConnector | undefined) => {
     let name = ''
@@ -105,23 +149,25 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
     })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
-    console.log(walletView)
-    console.log(pendingWallet)
 
     // if the connector is walletconnect and the user has already tried to connect, manually reset the connector
     if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
       connector.walletConnectProvider = undefined
     }
-
-    connector &&
-      activate(connector, undefined, true).catch(error => {
-        if (error instanceof UnsupportedChainIdError) {
-          activate(connector) // a little janky...can't use setError because the connector isn't set
-        } else {
-          setPendingError(true)
-          console.log(pendingError)
-        }
-      })
+    const walletFunction = async () => {
+      connector &&
+        (await activate(connector, undefined, true).catch(error => {
+          if (error instanceof UnsupportedChainIdError) {
+            activate(connector) // a little janky...can't use setError because the connector isn't set
+            console.log('aspdoaspok')
+          } else {
+            setPendingError(true)
+          }
+        }))
+    }
+    walletFunction().then(() => {
+      handleLoading(false)
+    })
   }
   // get wallets user can switch too, depending on device/browser\
   const getOptions = () => {
@@ -141,6 +187,9 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
           return (
             <Option
               onClick={() => {
+                if (option.name === 'Fortmatic' || option.name === 'Portis') {
+                  handleLoading(true)
+                }
                 option.connector !== connector && !option.href && tryActivation(option.connector)
               }}
               id={`connect-${key}`}
@@ -181,6 +230,9 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
           <Option
             id={`connect-${key}`}
             onClick={() => {
+              if (option.name === 'Fortmatic' || option.name === 'Portis') {
+                handleLoading(true)
+              }
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
                 : !option.href && tryActivation(option.connector)
@@ -199,19 +251,40 @@ const EmptyState = ({ header, subHeader }: { header?: string; subHeader?: string
 
     if (!account && !error) {
       return (
-        <MainRow>
-          <TitleRow>
-            <TitleText>{header}</TitleText>
-          </TitleRow>
-          <SubTitleRow>
-            <SubTitleText>{subHeader}</SubTitleText>
-          </SubTitleRow>
-          <WalletRow>{getOptions()}</WalletRow>
-          <Blurb style={{ lineHeight: '130%' }}>
-            <span>New to Ethereum? &nbsp;</span>{' '}
-            <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
-          </Blurb>
-        </MainRow>
+        <>
+          <Modal
+            isOpen={loading}
+            onDismiss={() => {
+              walletLoading(false)
+            }}
+            minHeight={false}
+            maxHeight={90}
+          >
+            <UpperSection>
+              <ContentWrapper>
+                <PendingView
+                  connector={pendingWallet}
+                  error={false}
+                  setPendingError={setPendingError}
+                  tryActivation={tryActivation}
+                />
+              </ContentWrapper>
+            </UpperSection>
+          </Modal>
+          <MainRow>
+            <TitleRow>
+              <TitleText>{header}</TitleText>
+            </TitleRow>
+            <SubTitleRow>
+              <SubTitleText>{subHeader}</SubTitleText>
+            </SubTitleRow>
+            <WalletRow>{getOptions()}</WalletRow>
+            <Blurb style={{ lineHeight: '130%' }}>
+              <span>New to Ethereum? &nbsp;</span>{' '}
+              <ExternalLink href="https://ethereum.org/wallets/">Learn more about wallets</ExternalLink>
+            </Blurb>
+          </MainRow>
+        </>
       )
     } else {
       return <></>

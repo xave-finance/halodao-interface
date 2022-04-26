@@ -219,6 +219,8 @@ export const NETWORK_PARAMS: {
     */
 }
 
+// Adding this comment so we can tag a new commit hash
+// v2.1.6 - remove cap on bridge (updated on .env)
 const isBridgeCapped = process.env.REACT_APP_IS_BRIDGE_CAPPED || 'true'
 
 export const NETWORK_SUPPORTED_FEATURES: {
