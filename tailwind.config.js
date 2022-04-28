@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       fontSize: {
         '9px': '9px',
+        '12px': '12px',
         '24px': '24px'
       },
       fontFamily: {
