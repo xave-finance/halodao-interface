@@ -238,7 +238,7 @@ export default function HaloHaloWithdrawPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloHaloBalance} xRNBW
+                    WALLET BALANCE: {xHaloHaloBalance} xRNBW
                   </TYPE.body>
                 )}
               </RowBetween>

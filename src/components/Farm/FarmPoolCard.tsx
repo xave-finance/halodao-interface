@@ -1009,7 +1009,7 @@ export default function FarmPoolCard({
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                    WALLET BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
                   </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>
