@@ -58,9 +58,9 @@ const EpochReleaseTimerCard = ({ event, content, countdown }: TimeObject) => {
           </div>
           <img className="h-155.61 hidden sm:block" alt="" src={EpochCharacter} />
         </div>
-        <div className="flex m-4 space-x-8">
+        <div className="flex flex-col md:flex-row text-center md:text-left mx-4 md:space-x-8 space-y-2 md:space-y-0 mt-4 ">
           <div className="flex flex-col">
-            <p className="text-12px bold">DEPOSIT IN POOL </p>
+            <p className="text-12px bold ">DEPOSIT IN POOL </p>
             <h4 className="text-lg">{content.deposit}</h4>
           </div>
           <div className="flex flex-col">
