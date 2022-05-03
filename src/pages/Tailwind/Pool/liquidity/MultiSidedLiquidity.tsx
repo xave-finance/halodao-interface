@@ -118,9 +118,10 @@ const MultiSidedLiquidity = ({
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
+    console.log(baseInput)
     if (!isAddLiquidityEnabled) {
       setMainState(AddLiquidityState.Disabled)
-    } else if (baseInput !== '' && quoteInput !== '') {
+    } else if (baseInput !== '' && quoteInput !== '' && Number(baseInput) !== 0 && Number(quoteInput) !== 0) {
       const baseBalance = balances[0] ? Number(balances[0].toExact()) : 0
       const quoteBalance = balances[1] ? Number(balances[1]?.toExact()) : 0
 
