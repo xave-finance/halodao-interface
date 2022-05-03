@@ -64,8 +64,8 @@ const EpochReleaseTimerCard = ({ event, content, countdown }: TimeObject) => {
             <h4 className="text-lg">{content.deposit}</h4>
           </div>
           <div className="flex flex-col">
-            <p className="text-12px bold">MONTHLY PROFITS </p>
-            <h4 className="text-lg">{content.profit}</h4>
+            {/*<p className="text-12px bold">MONTHLY PROFITS </p>*/}
+            {/*<h4 className="text-lg">{content.profit}</h4>*/}
           </div>
         </div>
       </GradientCard>
