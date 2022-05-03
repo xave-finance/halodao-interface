@@ -118,7 +118,6 @@ const MultiSidedLiquidity = ({
    * Logic for updating "Supply" button
    **/
   useEffect(() => {
-    console.log(baseInput)
     if (!isAddLiquidityEnabled) {
       setMainState(AddLiquidityState.Disabled)
     } else if (baseInput !== '' && quoteInput !== '' && Number(baseInput) !== 0 && Number(quoteInput) !== 0) {
