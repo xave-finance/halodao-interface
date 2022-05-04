@@ -1,12 +1,8 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import { useEffect, useState } from 'react'
-import {
-  COINGECKO_API_URL,
-  HALO_TOKEN_ADDRESS,
-  HALODAO_EXCHANGE_SUBGRAPH_HOSTED,
-  HALODAO_EXCHANGE_SUBGRAPH_STUDIO
-} from '../constants'
+import { HALO_TOKEN_ADDRESS, HALODAO_EXCHANGE_SUBGRAPH_HOSTED, HALODAO_EXCHANGE_SUBGRAPH_STUDIO } from '../constants'
 import { ChainId } from '@halodao/sdk'
+import { GetPriceBy, getTokensUSDPrice } from '../utils/coingecko'
 
 interface TVL {
   liquidityPools: number
@@ -54,21 +50,13 @@ const useTVLInfo = () => {
   }
 
   async function setData(data: any) {
-    const uri = 'token_price/ethereum?contract_addresses='
-    const concatString = HALO_TOKEN_ADDRESS[ChainId.MAINNET]
-    let usdPrice = 0
-    const url = `${COINGECKO_API_URL}/simple/${uri}${concatString}&vs_currencies=usd`
-
-    const response = await fetch(url)
-    const price = await response.json()
-    for (const key in price) {
-      usdPrice = price[key].usd
-    }
+    // Get Mainnet RNBW price
+    const usdPrice = await getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? ''])
 
     setTvlInfo({
       liquidityPools: data.data.tvls[0].liquidityPools,
       farm: data.data.tvls[0].farm,
-      vestingBalance: data.data.tvls[0].vestingBalance * usdPrice
+      vestingBalance: data.data.tvls[0].vestingBalance * usdPrice[HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']
     })
   }
 
