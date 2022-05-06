@@ -13,6 +13,8 @@ import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { useParams } from 'react-router'
 import { AmmRewardsVersion } from 'utils/ammRewards'
 import { useActiveWeb3React } from 'hooks'
+import useTVLInfo from '../../halo-hooks/useTVLInfo'
+import { formatNumber, NumberFormat } from '../../utils/formatNumber'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1040px;
@@ -94,6 +96,9 @@ const Farm = () => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const allocPoints = useAllocPoints(lpTokenAddresses)
 
+  // Get the Farm TVL
+  const { farm } = useTVLInfo()
+
   const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
 
   useEffect(() => {
@@ -150,6 +155,7 @@ const Farm = () => {
   useEffect(() => {
     setSelectedPoolAddress(address?.toLowerCase())
   }, [address])
+
   return (
     <>
       <PageWrapper id={`farm-page`}>
@@ -173,7 +179,7 @@ const Farm = () => {
             </Row>
           </HeaderRow>
           <Row>
-            <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
+            <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} farmTVL={formatNumber(farm, NumberFormat.usd)} />
           </Row>
         </FarmSummaryRow>
         <EmptyState
