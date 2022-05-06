@@ -5,6 +5,7 @@ import { PoolInfo } from 'halo-hooks/usePoolInfo'
 import { TokenPrice } from 'halo-hooks/useTokenPrice'
 import StakeCard from '../Tailwind/Cards/StakeCard'
 import { useActiveWeb3React } from '../../hooks'
+import { ChainId } from '@halodao/sdk'
 
 interface FarmSummaryProps {
   poolsInfo: PoolInfo[]
@@ -19,7 +20,7 @@ const FarmSummary = ({ poolsInfo, tokenPrice, farmTVL }: FarmSummaryProps) => {
 
   return (
     <div className="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 pb-2">
-      <StakeCard title={t('totalPoolValue')} value={farmTVL} mainnet={chainId !== 1} />
+      <StakeCard title={t('totalPoolValue')} value={farmTVL} displayMainnetIndicator={chainId !== ChainId.MAINNET} />
       <StakeCard title={t('poolSummaryHaloEarned')} value={summary.haloEarned} />
       <StakeCard title={t('poolSummaryStaked')} value={summary.stakedValue} />
       <StakeCard title={t('poolSummaryStakeable')} value={summary.stakeableValue} />

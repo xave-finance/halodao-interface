@@ -7,6 +7,7 @@ import StakeCard from '../../../components/Tailwind/Cards/StakeCard'
 import { useTranslation } from 'react-i18next'
 import useTVLInfo from '../../../halo-hooks/useTVLInfo'
 import { useActiveWeb3React } from '../../../hooks'
+import { ChainId } from '@halodao/sdk'
 
 const PageHeaderRight = () => {
   const [stakeableValue, setStakeableValue] = useState(0)
@@ -45,7 +46,7 @@ const PageHeaderRight = () => {
       <StakeCard
         title={t('totalPoolValue')}
         value={formatNumber(liquidityPools, NumberFormat.usd)}
-        mainnet={chainId !== 1}
+        displayMainnetIndicator={chainId !== ChainId.MAINNET}
       />
       <StakeCard title={t('poolSummaryHaloEarned')} value={formatNumber(rewardsEarned)} />
       <StakeCard title={t('poolSummaryStaked')} value={formatNumber(stakedValue, NumberFormat.usd)} />
