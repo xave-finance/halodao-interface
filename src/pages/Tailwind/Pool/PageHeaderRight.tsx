@@ -44,7 +44,7 @@ const PageHeaderRight = () => {
   return (
     <div className="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 pb-2">
       <StakeCard
-        title={t('totalPoolValue')}
+        title={t('totalValueLocked')}
         value={formatNumber(liquidityPools, NumberFormat.usd)}
         displayMainnetIndicator={chainId !== ChainId.MAINNET}
       />
