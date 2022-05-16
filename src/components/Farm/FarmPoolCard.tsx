@@ -949,8 +949,8 @@ export default function FarmPoolCard({
               )}
             </div>
           </StyledRowFixed>
-          <StyledRowFixed width="18%">
-            <LabelText className="first">{t('totalPoolValue')}:</LabelText>
+          <StyledRowFixed width="20%">
+            <LabelText className="first">{t('totalValueLocked')}:</LabelText>
             <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="13%">
