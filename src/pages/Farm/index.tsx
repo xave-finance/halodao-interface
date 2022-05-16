@@ -13,6 +13,8 @@ import { useTokenPrice } from 'halo-hooks/useTokenPrice'
 import { useParams } from 'react-router'
 import { AmmRewardsVersion } from 'utils/ammRewards'
 import { useActiveWeb3React } from 'hooks'
+import useTVLInfo from '../../halo-hooks/useTVLInfo'
+import { formatNumber, NumberFormat } from '../../utils/formatNumber'
 
 const PageWrapper = styled(AutoColumn)`
   max-width: 1040px;
@@ -94,6 +96,11 @@ const Farm = () => {
   const [poolsInfo, setPoolsInfo] = useState<PoolInfo[]>([])
   const allocPoints = useAllocPoints(lpTokenAddresses)
 
+  // Get the Farm TVL
+  const { farm } = useTVLInfo()
+
+  const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
+
   useEffect(() => {
     setPoolsInfo([])
     setV0PoolsInfo([])
@@ -172,10 +179,15 @@ const Farm = () => {
             </Row>
           </HeaderRow>
           <Row>
-            <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} />
+            <FarmSummary poolsInfo={poolsInfo} tokenPrice={tokenPrice} farmTVL={formatNumber(farm, NumberFormat.usd)} />
           </Row>
         </FarmSummaryRow>
-        <EmptyState header={t('emptyStateTitleInFarm')} subHeader={t('emptyStateSubTitleInFarm')} />
+        <EmptyState
+          header={t('emptyStateTitleInFarm')}
+          subHeader={t('emptyStateSubTitleInFarm')}
+          loading={EmptyStateLoading}
+          walletLoading={setEmptyStateLoading}
+        />
         <FarmPoolTable
           poolsInfo={poolsInfo}
           v0PoolsInfo={v0PoolsInfo}

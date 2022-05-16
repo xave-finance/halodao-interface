@@ -20,7 +20,18 @@ import { ChainId } from '@halodao/sdk'
 import { useTranslation } from 'react-i18next'
 import PoolTable from './PoolTable'
 import { isInactivePool } from 'utils/poolInfo'
+import { TYPE } from '../../../theme'
+import { Maximize2, Minimize2 } from 'react-feather'
+import useTheme from '../../../hooks/useTheme'
+import styled from 'styled-components'
 
+const InactivePools = styled.div`
+  margin-top: 1rem;
+
+  .tbHeader {
+    margin-bottom: 0.5rem;
+  }
+`
 export interface PoolAddressPidMap {
   address: string
   pid: number | undefined
@@ -33,6 +44,7 @@ enum PoolFilter {
 }
 
 const Pool = () => {
+  const theme = useTheme()
   const dispatch = useDispatch<AppDispatch>()
   const rewardPoolAddresses = useLPTokenAddresses()
 
@@ -67,6 +79,7 @@ const Pool = () => {
 
   const [poolMap, setPoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.active))
   const [inactivePoolMap, setInactivePoolMap] = useState<PoolAddressPidMap[]>(defaultPoolMap(PoolFilter.inactive))
+  const [showInactiveSection, setShowInactiveSection] = useState(false)
 
   useEffect(() => {
     const pools: CachedPool[] = []
@@ -104,7 +117,7 @@ const Pool = () => {
   return (
     <PageWrapper>
       <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:items-center">
-        <div className="md:w-1/2 md:pr-16">
+        <div className="md:w-1/3 md:pr-16">
           <PageHeaderLeft
             subtitle="Add/Remove Liquidity"
             title="Pools"
@@ -115,7 +128,7 @@ const Pool = () => {
             }}
           />
         </div>
-        <div className="md:w-1/2">
+        <div className="md:w-2/3">
           <PageHeaderRight />
         </div>
       </div>
@@ -127,10 +140,26 @@ const Pool = () => {
       <PoolTable poolMap={poolMap} isActivePools={true} />
 
       {inactivePoolMap.length > 0 && (
-        <>
-          <div className="mt-8 mb-4">{t('inactive pools')}</div>
-          <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
-        </>
+        <InactivePools>
+          <TYPE.thHeader
+            className="tbHeader flex items-center cursor-pointer"
+            onClick={() => setShowInactiveSection(!showInactiveSection)}
+          >
+            <div className="text-primary">{t('inactive pools')}</div>
+            <div className="ml-2">
+              {showInactiveSection ? (
+                <Minimize2 size={16} color={theme.primary1} />
+              ) : (
+                <Maximize2 size={14} color={theme.primary1} />
+              )}
+            </div>
+          </TYPE.thHeader>
+          {showInactiveSection && (
+            <>
+              <PoolTable poolMap={inactivePoolMap} isActivePools={false} />
+            </>
+          )}
+        </InactivePools>
       )}
     </PageWrapper>
   )
