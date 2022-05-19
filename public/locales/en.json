@@ -144,7 +144,7 @@
   "errorMessageCurveNotWhitelistingStage": "Contracts are no longer whitelisting stage.",
   "errorMessageCurveAmountTooLarge": "This amount is too large to swap.",
   "errorMessageCurveSwapFailed": "Swap failed. Please try again",
-  "errorMessageCurveSwapHalt": "Pool has reached maximum inbalance. Swap back towards ideal ratios at cheaper fees.",
+  "errorMessageCurveSwapHalt": "Pool has reached maximum imbalance. Swap back towards ideal ratios at cheaper fees.",
   "errorMessageCurveERC20TransferFailed": "ERC20 transfer failed.",
   "errorMessageSubtractionOverflow": "Overflow Issue",
   "errorMessageMetamaskRejection": "User rejected transaction.",

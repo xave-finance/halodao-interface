@@ -14,6 +14,7 @@ import { useSwap } from 'halo-hooks/amm/useSwap'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MetamaskErrorCode } from 'constants/errors'
 import { useTranslation } from 'react-i18next'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 
 enum AddLiquidityState {
   NoAmount,
@@ -65,13 +66,12 @@ const SingleSidedLiquidity = ({
   const [quoteZapApproveState, quoteZapApproveCallback] = useTokenAllowance(quoteTokenAmount, zapAddress)
   const baseZapApproved = baseZapApproveState === ApprovalState.APPROVED
   const quoteZapApproved = quoteZapApproveState === ApprovalState.APPROVED
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const [errorMessage, setErrorMessage] = useState<any | undefined>(undefined)
 
   const onBaseInputUpdate = async (val: string) => {
     setZapInput(val)
     onZapAmountChanged(val)
     setErrorMessage(undefined)
-    console.log('errorMessage', errorMessage)
     if (val === '') return
 
     let calcBaseAmount = 0
@@ -85,9 +85,9 @@ const SingleSidedLiquidity = ({
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any).message)
+          setErrorMessage((e as any))
         }
       }
     } else {
@@ -97,13 +97,12 @@ const SingleSidedLiquidity = ({
         calcQuoteAmount = Number(val) - Number(swapAmount)
       } catch (e) {
         console.log('error calculate', e)
-        setErrorMessage((e as any).message)
+        setErrorMessage((e as any))
       }
     }
 
     setBaseAmount(calcBaseAmount.toString())
     setQuoteAmount(calcQuoteAmount.toString())
-    console.log('errorMessageAfter', errorMessage)
   }
 
   /**
@@ -219,27 +218,29 @@ const SingleSidedLiquidity = ({
             mainState === AddLiquidityState.Disabled
               ? 'Add Liquidity Disabled'
               : mainState === AddLiquidityState.NoAmount
-              ? 'Enter an amount'
-              : mainState === AddLiquidityState.NotConfigured
-              ? 'Configure slippage'
-              : mainState === AddLiquidityState.InsufficientBalance
-              ? 'Insufficient Balance'
-              : 'Supply'
+                ? 'Enter an amount'
+                : mainState === AddLiquidityState.NotConfigured
+                  ? 'Configure slippage'
+                  : mainState === AddLiquidityState.InsufficientBalance
+                    ? 'Insufficient Balance'
+                    : 'Supply'
           }
           state={
             errorMessage !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
-              ? PrimaryButtonState.Disabled
-              : mainState === AddLiquidityState.Approved
-              ? PrimaryButtonState.Enabled
-              : mainState === AddLiquidityState.Depositing
-              ? PrimaryButtonState.InProgress
-              : PrimaryButtonState.Disabled
+                ? PrimaryButtonState.Disabled
+                : mainState === AddLiquidityState.Approved
+                  ? PrimaryButtonState.Enabled
+                  : mainState === AddLiquidityState.Depositing
+                    ? PrimaryButtonState.InProgress
+                    : PrimaryButtonState.Disabled
           }
           onClick={() => onDeposit()}
         />
-        {errorMessage && <div className="mt-4 text-red-600 text-center text-sm">{errorMessage}</div>}
+        {errorMessage && <div className="mt-2">
+          <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+        </div>}
       </div>
     </>
   )

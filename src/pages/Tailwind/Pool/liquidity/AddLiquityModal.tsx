@@ -15,6 +15,7 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage, MetamaskErrorCode } from 'constants/errors'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -60,7 +61,7 @@ const AddLiquityModal = ({
   const [poolShare, setPoolShare] = useState(0)
   const [depositAmount, setDepositAmount] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const [errorMessage, setErrorMessage] = useState<any | undefined>(undefined)
   const { t } = useTranslation()
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
@@ -100,9 +101,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setErrorMessage(t('error-vm-exception'))
+            setErrorMessage({ message: t('error-vm-exception') })
           } else {
-            setErrorMessage((e as any).message)
+            setErrorMessage((e as any))
           }
         }
       } else {
@@ -113,9 +114,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setErrorMessage(t('error-vm-exception'))
+            setErrorMessage({ message: t('error-vm-exception') })
           } else {
-            setErrorMessage((e as any).message)
+            setErrorMessage((e as any))
           }
         }
       }
@@ -337,7 +338,9 @@ const AddLiquityModal = ({
               isMultisided ? confirmDeposit() : confirmZap()
             }}
           />
-          {errorMessage && <div className="mt-4 text-red-600 text-center text-sm">{errorMessage}</div>}
+          {errorMessage && <div className="mt-2">
+            <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+          </div>}
         </div>
       </>
     )
