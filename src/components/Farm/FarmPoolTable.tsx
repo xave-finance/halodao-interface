@@ -76,7 +76,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="20%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalValueLocked')}</TYPE.thHeader>
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalValueStaked')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
@@ -84,7 +84,7 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
                   <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="20%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="8%"></RowFixed>

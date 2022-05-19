@@ -963,7 +963,7 @@ export default function FarmPoolCard({
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="20%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
