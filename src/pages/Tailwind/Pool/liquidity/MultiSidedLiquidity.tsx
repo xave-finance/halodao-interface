@@ -206,29 +206,31 @@ const MultiSidedLiquidity = ({
             mainState === AddLiquidityState.Disabled
               ? 'Add Liquidity Disabled'
               : mainState === AddLiquidityState.NoAmount
-                ? 'Enter an amount'
-                : mainState === AddLiquidityState.InsufficientBalance
-                  ? 'Insufficient Balance'
-                  : 'Supply'
+              ? 'Enter an amount'
+              : mainState === AddLiquidityState.InsufficientBalance
+              ? 'Insufficient Balance'
+              : 'Supply'
           }
           state={
             errorMessage !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
-                ? PrimaryButtonState.Disabled
-                : mainState === AddLiquidityState.Approved
-                  ? PrimaryButtonState.Enabled
-                  : mainState === AddLiquidityState.Depositing
-                    ? PrimaryButtonState.InProgress
-                    : PrimaryButtonState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
+              ? PrimaryButtonState.Enabled
+              : mainState === AddLiquidityState.Depositing
+              ? PrimaryButtonState.InProgress
+              : PrimaryButtonState.Disabled
           }
           onClick={onDeposit}
         />
       </div>
 
-      {errorMessage && <div className="mt-2">
-        <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
-      </div>}
+      {errorMessage && (
+        <div className="mt-2">
+          <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+        </div>
+      )}
     </>
   )
 }
