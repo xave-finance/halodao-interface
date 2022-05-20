@@ -19,7 +19,8 @@ export enum CurveErrorMessage {
 
 export enum GeneralErrorMessage {
   SubtractionOverflow = 'SafeMath: subtraction overflow',
-  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.'
+  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.',
+  SafeMathDivisionByZero = 'SafeMath: division by zero'
 }
 
 export enum MetamaskErrorCode {

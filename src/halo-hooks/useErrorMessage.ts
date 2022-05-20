@@ -15,9 +15,8 @@ const useErrorMessage = () => {
 
   const getFriendlyErrorMessage = useCallback(
     (errorObject: HaloError) => {
-      console.log('LowerHalt', errorObject.message.includes(CurveErrorMessage.LowerHalt))
       const errorMap = new Map()
-      errorMap.set(CurveErrorMessage.CurveReentered, t('errorMessageCurveDefault'))
+      errorMap.set(CurveErrorMessage.CurveReentered, t('errorMessageCurveReentered'))
       errorMap.set(CurveErrorMessage.AllowanceDecreaseUnderflow, t('errorMessageCurveAllowance'))
       errorMap.set(CurveErrorMessage.ApprovalOverflow, t('errorMessageCurveAllowance'))
       errorMap.set(CurveErrorMessage.InsufficientAllowance, t('errorMessageCurveAllowance'))
@@ -35,6 +34,7 @@ const useErrorMessage = () => {
       errorMap.set(CurveErrorMessage.CADCTransferFailed, t('errorMessageCurveERC20TransferFailed'))
       errorMap.set(GeneralErrorMessage.SubtractionOverflow, t('errorMessageSubtractionOverflow'))
       errorMap.set(GeneralErrorMessage.MetamaskRejection, t('errorMessageMetamaskRejection'))
+      errorMap.set(GeneralErrorMessage.SafeMathDivisionByZero, t('errorMessageSafeMathDivisionByZero'))
       errorMap.set(ZapErrorMessage.NotEnoughLpAmount, t('error-liquidity-zap-reverted'))
       consoleLog('errorObject', errorObject)
       errorMap.forEach((value, key) => {
