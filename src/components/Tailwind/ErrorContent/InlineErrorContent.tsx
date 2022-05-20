@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
 
 interface InlineErrorContentProps {
-  errorObject: any,
-  displayDetails: Boolean,
+  errorObject: any
+  displayDetails: boolean
 }
 
 const InlineErrorContent = ({ errorObject, displayDetails }: InlineErrorContentProps) => {
@@ -22,20 +22,15 @@ const InlineErrorContent = ({ errorObject, displayDetails }: InlineErrorContentP
   return (
     <div className="bg-error-light border-solid border border-red-600 rounded">
       <div className="text-center text-sm mb-2">
-        {displayDetails && (
-          <div className="font-semibold ">ERROR #: {haloError.code}</div>
-        )}
+        {displayDetails && <div className="font-semibold ">ERROR #: {haloError.code}</div>}
         {displayDetails && (
           <div className="text-center text-sm mb-2">
             {friendlyErrorMessage}. Please show this error message: &quot;
             <span className="text-primary-red">{haloError.message} </span>&quot; to the team on Discord or email us at
             dev@halodao.com.
           </div>
-
         )}
-        {!displayDetails && (
-          <span className="text-primary-red"> {friendlyErrorMessage} </span>
-        )}
+        {!displayDetails && <span className="text-primary-red"> {friendlyErrorMessage} </span>}
       </div>
     </div>
   )

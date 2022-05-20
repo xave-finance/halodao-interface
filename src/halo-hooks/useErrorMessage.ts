@@ -39,12 +39,12 @@ const useErrorMessage = () => {
       consoleLog('errorObject', errorObject)
       errorMap.forEach((value, key) => {
         if (errorObject.message.includes(key)) {
-          setFriendlyErrorMessage(value);
+          setFriendlyErrorMessage(value)
           console.log(key, value)
-        } 
+        }
       })
-      if (typeof errorObject.code !== 'number' ) {
-        setFriendlyErrorMessage(errorObject.message);
+      if (typeof errorObject.code !== 'number') {
+        setFriendlyErrorMessage(errorObject.message)
       }
     },
     [t]

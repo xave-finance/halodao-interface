@@ -87,7 +87,7 @@ const SingleSidedLiquidity = ({
         if ((e as any).code === MetamaskErrorCode.Reverted) {
           setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any))
+          setErrorMessage(e as any)
         }
       }
     } else {
@@ -97,7 +97,7 @@ const SingleSidedLiquidity = ({
         calcQuoteAmount = Number(val) - Number(swapAmount)
       } catch (e) {
         console.log('error calculate', e)
-        setErrorMessage((e as any))
+        setErrorMessage(e as any)
       }
     }
 
@@ -218,29 +218,31 @@ const SingleSidedLiquidity = ({
             mainState === AddLiquidityState.Disabled
               ? 'Add Liquidity Disabled'
               : mainState === AddLiquidityState.NoAmount
-                ? 'Enter an amount'
-                : mainState === AddLiquidityState.NotConfigured
-                  ? 'Configure slippage'
-                  : mainState === AddLiquidityState.InsufficientBalance
-                    ? 'Insufficient Balance'
-                    : 'Supply'
+              ? 'Enter an amount'
+              : mainState === AddLiquidityState.NotConfigured
+              ? 'Configure slippage'
+              : mainState === AddLiquidityState.InsufficientBalance
+              ? 'Insufficient Balance'
+              : 'Supply'
           }
           state={
             errorMessage !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
-                ? PrimaryButtonState.Disabled
-                : mainState === AddLiquidityState.Approved
-                  ? PrimaryButtonState.Enabled
-                  : mainState === AddLiquidityState.Depositing
-                    ? PrimaryButtonState.InProgress
-                    : PrimaryButtonState.Disabled
+              ? PrimaryButtonState.Disabled
+              : mainState === AddLiquidityState.Approved
+              ? PrimaryButtonState.Enabled
+              : mainState === AddLiquidityState.Depositing
+              ? PrimaryButtonState.InProgress
+              : PrimaryButtonState.Disabled
           }
           onClick={() => onDeposit()}
         />
-        {errorMessage && <div className="mt-2">
-          <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
-        </div>}
+        {errorMessage && (
+          <div className="mt-2">
+            <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+          </div>
+        )}
       </div>
     </>
   )

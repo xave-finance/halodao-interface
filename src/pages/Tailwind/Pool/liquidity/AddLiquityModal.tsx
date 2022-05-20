@@ -103,7 +103,7 @@ const AddLiquityModal = ({
           if ((e as any).code === MetamaskErrorCode.Reverted) {
             setErrorMessage({ message: t('error-vm-exception') })
           } else {
-            setErrorMessage((e as any))
+            setErrorMessage(e as any)
           }
         }
       } else {
@@ -116,7 +116,7 @@ const AddLiquityModal = ({
           if ((e as any).code === MetamaskErrorCode.Reverted) {
             setErrorMessage({ message: t('error-vm-exception') })
           } else {
-            setErrorMessage((e as any))
+            setErrorMessage(e as any)
           }
         }
       }
@@ -338,9 +338,11 @@ const AddLiquityModal = ({
               isMultisided ? confirmDeposit() : confirmZap()
             }}
           />
-          {errorMessage && <div className="mt-2">
-            <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
-          </div>}
+          {errorMessage && (
+            <div className="mt-2">
+              <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+            </div>
+          )}
         </div>
       </>
     )
