@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { HALO_TOKEN_ADDRESS, HALODAO_EXCHANGE_SUBGRAPH_HOSTED, HALODAO_EXCHANGE_SUBGRAPH_STUDIO } from '../constants'
 import { ChainId } from '@halodao/sdk'
 import { GetPriceBy, getTokensUSDPrice } from '../utils/coingecko'
+import { useActiveWeb3React } from '../hooks'
 
 interface TVL {
   liquidityPools: number
@@ -11,6 +12,7 @@ interface TVL {
 }
 
 const useTVLInfo = () => {
+  const { chainId } = useActiveWeb3React()
   const [tvlInfo, setTvlInfo] = useState<TVL>({
     liquidityPools: 0,
     farm: 0,
@@ -27,8 +29,9 @@ const useTVLInfo = () => {
         }
       }
     `
+
   async function getStudio() {
-    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_STUDIO[ChainId.MAINNET]
+    const APIURL = chainId ? HALODAO_EXCHANGE_SUBGRAPH_STUDIO[chainId] : ''
     const client = new ApolloClient({
       uri: APIURL,
       cache: new InMemoryCache()
@@ -39,7 +42,7 @@ const useTVLInfo = () => {
   }
 
   async function getHosted() {
-    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_HOSTED[ChainId.MAINNET]
+    const APIURL = chainId ? HALODAO_EXCHANGE_SUBGRAPH_HOSTED[chainId] : ''
     const client = new ApolloClient({
       uri: APIURL,
       cache: new InMemoryCache()
@@ -50,13 +53,13 @@ const useTVLInfo = () => {
   }
 
   async function setData(data: any) {
-    // Get Mainnet RNBW price
-    const usdPrice = await getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? ''])
+    // Get RNBW price
+    const usdPrice = await getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[chainId as ChainId] ?? ''])
 
     setTvlInfo({
       liquidityPools: data.data.tvls[0].liquidityPools,
       farm: data.data.tvls[0].farm,
-      vestingBalance: data.data.tvls[0].vestingBalance * usdPrice[HALO_TOKEN_ADDRESS[ChainId.MAINNET] ?? '']
+      vestingBalance: data.data.tvls[0].vestingBalance * usdPrice[HALO_TOKEN_ADDRESS[chainId as ChainId] ?? '']
     })
   }
 
@@ -76,7 +79,7 @@ const useTVLInfo = () => {
     } catch (e) {
       console.error('Error fetching data in Studio and Hosted')
     }
-  }, [ChainId]) //eslint-disable-line
+  }, [chainId]) //eslint-disable-line
 
   return tvlInfo
 }

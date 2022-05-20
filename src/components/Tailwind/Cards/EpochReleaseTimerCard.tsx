@@ -2,8 +2,6 @@ import React from 'react'
 import EpochCharacter from '../../../assets/svg/epochCharacter.svg'
 import GradientCard from './GradientCard'
 import { CurrentEpoch } from '../../../halo-hooks/useEpochCountdown'
-import { useActiveWeb3React } from '../../../hooks'
-import { ChainId } from '@halodao/sdk'
 
 interface TimeObject {
   event: boolean
@@ -12,7 +10,6 @@ interface TimeObject {
 }
 
 const EpochReleaseTimerCard = ({ event, content, countdown }: TimeObject) => {
-  const { chainId } = useActiveWeb3React()
   const ConvertToString = (x: any) => {
     return x.toString()
   }
@@ -66,11 +63,6 @@ const EpochReleaseTimerCard = ({ event, content, countdown }: TimeObject) => {
             <p className="text-12px bold ">DEPOSIT IN POOL </p>
             <h4 className="text-lg">{content.deposit}</h4>
           </div>
-          {chainId !== ChainId.MAINNET && (
-            <div className="flex justify-center md:justify-end items-end py-1">
-              <span className="text-gray-300 bottom-0 text-12px">(Ethereum Mainnet)</span>
-            </div>
-          )}
         </div>
       </GradientCard>
     </>
