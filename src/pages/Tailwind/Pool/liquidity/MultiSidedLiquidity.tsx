@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/ApproveButton'
-import PrimaryButton, { PrimaryButtonType, PrimaryButtonState } from 'components/Tailwind/Buttons/PrimaryButton'
+import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import CurrencyInput from 'components/Tailwind/InputFields/CurrencyInput'
 import { ApprovalState } from 'hooks/useApproveCallback'
 import { PoolData } from '../models/PoolData'
-import { TokenAmount, JSBI } from '@halodao/sdk'
+import { JSBI, TokenAmount } from '@halodao/sdk'
 import { parseEther } from 'ethers/lib/utils'
 import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MetamaskErrorCode } from 'constants/errors'
+import { useActiveWeb3React } from '../../../../hooks'
+import { useCurrencyBalance } from '../../../../state/wallet/hooks'
 
 enum AddLiquidityState {
   NoAmount,
@@ -44,6 +46,9 @@ const MultiSidedLiquidity = ({
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const { account } = useActiveWeb3React()
+  const currencyBalance0 = useCurrencyBalance(account ?? undefined, pool.token0)?.toSignificant(6)
+  const currencyBalance1 = useCurrencyBalance(account ?? undefined, pool.token1)?.toSignificant(6)
 
   const { previewDepositGivenBase, previewDepositGivenQuote } = useAddRemoveLiquidity(
     pool.address,
@@ -170,7 +175,9 @@ const MultiSidedLiquidity = ({
                     : `Approve ${pool.token0.symbol}`
                 }
                 state={
-                  baseApproveState === ApprovalState.PENDING
+                  currencyBalance0 === '0'
+                    ? ApproveButtonState.Disabled
+                    : baseApproveState === ApprovalState.PENDING
                     ? ApproveButtonState.Approving
                     : ApproveButtonState.NotApproved
                 }
@@ -187,7 +194,9 @@ const MultiSidedLiquidity = ({
                     : `Approve ${pool.token1.symbol}`
                 }
                 state={
-                  quoteApproveState === ApprovalState.PENDING
+                  currencyBalance1 === '0'
+                    ? ApproveButtonState.Disabled
+                    : quoteApproveState === ApprovalState.PENDING
                     ? ApproveButtonState.Approving
                     : ApproveButtonState.NotApproved
                 }
