@@ -76,7 +76,7 @@ const SingleSidedLiquidity = ({
 
     let calcBaseAmount = 0
     let calcQuoteAmount = 0
-    const zapFromBase = selectedToken === pool.token0
+    const zapFromBase = selectedToken.address.toLowerCase() === pool.token0.address.toLowerCase()
     if (zapFromBase) {
       try {
         const swapAmount = await calcSwapAmountForZapFromBase(val)
