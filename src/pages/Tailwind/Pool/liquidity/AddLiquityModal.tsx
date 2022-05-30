@@ -130,14 +130,14 @@ const AddLiquityModal = ({
         res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
 
         if (Number(res.base) > Number(baseTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          setErrorMessage({ message: t('error-liquidity-estimates-changed') })
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any).message)
+          setErrorMessage((e as any))
         }
         onDismiss()
       }
@@ -146,14 +146,14 @@ const AddLiquityModal = ({
         res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
 
         if (Number(res.quote) > Number(quoteTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          setErrorMessage({ message: t('error-liquidity-estimates-changed') })
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any).message)
+          setErrorMessage((e as any))
         }
         onDismiss()
       }
