@@ -10,7 +10,7 @@ const StakeCard = ({ title, value, displayMainnetIndicator }: StakeCardProps) =>
   return (
     <div>
       <div className="w-auto md:w-44 h-20 md:h-28 grid grid-cols-1 content-between border-2 border-link-alternate rounded-card bg-stakeCard">
-        <div className="md:bg-link-alternate font-extrabold tracking-widest uppercase text-xl md:text-9px text-link-alternate md:text-white md:text-center pl-3 md:pl-0 py-1 rounded-t-md">
+        <div className="md:bg-link-alternate font-semibold md:font-extrabold tracking-widest uppercase text-sm md:text-9px text-link-alternate md:text-white md:text-center pl-3 md:pl-0 py-1 rounded-t-md">
           {title}
         </div>
         {displayMainnetIndicator && <div className="text-xs text-gray-500 px-3">Ethereum Mainnet</div>}
