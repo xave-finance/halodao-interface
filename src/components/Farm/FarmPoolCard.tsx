@@ -903,7 +903,7 @@ export default function FarmPoolCard({
             }
           }}
         >
-          <StyledRowFixed width="22%">
+          <StyledRowFixed width="16%">
             <DoubleCurrencyLogo
               currency0={poolInfo.tokens[0].asToken}
               currency1={poolInfo.tokens[1].asToken}
@@ -912,13 +912,13 @@ export default function FarmPoolCard({
             &nbsp;
             <StyledTextForValue fontWeight={600}>{poolInfo.pair}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="13%">
             <LabelText className="first">{t('baseApr')}:</LabelText>
             <StyledTextForValue>
               {baseAPR > 0 ? `${formatNumber(baseAPR, NumberFormat.long)}%` : '--'}
             </StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="13%">
             <LabelText className="first">{t('apr')}:</LabelText>
             <div className="flex flex-row">
               <StyledTextForValue fontWeight={`${poolHasRewarder && rawAPY > 0 && 'bold'}`}>
@@ -949,8 +949,8 @@ export default function FarmPoolCard({
               )}
             </div>
           </StyledRowFixed>
-          <StyledRowFixed width="20%">
-            <LabelText className="first">{t('totalValueLocked')}:</LabelText>
+          <StyledRowFixed width="13%">
+            <LabelText className="first">{t('totalValueStaked')}:</LabelText>
             <StyledTextForValue>{formatNumber(poolLiquidity, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
           <StyledRowFixed width="13%">
@@ -959,11 +959,11 @@ export default function FarmPoolCard({
               {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
             </StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="13%">
             <LabelText>{t('valueStaked')}</LabelText>
             <StyledTextForValue>{formatNumber(bptStakedValue, NumberFormat.usd)}</StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="16%">
+          <StyledRowFixed width="13%">
             <LabelText>{t('earned')}:</LabelText>
             <StyledTextForValue>
               {hasPendingRewardTokenError ? (
@@ -983,7 +983,7 @@ export default function FarmPoolCard({
               )}
             </StyledTextForValue>
           </StyledRowFixed>
-          <StyledRowFixed width="8%" justify="flex-end">
+          <StyledRowFixed width="6%" justify="flex-end">
             {account && (
               <>
                 {showMore ? (
