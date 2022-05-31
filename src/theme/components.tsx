@@ -205,7 +205,7 @@ export function ExternalLink({
   href,
   rel = 'noopener noreferrer',
   ...rest
-}: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> & { href: string }) {
+}: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick' | 'onTouchStart'> & { href: string }) {
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       // don't prevent default, don't redirect if it's a new tab
@@ -223,7 +223,26 @@ export function ExternalLink({
     },
     [href, target]
   )
-  return <StyledLink target={target} rel={rel} href={href} onClick={handleClick} {...rest} />
+
+  const handleTouch = useCallback(
+    (event: React.TouchEvent<HTMLAnchorElement>) => {
+      // don't prevent default, don't redirect if it's a new tab
+      if (target === '_blank' || event.ctrlKey || event.altKey) {
+        ReactGA.outboundLink({ label: href }, () => {
+          console.debug('Fired outbound link event', href)
+          window.open(href, '_blank')
+        })
+      } else {
+        event.preventDefault()
+        // send a ReactGA event and then trigger a location change
+        ReactGA.outboundLink({ label: href }, () => {
+          window.location.href = href
+        })
+      }
+    },
+    [href, target]
+  )
+  return <StyledLink target={target} rel={rel} href={href} onClick={handleClick} onTouchStart={handleTouch} {...rest} />
 }
 
 export function ExternalLinkIcon({
