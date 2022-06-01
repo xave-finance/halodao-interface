@@ -18,7 +18,7 @@ import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskErrorCode } from 'constants/errors'
-import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 
 const SwapPanel = () => {
@@ -58,7 +58,7 @@ const SwapPanel = () => {
     approve,
     allowance,
     swapToken
-  } = useSwapToken(toCurrency, fromCurrency, setButtonState)
+  } = useSwapToken(toCurrency, fromCurrency, setButtonState, setErrorObject)
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -70,6 +70,8 @@ const SwapPanel = () => {
       }
     } catch (e) {
       console.log(e)
+      setErrorObject(e as any)
+
     }
   }, [approve, setApproveState])
 
@@ -228,7 +230,7 @@ const SwapPanel = () => {
       <div className="mt-4">
         <PrimaryButton
           type={PrimaryButtonType.Gradient}
-          title="Insufficient Pool Liquidity"
+          title="Swap"
           state={PrimaryButtonState.Disabled}
         />
       </div>
@@ -299,7 +301,6 @@ const SwapPanel = () => {
 
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
-
     if (!account && !error) {
       return (
         <div className="mt-2">
@@ -310,6 +311,11 @@ const SwapPanel = () => {
     return (
       <>
         <CurrentButtonContent />
+        {errorObject && (
+          <div className="mt-2">
+            <InlineErrorContent errorObject={errorObject} displayDetails={false} />
+          </div>
+        )}
         <SwapDetails
           price={price}
           isLoadingPrice={isLoadingPrice}
@@ -342,6 +348,7 @@ const SwapPanel = () => {
                 value={fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
+                  setErrorObject(undefined)
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
                     setButtonState(SwapButtonState.Swap)
                   } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
@@ -480,13 +487,6 @@ const SwapPanel = () => {
         txnHash={txhash}
         chainId={chainId as number}
       />
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
     </>
   )
 }

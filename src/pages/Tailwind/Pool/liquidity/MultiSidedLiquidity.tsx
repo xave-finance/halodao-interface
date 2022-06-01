@@ -75,7 +75,7 @@ const MultiSidedLiquidity = ({
         onQuoteAmountChanged(quote)
 
         if (parseEther(base).gt(parseEther(val))) {
-          setErrorMessage({ message: t('error-liquidity-zap-reverted') })
+          setErrorMessage({ message: t('error-liquidity-estimates-changed') })
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {
@@ -103,7 +103,7 @@ const MultiSidedLiquidity = ({
         onBaseAmountChanged(base)
 
         if (parseEther(quote).gt(parseEther(val))) {
-          setErrorMessage({ message: t('error-liquidity-zap-reverted') })
+          setErrorMessage({ message: t('error-liquidity-estimates-changed') })
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {

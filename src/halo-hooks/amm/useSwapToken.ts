@@ -27,7 +27,8 @@ export enum CurrencySide {
 export const useSwapToken = (
   toCurrency: Token,
   fromCurrency: Token,
-  setButtonState: (state: SwapButtonState) => void
+  setButtonState: (state: SwapButtonState) => void,
+  setErrorObject: (errorObject: any) => void
 ) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
@@ -117,9 +118,11 @@ export const useSwapToken = (
       setPrice(fromCurrencyRate / toCurrencyRate)
     } catch (e) {
       console.log(e)
+      setErrorObject(e as any)
+      setButtonState(SwapButtonState.InsufficientLiquidity)
     }
     setIsLoadingPrice(false)
-  }, [chainId, library, fromCurrency.symbol, toCurrency.symbol])
+  }, [chainId, library, fromCurrency.symbol, toCurrency.symbol, setButtonState, setErrorObject])
 
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
@@ -152,6 +155,7 @@ export const useSwapToken = (
           ? setToMinimumAmount(formatUnits(res, toCurrency.decimals))
           : setFromMinimumAmount(formatUnits(res, fromCurrency.decimals))
       } catch (e) {
+        setErrorObject(e as any)
         setButtonState(SwapButtonState.InsufficientLiquidity)
       }
       setIsLoadingMinimumAmount(false)
@@ -164,7 +168,8 @@ export const useSwapToken = (
       chainId,
       getRouter,
       toSafeValue,
-      setButtonState
+      setButtonState,
+      setErrorObject
     ]
   )
 
