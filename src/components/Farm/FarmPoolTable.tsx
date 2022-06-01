@@ -66,28 +66,28 @@ const FarmPoolTable = ({ poolsInfo, v0PoolsInfo, v1PoolsInfo, tokenPrice, select
             >
               <AutoColumn>
                 <RowBetween>
-                  <RowFixed width="22%">
+                  <RowFixed width="16%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('pool')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('baseApr')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('apr')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="20%">
-                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalValueLocked')}</TYPE.thHeader>
+                  <RowFixed width="13%">
+                    <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('totalValueStaked')}</TYPE.thHeader>
                   </RowFixed>
                   <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('stakeable')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('valueStaked')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="16%">
+                  <RowFixed width="13%">
                     <TYPE.thHeader style={{ justifySelf: 'flex-start' }}>{t('earned')}</TYPE.thHeader>
                   </RowFixed>
-                  <RowFixed width="8%"></RowFixed>
+                  <RowFixed width="6%"></RowFixed>
                 </RowBetween>
               </AutoColumn>
             </Card>

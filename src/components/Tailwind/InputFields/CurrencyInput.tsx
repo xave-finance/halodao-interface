@@ -37,7 +37,7 @@ const TokenInput = ({
   const currencyBalance = useCurrencyBalance(account ?? undefined, currency)
 
   const onMax = () => {
-    balance = balance ? balance : currencyBalance?.toSignificant(6)
+    balance = balance ? balance : currencyBalance?.toExact()
     if (balance && Number(balance) > 0) {
       didChangeValue(balance)
     }
@@ -72,8 +72,8 @@ const TokenInput = ({
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
                 Balance:{' '}
                 {balance
-                  ? formatNumber(Number(balance), NumberFormat.long) || '-'
-                  : currencyBalance?.toSignificant(6) || '-'}
+                  ? formatNumber(Number(balance), NumberFormat.long)
+                  : currencyBalance?.toFixed(2, { groupSeparator: ',' }) || '-'}
               </div>
             )}
             <NumericalInput

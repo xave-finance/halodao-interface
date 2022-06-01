@@ -99,6 +99,7 @@
   "poolSummaryStaked": "My Staked Value",
   "poolSummaryHaloEarned": "Unclaimed xRNBW Earned",
   "totalValueLocked": "Total Value Locked",
+  "totalValueStaked": "Total Value Staked",
   "tokenCardRewardDescription": "Every xRNBW you earn is a vesting token that you can use to claim RNBW, our governance token, from the Rainbow Pool. Press Harvest to claim your pending xRNBW from the Farm and go to the Vesting Tab to manage your rewards.",
   "valueStaked": "Value Staked",
   "earned": "Earned",

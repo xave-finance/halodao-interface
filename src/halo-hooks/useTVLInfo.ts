@@ -27,6 +27,7 @@ const useTVLInfo = () => {
         }
       }
     `
+  //TODO: make it dynamic for Arb and Matic
   async function getStudio() {
     const APIURL = HALODAO_EXCHANGE_SUBGRAPH_STUDIO[ChainId.MAINNET]
     const client = new ApolloClient({
