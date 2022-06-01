@@ -71,7 +71,6 @@ const SwapPanel = () => {
     } catch (e) {
       console.log(e)
       setErrorObject(e as any)
-
     }
   }, [approve, setApproveState])
 
@@ -228,11 +227,7 @@ const SwapPanel = () => {
   const InsufficientLiquidityContent = () => {
     return (
       <div className="mt-4">
-        <PrimaryButton
-          type={PrimaryButtonType.Gradient}
-          title="Swap"
-          state={PrimaryButtonState.Disabled}
-        />
+        <PrimaryButton type={PrimaryButtonType.Gradient} title="Swap" state={PrimaryButtonState.Disabled} />
       </div>
     )
   }

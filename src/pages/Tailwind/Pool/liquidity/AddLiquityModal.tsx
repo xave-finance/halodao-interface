@@ -137,7 +137,7 @@ const AddLiquityModal = ({
         if ((e as any).code === MetamaskErrorCode.Reverted) {
           setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any))
+          setErrorMessage(e as any)
         }
         onDismiss()
       }
@@ -153,7 +153,7 @@ const AddLiquityModal = ({
         if ((e as any).code === MetamaskErrorCode.Reverted) {
           setErrorMessage({ message: t('error-vm-exception') })
         } else {
-          setErrorMessage((e as any))
+          setErrorMessage(e as any)
         }
         onDismiss()
       }
