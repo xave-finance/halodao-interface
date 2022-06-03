@@ -5,7 +5,8 @@ import SuccessIcon from 'assets/svg/success-icon.svg'
 export enum ApproveButtonState {
   Approved,
   NotApproved,
-  Approving
+  Approving,
+  Disabled
 }
 
 interface ApproveButtonProps {
@@ -16,7 +17,7 @@ interface ApproveButtonProps {
 }
 
 const ApproveButton = ({ title, state, onClick, className }: ApproveButtonProps) => {
-  const isEnabled = state === ApproveButtonState.NotApproved
+  const isEnabled = state === ApproveButtonState.NotApproved || state !== ApproveButtonState.Disabled
   const isApproving = state === ApproveButtonState.Approving
   const isApproved = state === ApproveButtonState.Approved
 
