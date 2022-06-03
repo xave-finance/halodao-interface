@@ -37,13 +37,15 @@ const useErrorMessage = () => {
       errorMap.set(GeneralErrorMessage.SafeMathDivisionByZero, t('errorMessageSafeMathDivisionByZero'))
       errorMap.set(ZapErrorMessage.NotEnoughLpAmount, t('error-liquidity-zap-reverted'))
       consoleLog('errorObject', errorObject)
+      consoleLog('errorObject.code', typeof errorObject.code)
+      consoleLog('errorObject.message', errorObject.message)
       errorMap.forEach((value, key) => {
         if (errorObject.message.includes(key)) {
           setFriendlyErrorMessage(value)
           console.log(key, value)
-        }
+        } 
       })
-      if (typeof errorObject.code !== 'number') {
+      if (errorObject.code.toString().toLowerCase() === 'unknown') {
         setFriendlyErrorMessage(errorObject.message)
       }
     },
