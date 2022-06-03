@@ -1,7 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { HALO_TOKEN_ADDRESS, HALODAO_EXCHANGE_SUBGRAPH_HOSTED, HALODAO_EXCHANGE_SUBGRAPH_STUDIO } from '../constants'
-import { ChainId } from '@halodao/sdk'
 import { GetPriceBy, getTokensUSDPrice } from '../utils/coingecko'
 import { useActiveWeb3React } from '../hooks'
 
@@ -29,6 +28,15 @@ const useTVLInfo = () => {
         }
       }
     `
+  async function getMainnetHaloBalance(url: any) {
+    const client = new ApolloClient({
+      uri: url,
+      cache: new InMemoryCache()
+    })
+    return client.query({
+      query: gql(tvlQuery)
+    })
+  }
 
   async function getStudio() {
     const APIURL = chainId ? HALODAO_EXCHANGE_SUBGRAPH_STUDIO[chainId] : ''
@@ -36,9 +44,18 @@ const useTVLInfo = () => {
       uri: APIURL,
       cache: new InMemoryCache()
     })
-    return client.query({
+    const { data } = await client.query({
       query: gql(tvlQuery)
     })
+
+    const tvlData = { ...data.tvls[0] }
+
+    if (chainId !== 1) {
+      const haloBalance = await getMainnetHaloBalance(HALODAO_EXCHANGE_SUBGRAPH_STUDIO[1])
+      tvlData.vestingBalance = haloBalance.data.tvls[0].vestingBalance
+    }
+
+    return tvlData
   }
 
   async function getHosted() {
@@ -47,19 +64,28 @@ const useTVLInfo = () => {
       uri: APIURL,
       cache: new InMemoryCache()
     })
-    return client.query({
+    const { data } = await client.query({
       query: gql(tvlQuery)
     })
+
+    const tvlData = { ...data.tvls[0] }
+
+    if (chainId !== 1) {
+      const haloBalance = await getMainnetHaloBalance(HALODAO_EXCHANGE_SUBGRAPH_HOSTED[1])
+      tvlData.vestingBalance = haloBalance.data.tvls[0].vestingBalance
+    }
+
+    return tvlData
   }
 
   async function setData(data: any) {
     // Get RNBW price
-    const usdPrice = await getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[chainId as ChainId] ?? ''])
+    const usdPrice = await getTokensUSDPrice(GetPriceBy.address, [HALO_TOKEN_ADDRESS[1] ?? ''])
 
     setTvlInfo({
-      liquidityPools: data.data.tvls[0].liquidityPools,
-      farm: data.data.tvls[0].farm,
-      vestingBalance: data.data.tvls[0].vestingBalance * usdPrice[HALO_TOKEN_ADDRESS[chainId as ChainId] ?? '']
+      liquidityPools: data.liquidityPools,
+      farm: data.farm,
+      vestingBalance: Number(data.vestingBalance) * usdPrice[HALO_TOKEN_ADDRESS[1] ?? '']
     })
   }
 
