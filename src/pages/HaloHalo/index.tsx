@@ -33,12 +33,25 @@ import { useActiveWeb3React } from '../../hooks'
 import DepositOnUnsupportedNetwork from './DepositOnUnsupportedNetwork'
 import WithdrawOnUnsupportedNetwork from './WithdrawOnUnsupportedNetwork'
 import FeatureNotSupported from 'components/Tailwind/Panels/FeatureNotSupported'
+import EpochReleaseTimerCard from '../../components/Tailwind/Cards/EpochReleaseTimerCard'
+import useEpochCountdown from '../../halo-hooks/useEpochCountdown'
+import useTVLInfo from '../../halo-hooks/useTVLInfo'
 
 const PageWrapper = styled(AutoColumn)`
-  max-width: 820px;
+  max-width: 1050px;
   width: 100%;
-  display: block;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 2em;
+  padding: 5px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    flex-direction: column;
+    gap: 1em;
+  `};
 `
+
+const EmptyPageWrapper = styled(PageWrapper)``
 
 const VoteCard = styled(DataCard)`
   background: ${({ theme }) => transparentize(0.5, theme.bg1)};
@@ -102,22 +115,26 @@ const AutoColumnDeposit = styled.div`
 
 const VoteCardWrapper = styled.div`
   ${VoteCard} {
-    max-width: 370px;
     width: 100%;
-    float: left;
     border-radius: 0;
   }
 `
 
 const DepositWrapper = styled.div`
-  width: 440px;
-  float: right;
+  max-width: 528px;
+  width: 100%;
   border: 1px solid #15006d;
   border-radius: 4px;
-  box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.1);
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    width: 100%;
-    margin-bottom: 50px;
+  box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+  padding: 30px 80px;
+  height: 519px;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+    max-width: unset;
+    height: auto;
+    padding: 30px 20px;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
+    padding: 2px;
   `};
 `
 
@@ -142,7 +159,7 @@ const HaloIngredients = styled.img`
 `
 
 const HaloHaloPairText = styled.div`
-  margin: 0 0 0 0px;
+  margin: 0 0 0 0;
   font-style: italic;
   font-family: Open Sans;
   font-weight: 600;
@@ -163,8 +180,7 @@ const HaloPairCenterContainer = styled.div`
 
 const CardSectionContainer = styled.div`
   ${CardSection} {
-    width: 350px;
-    margin-top: 28px;
+    width: 100%;
     background: #e9e4f7;
     font-family: Open Sans;
     font-style: normal;
@@ -192,6 +208,58 @@ const RowBetweenCard = styled.div`
     margin: 0 0 20px 0;
   }
 `
+const ContentSection = styled.div`
+  max-width: 476px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+      max-width: unset;
+  `};
+`
+
+const HaloHaloHeaderStyle = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const PanelContainer = styled.div`
+  display: block;
+  ${({ theme }) => theme.mediaWidth.upToMedium`
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 1em;
+  `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+        display: flex;
+        flex-direction: column;
+        justify-content: unset;
+  `};
+`
+
+const CustomWithProtected = styled.div`
+  width: 476px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+     width: 100%;
+  `};
+`
+
+const HideInSmall = styled.div`
+  display: block;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+     display: none;
+  `};
+`
+
+const ShowInSmall = styled.div`
+  display: none;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+     display: block;
+  `};
+`
 
 export default function HaloHalo() {
   const { haloHaloAPY, haloHaloPrice } = useHaloHalo()
@@ -203,6 +271,8 @@ export default function HaloHalo() {
   const { chainId } = useActiveWeb3React()
   const features = NETWORK_SUPPORTED_FEATURES[chainId as ChainId]
   const [EmptyStateLoading, setEmptyStateLoading] = useState(false)
+  const epochCountdown = useEpochCountdown()
+  const { vestingBalance } = useTVLInfo()
 
   useEffect(() => {
     // Load vesting modal if user clicks "Harvest" button from Farm page
@@ -217,57 +287,86 @@ export default function HaloHalo() {
     <>
       <VestingModal poolVestingInfo={poolVestingInfo} />
       <PageWrapper>
-        <VoteCardWrapper>
-          <VoteCard>
-            <CardSectionWrapper>
+        <ContentSection>
+          <VoteCardWrapper>
+            <VoteCard>
+              <CardSectionWrapper>
+                <CardSection>
+                  <AutoColumnVesting>
+                    <AutoColumn gap="md">
+                      <VestingRow>
+                        <RowBetween>VESTING</RowBetween>
+                      </VestingRow>
+                      <DessertPoolRow>
+                        <RowBetween>Rainbow Pool</RowBetween>
+                      </DessertPoolRow>
+                      <TokenRewardsExplainer>
+                        <RowBetween>
+                          This is where your RNBW vesting rewards will go. We saved you some gas and sent it straight to
+                          the Rainbow Pool to earn monthly vesting rewards and a share of network profits.
+                        </RowBetween>
+                      </TokenRewardsExplainer>
+                    </AutoColumn>
+                  </AutoColumnVesting>
+                </CardSection>
+              </CardSectionWrapper>
+            </VoteCard>
+          </VoteCardWrapper>
+          <CustomWithProtected>
+            <EpochReleaseTimerCard
+              event={true}
+              content={{
+                title: 'Countdown to next rewards epoch',
+                deposit: formatNumber(vestingBalance, NumberFormat.long) + ' USD',
+                profit: '20,304,250.00 USD'
+              }}
+              countdown={epochCountdown}
+            />
+          </CustomWithProtected>
+          <HideInSmall>
+            <CardSectionContainer>
               <CardSection>
-                <AutoColumnVesting>
-                  <AutoColumn gap="md">
-                    <VestingRow>
-                      <RowBetween>VESTING</RowBetween>
-                    </VestingRow>
-                    <DessertPoolRow>
-                      <RowBetween>Rainbow Pool</RowBetween>
-                    </DessertPoolRow>
-                    <TokenRewardsExplainer>
-                      <RowBetween>
-                        This is where your RNBW vesting rewards will go. We saved you some gas and sent it straight to
-                        the Rainbow Pool to earn monthly vesting rewards and a share of network profits.
-                      </RowBetween>
-                    </TokenRewardsExplainer>
-                  </AutoColumn>
-                </AutoColumnVesting>
+                <RowBetweenCard>
+                  <RowBetween>RAINBOW FACT</RowBetween>
+                </RowBetweenCard>
+                <RowBetween id="haloHaloAPY">
+                  The longer you keep xRNBW, the more RNBW you can claim later on (
+                  {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APR' : 'APR pending'}). Claim
+                  anytime but lose out on monthly RNBW vesting multiples.
+                </RowBetween>
               </CardSection>
-            </CardSectionWrapper>
-          </VoteCard>
-        </VoteCardWrapper>
-
+            </CardSectionContainer>
+          </HideInSmall>
+        </ContentSection>
         <DepositWrapper>
-          <HaloHaloHeader vest={features?.vest} />
+          <HaloHaloHeaderStyle>
+            <HaloHaloHeader vest={features?.vest} />
+          </HaloHaloHeaderStyle>
           <Wrapper id="swap-page">
             <AutoColumnDeposit>
               <AutoColumn>
-                {features?.vest && (
-                  <>
-                    <HaloDepositPanel
-                      label={''}
-                      disableCurrencySelect={true}
-                      customBalanceText={'Available to deposit: '}
-                      id="stake-liquidity-token"
-                      buttonText="Claim RNBW"
-                      cornerRadiusBottomNone={true}
-                    />
-                    <HaloHaloWithdrawPanel
-                      label={''}
-                      disableCurrencySelect={true}
-                      customBalanceText={'Available to withdraw: '}
-                      id="withdraw-liquidity-token"
-                      buttonText="Withdraw"
-                      cornerRadiusTopNone={true}
-                    />
-                  </>
-                )}
-
+                <PanelContainer>
+                  {features?.vest && (
+                    <>
+                      <HaloDepositPanel
+                        label={''}
+                        disableCurrencySelect={true}
+                        customBalanceText={'Available to deposit: '}
+                        id="stake-liquidity-token"
+                        buttonText="Claim RNBW"
+                        cornerRadiusBottomNone={true}
+                      />
+                      <HaloHaloWithdrawPanel
+                        label={''}
+                        disableCurrencySelect={true}
+                        customBalanceText={'Available to withdraw: '}
+                        id="withdraw-liquidity-token"
+                        buttonText="Withdraw"
+                        cornerRadiusTopNone={true}
+                      />
+                    </>
+                  )}
+                </PanelContainer>
                 {!features?.vest && (
                   <>
                     {chainId === null ? (
@@ -303,20 +402,22 @@ export default function HaloHalo() {
             </AutoColumnDeposit>
           </Wrapper>
         </DepositWrapper>
-
-        <CardSectionContainer>
-          <CardSection>
-            <RowBetweenCard>
-              <RowBetween>RAINBOW FACT</RowBetween>
-            </RowBetweenCard>
-            <RowBetween id="haloHaloAPY">
-              The longer you keep xRNBW, the more RNBW you can claim later on (
-              {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APR' : 'APR pending'}). Claim
-              anytime but lose out on monthly RNBW vesting multiples.
-            </RowBetween>
-          </CardSection>
-        </CardSectionContainer>
-
+        <ShowInSmall>
+          <CardSectionContainer>
+            <CardSection>
+              <RowBetweenCard>
+                <RowBetween>RAINBOW FACT</RowBetween>
+              </RowBetweenCard>
+              <RowBetween id="haloHaloAPY">
+                The longer you keep xRNBW, the more RNBW you can claim later on (
+                {haloHaloAPY > 0 ? formatNumber(haloHaloAPY, NumberFormat.percent) + ' APR' : 'APR pending'}). Claim
+                anytime but lose out on monthly RNBW vesting multiples.
+              </RowBetween>
+            </CardSection>
+          </CardSectionContainer>
+        </ShowInSmall>
+      </PageWrapper>
+      <EmptyPageWrapper>
         <EmptyState
           header={t('emptyStateTitleInVest')}
           subHeader={t('emptyStateSubTitleInVest')}
@@ -325,7 +426,7 @@ export default function HaloHalo() {
             setEmptyStateLoading(true)
           }}
         />
-      </PageWrapper>
+      </EmptyPageWrapper>
     </>
   )
 }
