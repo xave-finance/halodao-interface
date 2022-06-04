@@ -46,7 +46,9 @@ const useErrorMessage = () => {
         } 
       })
       if (errorObject.code.toString().toLowerCase() === 'unknown') {
+        // consoleLog('setFriendlyErrorMessage', friendlyErrorMessage)
         setFriendlyErrorMessage(errorObject.message)
+        // consoleLog('errorObject.uknown', errorObject.message)
       }
     },
     [t]

@@ -14,10 +14,11 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
-import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
+import { SwapButtonState, ModalState, ErrorDisplayType } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskErrorCode } from 'constants/errors'
+import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 
@@ -43,6 +44,7 @@ const SwapPanel = () => {
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
   const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [errorDisplayType, setErrorDisplayType] = useState(ErrorDisplayType.Inline)
 
   const {
     getPrice,
@@ -58,7 +60,7 @@ const SwapPanel = () => {
     approve,
     allowance,
     swapToken
-  } = useSwapToken(toCurrency, fromCurrency, setButtonState, setErrorObject)
+  } = useSwapToken(toCurrency, fromCurrency, setButtonState, setErrorObject, setErrorDisplayType)
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -71,6 +73,7 @@ const SwapPanel = () => {
     } catch (e) {
       console.log(e)
       setErrorObject(e as any)
+      setErrorDisplayType(ErrorDisplayType.Modal)
     }
   }, [approve, setApproveState])
 
@@ -306,11 +309,6 @@ const SwapPanel = () => {
     return (
       <>
         <CurrentButtonContent />
-        {errorObject && (
-          <div className="mt-2">
-            <InlineErrorContent errorObject={errorObject} displayDetails={false} />
-          </div>
-        )}
         <SwapDetails
           price={price}
           isLoadingPrice={isLoadingPrice}
@@ -359,6 +357,7 @@ const SwapPanel = () => {
                 balance={fromAmountBalance}
                 onSelectToken={token => {
                   if (token !== toCurrency) {
+                    setErrorObject(undefined)
                     setFromCurrency(token)
                     setToInputValue('')
                     setFromInputValue('')
@@ -456,6 +455,7 @@ const SwapPanel = () => {
               setSwapTransactionModalState(ModalState.NotConfirmed)
               setErrorObject(txn)
               setButtonState(SwapButtonState.Swap)
+              setErrorDisplayType(ErrorDisplayType.Modal)
             }
           } catch (e) {
             console.error('Error catched! ', e)
@@ -482,6 +482,18 @@ const SwapPanel = () => {
         txnHash={txhash}
         chainId={chainId as number}
       />
+      {(errorObject && errorDisplayType === ErrorDisplayType.Inline) && (
+          <div className="mt-2">
+            <InlineErrorContent errorObject={errorObject} displayDetails={false} />
+          </div>
+        )}
+      {(errorObject && errorDisplayType === ErrorDisplayType.Modal) && (
+        <ErrorModal
+          isVisible={errorObject !== undefined}
+          onDismiss={() => setErrorObject(undefined)}
+          errorObject={errorObject}
+        />
+      )}
     </>
   )
 }

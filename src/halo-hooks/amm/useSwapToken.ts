@@ -16,7 +16,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useActiveWeb3React } from '../../hooks'
 import { ERC20_ABI } from 'constants/abis/erc20'
 import { toFixed } from 'utils/formatNumber'
-import { SwapButtonState } from 'constants/buttonStates'
+import { SwapButtonState, ErrorDisplayType } from 'constants/buttonStates'
 import { useTime } from 'halo-hooks/useTime'
 
 export enum CurrencySide {
@@ -28,7 +28,8 @@ export const useSwapToken = (
   toCurrency: Token,
   fromCurrency: Token,
   setButtonState: (state: SwapButtonState) => void,
-  setErrorObject: (errorObject: any) => void
+  setErrorObject: (errorObject: any) => void,
+  setErrorDisplayType: (errorDisplayType: ErrorDisplayType) => void
 ) => {
   const { account, chainId, library } = useActiveWeb3React()
   const [price, setPrice] = useState<number>()
@@ -120,9 +121,10 @@ export const useSwapToken = (
       console.log(e)
       setErrorObject(e as any)
       setButtonState(SwapButtonState.InsufficientLiquidity)
+      setErrorDisplayType(ErrorDisplayType.Inline)
     }
     setIsLoadingPrice(false)
-  }, [chainId, library, fromCurrency.symbol, toCurrency.symbol, setButtonState, setErrorObject])
+  }, [chainId, library, fromCurrency.symbol, toCurrency.symbol, setButtonState, setErrorObject, setErrorDisplayType])
 
   const getMinimumAmount = useCallback(
     async (amount: string, currencySide: CurrencySide) => {
@@ -157,6 +159,7 @@ export const useSwapToken = (
       } catch (e) {
         setErrorObject(e as any)
         setButtonState(SwapButtonState.InsufficientLiquidity)
+        setErrorDisplayType(ErrorDisplayType.Inline)
       }
       setIsLoadingMinimumAmount(false)
     },
@@ -169,7 +172,8 @@ export const useSwapToken = (
       getRouter,
       toSafeValue,
       setButtonState,
-      setErrorObject
+      setErrorObject,
+      setErrorDisplayType
     ]
   )
 
