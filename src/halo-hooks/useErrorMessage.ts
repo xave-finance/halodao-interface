@@ -43,7 +43,7 @@ const useErrorMessage = () => {
         if (errorObject.message.includes(key)) {
           setFriendlyErrorMessage(value)
           console.log(key, value)
-        } 
+        }
       })
       if (errorObject.code.toString().toLowerCase() === 'unknown') {
         // consoleLog('setFriendlyErrorMessage', friendlyErrorMessage)
