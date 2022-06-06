@@ -33,8 +33,3 @@ export enum SwapButtonState {
   InsufficientLiquidity,
   InsufficientBalance
 }
-
-export enum ErrorDisplayType {
-  Inline,
-  Modal
-}

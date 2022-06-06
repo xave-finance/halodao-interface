@@ -14,13 +14,14 @@ import ApproveButton, { ApproveButtonState } from 'components/Tailwind/Buttons/A
 import PrimaryButton, { PrimaryButtonState, PrimaryButtonType } from 'components/Tailwind/Buttons/PrimaryButton'
 import RetryButton from 'components/Tailwind/Buttons/RetryButton'
 import { haloTokenList } from 'constants/tokenLists/halo-tokenlist'
-import { SwapButtonState, ModalState, ErrorDisplayType } from '../../../constants/buttonStates'
+import { SwapButtonState, ModalState } from '../../../constants/buttonStates'
 import { HALO } from '../../../constants'
 import PageWarning from 'components/Tailwind/Layout/PageWarning'
 import { MetamaskErrorCode } from 'constants/errors'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
+import { ErrorDisplayType } from 'constants/errors'
 
 const SwapPanel = () => {
   const { account, error, chainId } = useWeb3React()
