@@ -483,12 +483,12 @@ const SwapPanel = () => {
         txnHash={txhash}
         chainId={chainId as number}
       />
-      {(errorObject && errorDisplayType === ErrorDisplayType.Inline) && (
-          <div className="mt-2">
-            <InlineErrorContent errorObject={errorObject} displayDetails={false} />
-          </div>
-        )}
-      {(errorObject && errorDisplayType === ErrorDisplayType.Modal) && (
+      {errorObject && errorDisplayType === ErrorDisplayType.Inline && (
+        <div className="mt-2">
+          <InlineErrorContent errorObject={errorObject} displayDetails={false} />
+        </div>
+      )}
+      {errorObject && errorDisplayType === ErrorDisplayType.Modal && (
         <ErrorModal
           isVisible={errorObject !== undefined}
           onDismiss={() => setErrorObject(undefined)}
