@@ -62,7 +62,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveReentered')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   /* 
     Curve/insufficient-allowance
@@ -175,7 +175,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveFrozen')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Curve/tx-deadline-passed
   it('Should return the equivalent Curve deadline passed friendly error', () => {
@@ -213,7 +213,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDeadlinePassed')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Curve/whitelist-stage-on-going
   it('Should return the equivalent Curve whitelist on-going friendly error', () => {
@@ -251,7 +251,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveWhitelistingStage')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Curve/whitelist-stage-stopped
   it('Should return the equivalent Curve whitelist stopped friendly error', () => {
@@ -289,7 +289,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveNotWhitelistingStage')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Curve/amount-too-large
   it('Should return the equivalent Curve whitelist stopped friendly error', () => {
@@ -327,7 +327,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveAmountTooLarge')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // swap failed
   it('Should return the equivalent Curve swap failed friendly error', () => {
@@ -365,7 +365,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapFailed')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
 
     // Curve/swap-invariant-violation
     errorFromContract = 'execution reverted: Curve/swap-invariant-violation'
@@ -399,7 +399,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapFailed')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
 
     // Curve/liquidity-invariant-violation
     errorFromContract = 'execution reverted: Curve/liquidity-invariant-violation'
@@ -433,7 +433,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapFailed')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Maximunm imbalance
   it('Should return the equivalent Curve maximunm imbalance friendly error', () => {
@@ -471,7 +471,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapHalt')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
 
     // Curve/upper-halt
     errorFromContract = 'execution reverted: Curve/upper-halt'
@@ -505,7 +505,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapHalt')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
 
     // Curve/below-min-target-amount
     errorFromContract = 'execution reverted: Curve/below-min-target-amount'
@@ -539,7 +539,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveSwapHalt')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // Curve/CADC-transfer-from-failed
   it('Should return the equivalent Curve whitelist stopped friendly error', () => {
@@ -577,7 +577,7 @@ describe('Friendly Error Message Test', () => {
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveERC20TransferFailed')
+    expect(result.current.friendlyErrorMessage).toBe('errorMessageCurveDefault')
   })
   // SafeMath: subtraction overflow
   it('Should return the equivalent SafeMath subtraction overflow friendly error', () => {
@@ -626,27 +626,19 @@ describe('Friendly Error Message Test', () => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
     expect(result.current.friendlyErrorMessage).toBe('errorMessageMetamaskRejection')
-
-    errorFromContract = 'User denied transaction signature'
-    errorObject = {
-      code: errorCode,
-      data: errorData,
+  })
+  // ErrorObject format
+  it('Should accept incomplete properties of ErrorObject and return the error message', () => {
+    const { result } = renderHook(() => useErrorMessage())
+    let errorFromContract = 'Arbitrary Error.'
+    
+    const errorObject = <HaloError>({
       message: errorFromContract
-    }
+    })
+
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)
     })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageMetamaskRejection')
-
-    errorFromContract = 'MetaMask Tx Signature'
-    errorObject = {
-      code: errorCode,
-      data: errorData,
-      message: errorFromContract
-    }
-    act(() => {
-      result.current.getFriendlyErrorMessage(errorObject)
-    })
-    expect(result.current.friendlyErrorMessage).toBe('errorMessageMetamaskRejection')
+    expect(result.current.friendlyErrorMessage).toBe(errorFromContract)
   })
 })

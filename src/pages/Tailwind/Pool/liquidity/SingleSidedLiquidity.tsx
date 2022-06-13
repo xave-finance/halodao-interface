@@ -240,7 +240,7 @@ const SingleSidedLiquidity = ({
         />
         {errorMessage && (
           <div className="mt-2">
-            <InlineErrorContent errorObject={errorMessage} displayDetails={false} />
+            <InlineErrorContent errorObject={errorMessage} />
           </div>
         )}
       </div>

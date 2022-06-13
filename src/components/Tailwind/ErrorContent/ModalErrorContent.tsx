@@ -4,7 +4,7 @@ import Copy from '../../AccountDetails/Copy'
 import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
 
 interface ModalErrorContentProps {
-  errorObject: any
+  errorObject: HaloError
   onDismiss: () => void
 }
 
@@ -12,15 +12,9 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
   const [showMore, setShowMore] = useState(false)
   const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
-  const [haloError] = useState<HaloError>({
-    code: errorObject?.code ?? 'Unknown',
-    data: errorObject?.data ?? 'Unknown',
-    message: errorObject?.message ?? 'Unknown'
-  })
-
   useEffect(() => {
-    getFriendlyErrorMessage(haloError)
-  }, [haloError, getFriendlyErrorMessage])
+    getFriendlyErrorMessage(errorObject)
+  }, [errorObject, getFriendlyErrorMessage])
 
   return (
     <div className="p-4">
@@ -43,11 +37,11 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
         {showMore && (
           <div className="flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray">
             <div className="flex justify-center items-center text-center">
-              <p className="italic mb-2.5 text-sm">{haloError.message}</p>
+              <p className="italic mb-2.5 text-sm">{errorObject.message}</p>
             </div>
             <div className="flex justify-center items-center w-full space-x-4">
               <div>
-                <Copy toCopy={haloError.message}>
+                <Copy toCopy={errorObject.message}>
                   <span>Copy</span>
                 </Copy>
               </div>

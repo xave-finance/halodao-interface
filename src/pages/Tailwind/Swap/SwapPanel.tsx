@@ -485,7 +485,7 @@ const SwapPanel = () => {
       />
       {errorObject && errorDisplayType === ErrorDisplayType.Inline && (
         <div className="mt-2">
-          <InlineErrorContent errorObject={errorObject} displayDetails={false} />
+          <InlineErrorContent errorObject={errorObject} />
         </div>
       )}
       {errorObject && errorDisplayType === ErrorDisplayType.Modal && (

@@ -12,12 +12,14 @@ export type HaloError = {
 const useErrorMessage = () => {
   const { t } = useTranslation()
   const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('errorMessageCurveDefault'))
+  let errorMatched = false
 
   const getFriendlyErrorMessage = useCallback(
     (errorObject: HaloError) => {
       const errorMap = new Map()
       errorMap.set(CurveErrorMessage.CurveReentered, t('errorMessageCurveReentered'))
       errorMap.set(CurveErrorMessage.AllowanceDecreaseUnderflow, t('errorMessageCurveAllowance'))
+      errorMap.set(CurveErrorMessage.BelowMinTargetAmount, t('errorMessageCurveSwapHalt'))
       errorMap.set(CurveErrorMessage.ApprovalOverflow, t('errorMessageCurveAllowance'))
       errorMap.set(CurveErrorMessage.InsufficientAllowance, t('errorMessageCurveAllowance'))
       errorMap.set(CurveErrorMessage.Frozen, t('errorMessageCurveFrozen'))
@@ -42,14 +44,21 @@ const useErrorMessage = () => {
       errorMap.forEach((value, key) => {
         if (errorObject.message.includes(key)) {
           setFriendlyErrorMessage(value)
-          console.log(key, value)
+          errorMatched = true
         }
       })
-      if (errorObject.code.toString().toLowerCase() === 'unknown') {
-        // consoleLog('setFriendlyErrorMessage', friendlyErrorMessage)
-        setFriendlyErrorMessage(errorObject.message)
-        // consoleLog('errorObject.uknown', errorObject.message)
+      if (typeof errorObject.message === 'undefined') {
+        setFriendlyErrorMessage(t('errorMessageCurveDefault'))
+        errorMatched = true
       }
+      if (typeof errorObject.code === 'undefined') {
+        setFriendlyErrorMessage(errorObject.message)
+        errorMatched = true
+      }
+      console.log('errorMatched', errorMatched)
+      if (errorMatched === false) {
+        setFriendlyErrorMessage(t('errorMessageCurveDefault'))
+      }      
     },
     [t]
   )
