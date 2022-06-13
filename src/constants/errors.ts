@@ -1,7 +1,7 @@
 export enum CurveErrorMessage {
   CurveReentered = 'Curve/re-entered',
   AllowanceDecreaseUnderflow = 'Curve/allowance-decrease-underflow',
-  BelowMinTargetAmount = 'Curve/below-min-target-amount', 	
+  BelowMinTargetAmount = 'Curve/below-min-target-amount',
   ApprovalOverflow = 'Curve/approval-overflow',
   InsufficientAllowance = 'Curve/insufficient-allowance',
   Frozen = 'Curve/frozen-only-allowing-proportional-withdraw',

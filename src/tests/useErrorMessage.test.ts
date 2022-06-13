@@ -614,10 +614,10 @@ describe('Friendly Error Message Test', () => {
   // User rejected tx
   it('Should return the equivalent Metamask user rejected tx friendly error', () => {
     const { result } = renderHook(() => useErrorMessage())
-    let errorFromContract = 'MetaMask Tx Signature: User denied transaction signature.'
+    const errorFromContract = 'MetaMask Tx Signature: User denied transaction signature.'
     const errorCode = 4001
     const errorData = ''
-    let errorObject = {
+    const errorObject = {
       code: errorCode,
       data: errorData,
       message: errorFromContract
@@ -630,11 +630,11 @@ describe('Friendly Error Message Test', () => {
   // ErrorObject format
   it('Should accept incomplete properties of ErrorObject and return the error message', () => {
     const { result } = renderHook(() => useErrorMessage())
-    let errorFromContract = 'Arbitrary Error.'
-    
-    const errorObject = <HaloError>({
+    const errorFromContract = 'Arbitrary Error.'
+
+    const errorObject = <HaloError>{
       message: errorFromContract
-    })
+    }
 
     act(() => {
       result.current.getFriendlyErrorMessage(errorObject)

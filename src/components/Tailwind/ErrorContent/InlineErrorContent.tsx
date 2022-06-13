@@ -21,8 +21,8 @@ const InlineErrorContent = ({ errorObject, displayDetails }: InlineErrorContentP
             <div className="font-semibold ">ERROR #: {errorObject.code}</div>
             <div className="text-center text-sm mb-2">
               {friendlyErrorMessage}. Please show this error message: &quot;
-              <span className="text-primary-red">{errorObject.message} </span>&quot; to the team on Discord or email us at
-              dev@halodao.com.
+              <span className="text-primary-red">{errorObject.message} </span>&quot; to the team on Discord or email us
+              at dev@halodao.com.
             </div>
           </>
         )}

@@ -58,7 +58,7 @@ const useErrorMessage = () => {
       console.log('errorMatched', errorMatched)
       if (errorMatched === false) {
         setFriendlyErrorMessage(t('errorMessageCurveDefault'))
-      }      
+      }
     },
     [t]
   )
