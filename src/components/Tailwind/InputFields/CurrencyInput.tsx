@@ -75,7 +75,7 @@ const TokenInput = ({
                   text={'These are the tokens in your wallet, not the tokens in the pool.'}
                   placement={'top'}
                 >
-                  Wallet Balance:{' '}
+                  Wallet Balance:&nbsp;{' '}
                 </MouseoverTooltip>
                 {balance
                   ? formatNumber(Number(balance), NumberFormat.long)
