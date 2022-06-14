@@ -139,7 +139,7 @@
   "errorMessageCurveDefault": "Something went wrong. Please try to input a different amount.",
   "errorMessageCurveReentered": "Critical error. Please contact the team.",
   "errorMessageCurveAllowance": "Allowance error. Please contact the team.",
-  "errorMessageCurveFrozen": "Contract is currently frozen. Only proportional withdraw allowed",
+  "errorMessageCurveFrozen": "Contract is currently frozen. Only proportional withdraw allowed.",
   "errorMessageCurveEmergency": "Contracts are in emergency state. This function is disabled.",
   "errorMessageCurveDeadlinePassed": "Swap rate has expired. Please try again.",
   "errorMessageCurveWhitelistingStage": "Contracts are in whitelisting stage. Your address must be whitelisted to use this function.",
