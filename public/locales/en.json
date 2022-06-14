@@ -145,7 +145,7 @@
   "errorMessageCurveWhitelistingStage": "Contracts are in whitelisting stage. Your address must be whitelisted to use this function.",
   "errorMessageCurveNotWhitelistingStage": "Contracts are no longer whitelisting stage.",
   "errorMessageCurveAmountTooLarge": "This amount is too large to swap.",
-  "errorMessageCurveSwapFailed": "Swap failed. Please try again",
+  "errorMessageCurveSwapFailed": "Swap failed. Please try again.",
   "errorMessageCurveSwapHalt": "Pool has reached maximum imbalance. Swap back towards ideal ratios at cheaper fees.",
   "errorMessageCurveERC20TransferFailed": "ERC20 transfer failed.",
   "errorMessageSubtractionOverflow": "Calculation Error. Please try a different amount.",
