@@ -15,6 +15,8 @@ import Demo from './Test/Demo'
 import TailwindDemo from './Test/TailwindDemo'
 import Pool from './Tailwind/Pool'
 import Swap from './Tailwind/Swap'
+import { GeofenceCountry, useGeofence } from '../halo-hooks/useGeofence'
+import GeoBlocked from 'components/Tailwind/Panels/GeoBlocked'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -53,6 +55,20 @@ const Marginer = styled.div`
 `
 
 export default function App() {
+  const { loading, rejected } = useGeofence(GeofenceCountry.SINGAPORE);
+
+  if (loading) {
+    return (
+      <div>
+        loading...
+      </div>
+    );
+  } else if (!loading && rejected) {
+    return (
+      <GeoBlocked />
+    );
+  }
+
   return (
     <Suspense fallback={null}>
       <Route component={GoogleAnalyticsReporter} />
