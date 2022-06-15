@@ -58,15 +58,9 @@ export default function App() {
   const { loading, rejected } = useGeofence(GeofenceCountry.SINGAPORE);
 
   if (loading) {
-    return (
-      <div>
-        loading...
-      </div>
-    );
+    return <div>loading...</div>
   } else if (!loading && rejected) {
-    return (
-      <GeoBlocked />
-    );
+    return <GeoBlocked />
   }
 
   return (

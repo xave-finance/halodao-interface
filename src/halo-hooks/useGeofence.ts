@@ -25,7 +25,7 @@ export const useGeofence = (country: GeofenceCountry) => {
           setRejected(false)
         }
       })
-      .catch((e) => {
+      .catch(e => {
         // Geofence failed. Should we default to rejected or ok?
         console.log(e)
         setRejected(false)
@@ -37,6 +37,6 @@ export const useGeofence = (country: GeofenceCountry) => {
 
   return {
     rejected,
-    loading,
+    loading
   }
 }
