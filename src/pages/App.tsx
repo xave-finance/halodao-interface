@@ -55,18 +55,12 @@ const Marginer = styled.div`
 `
 
 export default function App() {
-  const { loading, rejected } = useGeofence(GeofenceCountry.PHILIPPINES);
+  const { loading, rejected } = useGeofence(GeofenceCountry.PHILIPPINES)
 
   if (loading) {
-    return (
-      <div>
-        loading...
-      </div>
-    );
+    return <div>loading...</div>
   } else if (!loading && rejected) {
-    return (
-      <GeoBlocked />
-    );
+    return <GeoBlocked />
   }
 
   return (
