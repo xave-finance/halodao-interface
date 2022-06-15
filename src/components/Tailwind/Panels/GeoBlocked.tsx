@@ -2,7 +2,7 @@ import React from 'react'
 import PageWarning from '../Layout/PageWarning'
 
 const GeoBlocked = () => {
-  const caption = `Oops! Content is blocked from your location.`
+  const caption = `Oops! Content is blocked on your location.`
 
   return (
     <div
