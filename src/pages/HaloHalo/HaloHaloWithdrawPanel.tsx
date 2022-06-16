@@ -24,6 +24,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { MouseoverTooltip } from '../../components/Tooltip'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -238,7 +239,12 @@ export default function HaloHaloWithdrawPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {xHaloHaloBalance} xRNBW
+                    <MouseoverTooltip
+                      text={'These are the tokens in your wallet, not the tokens in the pool.'}
+                      placement={'top'}
+                    >
+                      WALLET BALANCE: {xHaloHaloBalance} xRNBW
+                    </MouseoverTooltip>
                   </TYPE.body>
                 )}
               </RowBetween>
