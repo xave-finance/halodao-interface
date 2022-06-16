@@ -151,5 +151,6 @@
   "errorMessageSubtractionOverflow": "Calculation Error. Please try a different amount.",
   "errorMessageMetamaskRejection": "User rejected transaction.",
   "errorMessageSafeMathDivisionByZero": "Calculation Error. Please try a different amount.",
-  "baseApr": "Base APR"
+  "baseApr": "Base APR",
+  "slippageTolerance": "Your transaction will revert if the price changes unfavorably by more than this percentage."
 }
