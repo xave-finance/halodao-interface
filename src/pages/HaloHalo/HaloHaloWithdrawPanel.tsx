@@ -96,7 +96,7 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function HaloHaloWithdrawPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     setRequestedApproval(true)
-    setErrorObject(undefined)
+    setError(undefined)
 
     try {
       const txHash = await approve()
@@ -130,13 +130,13 @@ export default function HaloHaloWithdrawPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(txHash)
+        setError(txHash)
       } else {
         await txHash.wait()
       }
     } catch (e) {
       console.log(e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setRequestedApproval(false)
     }
@@ -161,7 +161,7 @@ export default function HaloHaloWithdrawPanel({
   const withdraw = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
-    setErrorObject(undefined)
+    setError(undefined)
 
     let success = false
     let amount: BalanceProps | undefined
@@ -177,7 +177,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(tx)
+        setError(tx)
       } else {
         await tx.wait()
         setWithdrawValue('')
@@ -185,7 +185,7 @@ export default function HaloHaloWithdrawPanel({
       }
     } catch (e) {
       console.error(e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
@@ -320,13 +320,7 @@ export default function HaloHaloWithdrawPanel({
         </Container>
       </InputPanel>
 
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
+      {error && <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />}
     </>
   )
 }

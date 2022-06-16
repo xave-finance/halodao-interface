@@ -98,7 +98,7 @@ export default function CurrencyInputPanel({
   const [maxSelected, setMaxSelected] = useState(false)
   const maxDepositAmountInput = haloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function CurrencyInputPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     setRequestedApproval(true)
-    setErrorObject(undefined)
+    setError(undefined)
 
     try {
       const txHash = await approve()
@@ -130,13 +130,13 @@ export default function CurrencyInputPanel({
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(txHash)
+        setError(txHash)
       } else {
         await txHash.wait()
       }
     } catch (e) {
       console.error(e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setRequestedApproval(false)
     }
@@ -157,7 +157,7 @@ export default function CurrencyInputPanel({
   const deposit = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
-    setErrorObject(undefined)
+    setError(undefined)
 
     let success = false
     let amount: BalanceProps | undefined
@@ -173,7 +173,7 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(tx)
+        setError(tx)
       } else {
         await tx.wait()
         setDepositValue('')
@@ -181,7 +181,7 @@ export default function CurrencyInputPanel({
       }
     } catch (e) {
       console.error('Error catched! ', e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
@@ -316,13 +316,7 @@ export default function CurrencyInputPanel({
         </Container>
       </InputPanel>
 
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
+      {error && <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />}
     </>
   )
 }

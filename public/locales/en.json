@@ -136,7 +136,7 @@
   "apr-breakdown": "APR Breakdown:",
   "insufficient-reward-balance": "Please ask protocol to top up rewards.",
   "harvest-failed": "Harvest failed. Please try again.",
-  "errorMessageCurveDefault": "Something went wrong. Please try to input a different amount.",
+  "errorMessageCurveDefault": "Something went wrong. You may try to enter a different amount.",
   "errorMessageCurveReentered": "Critical error. Please contact the team.",
   "errorMessageCurveAllowance": "Allowance error. Please contact the team.",
   "errorMessageCurveFrozen": "Contract is currently frozen. Only proportional withdraw allowed.",
@@ -151,6 +151,7 @@
   "errorMessageSubtractionOverflow": "Calculation Error. Please try a different amount.",
   "errorMessageMetamaskRejection": "User rejected transaction.",
   "errorMessageSafeMathDivisionByZero": "Calculation Error. Please try a different amount.",
+  "errorMessageGeneric": "Something went wrong. Please try again.",
   "baseApr": "Base APR",
   "slippageTolerance": "Your transaction will revert if the price changes unfavorably by more than this percentage."
 }

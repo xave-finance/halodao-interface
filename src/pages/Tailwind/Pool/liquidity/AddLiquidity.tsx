@@ -21,7 +21,7 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [zapAmount, setZapAmount] = useState('')
   const [isGivenBase, setIsGivenBase] = useState(true)
   const [slippage, setSlippage] = useState('3')
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
 
   const { account } = useActiveWeb3React()
   const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
@@ -75,15 +75,9 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
         slippage={slippage}
         isMultisided={activeSegment === 0}
         isGivenBase={isGivenBase}
-        onError={setErrorObject}
+        onError={setError}
       />
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
+      {error && <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />}
     </div>
   )
 }

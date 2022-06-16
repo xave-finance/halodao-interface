@@ -1,21 +1,14 @@
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { consoleLog } from 'utils/simpleLogger'
+import { HaloError } from 'utils/errors/HaloError'
 import { CurveErrorMessage, GeneralErrorMessage, ZapErrorMessage } from '../constants/errors'
-
-export type HaloError = {
-  code: number
-  data: string
-  message: string
-}
 
 const useErrorMessage = () => {
   const { t } = useTranslation()
-  const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('errorMessageCurveDefault'))
-  let errorMatched = false
+  const [friendlyErrorMessage, setFriendlyErrorMessage] = useState(t('errorMessageGeneric'))
 
   const getFriendlyErrorMessage = useCallback(
-    (errorObject: HaloError) => {
+    (error: Error) => {
       const errorMap = new Map()
       errorMap.set(CurveErrorMessage.CurveReentered, t('errorMessageCurveReentered'))
       errorMap.set(CurveErrorMessage.AllowanceDecreaseUnderflow, t('errorMessageCurveAllowance'))
@@ -38,26 +31,23 @@ const useErrorMessage = () => {
       errorMap.set(GeneralErrorMessage.MetamaskRejection, t('errorMessageMetamaskRejection'))
       errorMap.set(GeneralErrorMessage.SafeMathDivisionByZero, t('errorMessageSafeMathDivisionByZero'))
       errorMap.set(ZapErrorMessage.NotEnoughLpAmount, t('error-liquidity-zap-reverted'))
-      consoleLog('errorObject', errorObject)
-      consoleLog('errorObject.code', typeof errorObject.code)
-      consoleLog('errorObject.message', errorObject.message)
+
+      let errorMsg: string | undefined = undefined
       errorMap.forEach((value, key) => {
-        if (errorObject.message.includes(key)) {
-          setFriendlyErrorMessage(value)
-          errorMatched = true
+        if (
+          (error.message && error.message.includes(key)) || // normal error
+          ((error as any).data && (error as any).data.message.includes(key)) // tx supplied as error
+        ) {
+          errorMsg = value
         }
       })
-      if (typeof errorObject.message === 'undefined') {
-        setFriendlyErrorMessage(t('errorMessageCurveDefault'))
-        errorMatched = true
-      }
-      if (typeof errorObject.code === 'undefined') {
-        setFriendlyErrorMessage(errorObject.message)
-        errorMatched = true
-      }
-      console.log('errorMatched', errorMatched)
-      if (errorMatched === false) {
-        setFriendlyErrorMessage(t('errorMessageCurveDefault'))
+
+      if (errorMsg) {
+        setFriendlyErrorMessage(errorMsg)
+      } else if (error instanceof HaloError) {
+        setFriendlyErrorMessage(error.message)
+      } else {
+        setFriendlyErrorMessage(t('errorMessageGeneric'))
       }
     },
     [t]
