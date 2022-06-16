@@ -3,6 +3,7 @@ import BaseModal from 'components/Tailwind/Modals/BaseModal'
 import SlippageTolerance from 'components/Tailwind/InputFields/SlippageTolerance'
 import NumericalInput from 'components/NumericalInput'
 import { HelpCircle as QuestionIcon } from 'react-feather'
+import { MouseoverTooltip } from '../../../../components/Tooltip'
 
 interface SwapSettingsModalProps {
   txDeadline: number
@@ -25,6 +26,8 @@ const SwapSettingsModal = ({
     onDismiss()
   }
 
+  const Description = 'Your transaction will revert if it is pending for more than this period of time.'
+
   return (
     <BaseModal isVisible={isVisible} onDismiss={dismissGracefully}>
       <div className="p-4">
@@ -40,8 +43,12 @@ const SwapSettingsModal = ({
           />
         </div>
         <div className="flex items-center space-x-2 mt-2">
-          <span>Transaction deadline</span>
-          <QuestionIcon size={16} />
+          <span>Transaction deadline: </span>
+          <MouseoverTooltip placement={'top'} text={Description}>
+            <div className="cursor-pointer">
+              <QuestionIcon size={16} />
+            </div>
+          </MouseoverTooltip>
         </div>
         <div className="flex items-center space-x-2 mt-2">
           <div className="w-20">
