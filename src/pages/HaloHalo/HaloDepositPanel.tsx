@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 import Spinner from '../../assets/images/spinner.svg'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { HaloError } from 'utils/errors/HaloError'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -124,15 +125,15 @@ export default function CurrencyInputPanel({
     setError(undefined)
 
     try {
-      const txHash = await approve()
+      const tx = await approve()
       // user rejected tx or didn't go thru
       if (
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(txHash)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
-        await txHash.wait()
+        await tx.wait()
       }
     } catch (e) {
       console.error(e)
@@ -140,7 +141,7 @@ export default function CurrencyInputPanel({
     } finally {
       setRequestedApproval(false)
     }
-  }, [approve, setRequestedApproval])
+  }, [t, approve, setRequestedApproval])
 
   // track and parse user input for Deposit Input
   const onUserDepositInput = useCallback((depositValue: string, max = false) => {
@@ -173,7 +174,7 @@ export default function CurrencyInputPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(tx)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
         await tx.wait()
         setDepositValue('')

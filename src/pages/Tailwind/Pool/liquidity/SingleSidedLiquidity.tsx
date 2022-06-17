@@ -15,7 +15,7 @@ import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MetamaskErrorCode } from 'constants/errors'
 import { useTranslation } from 'react-i18next'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
-import { HaloError, HaloErrorDomain } from 'utils/errors/HaloError'
+import { HaloError } from 'utils/errors/HaloError'
 
 enum AddLiquidityState {
   NoAmount,
@@ -86,7 +86,7 @@ const SingleSidedLiquidity = ({
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
           setError(e)
         }

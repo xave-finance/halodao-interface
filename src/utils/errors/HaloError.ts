@@ -1,18 +1,9 @@
-export enum HaloErrorDomain {
-  Generic = 'Generic',
-  Swap = 'Swap',
-  Liquidity = 'AddLiquidity',
-  Rewards = 'Rewards',
-  Vesting = 'Vesting',
-  Bridge = 'Bridge'
-}
-
 export class HaloError extends Error {
-  domain: HaloErrorDomain
+  uderlyingTx: any // an optional metamask transaction which caused the error
 
-  constructor(message: string, domain: HaloErrorDomain) {
-    super(message)
+  constructor(_message: string, _uderlyingTx?: any) {
+    super(_message)
     this.name = 'HaloError'
-    this.domain = domain
+    this.uderlyingTx = _uderlyingTx
   }
 }

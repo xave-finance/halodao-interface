@@ -13,7 +13,7 @@ import { MetamaskErrorCode } from 'constants/errors'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 import { useActiveWeb3React } from '../../../../hooks'
 import { useCurrencyBalance } from '../../../../state/wallet/hooks'
-import { HaloError, HaloErrorDomain } from 'utils/errors/HaloError'
+import { HaloError } from 'utils/errors/HaloError'
 
 enum AddLiquidityState {
   NoAmount,
@@ -82,11 +82,11 @@ const MultiSidedLiquidity = ({
 
         if (parseEther(base).gt(parseEther(val))) {
           console.error('estimate > base')
-          setError(new HaloError(t('error-liquidity-estimates-changed'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
           setError(e)
         }
@@ -113,11 +113,11 @@ const MultiSidedLiquidity = ({
 
         if (parseEther(quote).gt(parseEther(val))) {
           console.error('estimate > quote')
-          setError(new HaloError(t('error-liquidity-estimates-changed'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
           setError(e)
         }

@@ -35,8 +35,10 @@ const useErrorMessage = () => {
       let errorMsg: string | undefined = undefined
       errorMap.forEach((value, key) => {
         if (
-          (error.message && error.message.includes(key)) || // normal error
-          ((error as any).data && (error as any).data.message.includes(key)) // tx supplied as error
+          (error.message && error.message.includes(key)) || // normal Error
+          (error instanceof HaloError &&
+            (error as HaloError).uderlyingTx &&
+            (error as HaloError).uderlyingTx.data.message.includes(key)) // HaloError with underlying tx
         ) {
           errorMsg = value
         }

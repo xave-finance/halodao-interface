@@ -24,6 +24,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { HaloError } from 'utils/errors/HaloError'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -122,17 +123,16 @@ export default function HaloHaloWithdrawPanel({
     setError(undefined)
 
     try {
-      const txHash = await approve()
-      console.log(txHash)
+      const tx = await approve()
       // user rejected tx or didn't go thru
       if (
         // catch metamask rejection
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(txHash)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
-        await txHash.wait()
+        await tx.wait()
       }
     } catch (e) {
       console.log(e)
@@ -177,7 +177,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(tx)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
         await tx.wait()
         setWithdrawValue('')

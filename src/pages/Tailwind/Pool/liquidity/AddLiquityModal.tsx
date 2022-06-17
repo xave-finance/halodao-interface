@@ -16,7 +16,7 @@ import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage, MetamaskErrorCode } from 'constants/errors'
 import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
-import { HaloError, HaloErrorDomain } from 'utils/errors/HaloError'
+import { HaloError } from 'utils/errors/HaloError'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -102,9 +102,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+            setError(new HaloError(t('error-vm-exception')))
           } else {
-            setError(e as any)
+            setError(e)
           }
         }
       } else {
@@ -115,9 +115,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+            setError(new HaloError(t('error-vm-exception')))
           } else {
-            setError(e as any)
+            setError(e)
           }
         }
       }
@@ -131,12 +131,12 @@ const AddLiquityModal = ({
         res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
 
         if (Number(res.base) > Number(baseTokenAmount)) {
-          setError(new HaloError(t('error-liquidity-estimates-changed'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
           setError(e)
         }
@@ -147,12 +147,12 @@ const AddLiquityModal = ({
         res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
 
         if (Number(res.quote) > Number(quoteTokenAmount)) {
-          setError(new HaloError(t('error-liquidity-estimates-changed'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setError(new HaloError(t('error-vm-exception'), HaloErrorDomain.Liquidity))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
           setError(e)
         }
@@ -252,7 +252,7 @@ const AddLiquityModal = ({
         (err as any).code === ZapErrorCode.SlippageTooLow ||
         (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
       ) {
-        onError(new HaloError(t('error-liquidity-zap-reverted'), HaloErrorDomain.Liquidity))
+        onError(new HaloError(t('error-liquidity-zap-reverted')))
       } else {
         onError(err)
         onDismiss()
