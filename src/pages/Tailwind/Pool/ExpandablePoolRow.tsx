@@ -14,19 +14,20 @@ import { useDispatch } from 'react-redux'
 import { AppDispatch } from 'state'
 import { updatePools } from 'state/pool/actions'
 import { useActivePopups, useBlockNumber } from '../../../state/application/hooks'
+import { usePoolsEarnedFees } from '../../../halo-hooks/usePoolInfo'
 
 const PoolRow = styled.div`
   .col-1 {
     width: 19%;
   }
   .col-2 {
-    width: 18%;
+    width: 14%;
   }
   .col-3 {
-    width: 18%;
+    width: 14%;
   }
   .col-4 {
-    width: 11%;
+    width: 13%;
   }
   .col-5 {
     width: 13%;
@@ -35,6 +36,9 @@ const PoolRow = styled.div`
     width: 13%;
   }
   .col-7 {
+    width: 13%;
+  }
+  .col-8 {
     width: 8%;
   }
 
@@ -65,6 +69,9 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
   const blockNumber = useBlockNumber()
   const activePopups = useActivePopups()
 
+  //get pools earned fees
+  const poolsEarnedFees = usePoolsEarnedFees()
+
   useEffect(() => {
     setReloader((r: number) => r + 1)
     setTimeout(() => {
@@ -79,6 +86,10 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
    * - network changed
    **/
   useEffect(() => {
+    const feesEarned = poolsEarnedFees.find(val => {
+      return val.id.toLowerCase() === poolAddress.toLowerCase()
+    })
+
     const promises = [
       getTokens(),
       getLiquidity(),
@@ -126,7 +137,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
           staked: Number(formatEther(staked)),
           earned: Number(formatEther(rewards)),
           totalSupply: Number(formatEther(totalSupply)),
-          assimilators: liquidity.assimilators
+          assimilators: liquidity.assimilators,
+          earnedFees: feesEarned ? feesEarned.earnedFees : 0
         })
       })
       .catch(e => {
@@ -141,7 +153,8 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
     getPendingRewards,
     getTotalSupply,
     blockNumber,
-    reloader
+    reloader,
+    poolsEarnedFees
   ])
 
   /**
@@ -223,10 +236,14 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
           <div className="">{formatNumber(pool.staked)}</div>
         </div>
         <div className="col-6 mb-4 md:mb-0">
+          <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Pool Fees Earned:</div>
+          <div className="">{formatNumber(pool.earnedFees)}</div>
+        </div>
+        <div className="col-7 mb-4 md:mb-0">
           <div className="text-xs font-semibold tracking-widest uppercase md:hidden">Earned:</div>
           <div className="">{formatNumber(pool.earned)} xRNBW</div>
         </div>
-        <div className="col-7 md:text-right">
+        <div className="col-8 md:text-right">
           <PoolExpandButton title="Manage" expandedTitle="Close" isExpanded={isExpanded} onClick={onClick} />
         </div>
       </PoolRow>

@@ -6,13 +6,13 @@ const Wrapper = styled.div`
     width: 19%;
   }
   .col-2 {
-    width: 18%;
+    width: 14%;
   }
   .col-3 {
-    width: 18%;
+    width: 14%;
   }
   .col-4 {
-    width: 11%;
+    width: 13%;
   }
   .col-5 {
     width: 13%;
@@ -21,6 +21,9 @@ const Wrapper = styled.div`
     width: 13%;
   }
   .col-7 {
+    width: 13%;
+  }
+  .col-8 {
     width: 8%;
   }
 `
@@ -33,8 +36,9 @@ const PoolColumns = () => {
       <div className="col-3 text-gray-500 font-bold">Pooled (B) Tokens</div>
       <div className="col-4 text-gray-500 font-bold">Held HLP</div>
       <div className="col-5 text-gray-500 font-bold">Staked HLP</div>
-      <div className="col-6 text-gray-500 font-bold">Earned</div>
-      <div className="col-7">&nbsp;</div>
+      <div className="col-6 text-gray-500 font-bold">Pool Fees Earned</div>
+      <div className="col-7 text-gray-500 font-bold">Earned</div>
+      <div className="col-8">&nbsp;</div>
     </Wrapper>
   )
 }

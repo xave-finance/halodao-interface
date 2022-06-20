@@ -1,11 +1,13 @@
-import { Token } from '@halodao/sdk'
+import { ChainId, Token } from '@halodao/sdk'
 import { useActiveWeb3React } from 'hooks'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { groupByPoolProvider } from 'utils/poolInfo'
 import { useBalancerPoolInfo } from './useBalancerPoolInfo'
 import { useHaloPoolInfo } from './useHaloPoolInfo'
 import { useSushiPoolInfo } from './useSushiPoolInfo'
 import { useUniPoolInfo } from './useUniPoolInfo'
+import { HALODAO_EXCHANGE_SUBGRAPH_STUDIO, HALODAO_EXCHANGE_SUBGRAPH_HOSTED } from '../constants'
+import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 
 export enum PoolProvider {
   Balancer,
@@ -73,4 +75,67 @@ export const usePoolInfo = (lpTokenAddresses: string[]) => {
 
     return { poolsInfo, tokenAddresses }
   }, [balancer, uni, sushi, halo, fetchBalancerPoolInfo, fetchSushiPoolInfo, fetchUniPoolInfo, fetchHaloPoolInfo])
+}
+
+interface PoolSubgraphInfo {
+  id: string
+  earnedFees: number
+}
+
+export const usePoolsEarnedFees = () => {
+  const [info, setInfo] = useState<PoolSubgraphInfo[]>([])
+
+  const poolQuery = `
+      query{
+        pools{
+          id
+          earnedFees
+        }
+      }
+    `
+  async function getStudio() {
+    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_STUDIO[ChainId.MAINNET]
+    const client = new ApolloClient({
+      uri: APIURL,
+      cache: new InMemoryCache()
+    })
+    return client.query({
+      query: gql(poolQuery)
+    })
+  }
+
+  async function getHosted() {
+    const APIURL = HALODAO_EXCHANGE_SUBGRAPH_HOSTED[ChainId.MAINNET]
+    const client = new ApolloClient({
+      uri: APIURL,
+      cache: new InMemoryCache()
+    })
+    return client.query({
+      query: gql(poolQuery)
+    })
+  }
+
+  async function setData(data: PoolSubgraphInfo[]) {
+    setInfo(data)
+  }
+
+  useEffect(() => {
+    try {
+      getStudio()
+        .then(data => {
+          setData(data.data.pools)
+        })
+        .catch(err => {
+          console.log('Error fetching data on Studio: ', err)
+          console.log('Trying to get data in Hosted')
+          getHosted().then(data => {
+            setData(data.data.pools)
+          })
+        })
+    } catch (e) {
+      console.error('Error fetching data in Studio and Hosted')
+    }
+  }, [ChainId]) //eslint-disable-line
+
+  return info
 }

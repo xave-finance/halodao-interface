@@ -25,4 +25,5 @@ export interface PoolData {
   earned: number
   totalSupply: number
   assimilators: string[]
+  earnedFees: number
 }
