@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import OrangeWarningIcon from 'assets/svg/orange-warning-icon.svg'
 import Copy from '../../AccountDetails/Copy'
-import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
+import useErrorMessage from 'halo-hooks/useErrorMessage'
 
 interface ModalErrorContentProps {
-  errorObject: HaloError
+  error: Error
   onDismiss: () => void
 }
 
-const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) => {
+const ModalErrorContent = ({ error, onDismiss }: ModalErrorContentProps) => {
   const [showMore, setShowMore] = useState(false)
   const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
   useEffect(() => {
-    getFriendlyErrorMessage(errorObject)
-  }, [errorObject, getFriendlyErrorMessage])
+    getFriendlyErrorMessage(error)
+  }, [error]) // eslint-disable-line
 
   return (
     <div className="p-4">
@@ -37,11 +37,11 @@ const ModalErrorContent = ({ errorObject, onDismiss }: ModalErrorContentProps) =
         {showMore && (
           <div className="flex flex-col justify-center items-center text-center rounded w-11/12 p-4 mt-4 bg-primary-midGray">
             <div className="flex justify-center items-center text-center">
-              <p className="italic mb-2.5 text-sm">{errorObject.message}</p>
+              <p className="italic mb-2.5 text-sm">{error.message}</p>
             </div>
             <div className="flex justify-center items-center w-full space-x-4">
               <div>
-                <Copy toCopy={errorObject.message}>
+                <Copy toCopy={error.message}>
                   <span>Copy</span>
                 </Copy>
               </div>

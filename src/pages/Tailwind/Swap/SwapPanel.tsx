@@ -24,7 +24,7 @@ import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import { ErrorDisplayType } from 'constants/errors'
 
 const SwapPanel = () => {
-  const { account, error, chainId } = useWeb3React()
+  const { account, error: web3Error, chainId } = useWeb3React()
 
   const [toCurrency, setToCurrency] = useState(
     chainId ? (haloTokenList[chainId as ChainId] as Token[])[0] : (HALO[ChainId.MAINNET] as Token)
@@ -44,7 +44,7 @@ const SwapPanel = () => {
   const [isExpired, setIsExpired] = useState(false)
   const [swapTransactionModalState, setSwapTransactionModalState] = useState(ModalState.NotConfirmed)
   const [txhash, setTxhash] = useState('')
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
   const [errorDisplayType, setErrorDisplayType] = useState(ErrorDisplayType.Inline)
 
   const {
@@ -61,7 +61,7 @@ const SwapPanel = () => {
     approve,
     allowance,
     swapToken
-  } = useSwapToken(toCurrency, fromCurrency, setButtonState, setErrorObject, setErrorDisplayType)
+  } = useSwapToken(toCurrency, fromCurrency, setButtonState, setError, setErrorDisplayType)
   const handleApprove = useCallback(async () => {
     try {
       setApproveState(ApproveButtonState.Approving)
@@ -73,7 +73,7 @@ const SwapPanel = () => {
       }
     } catch (e) {
       console.log(e)
-      setErrorObject(e as any)
+      setError(e)
       setErrorDisplayType(ErrorDisplayType.Modal)
     }
   }, [approve, setApproveState])
@@ -300,7 +300,7 @@ const SwapPanel = () => {
 
   const MainContent = () => {
     const toggleWalletModal = useWalletModalToggle()
-    if (!account && !error) {
+    if (!account && !web3Error) {
       return (
         <div className="mt-2">
           <ConnectButton title="Connect to Wallet" onClick={() => toggleWalletModal()} />
@@ -342,7 +342,7 @@ const SwapPanel = () => {
                 value={fromInputValue}
                 canSelectToken={true}
                 didChangeValue={async val => {
-                  setErrorObject(undefined)
+                  setError(undefined)
                   if (parseFloat(fromAmountBalance) >= parseFloat(val)) {
                     setButtonState(SwapButtonState.Swap)
                   } else if (parseFloat(fromAmountBalance) < parseFloat(val)) {
@@ -358,7 +358,7 @@ const SwapPanel = () => {
                 balance={fromAmountBalance}
                 onSelectToken={token => {
                   if (token !== toCurrency) {
-                    setErrorObject(undefined)
+                    setError(undefined)
                     setFromCurrency(token)
                     setToInputValue('')
                     setFromInputValue('')
@@ -454,7 +454,7 @@ const SwapPanel = () => {
             ) {
               setShowModal(false)
               setSwapTransactionModalState(ModalState.NotConfirmed)
-              setErrorObject(txn)
+              setError(txn)
               setButtonState(SwapButtonState.Swap)
               setErrorDisplayType(ErrorDisplayType.Modal)
             }
@@ -462,7 +462,7 @@ const SwapPanel = () => {
             console.error('Error catched! ', e)
             setShowModal(false)
             setSwapTransactionModalState(ModalState.NotConfirmed)
-            setErrorObject(e)
+            setError(e)
             setButtonState(SwapButtonState.Swap)
           }
         }}
@@ -483,17 +483,13 @@ const SwapPanel = () => {
         txnHash={txhash}
         chainId={chainId as number}
       />
-      {errorObject && errorDisplayType === ErrorDisplayType.Inline && (
-        <div className="mt-2">
-          <InlineErrorContent errorObject={errorObject} />
+      {error && errorDisplayType === ErrorDisplayType.Inline && (
+        <div className="mt-4">
+          <InlineErrorContent error={error} />
         </div>
       )}
-      {errorObject && errorDisplayType === ErrorDisplayType.Modal && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
+      {error && errorDisplayType === ErrorDisplayType.Modal && (
+        <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />
       )}
     </>
   )
