@@ -15,6 +15,8 @@ import { useTime } from 'halo-hooks/useTime'
 import ReactGA from 'react-ga'
 import { useTranslation } from 'react-i18next'
 import { ZapErrorCode, ZapErrorMessage, MetamaskErrorCode } from 'constants/errors'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
+import { HaloError } from 'utils/errors/HaloError'
 
 enum AddLiquityModalState {
   NotConfirmed,
@@ -60,7 +62,7 @@ const AddLiquityModal = ({
   const [poolShare, setPoolShare] = useState(0)
   const [depositAmount, setDepositAmount] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const [error, setError] = useState<any | undefined>(undefined)
   const { t } = useTranslation()
 
   const { calcSwapAmountForZapFromBase, calcSwapAmountForZapFromQuote, zapFromBase, zapFromQuote } = useZap(
@@ -84,7 +86,7 @@ const AddLiquityModal = ({
     if (!isMultisided && (!zapAmount || zapAmount === '')) return
 
     setIsLoading(true)
-    setErrorMessage(undefined)
+    setError(undefined)
     let baseTokenAmount = 0
     let quoteTokenAmount = 0
 
@@ -100,9 +102,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setErrorMessage(t('error-vm-exception'))
+            setError(new HaloError(t('error-vm-exception')))
           } else {
-            setErrorMessage((e as any).message)
+            setError(e)
           }
         }
       } else {
@@ -113,9 +115,9 @@ const AddLiquityModal = ({
         } catch (e) {
           console.log('error calculate', e)
           if ((e as any).code === MetamaskErrorCode.Reverted) {
-            setErrorMessage(t('error-vm-exception'))
+            setError(new HaloError(t('error-vm-exception')))
           } else {
-            setErrorMessage((e as any).message)
+            setError(e)
           }
         }
       }
@@ -129,14 +131,14 @@ const AddLiquityModal = ({
         res = await previewDepositGivenBase(`${baseTokenAmount}`, pool.rates.token0, pool.weights.token0)
 
         if (Number(res.base) > Number(baseTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
-          setErrorMessage((e as any).message)
+          setError(e)
         }
         onDismiss()
       }
@@ -145,14 +147,14 @@ const AddLiquityModal = ({
         res = await previewDepositGivenQuote(`${quoteTokenAmount}`)
 
         if (Number(res.quote) > Number(quoteTokenAmount)) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         console.log('error calculate', e)
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setError(new HaloError(t('error-vm-exception')))
         } else {
-          setErrorMessage((e as any).message)
+          setError(e)
         }
         onDismiss()
       }
@@ -191,7 +193,7 @@ const AddLiquityModal = ({
       min: 0
     })
     setPoolShare(0)
-    setErrorMessage(undefined)
+    setError(undefined)
     onDismiss()
   }
 
@@ -231,7 +233,7 @@ const AddLiquityModal = ({
    **/
   const confirmZap = async () => {
     setState(AddLiquityModalState.InProgress)
-    setErrorMessage(undefined)
+    setError(undefined)
 
     try {
       const deadline = getFutureTime()
@@ -250,9 +252,9 @@ const AddLiquityModal = ({
         (err as any).code === ZapErrorCode.SlippageTooLow ||
         (err as any).message.includes(ZapErrorMessage.NotEnoughLpAmount)
       ) {
-        onError({ message: t('error-liquidity-zap-reverted') })
+        onError(new HaloError(t('error-liquidity-zap-reverted')))
       } else {
-        onError(err as any)
+        onError(err)
         onDismiss()
       }
     }
@@ -332,12 +334,16 @@ const AddLiquityModal = ({
           </div>
           <PrimaryButton
             title="Confirm Supply"
-            state={isLoading || errorMessage !== undefined ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
+            state={isLoading || error !== undefined ? PrimaryButtonState.Disabled : PrimaryButtonState.Enabled}
             onClick={() => {
               isMultisided ? confirmDeposit() : confirmZap()
             }}
           />
-          {errorMessage && <div className="mt-4 text-red-600 text-center text-sm">{errorMessage}</div>}
+          {error && (
+            <div className="mt-2">
+              <InlineErrorContent error={error} />
+            </div>
+          )}
         </div>
       </>
     )

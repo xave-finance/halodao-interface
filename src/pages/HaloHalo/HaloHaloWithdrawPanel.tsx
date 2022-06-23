@@ -24,6 +24,7 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import { HaloError } from 'utils/errors/HaloError'
 import { MouseoverTooltip } from '../../components/Tooltip'
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -97,7 +98,7 @@ export default function HaloHaloWithdrawPanel({
   const maxWithdrawAmountInput = xHaloHaloBalanceBigInt
   const [buttonState, setButtonState] = useState(ButtonHaloStates.Disabled)
   const [haloToClaim, setHaloToClaim] = useState(0)
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
 
   // Updating the state of stake button
   useEffect(() => {
@@ -120,24 +121,23 @@ export default function HaloHaloWithdrawPanel({
   // handle approval
   const handleApprove = useCallback(async () => {
     setRequestedApproval(true)
-    setErrorObject(undefined)
+    setError(undefined)
 
     try {
-      const txHash = await approve()
-      console.log(txHash)
+      const tx = await approve()
       // user rejected tx or didn't go thru
       if (
         // catch metamask rejection
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
-        txHash.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
+        tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(txHash)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
-        await txHash.wait()
+        await tx.wait()
       }
     } catch (e) {
       console.log(e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setRequestedApproval(false)
     }
@@ -162,7 +162,7 @@ export default function HaloHaloWithdrawPanel({
   const withdraw = async () => {
     setPendingTx(true)
     setButtonState(ButtonHaloStates.TxInProgress)
-    setErrorObject(undefined)
+    setError(undefined)
 
     let success = false
     let amount: BalanceProps | undefined
@@ -178,7 +178,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setErrorObject(tx)
+        setError(new HaloError(t('errorMessageMetamaskRejection')))
       } else {
         await tx.wait()
         setWithdrawValue('')
@@ -186,7 +186,7 @@ export default function HaloHaloWithdrawPanel({
       }
     } catch (e) {
       console.error(e)
-      setErrorObject(e)
+      setError(e)
     } finally {
       setPendingTx(false)
       setButtonState(ButtonHaloStates.Disabled)
@@ -326,13 +326,7 @@ export default function HaloHaloWithdrawPanel({
         </Container>
       </InputPanel>
 
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
+      {error && <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />}
     </>
   )
 }

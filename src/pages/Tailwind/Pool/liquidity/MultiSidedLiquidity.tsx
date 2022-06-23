@@ -10,8 +10,10 @@ import { useAddRemoveLiquidity } from 'halo-hooks/amm/useAddRemoveLiquidity'
 import { useTranslation } from 'react-i18next'
 import useTokenAllowance from 'halo-hooks/tokens/useTokenAllowance'
 import { MetamaskErrorCode } from 'constants/errors'
+import InlineErrorContent from 'components/Tailwind/ErrorContent/InlineErrorContent'
 import { useActiveWeb3React } from '../../../../hooks'
 import { useCurrencyBalance } from '../../../../state/wallet/hooks'
+import { HaloError } from 'utils/errors/HaloError'
 
 enum AddLiquidityState {
   NoAmount,
@@ -45,7 +47,7 @@ const MultiSidedLiquidity = ({
   const [mainState, setMainState] = useState<AddLiquidityState>(AddLiquidityState.NoAmount)
   const [baseInput, setBaseInput] = useState('')
   const [quoteInput, setQuoteInput] = useState('')
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+  const [error, setError] = useState<any | undefined>(undefined)
   const { account } = useActiveWeb3React()
   const currencyBalance0 = useCurrencyBalance(account ?? undefined, pool.token0)?.toSignificant(6)
   const currencyBalance1 = useCurrencyBalance(account ?? undefined, pool.token1)?.toSignificant(6)
@@ -70,7 +72,7 @@ const MultiSidedLiquidity = ({
     setBaseInput(val)
     onBaseAmountChanged(val)
     onIsGivenBaseChanged(true)
-    setErrorMessage(undefined)
+    setError(undefined)
 
     if (val !== '') {
       try {
@@ -79,11 +81,14 @@ const MultiSidedLiquidity = ({
         onQuoteAmountChanged(quote)
 
         if (parseEther(base).gt(parseEther(val))) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          console.error('estimate > base')
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setError(new HaloError(t('error-vm-exception')))
+        } else {
+          setError(e)
         }
       }
     } else {
@@ -98,7 +103,7 @@ const MultiSidedLiquidity = ({
     setQuoteInput(val)
     onQuoteAmountChanged(val)
     onIsGivenBaseChanged(false)
-    setErrorMessage(undefined)
+    setError(undefined)
 
     if (val !== '') {
       try {
@@ -107,11 +112,14 @@ const MultiSidedLiquidity = ({
         onBaseAmountChanged(base)
 
         if (parseEther(quote).gt(parseEther(val))) {
-          setErrorMessage(t('error-liquidity-estimates-changed'))
+          console.error('estimate > quote')
+          setError(new HaloError(t('error-liquidity-estimates-changed')))
         }
       } catch (e) {
         if ((e as any).code === MetamaskErrorCode.Reverted) {
-          setErrorMessage(t('error-vm-exception'))
+          setError(new HaloError(t('error-vm-exception')))
+        } else {
+          setError(e)
         }
       }
     } else {
@@ -220,7 +228,7 @@ const MultiSidedLiquidity = ({
               : 'Supply'
           }
           state={
-            errorMessage !== undefined
+            error !== undefined
               ? PrimaryButtonState.Disabled
               : mainState === AddLiquidityState.Disabled
               ? PrimaryButtonState.Disabled
@@ -234,7 +242,11 @@ const MultiSidedLiquidity = ({
         />
       </div>
 
-      {errorMessage && <div className="mt-2 text-red-600 text-center text-sm">{errorMessage}</div>}
+      {error && (
+        <div className="mt-2">
+          <InlineErrorContent error={error} />
+        </div>
+      )}
     </>
   )
 }

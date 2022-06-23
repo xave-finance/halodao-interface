@@ -1,31 +1,33 @@
-import { AnyRecord } from 'dns'
-import React, { useEffect, useState } from 'react'
-import useErrorMessage, { HaloError } from 'halo-hooks/useErrorMessage'
+import React, { useEffect } from 'react'
+import useErrorMessage from 'halo-hooks/useErrorMessage'
 
 interface InlineErrorContentProps {
-  errorObject: any
+  error: Error
+  displayDetails?: boolean
 }
 
-const InlineErrorContent = ({ errorObject }: InlineErrorContentProps) => {
+const InlineErrorContent = ({ error, displayDetails }: InlineErrorContentProps) => {
   const { friendlyErrorMessage, getFriendlyErrorMessage } = useErrorMessage()
 
-  const [haloError] = useState<HaloError>({
-    code: errorObject?.code ?? 'Unknown',
-    data: errorObject?.data ?? 'Unknown',
-    message: errorObject?.message ?? 'Unknown'
-  })
-
   useEffect(() => {
-    getFriendlyErrorMessage(haloError)
-  }, [haloError]) // eslint-disable-line
+    getFriendlyErrorMessage(error)
+  }, [error, displayDetails]) // eslint-disable-line
 
   return (
-    <div className="bg-error-light border-solid border-1 border-error-dark rounded">
-      <div className="">ERROR #: {haloError.code}</div>
-      <div className="text-center font-semibold text-xl mb-2">
-        {friendlyErrorMessage}. Please show this error message: &quot;
-        <span className="text-primary-red">{haloError.message} </span>&quot; to the team on Discord or email us at
-        dev@halodao.com.
+    <div className="bg-error-light border-solid border border-red-600 rounded">
+      <div className="text-center text-sm py-2">
+        {displayDetails ? (
+          <>
+            {(error as any).code && <div className="font-semibold ">ERROR #: {(error as any).code}</div>}
+            <div className="text-center text-sm mb-2">
+              {friendlyErrorMessage}. Please show this error message: &quot;
+              <span className="text-primary-red">{error.message} </span>&quot; to the team on Discord or email us at
+              dev@halodao.com.
+            </div>
+          </>
+        ) : (
+          <span className="text-primary-red"> {friendlyErrorMessage} </span>
+        )}
       </div>
     </div>
   )
