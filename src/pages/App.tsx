@@ -57,7 +57,7 @@ const Marginer = styled.div`
 export default function App() {
   return (
     <>
-      <GeoBlocked country={GeofenceCountry.PHILIPPINES}>
+      <GeoBlocked country={GeofenceCountry.SINGAPORE}>
         <Suspense fallback={null}>
           <Route component={GoogleAnalyticsReporter} />
           <AppWrapper>

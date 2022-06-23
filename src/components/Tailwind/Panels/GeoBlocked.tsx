@@ -13,7 +13,7 @@ const GeoBlocked = ({children, country}: GeoBlockedProps) => {
         <>
             <div className="flex items-center border border-primary-hover shadow-md rounded-card bg-white m-20 pt-10 pb-10">
                 <div className="w-full">
-                    <PageWarning caption={`loading`} />
+                    <PageWarning caption={`Loading...`} />
                 </div>
             </div>
         </>
