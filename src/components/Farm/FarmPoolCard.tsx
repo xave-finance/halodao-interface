@@ -1009,7 +1009,12 @@ export default function FarmPoolCard({
               <StakeUnstakeChild>
                 <FixedHeightRow>
                   <TYPE.label>
-                    BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                    <MouseoverTooltip
+                      text={'These are the tokens in your wallet, not the tokens in the pool.'}
+                      placement={'top'}
+                    >
+                      WALLET BALANCE: {formatNumber(bptBalance)} {tokenSymbolForPool(poolInfo.address, chainId)}
+                    </MouseoverTooltip>
                   </TYPE.label>
                 </FixedHeightRow>
                 <RowFlat>

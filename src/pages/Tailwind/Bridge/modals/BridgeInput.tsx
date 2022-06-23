@@ -64,7 +64,7 @@ const TokenInput = ({
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
-                Balance: {balance ? balance.toSignificant(6) : '-'}
+                Wallet Balance: {balance ? balance.toSignificant(6) : '-'}
               </div>
             )}
             <NumericalInput

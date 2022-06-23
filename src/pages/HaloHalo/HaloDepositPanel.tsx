@@ -25,6 +25,7 @@ import Spinner from '../../assets/images/spinner.svg'
 import { ProviderErrorCode } from 'walletlink/dist/provider/Web3Provider'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
 import { HaloError } from 'utils/errors/HaloError'
+import { MouseoverTooltip } from '../../components/Tooltip'
 
 const InputRow = styled.div<{ selected: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -236,7 +237,12 @@ export default function CurrencyInputPanel({
                       color: '#000000'
                     }}
                   >
-                    BALANCE: {haloBalance} RNBW
+                    <MouseoverTooltip
+                      text={'These are the tokens in your wallet, not the tokens in the pool.'}
+                      placement={'top'}
+                    >
+                      WALLET BALANCE: {haloBalance} RNBW
+                    </MouseoverTooltip>
                   </TYPE.body>
                 )}
               </RowBetween>

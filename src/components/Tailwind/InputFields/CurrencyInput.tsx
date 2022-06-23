@@ -8,6 +8,7 @@ import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
+import { MouseoverTooltip } from '../../Tooltip'
 
 interface TokenInputProps {
   currency: Currency
@@ -70,7 +71,12 @@ const TokenInput = ({
           <div className="flex-auto">
             {showBalance && (
               <div className="text-xs text-secondary-alternate uppercase font-semibold tracking-widest">
-                Balance:{' '}
+                <MouseoverTooltip
+                  text={'These are the tokens in your wallet, not the tokens in the pool.'}
+                  placement={'top'}
+                >
+                  Wallet Balance:&nbsp;{' '}
+                </MouseoverTooltip>
                 {balance
                   ? formatNumber(Number(balance), NumberFormat.long)
                   : currencyBalance?.toFixed(2, { groupSeparator: ',' }) || '-'}
