@@ -3,8 +3,8 @@ import PageWarning from '../Layout/PageWarning'
 import { GeofenceCountry, useGeofence } from '../../../halo-hooks/useGeofence'
 
 interface GeoBlockedProps {
-    children: React.ReactNode,
-    country: GeofenceCountry
+  children: React.ReactNode
+  country: GeofenceCountry
 }
 
 const GeoBlocked = ({children, country}: GeoBlockedProps) => {
@@ -28,11 +28,7 @@ const GeoBlocked = ({children, country}: GeoBlockedProps) => {
         </>
     )
 
-    return (
-        <>
-            {children}
-        </>
-    )
+  return <>{children}</>
 }
 
 export default GeoBlocked
