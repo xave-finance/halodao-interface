@@ -96,14 +96,14 @@ const SingleSidedLiquidity = ({
         const swapAmount = await calcSwapAmountForZapFromQuote(val)
         calcBaseAmount = Number(await viewTargetSwap(swapAmount))
         calcQuoteAmount = Number(val) - Number(swapAmount)
+
+        setBaseAmount(calcBaseAmount.toString())
+        setQuoteAmount(calcQuoteAmount.toString())
       } catch (e) {
         console.log('error calculate', e)
         setError(e)
       }
     }
-
-    setBaseAmount(calcBaseAmount.toString())
-    setQuoteAmount(calcQuoteAmount.toString())
   }
 
   /**
