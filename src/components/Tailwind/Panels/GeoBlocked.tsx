@@ -6,7 +6,7 @@ interface GeoBlockedProps {
     children: React.ReactNode
 }
 
-const BLOCKED_COUNTRIES = [ GeofenceCountry.SINGAPORE ];
+const BLOCKED_COUNTRIES = [ GeofenceCountry.SINGAPORE ]
 
 const GeoBlocked = ({ children }: GeoBlockedProps) => {
     const { loading, rejected } = useGeofence(BLOCKED_COUNTRIES)
