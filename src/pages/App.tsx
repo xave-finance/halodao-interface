@@ -15,7 +15,6 @@ import Demo from './Test/Demo'
 import TailwindDemo from './Test/TailwindDemo'
 import Pool from './Tailwind/Pool'
 import Swap from './Tailwind/Swap'
-import { GeofenceCountry } from '../halo-hooks/useGeofence'
 import GeoBlocked from 'components/Tailwind/Panels/GeoBlocked'
 
 const AppWrapper = styled.div`
@@ -56,40 +55,38 @@ const Marginer = styled.div`
 
 export default function App() {
   return (
-    <>
-      <GeoBlocked country={GeofenceCountry.SINGAPORE}>
-        <Suspense fallback={null}>
-          <Route component={GoogleAnalyticsReporter} />
-          <AppWrapper>
-            <URLWarning />
-            <DisclaimerAlert />
-            <HeaderWrapper>
-              <Header />
-            </HeaderWrapper>
-            <BodyWrapper>
-              <Popups />
-              <Polling />
-              <Web3ReactManager>
-                <Switch>
-                  <Route exact strict path="/pool" component={Pool} />
-                  <Route exact strict path="/farm" component={Farm} />
-                  <Route path="/farm/:address" component={Farm} />
-                  <Route exact strict path="/vesting" component={HaloHalo} />
-                  <Route exact strict path="/swap" component={Swap} />
-                  {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
-                    <Route exact strict path="/demo" component={Demo} />
-                  )}
-                  {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
-                    <Route exact strict path="/tw-demo" component={TailwindDemo} />
-                  )}
-                  <Route component={RedirectPathToFarmOnly} />
-                </Switch>
-              </Web3ReactManager>
-              <Marginer />
-            </BodyWrapper>
-          </AppWrapper>
-        </Suspense>
-      </GeoBlocked>
-    </>
+    <GeoBlocked>
+      <Suspense fallback={null}>
+        <Route component={GoogleAnalyticsReporter} />
+        <AppWrapper>
+          <URLWarning />
+          <DisclaimerAlert />
+          <HeaderWrapper>
+            <Header />
+          </HeaderWrapper>
+          <BodyWrapper>
+            <Popups />
+            <Polling />
+            <Web3ReactManager>
+              <Switch>
+                <Route exact strict path="/pool" component={Pool} />
+                <Route exact strict path="/farm" component={Farm} />
+                <Route path="/farm/:address" component={Farm} />
+                <Route exact strict path="/vesting" component={HaloHalo} />
+                <Route exact strict path="/swap" component={Swap} />
+                {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                  <Route exact strict path="/demo" component={Demo} />
+                )}
+                {(process.env.NODE_ENV === 'development' || process.env.REACT_APP_SHOW_DEMO === 'true') && (
+                  <Route exact strict path="/tw-demo" component={TailwindDemo} />
+                )}
+                <Route component={RedirectPathToFarmOnly} />
+              </Switch>
+            </Web3ReactManager>
+            <Marginer />
+          </BodyWrapper>
+        </AppWrapper>
+      </Suspense>
+    </GeoBlocked>
   )
 }

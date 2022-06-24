@@ -9,7 +9,7 @@ export enum GeofenceCountry {
 }
 
 // and then redirects to a URL if not applicable
-export const useGeofence = (country: GeofenceCountry) => {
+export const useGeofence = (country: GeofenceCountry[]) => {
   // If rejected, redirect to rejectedUrl
   const [rejected, setRejected] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -19,7 +19,7 @@ export const useGeofence = (country: GeofenceCountry) => {
     axios
       .get('https://ipapi.co/country')
       .then(({ data }) => {
-        if (data === country) {
+        if (country.includes(data)) {
           setRejected(true)
         } else {
           setRejected(false)
