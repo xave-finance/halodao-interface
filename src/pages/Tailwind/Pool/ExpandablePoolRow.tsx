@@ -239,7 +239,7 @@ const ExpandablePoolRow = ({ poolAddress, pid, isExpanded, onClick, isActivePool
               <PoolCardLeft pool={pool} isActivePool={isActivePool} />
             </div>
             <div className="md:w-1/2">
-              <PoolCardRight pool={pool} />
+              <PoolCardRight pool={pool} isActivePool={isActivePool} />
             </div>
           </div>
           <div className="px-4 pb-4 text-right text-white bg-primary-hover rounded-br-card rounded-bl-card md:hidden">

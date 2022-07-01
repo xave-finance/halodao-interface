@@ -7,13 +7,18 @@ import { PoolData } from './models/PoolData'
 
 interface PoolCardRightProps {
   pool: PoolData
+  isActivePool?: boolean
 }
 
-const PoolCardRight = ({ pool }: PoolCardRightProps) => {
+const PoolCardRight = ({ pool, isActivePool }: PoolCardRightProps) => {
   const history = useHistory()
 
   const stake = () => {
-    history.push(`/farm/${pool.address}`)
+    return isActivePool && pool.held > 0
+      ? history.push(`/farm/${pool.address}`)
+      : () => {
+          // silent
+        }
   }
 
   const lpToken0Price = pool.weights.token0 * (1 / pool.rates.token0)
