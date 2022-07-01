@@ -20,7 +20,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
   const [token1Amount, setToken1Amount] = useState(0)
   const { getFutureTime } = useTime()
   const [removeButtonState, setRemoveButtonState] = useState(PrimaryButtonState.Disabled)
-  const [errorObject, setErrorObject] = useState<any>(undefined)
+  const [error, setError] = useState<any>(undefined)
 
   const { viewWithdraw, withdraw } = useAddRemoveLiquidity(pool.address, pool.token0, pool.token1)
 
@@ -63,7 +63,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       })
     } catch (err) {
       console.error(err)
-      setErrorObject(err)
+      setError(err)
       setRemoveButtonState(PrimaryButtonState.Enabled)
     }
   }
@@ -94,13 +94,7 @@ const RemoveLiquidity = ({ pool }: RemoveLiquidityProps) => {
       <div className="mt-4">
         <PrimaryButton title="Remove Supply" state={removeButtonState} onClick={confirmWithdraw} />
       </div>
-      {errorObject && (
-        <ErrorModal
-          isVisible={errorObject !== undefined}
-          onDismiss={() => setErrorObject(undefined)}
-          errorObject={errorObject}
-        />
-      )}
+      {error && <ErrorModal isVisible={error !== undefined} onDismiss={() => setError(undefined)} error={error} />}
     </div>
   )
 }

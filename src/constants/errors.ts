@@ -1,6 +1,7 @@
 export enum CurveErrorMessage {
   CurveReentered = 'Curve/re-entered',
   AllowanceDecreaseUnderflow = 'Curve/allowance-decrease-underflow',
+  BelowMinTargetAmount = 'Curve/below-min-target-amount',
   ApprovalOverflow = 'Curve/approval-overflow',
   InsufficientAllowance = 'Curve/insufficient-allowance',
   Frozen = 'Curve/frozen-only-allowing-proportional-withdraw',
@@ -19,7 +20,8 @@ export enum CurveErrorMessage {
 
 export enum GeneralErrorMessage {
   SubtractionOverflow = 'SafeMath: subtraction overflow',
-  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.'
+  MetamaskRejection = 'MetaMask Tx Signature: User denied transaction signature.',
+  SafeMathDivisionByZero = 'SafeMath: division by zero'
 }
 
 export enum MetamaskErrorCode {
@@ -33,4 +35,9 @@ export enum ZapErrorCode {
 
 export enum ZapErrorMessage {
   NotEnoughLpAmount = '!Zap/not-enough-lp-amount'
+}
+
+export enum ErrorDisplayType {
+  Inline,
+  Modal
 }

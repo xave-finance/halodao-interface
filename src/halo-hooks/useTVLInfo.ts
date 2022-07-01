@@ -98,9 +98,13 @@ const useTVLInfo = () => {
         .catch(err => {
           console.log('Error fetching data on Studio: ', err)
           console.log('Trying to get data in Hosted')
-          getHosted().then(data => {
-            setData(data)
-          })
+          getHosted()
+            .then(data => {
+              setData(data)
+            })
+            .catch(e => {
+              console.log('Error fetching data on either Studio or Hosted: ', e)
+            })
         })
     } catch (e) {
       console.error('Error fetching data in Studio and Hosted')
