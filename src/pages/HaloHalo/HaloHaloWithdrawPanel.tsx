@@ -24,7 +24,6 @@ import { ErrorText } from 'components/Alerts'
 import Column from 'components/Column'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
-import { HaloError } from 'utils/errors/HaloError'
 import { MouseoverTooltip } from '../../components/Tooltip'
 
 const InputRow = styled.div<{ selected: boolean }>`
@@ -131,7 +130,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(new HaloError(t('errorMessageMetamaskRejection')))
+        setError(tx)
       } else {
         await tx.wait()
       }
@@ -178,7 +177,7 @@ export default function HaloHaloWithdrawPanel({
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_ACCOUNTS ||
         tx.code === ProviderErrorCode.USER_DENIED_REQUEST_SIGNATURE
       ) {
-        setError(new HaloError(t('errorMessageMetamaskRejection')))
+        setError(tx)
       } else {
         await tx.wait()
         setWithdrawValue('')
