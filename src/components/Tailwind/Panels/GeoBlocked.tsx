@@ -11,15 +11,7 @@ const BLOCKED_COUNTRIES = [GeofenceCountry.SINGAPORE]
 const GeoBlocked = ({ children }: GeoBlockedProps) => {
   const { loading, rejected } = useGeofence(BLOCKED_COUNTRIES)
 
-  if (loading)
-    return (
-      <div className="flex items-center border border-primary-hover shadow-md rounded-card bg-white m-20 pt-10 pb-10">
-        <div className="w-full">
-          <PageWarning caption={`Loading...`} />
-        </div>
-      </div>
-    )
-  else if (!loading && rejected)
+  if (!loading && rejected)
     return (
       <div className="flex items-center border border-primary-hover shadow-md rounded-card bg-white m-20 pt-10 pb-10">
         <div className="w-full">
