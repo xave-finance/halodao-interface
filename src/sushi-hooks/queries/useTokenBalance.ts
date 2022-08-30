@@ -25,8 +25,7 @@ const useTokenBalance = (tokenAddress?: string, accountAddress?: string) => {
   const getBalance = async (contract: Contract | null, owner: string | null | undefined): Promise<BalanceProps> => {
     try {
       //console.log('token_contract:', contract)
-      const balance = await contract?.balanceOf(owner)
-      const decimals = await contract?.decimals()
+      const [balance, decimals] = await Promise.all([contract?.balanceOf(owner), contract?.decimals()])
       return { value: BigNumber.from(balance), decimals: decimals }
       //todo: return as BigNumber as opposed toString since information will
       //return Fraction.from(BigNumber.from(balance), BigNumber.from(10).pow(decimals)).toString()

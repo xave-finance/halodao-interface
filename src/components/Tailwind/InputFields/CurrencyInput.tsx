@@ -6,9 +6,11 @@ import SelectButton from '../Buttons/SelectButton'
 import NumericalInput from 'components/NumericalInput'
 import TokenSelectModal from 'components/Tailwind/Modals/TokenSelectModal'
 import { formatNumber, NumberFormat } from 'utils/formatNumber'
-import { useCurrencyBalance } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import { MouseoverTooltip } from '../../Tooltip'
+import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
+import { formatUnits } from 'ethers/lib/utils'
+import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 interface TokenInputProps {
   currency: Currency
@@ -35,12 +37,16 @@ const TokenInput = ({
 }: TokenInputProps) => {
   const [showModal, setShowModal] = useState(false)
   const { account } = useActiveWeb3React()
-  const currencyBalance = useCurrencyBalance(account ?? undefined, currency)
+
+  const currencyBalance = useTokenBalance(
+    currency instanceof Token ? (currency as Token).address : undefined,
+    account ?? undefined
+  )
 
   const onMax = () => {
-    balance = balance ? balance : currencyBalance?.toExact()
-    if (balance && Number(balance) > 0) {
-      didChangeValue(balance)
+    const _balance = balance ? balance : formatUnits(currencyBalance.value, currencyBalance.decimals)
+    if (_balance && Number(_balance) > 0) {
+      didChangeValue(_balance)
     }
   }
 
@@ -79,7 +85,9 @@ const TokenInput = ({
                 </MouseoverTooltip>
                 {balance
                   ? formatNumber(Number(balance), NumberFormat.long)
-                  : currencyBalance?.toFixed(2, { groupSeparator: ',' }) || '-'}
+                  : currencyBalance
+                  ? formatNumber(bigNumberToNumber(currencyBalance.value, currencyBalance.decimals), NumberFormat.long)
+                  : '-'}
               </div>
             )}
             <NumericalInput

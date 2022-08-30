@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { PoolData } from '../models/PoolData'
-import { useTokenBalances } from 'state/wallet/hooks'
 import { useActiveWeb3React } from 'hooks'
 import SegmentControl from 'components/Tailwind/SegmentControl/SegmentControl'
 import MultiSidedLiquidity from './MultiSidedLiquidity'
 import SingleSidedLiquidity from './SingleSidedLiquidity'
 import AddLiquityModal from './AddLiquityModal'
 import ErrorModal from 'components/Tailwind/Modals/ErrorModal'
+import useTokenBalance from 'sushi-hooks/queries/useTokenBalance'
+import { TokenAmount } from '@halodao/sdk'
 
 interface AddLiquidityProps {
   pool: PoolData
@@ -24,8 +25,12 @@ const AddLiquidity = ({ pool, isEnabled }: AddLiquidityProps) => {
   const [error, setError] = useState<any>(undefined)
 
   const { account } = useActiveWeb3React()
-  const tokenBalances = useTokenBalances(account ?? undefined, [pool.token0, pool.token1])
-  const balances = [tokenBalances[pool.token0.address], tokenBalances[pool.token1.address]]
+  const token0Balance = useTokenBalance(pool.token0.address, account ?? undefined)
+  const token1Balance = useTokenBalance(pool.token1.address, account ?? undefined)
+  const balances = [
+    new TokenAmount(pool.token0, BigInt(token0Balance.value.toString())),
+    new TokenAmount(pool.token1, BigInt(token1Balance.value.toString()))
+  ]
 
   const disabledSegments = pool.pooled.total > 0 ? undefined : [1]
 
