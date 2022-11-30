@@ -14,6 +14,7 @@ import { bigNumberToNumber } from 'utils/bigNumberHelper'
 
 interface TokenInputProps {
   currency: Currency
+  pairCurrency?: Currency
   value: string
   canSelectToken: boolean
   didChangeValue: (newValue: string) => void
@@ -26,6 +27,7 @@ interface TokenInputProps {
 
 const TokenInput = ({
   currency,
+  pairCurrency,
   value,
   canSelectToken,
   didChangeValue,
@@ -103,6 +105,8 @@ const TokenInput = ({
       </div>
 
       <TokenSelectModal
+        currency={currency}
+        pairCurrency={pairCurrency}
         isVisible={showModal}
         onDismiss={() => setShowModal(false)}
         onSelect={token => {
