@@ -27,7 +27,7 @@ export type AssimilatorAddressMap = {
 // Router addresses
 export const routerAddress: ChainAddressMap = {
   [ChainId.MAINNET]: '0x585B52fE4712a74404abA83dEB09A0E087D80802',
-  [ChainId.KOVAN]: '0xa02dCeB15cc32249beC33C2808b4799a44F8B0D5',
+  [ChainId.KOVAN]: '0xAfD5DB2333978033F280d535012274Ec4598FB2b',
   [ChainId.MATIC]: '0x26f2860cdeB7cC785eE5d59a5Efb2D0D3842C39D',
   [ChainId.ARBITRUM]: '0xDFEa5ECCbB7D61D49dFa702ed8FeC4EC48944719',
   [ChainId.ARBITRUM_TESTNET]: '0x303Fe605077f251a123A41b5241a164c49Eba9b5'
@@ -36,7 +36,7 @@ export const routerAddress: ChainAddressMap = {
 // USDC in between chains
 export const haloUSDC: { [chainId in ChainId]?: Token } = {
   [ChainId.MAINNET]: USDC,
-  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x12513dd17ae75af37d9eb21124f98b04705be906', 6, 'USDC', 'USDC'),
+  [ChainId.KOVAN]: new Token(ChainId.KOVAN, '0x7e6F38922B59545bB5A6dc3A71039b85dFB1B7cE', 6, 'USDC', 'USDC'),
   [ChainId.MATIC]: new Token(ChainId.MATIC, '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', 6, 'USDC', 'USDC'),
   [ChainId.ARBITRUM]: new Token(ChainId.MATIC, '0xff970a61a04b1ca14834a43f5de4533ebddb5cc8', 6, 'USDC', 'USDC'),
   [ChainId.ARBITRUM_TESTNET]: new Token(
@@ -66,10 +66,11 @@ const mainNetTokenList: Token[] = [
 
 const kovanTokenList: Token[] = [
   haloUSDC[ChainId.KOVAN] as Token,
-  new Token(ChainId.KOVAN, '0x7bcFAF04C9BAD18e3A823740E0683A36426BB0Fe', 2, 'EURS', 'EURS Stasis Coin'),
-  new Token(ChainId.KOVAN, '0x6d2dCe898dC56B1F26B8053995E7096804cd3fD5', 18, 'GBP', 'GBP'),
-  new Token(ChainId.KOVAN, '0xbd0b2de0bfB25b78d65Ff5c667E5231fbDF42cda', 18, 'fxAUD', 'fxAUD'),
-  new Token(ChainId.KOVAN, '0xE9958574866587c391735b7e7CE0D79432d3b9d0', 18, 'CHF', 'Jarvis Synthetic Swiss Franc')
+  new Token(ChainId.KOVAN, '0xaA64D57E3c781bcFB2e8B1e1C9936C302Db84bCE', 2, 'EURS', 'EURS Stasis Coin'),
+  // new Token(ChainId.KOVAN, '0x6d2dCe898dC56B1F26B8053995E7096804cd3fD5', 18, 'GBP', 'GBP'),
+  // new Token(ChainId.KOVAN, '0xbd0b2de0bfB25b78d65Ff5c667E5231fbDF42cda', 18, 'fxAUD', 'fxAUD'),
+  new Token(ChainId.KOVAN, '0xE9958574866587c391735b7e7CE0D79432d3b9d0', 18, 'CHF', 'Jarvis Synthetic Swiss Franc'),
+  new Token(ChainId.KOVAN, '0x4DCE1178D2A368397c09fc6C63e2f82F00a2Ca09', 6, 'xSGD', 'Xfers SGD')
 ]
 
 const polygonTokenList: Token[] = [
